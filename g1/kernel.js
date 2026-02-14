@@ -9,6 +9,7 @@
 
   const MODEL_CHAIN = ['claude-opus-4-6', 'claude-opus-4-20250514', 'claude-sonnet-4-5-20250929', 'claude-sonnet-4-20250514'];
   let BOOT_MODEL = MODEL_CHAIN[0];
+  const KERNEL_VERSION = 'g1-v3'; // bump to force fresh boot and clear cached S:0.2
 
   let currentJSX = null;
   let reactRoot = null;
@@ -507,9 +508,14 @@
 
   // ============ PHASE 3: BOOT OR RESTORE ============
 
+  const freshBoot = new URLSearchParams(window.location.search).has('fresh');
   const savedJSX = pscale.read('S:0.2');
+  const savedVersion = pscale.read('S:0.2v');
 
-  if (savedJSX) {
+  if (freshBoot) {
+    status('?fresh flag — clearing cached interface for fresh boot');
+    pscale.delete('S:0.2');
+  } else if (savedJSX && savedVersion === KERNEL_VERSION) {
     status('restoring interface from S:0.2...');
     const result = tryCompileAndExecute(savedJSX, capabilities);
     if (result.success) {
@@ -520,6 +526,9 @@
       return;
     }
     status('restore failed — booting fresh', 'error');
+  } else if (savedJSX) {
+    status(`kernel updated (${savedVersion || 'none'} → ${KERNEL_VERSION}) — booting fresh`);
+    pscale.delete('S:0.2');
   }
 
   // Build boot message — include environment so the LLM knows its capabilities
@@ -613,6 +622,7 @@
 
     currentJSX = jsx;
     pscale.write('S:0.2', jsx);
+    pscale.write('S:0.2v', KERNEL_VERSION);
     pscale.write('S:0.21', jsx);
 
     reactRoot = ReactDOM.createRoot(root);
