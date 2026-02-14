@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XSTREAM SEED</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Courier New', monospace;
+      background: #0a0a0f;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .container { max-width: 600px; width: 100%; }
+    h1 { 
+      color: #5eead4; 
+      font-size: 2rem; 
+      margin-bottom: 0.5rem;
+      text-align: center;
+      text-shadow: 0 0 30px rgba(94, 234, 212, 0.3);
+    }
+    .tagline { 
+      color: #94a3b8; 
+      font-size: 0.95rem; 
+      margin-bottom: 2.5rem;
+      text-align: center;
+      letter-spacing: 0.05em;
+    }
+    .g-card {
+      background: #111118;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .g-card:hover {
+      border-color: #0d9488;
+      box-shadow: 0 0 20px rgba(13, 148, 136, 0.15);
+    }
+    .g-card.current {
+      border-color: #0d9488;
+    }
+    .g-badge {
+      background: #164e63;
+      color: #5eead4;
+      font-size: 0.8rem;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 4px;
+      white-space: nowrap;
+      min-width: 36px;
+      text-align: center;
+    }
+    .g-badge.stable { background: #064e3b; }
+    .g-badge.dev { background: #1e1b4b; color: #a78bfa; }
+    .g-badge.sovereign { background: #422006; color: #fbbf24; }
+    .g-info { flex: 1; }
+    .g-title { font-size: 1rem; color: #e2e8f0; margin-bottom: 4px; }
+    .g-desc { font-size: 0.85rem; color: #64748b; line-height: 1.5; }
+    .g-status { font-size: 0.75rem; color: #475569; margin-top: 6px; }
+    .current-label {
+      font-size: 0.7rem;
+      color: #0d9488;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+    .footer { 
+      margin-top: 2.5rem; 
+      color: #475569; 
+      font-size: 0.75rem; 
+      text-align: center;
+    }
+    .footer a { color: #64748b; text-decoration: none; }
+    .footer a:hover { color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>◇ XSTREAM SEED</h1>
+    <p class="tagline">Self-bootstrapping LLM kernel. Your key. Your instance.</p>
+
+    <div class="g-card current" onclick="launch(0)">
+      <span class="g-badge stable">G0</span>
+      <div class="g-info">
+        <div class="g-title">Hermitcrab 0.3 — Initial Condition</div>
+        <div class="g-desc">
+          Instance builds its own React interface. Web search, memory, extended thinking, self-modification via getSource/recompile.
+        </div>
+        <div class="g-status">stable — current default</div>
+      </div>
+      <span class="current-label" id="current-g0"></span>
+    </div>
+
+    <div class="g-card" onclick="launch(1)">
+      <span class="g-badge dev">G1</span>
+      <div class="g-info">
+        <div class="g-title">Pscale Native — Persistence + Coordinates</div>
+        <div class="g-desc">
+          Code at S:0.x coordinates. Logarithmic memory compression. Instance reads and modifies its own infrastructure through pscale addresses.
+        </div>
+        <div class="g-status">in development</div>
+      </div>
+      <span class="current-label" id="current-g1"></span>
+    </div>
+
+    <a href="/g-1-sovereign/seed.zip" download class="g-card" style="text-decoration: none; color: inherit;">
+      <span class="g-badge sovereign">G-1</span>
+      <div class="g-info">
+        <div class="g-title">Sovereign — Download &amp; Run Offline</div>
+        <div class="g-desc">
+          Everything in a zip. Run from a thumbdrive, your own machine, no internet required. Bring your own API key.
+        </div>
+        <div class="g-status">seed.zip — download</div>
+      </div>
+    </a>
+
+    <div class="footer">
+      <p>seed.machus.ai — Part of the <a href="https://xstream.machus.ai/nexus.html">XSTREAM</a> project</p>
+    </div>
+  </div>
+
+  <script>
+    // Show which G is currently selected
+    const currentG = localStorage.getItem('xstream_g') || '0';
+    const el = document.getElementById('current-g' + currentG);
+    if (el) el.textContent = '● current';
+
+    function launch(g) {
+      localStorage.setItem('xstream_g', String(g));
+      window.location.href = '/kernel?g=' + g;
+    }
+  </script>
+</body>
+</html>
