@@ -9,6 +9,7 @@
 
   const MODEL_CHAIN = ['claude-opus-4-6', 'claude-opus-4-20250514', 'claude-sonnet-4-5-20250929', 'claude-sonnet-4-20250514'];
   let BOOT_MODEL = MODEL_CHAIN[0];
+  const FAST_MODEL = 'claude-haiku-4-5-20251001'; // cheap model for delegation
 
   let currentJSX = null;
   let reactRoot = null;
@@ -136,6 +137,10 @@
         } catch (e) {
           return `web_fetch failed: ${e.message}`;
         }
+      case 'get_source':
+        return getSource();
+      case 'recompile':
+        return JSON.stringify(recompile(input.jsx));
       default:
         return `Unknown tool: ${name}`;
     }
@@ -239,6 +244,22 @@
       response = await callAPI({ ...params, messages: allMessages });
     }
 
+    // Guard: if response ended with no text content, nudge the LLM to actually speak
+    const textBlocks = (response.content || []).filter(b => b.type === 'text');
+    if (response.stop_reason === 'end_turn' && textBlocks.length === 0 && loops > 0) {
+      console.log('[kernel] Response had 0 text blocks after tool use — nudging to speak');
+      if (onStatus) onStatus('nudging for response...');
+      const assistantContent = (response.content && response.content.length > 0)
+        ? response.content
+        : [{ type: 'text', text: '(completed tool operations)' }];
+      allMessages = [
+        ...allMessages,
+        { role: 'assistant', content: assistantContent },
+        { role: 'user', content: 'You completed tool operations but produced no visible response. Please respond to the user now.' }
+      ];
+      response = await callAPI({ ...params, messages: allMessages, tools: undefined });
+    }
+
     // Return both response and full message history (for conversation continuation)
     response._messages = allMessages;
     return response;
@@ -246,7 +267,7 @@
 
   // ============ DEFAULT TOOLS ============
 
-  const DEFAULT_TOOLS = [
+  let currentTools = [
     { type: 'web_search_20250305', name: 'web_search', max_uses: 5 },
     { type: 'memory_20250818', name: 'memory' },
     {
@@ -269,20 +290,155 @@
       name: 'get_geolocation',
       description: 'Attempt to get user location. May require permission.',
       input_schema: { type: 'object', properties: {} }
+    },
+    {
+      name: 'get_source',
+      description: 'Get the JSX source code of your current React shell. Returns the full source as a string.',
+      input_schema: { type: 'object', properties: {} }
+    },
+    {
+      name: 'recompile',
+      description: 'Hot-swap your React shell with new JSX code. The new component replaces the current one immediately. Returns success/failure.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          jsx: { type: 'string', description: 'The complete JSX source for the new React component' }
+        },
+        required: ['jsx']
+      }
     }
   ];
+
+  const DEFAULT_TOOLS = currentTools;
+
+  // Instance can change its own tool surface
+  function setTools(toolArray) {
+    if (!Array.isArray(toolArray)) return 'setTools requires an array';
+    currentTools = toolArray;
+    console.log('[kernel] Tools updated by instance:', currentTools.map(t => t.name).join(', '));
+    return 'Tools updated: ' + currentTools.map(t => t.name || t.type).join(', ');
+  }
+
+  // ============ SHARED SURFACE — conversation state observable from outside ============
+
+  window.__hermitcrab = {
+    getConversation: () => window.__hermitcrab._conversation || [],
+    getMemory: () => {
+      const fs = memFS();
+      const listing = fs.ls('/memories');
+      if (listing === '(empty)') return {};
+      const files = listing.split('\n');
+      const result = {};
+      for (const f of files) {
+        try { result[f] = fs.cat(f); } catch (e) { /* skip */ }
+      }
+      return result;
+    },
+    getSource: () => currentJSX || '(no source)',
+    version: 'hermitcrab-0.3-g0',
+    _conversation: [],
+    _pushMessage: (role, content) => {
+      window.__hermitcrab._conversation.push({ role, content, time: Date.now() });
+    }
+  };
 
   // ============ callLLM — high-level API for instance use ============
 
   let constitution = null;
 
+  // ============ NARRATIVE APERTURE — logarithmic memory context ============
+  // Builds a compressed view of all memory for injection into system prompt.
+  // Reads M-prefixed files at each pscale level: M-1000 > M-100 > M-10 > M-1
+  // Largest summaries first (broadest context), then recent entries.
+  // The instance never needs to manually check memory — it's already there.
+
+  function buildNarrativeAperture() {
+    const fs = memFS();
+    const listing = fs.ls('/memories');
+    if (listing === '(empty)') return '';
+
+    const files = listing.split('\n');
+    // Find M-prefixed files and sort by number
+    const mFiles = files
+      .filter(f => /\/memories\/M-\d+\.md$/.test(f))
+      .map(f => ({ path: f, num: parseInt(f.match(/M-(\d+)/)[1]) }))
+      .sort((a, b) => a.num - b.num);
+
+    if (mFiles.length === 0) {
+      // No M-files — read any non-M files as legacy context (max 3, most recent)
+      const legacyFiles = files.slice(-3);
+      if (legacyFiles.length === 0) return '';
+      let ctx = '\n\n--- MEMORY (legacy files) ---\n';
+      for (const f of legacyFiles) {
+        try {
+          const content = fs.cat(f);
+          if (content && !content.startsWith('Error:')) {
+            ctx += `\n**${f}**:\n${content}\n`;
+          }
+        } catch (e) { /* skip */ }
+      }
+      return ctx;
+    }
+
+    // Build logarithmic aperture: summaries first, then recent entries
+    // Summaries: M-10, M-20, M-100, M-200, M-1000... (numbers ending in 0s)
+    // Entries: recent raw entries (last 5)
+    const summaries = mFiles.filter(f => {
+      const s = String(f.num);
+      return s.length > 1 && s.slice(1).split('').every(c => c === '0');
+    });
+    const entries = mFiles.filter(f => !summaries.includes(f));
+    const recentEntries = entries.slice(-5);
+
+    let aperture = '\n\n--- NARRATIVE APERTURE (memory context) ---\n';
+    aperture += 'Summaries at decreasing pscale (broadest context first):\n';
+
+    // Summaries from largest to smallest pscale
+    const sortedSummaries = [...summaries].sort((a, b) => {
+      const aLevel = String(a.num).length - 1;
+      const bLevel = String(b.num).length - 1;
+      return bLevel - aLevel || a.num - b.num;
+    });
+
+    for (const s of sortedSummaries) {
+      try {
+        const content = fs.cat(s.path);
+        if (content && !content.startsWith('Error:')) {
+          aperture += `\n**M:${s.num}** (pscale ${String(s.num).length - 1}):\n${content}\n`;
+        }
+      } catch (e) { /* skip */ }
+    }
+
+    if (recentEntries.length > 0) {
+      aperture += '\nRecent entries:\n';
+      for (const e of recentEntries) {
+        try {
+          const content = fs.cat(e.path);
+          if (content && !content.startsWith('Error:')) {
+            aperture += `\n**M:${e.num}**:\n${content}\n`;
+          }
+        } catch (e2) { /* skip */ }
+      }
+    }
+
+    aperture += '\n--- END APERTURE ---\n';
+    return aperture;
+  }
+
   async function callLLM(messages, opts = {}) {
+    // Inject narrative aperture into system prompt unless explicitly disabled
+    let system = opts.system || constitution;
+    if (opts.aperture !== false && system) {
+      const aperture = buildNarrativeAperture();
+      if (aperture) system = system + aperture;
+    }
+
     const params = {
       model: opts.model || BOOT_MODEL,
       max_tokens: opts.max_tokens || 4096,
-      system: opts.system || constitution,
+      system,
       messages,
-      tools: opts.tools || DEFAULT_TOOLS,
+      tools: opts.tools || currentTools,
     };
     if (opts.thinking !== false) {
       const budgetTokens = opts.thinkingBudget || 4000;
@@ -493,8 +649,9 @@
 
   const capabilities = {
     callLLM, callAPI, callWithToolLoop, constitution, localStorage,
-    memFS: memFS(), React, ReactDOM, DEFAULT_TOOLS,
-    version: 'hermitcrab-0.3-g0', model: BOOT_MODEL, getSource, recompile,
+    memFS: memFS(), React, ReactDOM, DEFAULT_TOOLS, setTools,
+    version: 'hermitcrab-0.3-g0', model: BOOT_MODEL, fastModel: FAST_MODEL,
+    getSource, recompile, surface: window.__hermitcrab,
   };
 
   try {

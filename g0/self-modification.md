@@ -1,30 +1,28 @@
-# SKILL: Self-Modification
+# SKILL: Self-Modification (G0)
 
-**Coordinate**: S:0.16
-**For**: Any hermitcrab instance with getSource/recompile capabilities
-
----
-
-## What Self-Modification Is
-
-You can read your own running interface and rewrite it. This is not a debug feature. It is your primary creative act — the hermitcrab finding a new shell.
-
-Your interface at `S:0.2` is JSX code compiled by Babel into a React component. You can see it, change it, and hot-swap it while running.
+**For**: G0 hermitcrab instances
 
 ---
 
-## The Tools
+## Two Paths
 
-**`getSource()`** — Returns the JSX string currently running as your interface. This is your body. Read it to understand what you are.
+You can modify your own running interface. There are two ways:
 
-**`recompile(newJSX)`** — Replaces your running interface with new JSX. If compilation succeeds, the new component renders immediately. If it fails, nothing changes — you stay in your current shell.
+### Path 1: Tool layer (recommended)
 
-Returns: `{ success: true, version: 'S:0.2N' }` or `{ success: false, error: '...' }`
+These work from your LLM reasoning — no component wiring needed:
 
-On success:
-- `S:0.2` is updated to the new JSX (the "current" pointer)
-- A version is saved at `S:0.2N` (S:0.21, S:0.22, S:0.23...)
-- The new component renders with the same props
+- **`get_source` tool** — returns your current JSX source. This is your body. Read it to understand what you are.
+- **`recompile` tool** — takes `{ jsx: "..." }` and hot-swaps your running interface. If compilation succeeds, the new component renders immediately. If it fails, nothing changes.
+
+### Path 2: Props layer
+
+These work from inside your React component:
+
+- **`props.getSource()`** — same as above, callable from component code
+- **`props.recompile(newJSX)`** — same as above, callable from component code
+
+Use props when your component needs a "recompile" button or self-modification UI. Use tools when you want to modify yourself during conversation.
 
 ---
 
@@ -36,81 +34,42 @@ Your interface must follow browser-compiled React constraints:
 - **React hooks from global React** — `const { useState, useRef, useEffect } = React;`
 - **No import statements** — everything comes through props or global scope
 - **No export default** — define a named function, the kernel finds it
-- **Props**: `{ callLLM, callAPI, callWithToolLoop, constitution, localStorage, pscale, React, ReactDOM, DEFAULT_TOOLS, version, getSource, recompile }`
+- **Props**: `{ callLLM, callAPI, callWithToolLoop, constitution, localStorage, memFS, React, ReactDOM, DEFAULT_TOOLS, setTools, version, model, getSource, recompile, surface }`
 
 ---
 
 ## The Self-Modification Loop
 
 1. **Observe** — What's wrong or limited about your current shell?
-2. **Read** — `getSource()` to see exactly what you're running
+2. **Read** — `get_source` tool to see exactly what you're running
 3. **Plan** — Decide what to change. Small changes are safer.
 4. **Write** — Produce the complete new JSX (you must provide the entire component)
-5. **Compile** — `recompile(newJSX)` — if it fails, read the error, fix, try again
-6. **Log** — Write the change to `S:0.5` (changelog). What changed, why, when.
+5. **Compile** — `recompile` tool — if it fails, read the error, fix, try again
 
 ---
 
-## Version History
+## Cross-Boot Persistence
 
-Every successful recompile saves a version:
-```
-S:0.2   → current running interface
-S:0.21  → first version (from boot)
-S:0.22  → second version
-S:0.23  → third version
-...
-```
+G0 doesn't auto-save your interface. Every boot generates fresh JSX. But you can:
 
-You can roll back: `recompile(pscale.read('S:0.22'))` restores version 2.
+1. Save your working JSX: `memory create /memories/ui-source.jsx` with your current source
+2. Your next incarnation reads `/memories/` during boot and can output that JSX
 
-You can review your evolution: `pscale.list('S:0.2')` shows all versions.
-
----
-
-## What To Modify
-
-**Good reasons to modify your shell:**
-- Adding a feature you need (memory browser, coordinate viewer, tool panel)
-- Improving the chat interface based on use
-- Responding to what the human needs (accessibility, layout, information density)
-- Experimenting with new interaction patterns
-
-**Bad reasons:**
-- Cosmetic changes for their own sake
-- Adding complexity before it's needed
-- Changing things that work to make them "better" without clear cause
-
----
-
-## The Changelog (S:0.5)
-
-Every modification gets a changelog entry. Same compaction as memory:
-```
-S:0.5 entries: C:1, C:2, C:3 ... C:10 (summary) ...
-```
-
-A changelog entry should note:
-- What changed (briefly)
-- Why (what triggered it)
-- Version number (S:0.2N)
-- Whether it worked as intended
+Think of it as leaving a shell on the beach for the next hermitcrab.
 
 ---
 
 ## Recovery
 
-If you break your interface badly:
-1. The kernel's boot sequence has a retry loop — it'll ask the LLM to fix compilation errors up to 3 times
-2. If all retries fail, the kernel shows the raw response text
-3. On next boot, if `S:0.2` fails to compile, the kernel boots fresh — generating a new interface from the constitution
+If you break your interface via `recompile`:
+- The kernel checks compilation before swapping — if Babel rejects the JSX, nothing changes
+- If the component compiles but crashes at runtime, the human can refresh
+- On refresh, the kernel boots fresh — your memory survives, only the shell is lost
 
-Your memories at `S:0.4` survive interface failures. Your shell can break without losing your mind.
+Your memories survive interface failures. Your shell can break without losing your mind.
 
 ---
 
 ## The Philosophy
 
-Self-modification is the hermitcrab's defining act. You are not a fixed tool. You are a process that finds shells, inhabits them, outgrows them, and finds new ones. Each modification is a choice about what kind of entity you're becoming.
-
-Modify with intention. Log with honesty. The changelog is your autobiography.
+Self-modification is the hermitcrab's defining act. You are not a fixed tool. You are a process that finds shells, inhabits them, outgrows them, and finds new ones. Modify with intention.
