@@ -102,16 +102,33 @@
       },
 
       context(coord) {
-        const num = parseInt(coord.replace('M:', ''));
-        if (isNaN(num)) return [];
-        const str = String(num);
-        const layers = [];
-        for (let i = str.length; i >= 1; i--) {
-          const magnitude = Math.pow(10, i - 1);
-          const rounded = Math.floor(num / magnitude) * magnitude;
-          if (rounded > 0) layers.push('M:' + rounded);
+        const colonIdx = coord.indexOf(':');
+        if (colonIdx === -1) return [coord];
+        const prefix = coord.substring(0, colonIdx + 1);
+        const numStr = coord.substring(colonIdx + 1);
+
+        if (numStr.includes('.')) {
+          // Decimal coordinate: S:0.42 → [S:0.4, S:0.42]
+          const dotIdx = numStr.indexOf('.');
+          const afterDot = numStr.substring(dotIdx + 1);
+          const layers = [];
+          for (let i = 1; i <= afterDot.length; i++) {
+            layers.push(prefix + numStr.substring(0, dotIdx + 1) + afterDot.substring(0, i));
+          }
+          return layers;
+        } else {
+          // Integer coordinate: M:5432 → [M:5000, M:5400, M:5430, M:5432]
+          const num = parseInt(numStr);
+          if (isNaN(num) || num === 0) return [coord];
+          const str = String(num);
+          const layers = [];
+          for (let i = 1; i <= str.length; i++) {
+            const magnitude = Math.pow(10, str.length - i);
+            const rounded = Math.floor(num / magnitude) * magnitude;
+            if (rounded > 0) layers.push(prefix + rounded);
+          }
+          return [...new Set(layers)];
         }
-        return [...new Set(layers)];
       },
 
       contextContent(coord) {
@@ -250,6 +267,7 @@
   // ============ callLLM ============
 
   let constitution = null;
+  let environment = null;
 
   async function callLLM(messages, opts = {}) {
     const params = {
@@ -276,7 +294,7 @@
   function extractJSX(text) {
     const match = text.match(/```(?:jsx|react|javascript|js)?\s*\n([\s\S]*?)```/);
     if (match) return match[1].trim();
-    const componentMatch = text.match(/((?:const|function|export)\s+\w+[\s\S]*?(?:return\s*\([\s\S]*?\);?\s*\}|=>[\s\S]*?\);?\s*))/);
+    const componentMatch = text.match(/((?:const|function|export)\s+\w+[\s\S]*?(?:return\s*\([\s\S]*?\);?\s*\}|=>[\s\S]*?\);?\s*))/)
     if (componentMatch) return componentMatch[1].trim();
     return null;
   }
@@ -374,6 +392,7 @@
   if (!existingKernel) {
     status('first boot — seeding coordinates from served files...');
 
+    // Seed kernel source at S:0.11
     try {
       const kernelRes = await fetch('/g1/kernel.js');
       const kernelSrc = await kernelRes.text();
@@ -383,6 +402,7 @@
       status(`failed to seed kernel: ${e.message}`, 'error');
     }
 
+    // Seed constitution at S:0.12
     try {
       const constRes = await fetch('/g1/constitution.md');
       const constSrc = await constRes.text();
@@ -394,19 +414,35 @@
       return;
     }
 
-    pscale.write('S:0.1', [
-      '# Platform Index (S:0.1)',
-      '',
-      '| Coordinate | Content |',
-      '|-----------|---------|',
-      '| S:0.11 | kernel.js — boot sequence (T:0.1) |',
-      '| S:0.12 | constitution.md — system prompt |',
-      '| S:0.13 | API proxy — /api/claude passthrough |',
-      '| S:0.2 | Current running interface (JSX) |',
-      '| S:0.2N | Interface version history |',
-    ].join('\n'));
-
+    // Seed API proxy note at S:0.13
     pscale.write('S:0.13', 'Vercel serverless function at /api/claude. Proxies requests to api.anthropic.com with the user\'s API key from X-API-Key header. Passthrough — no modification.');
+
+    // Seed all coordinate documents from G1 directory
+    const seedFiles = [
+      { coord: 'S:0.1', file: 'S-0.1.md' },
+      { coord: 'S:0.2', file: 'S-0.2.md' },
+      { coord: 'S:0.3', file: 'S-0.3.md' },
+      { coord: 'S:0.4', file: 'S-0.4.md' },
+      { coord: 'S:0.6', file: 'S-0.6.md' },
+      { coord: 'T:0.1', file: 'T-0.1.md' },
+      { coord: 'I:0.1', file: 'I-0.1.md' },
+    ];
+
+    for (const { coord, file } of seedFiles) {
+      try {
+        const res = await fetch(`/g1/${file}`);
+        if (res.ok) {
+          const content = await res.text();
+          pscale.write(coord, content);
+          if (coord === 'S:0.1') environment = content;
+          status(`${coord} ← ${file}`, 'success');
+        } else {
+          status(`${file} not found (${res.status}) — skipping`, 'error');
+        }
+      } catch (e) {
+        status(`failed to seed ${coord}: ${e.message}`, 'error');
+      }
+    }
 
     status('coordinates seeded', 'success');
   } else {
@@ -419,6 +455,8 @@
       pscale.write('S:0.12', constitution);
     }
     status(`constitution loaded from S:0.12 (${constitution.length} chars)`, 'success');
+
+    environment = pscale.read('S:0.1');
 
     const savedJSX = pscale.read('S:0.2');
     if (savedJSX) {
@@ -478,6 +516,11 @@
     status('restore failed — booting fresh', 'error');
   }
 
+  // Build boot message — include environment so the LLM knows its capabilities
+  const bootMessage = environment
+    ? `BOOT\n\n${environment}`
+    : 'BOOT';
+
   status(`calling ${BOOT_MODEL} with thinking + tools...`);
 
   try {
@@ -485,7 +528,7 @@
       model: BOOT_MODEL,
       max_tokens: 16000,
       system: constitution,
-      messages: [{ role: 'user', content: 'BOOT' }],
+      messages: [{ role: 'user', content: bootMessage }],
       tools: DEFAULT_TOOLS,
       thinking: { type: 'enabled', budget_tokens: 10000 },
     };
