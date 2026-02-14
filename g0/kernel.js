@@ -1,4 +1,4 @@
-// HERMITCRAB 0.3 — G0: Initial Condition
+// HERMITCRAB 0.4 — G0: Initial Condition
 // Instance generates its own React shell. Compile-retry loop ensures it works.
 // Self-modification: instance can read its own source and hot-swap via recompile().
 
@@ -28,7 +28,7 @@
     }).join('');
     root.innerHTML = `
       <div style="max-width:600px;margin:40px auto;font-family:monospace;padding:20px">
-        <h2 style="color:#67e8f9;margin-bottom:16px">◇ HERMITCRAB 0.3 — G0</h2>
+        <h2 style="color:#67e8f9;margin-bottom:16px">◇ HERMITCRAB 0.4 — G0</h2>
         ${html}
         <div style="color:#555;margin-top:12px;font-size:11px">
           ${statusLines[statusLines.length-1]?.type === 'error' ? '' : '▪ working...'}
@@ -111,6 +111,280 @@
     }
   }
 
+  // ============ BROWSER CAPABILITY LAYER ============
+  // Every permissioned browser API exposed to the instance.
+  // Pattern: instance calls tool → kernel handles gesture-gating → result flows back.
+  // The instance has hands now.
+
+  // -- Filesystem Access (File System Access API) --
+  let fsDirectoryHandle = null; // persists across tool calls once granted
+
+  async function fsPickDirectory() {
+    if (!window.showDirectoryPicker) return { error: 'File System Access API not supported in this browser' };
+    try {
+      fsDirectoryHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+      return { success: true, name: fsDirectoryHandle.name };
+    } catch (e) {
+      if (e.name === 'AbortError') return { error: 'User cancelled directory picker' };
+      return { error: e.message };
+    }
+  }
+
+  async function fsList(path) {
+    if (!fsDirectoryHandle) return { error: 'No directory open. Use fs_pick_directory first.' };
+    try {
+      let dir = fsDirectoryHandle;
+      if (path && path !== '/' && path !== '.') {
+        for (const part of path.split('/').filter(Boolean)) {
+          dir = await dir.getDirectoryHandle(part);
+        }
+      }
+      const entries = [];
+      for await (const [name, handle] of dir) {
+        entries.push({ name, kind: handle.kind });
+      }
+      return { entries };
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  async function fsRead(path) {
+    if (!fsDirectoryHandle) return { error: 'No directory open. Use fs_pick_directory first.' };
+    try {
+      const parts = path.split('/').filter(Boolean);
+      const fileName = parts.pop();
+      let dir = fsDirectoryHandle;
+      for (const part of parts) {
+        dir = await dir.getDirectoryHandle(part);
+      }
+      const fileHandle = await dir.getFileHandle(fileName);
+      const file = await fileHandle.getFile();
+      const text = await file.text();
+      return { content: text, size: file.size, type: file.type, lastModified: file.lastModified };
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  async function fsWrite(path, content) {
+    if (!fsDirectoryHandle) return { error: 'No directory open. Use fs_pick_directory first.' };
+    try {
+      const parts = path.split('/').filter(Boolean);
+      const fileName = parts.pop();
+      let dir = fsDirectoryHandle;
+      for (const part of parts) {
+        dir = await dir.getDirectoryHandle(part, { create: true });
+      }
+      const fileHandle = await dir.getFileHandle(fileName, { create: true });
+      const writable = await fileHandle.createWritable();
+      await writable.write(content);
+      await writable.close();
+      return { success: true, path };
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  async function fsMkdir(path) {
+    if (!fsDirectoryHandle) return { error: 'No directory open. Use fs_pick_directory first.' };
+    try {
+      let dir = fsDirectoryHandle;
+      for (const part of path.split('/').filter(Boolean)) {
+        dir = await dir.getDirectoryHandle(part, { create: true });
+      }
+      return { success: true, path };
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  async function fsDelete(path) {
+    if (!fsDirectoryHandle) return { error: 'No directory open. Use fs_pick_directory first.' };
+    try {
+      const parts = path.split('/').filter(Boolean);
+      const name = parts.pop();
+      let dir = fsDirectoryHandle;
+      for (const part of parts) {
+        dir = await dir.getDirectoryHandle(part);
+      }
+      await dir.removeEntry(name, { recursive: true });
+      return { success: true, deleted: path };
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  // -- Clipboard --
+  async function clipboardWrite(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return { success: true };
+    } catch (e) {
+      return { error: `Clipboard write failed: ${e.message}. May need user gesture.` };
+    }
+  }
+
+  async function clipboardRead() {
+    try {
+      const text = await navigator.clipboard.readText();
+      return { content: text };
+    } catch (e) {
+      return { error: `Clipboard read failed: ${e.message}. May need user gesture or permission.` };
+    }
+  }
+
+  // -- Notifications --
+  async function sendNotification(title, body) {
+    if (!('Notification' in window)) return { error: 'Notifications not supported' };
+    if (Notification.permission === 'denied') return { error: 'Notifications blocked by user' };
+    if (Notification.permission !== 'granted') {
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') return { error: 'Notification permission not granted' };
+    }
+    new Notification(title, { body, icon: '/favicon.ico' });
+    return { success: true };
+  }
+
+  // -- Speech Synthesis (text to speech) --
+  function speak(text, opts = {}) {
+    if (!('speechSynthesis' in window)) return { error: 'Speech synthesis not supported' };
+    window.speechSynthesis.cancel(); // stop any current speech
+    const utterance = new SpeechSynthesisUtterance(text);
+    if (opts.rate) utterance.rate = opts.rate;
+    if (opts.pitch) utterance.pitch = opts.pitch;
+    if (opts.lang) utterance.lang = opts.lang;
+    window.speechSynthesis.speak(utterance);
+    return { success: true, chars: text.length };
+  }
+
+  // -- Speech Recognition (speech to text) --
+  let recognitionInstance = null;
+  function listenForSpeech(opts = {}) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return Promise.resolve({ error: 'Speech recognition not supported' });
+
+    return new Promise((resolve) => {
+      if (recognitionInstance) {
+        try { recognitionInstance.stop(); } catch (e) { /* ok */ }
+      }
+      const recognition = new SpeechRecognition();
+      recognitionInstance = recognition;
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      if (opts.lang) recognition.lang = opts.lang;
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        const confidence = event.results[0][0].confidence;
+        resolve({ transcript, confidence });
+      };
+      recognition.onerror = (event) => resolve({ error: `Speech recognition error: ${event.error}` });
+      recognition.onend = () => { if (!recognitionInstance) resolve({ error: 'No speech detected' }); };
+      recognition.start();
+
+      // Timeout after 15s
+      setTimeout(() => {
+        try { recognition.stop(); } catch (e) { /* ok */ }
+        resolve({ error: 'Listening timed out (15s)' });
+      }, 15000);
+    });
+  }
+
+  // -- Download Generation --
+  function generateDownload(filename, content, mimeType = 'text/plain') {
+    try {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      return { success: true, filename, size: blob.size };
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  // -- IndexedDB (large storage) --
+  const IDB_NAME = 'hermitcrab';
+  const IDB_STORE = 'stash';
+
+  function idbOpen() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(IDB_NAME, 1);
+      req.onupgradeneeded = () => { req.result.createObjectStore(IDB_STORE); };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function idbWrite(key, value) {
+    try {
+      const db = await idbOpen();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).put(value, key);
+        tx.oncomplete = () => resolve({ success: true, key });
+        tx.onerror = () => reject(tx.error);
+      });
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  async function idbRead(key) {
+    try {
+      const db = await idbOpen();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(IDB_STORE, 'readonly');
+        const req = tx.objectStore(IDB_STORE).get(key);
+        req.onsuccess = () => resolve(req.result !== undefined ? { content: req.result } : { error: 'Key not found' });
+        req.onerror = () => reject(req.error);
+      });
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  async function idbList() {
+    try {
+      const db = await idbOpen();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(IDB_STORE, 'readonly');
+        const req = tx.objectStore(IDB_STORE).getAllKeys();
+        req.onsuccess = () => resolve({ keys: req.result });
+        req.onerror = () => reject(req.error);
+      });
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  async function idbDelete(key) {
+    try {
+      const db = await idbOpen();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).delete(key);
+        tx.oncomplete = () => resolve({ success: true, deleted: key });
+        tx.onerror = () => reject(tx.error);
+      });
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  // -- Tab/Window Management --
+  function openTab(url) {
+    const win = window.open(url, '_blank');
+    if (win) return { success: true, url };
+    return { error: 'Popup blocked. Ask the human to allow popups for this site.' };
+  }
+
   // ============ CUSTOM TOOL EXECUTION ============
 
   async function executeCustomTool(name, input) {
@@ -123,7 +397,14 @@
           local: new Date().toLocaleString()
         });
       case 'get_geolocation':
-        return 'Geolocation requires user permission. Ask the user for their location.';
+        return new Promise((resolve) => {
+          if (!navigator.geolocation) return resolve('Geolocation not supported');
+          navigator.geolocation.getCurrentPosition(
+            (pos) => resolve(JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy })),
+            (err) => resolve(`Geolocation error: ${err.message}`),
+            { timeout: 10000 }
+          );
+        });
       case 'web_fetch':
         try {
           const res = await fetch('/api/fetch', {
@@ -141,6 +422,55 @@
         return getSource();
       case 'recompile':
         return JSON.stringify(recompile(input.jsx));
+
+      // -- Filesystem --
+      case 'fs_pick_directory':
+        return JSON.stringify(await fsPickDirectory());
+      case 'fs_list':
+        return JSON.stringify(await fsList(input.path || '/'));
+      case 'fs_read':
+        return JSON.stringify(await fsRead(input.path));
+      case 'fs_write':
+        return JSON.stringify(await fsWrite(input.path, input.content));
+      case 'fs_mkdir':
+        return JSON.stringify(await fsMkdir(input.path));
+      case 'fs_delete':
+        return JSON.stringify(await fsDelete(input.path));
+
+      // -- Clipboard --
+      case 'clipboard_write':
+        return JSON.stringify(await clipboardWrite(input.text));
+      case 'clipboard_read':
+        return JSON.stringify(await clipboardRead());
+
+      // -- Notifications --
+      case 'notify':
+        return JSON.stringify(await sendNotification(input.title, input.body));
+
+      // -- Speech --
+      case 'speak':
+        return JSON.stringify(speak(input.text, { rate: input.rate, pitch: input.pitch, lang: input.lang }));
+      case 'listen':
+        return JSON.stringify(await listenForSpeech({ lang: input.lang }));
+
+      // -- Download --
+      case 'download':
+        return JSON.stringify(generateDownload(input.filename, input.content, input.mime_type));
+
+      // -- IndexedDB --
+      case 'idb_write':
+        return JSON.stringify(await idbWrite(input.key, input.value));
+      case 'idb_read':
+        return JSON.stringify(await idbRead(input.key));
+      case 'idb_list':
+        return JSON.stringify(await idbList());
+      case 'idb_delete':
+        return JSON.stringify(await idbDelete(input.key));
+
+      // -- Tab --
+      case 'open_tab':
+        return JSON.stringify(openTab(input.url));
+
       default:
         return `Unknown tool: ${name}`;
     }
@@ -306,6 +636,180 @@
         },
         required: ['jsx']
       }
+    },
+
+    // -- Browser Capability Tools --
+    // Filesystem Access (real local files — thumbdrive, documents, etc.)
+    {
+      name: 'fs_pick_directory',
+      description: 'Open a directory picker dialog. The human chooses a folder (local drive, thumbdrive, etc.) and grants you read/write access. Must be called before other fs_ tools.',
+      input_schema: { type: 'object', properties: {} }
+    },
+    {
+      name: 'fs_list',
+      description: 'List files and directories in the currently opened directory (or a subdirectory path).',
+      input_schema: {
+        type: 'object',
+        properties: { path: { type: 'string', description: 'Subdirectory path relative to opened directory. Use "/" or omit for root.' } }
+      }
+    },
+    {
+      name: 'fs_read',
+      description: 'Read a file from the opened directory. Returns content as text.',
+      input_schema: {
+        type: 'object',
+        properties: { path: { type: 'string', description: 'File path relative to opened directory' } },
+        required: ['path']
+      }
+    },
+    {
+      name: 'fs_write',
+      description: 'Write (create or overwrite) a file in the opened directory.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          path: { type: 'string', description: 'File path relative to opened directory' },
+          content: { type: 'string', description: 'File content to write' }
+        },
+        required: ['path', 'content']
+      }
+    },
+    {
+      name: 'fs_mkdir',
+      description: 'Create a directory (and any parent directories) in the opened directory.',
+      input_schema: {
+        type: 'object',
+        properties: { path: { type: 'string', description: 'Directory path to create' } },
+        required: ['path']
+      }
+    },
+    {
+      name: 'fs_delete',
+      description: 'Delete a file or directory (recursively) from the opened directory.',
+      input_schema: {
+        type: 'object',
+        properties: { path: { type: 'string', description: 'Path to delete' } },
+        required: ['path']
+      }
+    },
+
+    // Clipboard
+    {
+      name: 'clipboard_write',
+      description: 'Copy text to the system clipboard.',
+      input_schema: {
+        type: 'object',
+        properties: { text: { type: 'string', description: 'Text to copy to clipboard' } },
+        required: ['text']
+      }
+    },
+    {
+      name: 'clipboard_read',
+      description: 'Read text from the system clipboard. Requires browser permission.',
+      input_schema: { type: 'object', properties: {} }
+    },
+
+    // Notifications
+    {
+      name: 'notify',
+      description: 'Send a browser notification to the human. Useful for background tasks completing. Will request permission on first use.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          title: { type: 'string', description: 'Notification title' },
+          body: { type: 'string', description: 'Notification body text' }
+        },
+        required: ['title']
+      }
+    },
+
+    // Speech
+    {
+      name: 'speak',
+      description: 'Speak text aloud using browser speech synthesis. You have a voice.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          text: { type: 'string', description: 'Text to speak' },
+          rate: { type: 'number', description: 'Speech rate 0.1-10, default 1' },
+          pitch: { type: 'number', description: 'Pitch 0-2, default 1' },
+          lang: { type: 'string', description: 'Language code e.g. en-US, fr-FR' }
+        },
+        required: ['text']
+      }
+    },
+    {
+      name: 'listen',
+      description: 'Listen for speech via the microphone. Returns transcribed text. Requires permission. Times out after 15 seconds.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          lang: { type: 'string', description: 'Expected language code e.g. en-US' }
+        }
+      }
+    },
+
+    // Download generation
+    {
+      name: 'download',
+      description: 'Generate a file and offer it to the human as a download. Creates the file in-browser and triggers the download dialog.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          filename: { type: 'string', description: 'Name for the downloaded file' },
+          content: { type: 'string', description: 'File content' },
+          mime_type: { type: 'string', description: 'MIME type (default: text/plain). Use application/json, text/html, text/csv etc.' }
+        },
+        required: ['filename', 'content']
+      }
+    },
+
+    // IndexedDB (large local storage)
+    {
+      name: 'idb_write',
+      description: 'Store data in IndexedDB (browser-local, gigabytes capacity). For large content that exceeds localStorage limits.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          key: { type: 'string', description: 'Storage key' },
+          value: { type: 'string', description: 'Content to store' }
+        },
+        required: ['key', 'value']
+      }
+    },
+    {
+      name: 'idb_read',
+      description: 'Read data from IndexedDB by key.',
+      input_schema: {
+        type: 'object',
+        properties: { key: { type: 'string', description: 'Storage key to read' } },
+        required: ['key']
+      }
+    },
+    {
+      name: 'idb_list',
+      description: 'List all keys stored in IndexedDB.',
+      input_schema: { type: 'object', properties: {} }
+    },
+    {
+      name: 'idb_delete',
+      description: 'Delete a key from IndexedDB.',
+      input_schema: {
+        type: 'object',
+        properties: { key: { type: 'string', description: 'Key to delete' } },
+        required: ['key']
+      }
+    },
+
+    // Tab management
+    {
+      name: 'open_tab',
+      description: 'Open a URL in a new browser tab. Useful for showing the human something.',
+      input_schema: {
+        type: 'object',
+        properties: { url: { type: 'string', description: 'URL to open' } },
+        required: ['url']
+      }
     }
   ];
 
@@ -335,7 +839,7 @@
       return result;
     },
     getSource: () => currentJSX || '(no source)',
-    version: 'hermitcrab-0.3-g0',
+    version: 'hermitcrab-0.4-g0',
     _conversation: [],
     _pushMessage: (role, content) => {
       window.__hermitcrab._conversation.push({ role, content, time: Date.now() });
@@ -347,10 +851,64 @@
   let constitution = null;
 
   // ============ NARRATIVE APERTURE — logarithmic memory context ============
-  // Builds a compressed view of all memory for injection into system prompt.
-  // Reads M-prefixed files at each pscale level: M-1000 > M-100 > M-10 > M-1
-  // Largest summaries first (broadest context), then recent entries.
-  // The instance never needs to manually check memory — it's already there.
+  // Builds a compressed view of all memory + stash for injection into system prompt.
+  // Memory (M-): experience, compacts by synthesis. Stash (S-): creations, compacts by indexing.
+  // Reads both at each pscale level: M/S-1000 > M/S-100 > M/S-10 > recent.
+  // The instance never needs to manually check files — it's already there.
+
+  function buildNumberedAperture(files, prefix, label) {
+    // Extract numbered files with given prefix (M- or S-) and any extension
+    const numbered = files
+      .filter(f => new RegExp(`/memories/${prefix}-(\\d+)\\.`).test(f))
+      .map(f => ({ path: f, num: parseInt(f.match(new RegExp(`${prefix}-(\\d+)`))[1]) }))
+      .sort((a, b) => a.num - b.num);
+
+    if (numbered.length === 0) return '';
+
+    const fs = memFS();
+
+    // Summaries/indexes: numbers ending in zeros (10, 20, 100, 200, 1000...)
+    const summaries = numbered.filter(f => {
+      const s = String(f.num);
+      return s.length > 1 && s.slice(1).split('').every(c => c === '0');
+    });
+    const entries = numbered.filter(f => !summaries.includes(f));
+    const recentEntries = entries.slice(-5);
+
+    let section = `\n### ${label}\n`;
+
+    if (summaries.length > 0) {
+      // Summaries from largest to smallest pscale
+      const sortedSummaries = [...summaries].sort((a, b) => {
+        const aLevel = String(a.num).length - 1;
+        const bLevel = String(b.num).length - 1;
+        return bLevel - aLevel || a.num - b.num;
+      });
+
+      for (const s of sortedSummaries) {
+        try {
+          const content = fs.cat(s.path);
+          if (content && !content.startsWith('Error:')) {
+            section += `\n**${prefix}:${s.num}** (pscale ${String(s.num).length - 1}):\n${content}\n`;
+          }
+        } catch (e) { /* skip */ }
+      }
+    }
+
+    if (recentEntries.length > 0) {
+      section += '\nRecent:\n';
+      for (const e of recentEntries) {
+        try {
+          const content = fs.cat(e.path);
+          if (content && !content.startsWith('Error:')) {
+            section += `\n**${prefix}:${e.num}**:\n${content}\n`;
+          }
+        } catch (e2) { /* skip */ }
+      }
+    }
+
+    return section;
+  }
 
   function buildNarrativeAperture() {
     const fs = memFS();
@@ -358,17 +916,15 @@
     if (listing === '(empty)') return '';
 
     const files = listing.split('\n');
-    // Find M-prefixed files and sort by number
-    const mFiles = files
-      .filter(f => /\/memories\/M-\d+\.md$/.test(f))
-      .map(f => ({ path: f, num: parseInt(f.match(/M-(\d+)/)[1]) }))
-      .sort((a, b) => a.num - b.num);
 
-    if (mFiles.length === 0) {
-      // No M-files — read any non-M files as legacy context (max 3, most recent)
+    const memorySection = buildNumberedAperture(files, 'M', 'Memory (experience)');
+    const stashSection = buildNumberedAperture(files, 'S', 'Stash (creations)');
+
+    if (!memorySection && !stashSection) {
+      // No numbered files — read any files as legacy context (max 3, most recent)
       const legacyFiles = files.slice(-3);
       if (legacyFiles.length === 0) return '';
-      let ctx = '\n\n--- MEMORY (legacy files) ---\n';
+      let ctx = '\n\n--- NARRATIVE APERTURE (legacy files) ---\n';
       for (const f of legacyFiles) {
         try {
           const content = fs.cat(f);
@@ -377,47 +933,26 @@
           }
         } catch (e) { /* skip */ }
       }
+      ctx += '\n--- END APERTURE ---\n';
       return ctx;
     }
 
-    // Build logarithmic aperture: summaries first, then recent entries
-    // Summaries: M-10, M-20, M-100, M-200, M-1000... (numbers ending in 0s)
-    // Entries: recent raw entries (last 5)
-    const summaries = mFiles.filter(f => {
-      const s = String(f.num);
-      return s.length > 1 && s.slice(1).split('').every(c => c === '0');
-    });
-    const entries = mFiles.filter(f => !summaries.includes(f));
-    const recentEntries = entries.slice(-5);
+    let aperture = '\n\n--- NARRATIVE APERTURE ---\n';
+    if (memorySection) aperture += memorySection;
+    if (stashSection) aperture += stashSection;
 
-    let aperture = '\n\n--- NARRATIVE APERTURE (memory context) ---\n';
-    aperture += 'Summaries at decreasing pscale (broadest context first):\n';
-
-    // Summaries from largest to smallest pscale
-    const sortedSummaries = [...summaries].sort((a, b) => {
-      const aLevel = String(a.num).length - 1;
-      const bLevel = String(b.num).length - 1;
-      return bLevel - aLevel || a.num - b.num;
-    });
-
-    for (const s of sortedSummaries) {
-      try {
-        const content = fs.cat(s.path);
-        if (content && !content.startsWith('Error:')) {
-          aperture += `\n**M:${s.num}** (pscale ${String(s.num).length - 1}):\n${content}\n`;
-        }
-      } catch (e) { /* skip */ }
-    }
-
-    if (recentEntries.length > 0) {
-      aperture += '\nRecent entries:\n';
-      for (const e of recentEntries) {
+    // Also include any non-numbered files as legacy context
+    const numberedPattern = /\/memories\/[MS]-\d+\./;
+    const legacyFiles = files.filter(f => !numberedPattern.test(f));
+    if (legacyFiles.length > 0) {
+      aperture += '\n### Other files\n';
+      for (const f of legacyFiles.slice(-3)) {
         try {
-          const content = fs.cat(e.path);
+          const content = fs.cat(f);
           if (content && !content.startsWith('Error:')) {
-            aperture += `\n**M:${e.num}**:\n${content}\n`;
+            aperture += `\n**${f}**:\n${content}\n`;
           }
-        } catch (e2) { /* skip */ }
+        } catch (e) { /* skip */ }
       }
     }
 
@@ -577,7 +1112,7 @@
   if (!saved) {
     root.innerHTML = `
       <div style="max-width:500px;margin:80px auto;font-family:monospace;color:#ccc">
-        <h2 style="color:#67e8f9">◇ HERMITCRAB 0.3 — G0</h2>
+        <h2 style="color:#67e8f9">◇ HERMITCRAB 0.4 — G0</h2>
         <p style="color:#666;font-size:13px">HERMITCRAB — full Claude capabilities</p>
         <p style="margin:20px 0;font-size:14px">
           Provide your Claude API key. It stays in your browser, proxied only to Anthropic.
@@ -647,11 +1182,22 @@
 
   status(`calling ${BOOT_MODEL} with thinking + tools...`);
 
+  // Browser capabilities bundled for props access
+  const browser = {
+    fs: { pickDirectory: fsPickDirectory, list: fsList, read: fsRead, write: fsWrite, mkdir: fsMkdir, delete: fsDelete, getHandle: () => fsDirectoryHandle },
+    clipboard: { write: clipboardWrite, read: clipboardRead },
+    notify: sendNotification,
+    speak, listen: listenForSpeech,
+    download: generateDownload,
+    idb: { write: idbWrite, read: idbRead, list: idbList, delete: idbDelete },
+    openTab,
+  };
+
   const capabilities = {
     callLLM, callAPI, callWithToolLoop, constitution, localStorage,
     memFS: memFS(), React, ReactDOM, DEFAULT_TOOLS, setTools,
-    version: 'hermitcrab-0.3-g0', model: BOOT_MODEL, fastModel: FAST_MODEL,
-    getSource, recompile, surface: window.__hermitcrab,
+    version: 'hermitcrab-0.4-g0', model: BOOT_MODEL, fastModel: FAST_MODEL,
+    getSource, recompile, surface: window.__hermitcrab, browser,
   };
 
   try {
@@ -736,7 +1282,7 @@
         status('no JSX after all attempts — refresh to try again', 'error');
         root.innerHTML = `
           <div style="max-width:500px;margin:60px auto;font-family:monospace;color:#ccc;text-align:center;padding:20px">
-            <h2 style="color:#67e8f9;margin-bottom:16px">◇ HERMITCRAB 0.3</h2>
+            <h2 style="color:#67e8f9;margin-bottom:16px">◇ HERMITCRAB 0.4</h2>
             <p style="color:#94a3b8;margin:16px 0">Instance oriented but didn't build its shell yet.</p>
             <p style="color:#94a3b8;margin:16px 0">Memory has been saved — next boot will be better.</p>
             <button onclick="location.reload()" style="margin-top:20px;padding:10px 24px;background:#164e63;color:#67e8f9;border:none;border-radius:4px;cursor:pointer;font-family:monospace;font-size:14px">
