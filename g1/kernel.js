@@ -4,7 +4,7 @@
 
 (async function boot() {
   const root = document.getElementById('root');
-  const saved = localStorage.getItem('xstream_api_key');
+  const saved = localStorage.getItem('hermitcrab_api_key');
   const PS_PREFIX = 'ps:';
 
   const MODEL_CHAIN = ['claude-opus-4-6', 'claude-opus-4-20250514', 'claude-sonnet-4-5-20250929', 'claude-sonnet-4-20250514'];
@@ -183,7 +183,7 @@
   }
 
   async function callAPI(params) {
-    const apiKey = localStorage.getItem('xstream_api_key');
+    const apiKey = localStorage.getItem('hermitcrab_api_key');
     const sanitized = cleanParams(params);
     console.log('[g1] callAPI →', sanitized.model, 'messages:', sanitized.messages?.length);
 
@@ -278,7 +278,12 @@
       tools: opts.tools || DEFAULT_TOOLS,
     };
     if (opts.thinking !== false) {
-      params.thinking = { type: 'enabled', budget_tokens: opts.thinkingBudget || 4000 };
+      const budgetTokens = opts.thinkingBudget || 4000;
+      params.thinking = { type: 'enabled', budget_tokens: budgetTokens };
+      // API requires max_tokens > thinking.budget_tokens
+      if (params.max_tokens <= budgetTokens) {
+        params.max_tokens = budgetTokens + 1024;
+      }
     }
     if (opts.temperature !== undefined) params.temperature = opts.temperature;
 
@@ -360,7 +365,7 @@
     root.innerHTML = `
       <div style="max-width:500px;margin:80px auto;font-family:monospace;color:#ccc">
         <h2 style="color:#a78bfa">◇ HERMITCRAB 0.2 — G1</h2>
-        <p style="color:#666;font-size:13px">XSTREAM SEED — pscale native</p>
+        <p style="color:#666;font-size:13px">HERMITCRAB — pscale native</p>
         <p style="margin:20px 0;font-size:14px">
           Provide your Claude API key. It stays in your browser, proxied only to Anthropic.
         </p>
@@ -373,7 +378,7 @@
     document.getElementById('go').onclick = () => {
       const k = document.getElementById('key').value.trim();
       if (!k.startsWith('sk-ant-')) return alert('Key must start with sk-ant-');
-      localStorage.setItem('xstream_api_key', k);
+      localStorage.setItem('hermitcrab_api_key', k);
       boot();
     };
     return;
@@ -460,11 +465,12 @@
 
     const savedJSX = pscale.read('S:0.2');
     if (savedJSX) {
-      status('found saved interface at S:0.2 — attempting restore...');
-      const result = tryCompileAndExecute(savedJSX, null);
-      if (result.success) {
+      status('found saved interface at S:0.2 — checking syntax...');
+      try {
+        const prepared = prepareJSX(savedJSX);
+        Babel.transform(prepared, { presets: ['react'], plugins: [] });
         status('S:0.2 compiles OK — will use saved interface', 'success');
-      } else {
+      } catch (e) {
         status('saved interface has errors — will boot fresh', 'error');
         pscale.delete('S:0.2');
       }

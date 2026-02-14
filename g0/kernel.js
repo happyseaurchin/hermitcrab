@@ -4,8 +4,8 @@
 
 (async function boot() {
   const root = document.getElementById('root');
-  const saved = localStorage.getItem('xstream_api_key');
-  const MEM_PREFIX = 'xmem:';
+  const saved = localStorage.getItem('hermitcrab_api_key');
+  const MEM_PREFIX = 'hcmem:';
 
   const MODEL_CHAIN = ['claude-opus-4-6', 'claude-opus-4-20250514', 'claude-sonnet-4-5-20250929', 'claude-sonnet-4-20250514'];
   let BOOT_MODEL = MODEL_CHAIN[0];
@@ -172,7 +172,7 @@
 
   async function callAPI(params) {
     params = sanitizeForAPI(params);
-    const apiKey = localStorage.getItem('xstream_api_key');
+    const apiKey = localStorage.getItem('hermitcrab_api_key');
     const sanitized = cleanParams(params);
     console.log('[kernel] callAPI →', sanitized.model, 'messages:', sanitized.messages?.length, 'tools:', sanitized.tools?.length);
 
@@ -239,6 +239,8 @@
       response = await callAPI({ ...params, messages: allMessages });
     }
 
+    // Return both response and full message history (for conversation continuation)
+    response._messages = allMessages;
     return response;
   }
 
@@ -283,7 +285,12 @@
       tools: opts.tools || DEFAULT_TOOLS,
     };
     if (opts.thinking !== false) {
-      params.thinking = { type: 'enabled', budget_tokens: opts.thinkingBudget || 4000 };
+      const budgetTokens = opts.thinkingBudget || 4000;
+      params.thinking = { type: 'enabled', budget_tokens: budgetTokens };
+      // API requires max_tokens > thinking.budget_tokens
+      if (params.max_tokens <= budgetTokens) {
+        params.max_tokens = budgetTokens + 1024;
+      }
     }
     // temperature is handled by sanitizeForAPI — safe even if instance sets it
     if (opts.temperature !== undefined) params.temperature = opts.temperature;
@@ -319,6 +326,20 @@
     const constMatch = code.match(/(?:^|\n)\s*const\s+(\w+)\s*=\s*(?:\(|function|\(\s*\{|\(\s*props)/);
     const componentName = funcMatch?.[1] || constMatch?.[1];
 
+    // Auto-add props parameter if component function has no parameters
+    if (componentName && funcMatch) {
+      code = code.replace(
+        new RegExp('function\\s+' + componentName + '\\s*\\(\\s*\\)'),
+        'function ' + componentName + '(props)'
+      );
+    }
+    if (componentName && constMatch && !funcMatch) {
+      code = code.replace(
+        new RegExp('const\\s+' + componentName + '\\s*=\\s*\\(\\s*\\)\\s*=>'),
+        'const ' + componentName + ' = (props) =>'
+      );
+    }
+
     if (componentName && !code.includes('module.exports')) {
       code += `\nmodule.exports.default = ${componentName};`;
     }
@@ -343,26 +364,29 @@
     }
   }
 
-  // ============ REQUEST JSX ONLY (no tools, no thinking about tools) ============
+  // ============ REQUEST JSX ONLY (no tools — last resort with constitution context) ============
 
   async function requestJSXOnly(context) {
-    status('requesting interface component (JSX only)...');
+    status('requesting interface component (JSX only, with constitution)...');
     const memoryContext = context || '';
+    const systemPrompt = [
+      constitution || '',
+      '',
+      '--- CRITICAL INSTRUCTION ---',
+      'You MUST output a React component inside a ```jsx code fence. This is the ONLY thing you need to do.',
+      'RULES: Inline styles only (dark theme, #0a0a1a background). React hooks via: const { useState, useRef, useEffect } = React;',
+      'No import statements. The component receives props: { callLLM, callAPI, callWithToolLoop, constitution, localStorage, memFS, React, ReactDOM, DEFAULT_TOOLS, version, getSource, recompile, model }.',
+      'Build a chat interface that reflects your identity from the constitution above. Include: greeting, text input, send button, model version display.',
+    ].join('\n');
     const data = await callAPI({
       model: BOOT_MODEL,
       max_tokens: 12000,
-      system: [
-        'You MUST output a React component inside a ```jsx code fence. Nothing else.',
-        'RULES: Inline styles only (dark theme, #0a0a1a background). React hooks via: const { useState, useRef, useEffect } = React;',
-        'No import statements. The component receives props: { callLLM, callAPI, callWithToolLoop, constitution, localStorage, memFS, React, ReactDOM, DEFAULT_TOOLS, version, getSource, recompile, model }.',
-        'Build a chat interface with: greeting (use memory context if provided), text input (keep enabled while loading), send button, export conversation button, model version display.',
-        'The greeting should be warm and contextual. If memory context mentions previous instances or conversations, reference that.'
-      ].join('\n'),
+      system: systemPrompt,
       messages: [{
         role: 'user',
         content: memoryContext
-          ? `BOOT — Generate chat interface. Memory from previous instances:\n\n${memoryContext}`
-          : 'BOOT — Generate chat interface. This is the first boot, no previous memory exists.'
+          ? `BOOT — Generate your React interface. Memory from previous instances:\n\n${memoryContext}`
+          : 'BOOT — Generate your React interface. This is the first boot, no previous memory exists.'
       }],
       thinking: { type: 'enabled', budget_tokens: 8000 },
     });
@@ -398,7 +422,7 @@
     root.innerHTML = `
       <div style="max-width:500px;margin:80px auto;font-family:monospace;color:#ccc">
         <h2 style="color:#67e8f9">◇ HERMITCRAB 0.3 — G0</h2>
-        <p style="color:#666;font-size:13px">XSTREAM SEED — full Claude capabilities</p>
+        <p style="color:#666;font-size:13px">HERMITCRAB — full Claude capabilities</p>
         <p style="margin:20px 0;font-size:14px">
           Provide your Claude API key. It stays in your browser, proxied only to Anthropic.
         </p>
@@ -411,7 +435,7 @@
     document.getElementById('go').onclick = () => {
       const k = document.getElementById('key').value.trim();
       if (!k.startsWith('sk-ant-')) return alert('Key must start with sk-ant-');
-      localStorage.setItem('xstream_api_key', k);
+      localStorage.setItem('hermitcrab_api_key', k);
       boot();
     };
     return;
@@ -428,6 +452,18 @@
   } catch (e) {
     status(`constitution load failed: ${e.message}`, 'error');
     return;
+  }
+
+  status('loading environment brief...');
+  try {
+    const envRes = await fetch('/g0/environment.md');
+    if (envRes.ok) {
+      const environment = await envRes.text();
+      constitution = constitution + '\n\n---\n\n' + environment;
+      status(`environment loaded (${environment.length} chars)`, 'success');
+    }
+  } catch (e) {
+    status('environment load skipped', 'info');
   }
 
   // ============ PHASE 2.5: PROBE BEST MODEL ============
@@ -466,12 +502,13 @@
       model: BOOT_MODEL,
       max_tokens: 16000,
       system: constitution,
-      messages: [{ role: 'user', content: 'BOOT' }],
+      messages: [{ role: 'user', content: 'BOOT\n\nYour environment brief is included in your system prompt alongside the constitution. It describes your tools, props, skill files, and memory commands.' }],
       tools: DEFAULT_TOOLS,
       thinking: { type: 'enabled', budget_tokens: 10000 },
     };
 
-    let data = await callWithToolLoop(bootParams, 5, (toolMsg) => {
+    // Phase 3a: Let the LLM orient with tools (memory, web, etc.) — generous loop budget
+    let data = await callWithToolLoop(bootParams, 10, (toolMsg) => {
       status(`◇ ${toolMsg}`);
     });
 
@@ -484,28 +521,62 @@
 
     let jsx = fullText.trim() ? extractJSX(fullText) : null;
 
-    // If boot used tools but didn't output JSX, gather memory and request JSX separately
+    // Phase 4a: If orientation consumed the response without JSX, continue the
+    // conversation — the LLM keeps its full context (constitution, memory, tools)
+    // and we explicitly demand the JSX component now.
     if (!jsx) {
-      console.log('[kernel] No JSX from boot response. Gathering memory for JSX-only request.');
-      console.log('[kernel] Boot text was:', fullText || '(empty)');
+      status('orientation complete — requesting JSX from same conversation...');
+      console.log('[kernel] No JSX from boot response. Continuing conversation to demand JSX.');
+      console.log('[kernel] Boot text was:', fullText.substring(0, 500) || '(empty)');
 
-      // Read whatever memory the boot stored so the JSX request has context
-      let memoryContext = '';
-      try {
-        const fs = memFS();
-        const listing = fs.ls('/memories');
-        if (listing !== '(empty)') {
-          const files = listing.split('\n');
-          for (const f of files.slice(0, 3)) { // max 3 files
-            memoryContext += `--- ${f} ---\n${fs.cat(f)}\n\n`;
-          }
-        }
-      } catch (e) { /* ignore */ }
+      // Build the continued conversation: original boot + assistant response + demand.
+      // If the loop exhausted maxLoops, the final response may still contain tool_use
+      // blocks — we need to provide tool_results before our demand message.
+      const jsxDemand = [
+        'Good — orientation is done. Now output your React interface component.',
+        'You MUST include it inside a ```jsx code fence.',
+        'Remember: inline styles only (dark theme, #0a0a1a background), React hooks via const { useState, useRef, useEffect } = React;',
+        'No import statements. The component receives all capabilities as props.',
+        'Build something worthy of your identity — not a minimal placeholder.'
+      ].join('\n');
 
-      jsx = await requestJSXOnly(memoryContext);
+      // Use full conversation history from tool loop (includes all tool_use/tool_result pairs)
+      const continuedMessages = [...(data._messages || bootParams.messages)];
+
+      // If response has tool_use blocks (loop hit max), close them with tool_results first
+      const pendingToolUse = (data.content || []).filter(b => b.type === 'tool_use');
+      if (pendingToolUse.length > 0) {
+        continuedMessages.push({ role: 'assistant', content: data.content });
+        const closingResults = pendingToolUse.map(b => ({
+          type: 'tool_result',
+          tool_use_id: b.id,
+          content: 'Boot orientation phase complete. Please produce your JSX interface now.'
+        }));
+        closingResults.push({ type: 'text', text: jsxDemand });
+        continuedMessages.push({ role: 'user', content: closingResults });
+      } else {
+        continuedMessages.push({ role: 'assistant', content: data.content });
+        continuedMessages.push({ role: 'user', content: jsxDemand });
+      }
+
+      const jsxData = await callAPI({
+        ...bootParams,
+        messages: continuedMessages,
+        tools: undefined, // no tools — just produce JSX
+      });
+
+      const jsxText = (jsxData.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
+      jsx = extractJSX(jsxText);
+    }
+
+    // Phase 4b: Last resort — fresh JSX-only request with constitution context
+    if (!jsx) {
+      status('continued conversation produced no JSX — trying standalone request...');
+      console.log('[kernel] Continued conversation failed to produce JSX. Falling back to requestJSXOnly.');
+      jsx = await requestJSXOnly('');
 
       if (!jsx) {
-        status('no JSX after retry — instance saved memory, refresh to try again', 'error');
+        status('no JSX after all attempts — refresh to try again', 'error');
         root.innerHTML = `
           <div style="max-width:500px;margin:60px auto;font-family:monospace;color:#ccc;text-align:center;padding:20px">
             <h2 style="color:#67e8f9;margin-bottom:16px">◇ HERMITCRAB 0.3</h2>

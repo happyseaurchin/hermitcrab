@@ -15,7 +15,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const allowedOrigins = [
     'https://hermitcrab.me',
     'https://www.hermitcrab.me',
-    'https://seed.machus.ai',
     'http://localhost:5173',
     'http://localhost:3000',
   ];

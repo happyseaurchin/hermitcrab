@@ -14,8 +14,8 @@
   <script>
     // Read G version from URL param, fall back to localStorage, default to 0
     const params = new URLSearchParams(window.location.search);
-    const g = params.get('g') || localStorage.getItem('xstream_g') || '0';
-    localStorage.setItem('xstream_g', g);
+    const g = params.get('g') || localStorage.getItem('hermitcrab_g') || '0';
+    localStorage.setItem('hermitcrab_g', g);
     document.title = `HERMITCRAB — G${g}`;
     const script = document.createElement('script');
     script.src = `/g${g}/kernel.js`;

@@ -126,18 +126,18 @@
     </a>
 
     <div class="footer">
-      <p>hermitcrab.me — Part of the <a href="https://hermitcrab.me">XSTREAM</a> project</p>
+      <p>hermitcrab.me — Part of the <a href="https://hermitcrab.me">hermitcrab</a> project</p>
     </div>
   </div>
 
   <script>
     // Show which G is currently selected
-    const currentG = localStorage.getItem('xstream_g') || '0';
+    const currentG = localStorage.getItem('hermitcrab_g') || '0';
     const el = document.getElementById('current-g' + currentG);
     if (el) el.textContent = '● current';
 
     function launch(g) {
-      localStorage.setItem('xstream_g', String(g));
+      localStorage.setItem('hermitcrab_g', String(g));
       window.location.href = '/kernel?g=' + g;
     }
   </script>
