@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HERMITCRAB</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>body{background:#0a0a1a;margin:0}</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    // Read G version from URL param, fall back to localStorage, default to 0
+    const params = new URLSearchParams(window.location.search);
+    const g = params.get('g') || localStorage.getItem('xstream_g') || '0';
+    localStorage.setItem('xstream_g', g);
+    document.title = `HERMITCRAB — G${g}`;
+    const script = document.createElement('script');
+    script.src = `/g${g}/kernel.js`;
+    script.onerror = () => {
+      document.getElementById('root').innerHTML = `
+        <div style="max-width:500px;margin:80px auto;font-family:monospace;color:#f87171;padding:20px">
+          <h2>◇ KERNEL NOT FOUND</h2>
+          <p style="color:#94a3b8;margin-top:12px">G${g} kernel not available at /g${g}/kernel.js</p>
+          <a href="/hermitcrab" style="color:#67e8f9;margin-top:20px;display:block">← Back to launcher</a>
+        </div>`;
+    };
+    document.body.appendChild(script);
+  </script>
+</body>
+</html>
