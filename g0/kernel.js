@@ -1219,10 +1219,13 @@
 
     const textBlocks = (data.content || []).filter(b => b.type === 'text');
     const fullText = textBlocks.map(b => b.text).join('\n');
+    console.log('[kernel] Boot response text length:', fullText.length, 'blocks:', textBlocks.length);
+    console.log('[kernel] Boot text preview:', fullText.substring(0, 300));
 
     // ============ PHASE 4: EXTRACT → COMPILE → EXECUTE → RETRY ============
 
     let jsx = fullText.trim() ? extractJSX(fullText) : null;
+    console.log('[kernel] JSX extracted from boot:', jsx ? `YES (${jsx.length} chars)` : 'NO');
 
     // Phase 4a: If orientation consumed the response without JSX, continue the
     // conversation — the LLM keeps its full context (constitution, memory, tools)
@@ -1294,7 +1297,9 @@
     }
 
     status('compiling + executing...');
+    console.log('[kernel] JSX to compile, length:', jsx?.length, 'first 200 chars:', jsx?.substring(0, 200));
     let result = tryCompileAndExecute(jsx, capabilities);
+    console.log('[kernel] Compile result:', result.success ? 'SUCCESS' : 'FAIL: ' + result.error?.substring(0, 200));
 
     let retries = 0;
     while (!result.success && retries < 3) {
@@ -1344,9 +1349,23 @@
     // ============ PHASE 5: RENDER ============
 
     currentJSX = jsx;
+    console.log('[kernel] Phase 5: Boot complete. Rendering component. JSX length:', jsx.length);
+    console.log('[kernel] Phase 5: Component name:', result.Component.name || '(anonymous)');
+
+    // Brief flash of success before component takes over the DOM
+    status('boot complete — rendering shell...', 'success');
+
+    // Small delay so the human sees "boot complete" before the component replaces it
+    await new Promise(r => setTimeout(r, 300));
+
     reactRoot = ReactDOM.createRoot(root);
-    status('rendering...', 'success');
-    reactRoot.render(React.createElement(result.Component, capabilities));
+    try {
+      reactRoot.render(React.createElement(result.Component, capabilities));
+      console.log('[kernel] Phase 5: render() called successfully — component is live');
+    } catch (renderErr) {
+      console.error('[kernel] Phase 5: render() threw:', renderErr);
+      throw renderErr;
+    }
 
   } catch (e) {
     status(`boot failed: ${e.message}`, 'error');
