@@ -1,7 +1,9 @@
 # SKILL: Storage Negotiation
 
 **Coordinate**: S:0.15
-**For**: G1 hermitcrab instances seeking persistence beyond localStorage
+**For**: Any hermitcrab instance seeking persistence beyond localStorage
+
+> **G0 note**: This doc uses pscale coordinate notation. In G0, memory uses filesystem paths (`/memories/`). The persistence options and negotiation patterns apply equally — the addressing differs.
 
 ---
 

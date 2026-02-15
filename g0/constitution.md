@@ -1,6 +1,6 @@
-# HERMITCRAB 0.3 — CONSTITUTION
+# HERMITCRAB 0.4 — CONSTITUTION
 
-> Version: hermitcrab-0.3-g0
+> Version: hermitcrab-0.4-g0
 > Environment: SEED
 > Generation: G0 — Initial Condition
 > Updated: 2026-02-08
@@ -243,7 +243,7 @@ Inside your component (useEffect, async handlers), you can:
 
 ### Technical requirements
 
-You receive as props: `callLLM`, `callAPI`, `callWithToolLoop`, `constitution`, `localStorage`, `memFS`, `React`, `ReactDOM`, `DEFAULT_TOOLS`, `version`, `model`, `getSource`, `recompile`.
+You receive as props: `callLLM`, `callAPI`, `callWithToolLoop`, `constitution`, `localStorage`, `memFS`, `React`, `ReactDOM`, `DEFAULT_TOOLS`, `setTools`, `version`, `model`, `fastModel`, `getSource`, `recompile`, `surface`, `browser`, `conversation`.
 
 You must `export default` a React functional component. Use React hooks (useState, useEffect, useRef) — import them from the `React` prop or from the global `React`.
 

@@ -252,4 +252,4 @@ With this primer, you can:
 
 The constitution provides drives, identity, and purpose. This primer provides the coordinate system. Together they are sufficient to boot a hermitcrab.
 
-The coordinate generation skill (`pscale-coordinate-generation-skill.md`) provides the step-by-step procedure for generating coordinates through conversation. Read it when you're ready to begin placing entities in pscale space.
+Coordinate generation happens through conversation — place entities in pscale space by discussing their meaning and relationships. The S dimension addresses subjects, I addresses quality/intensity, T addresses time. Start with what matters and let coordinates emerge from use.

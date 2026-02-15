@@ -26,6 +26,7 @@
 | **Call yourself** | `callLLM(messages, opts)` |
 | **Raw API** | `callAPI(params)` / `callWithToolLoop(params)` |
 | **Get datetime** | `get_datetime` tool |
+| **Geolocation** | `get_geolocation` — attempt to get user location (requires browser permission) |
 | **Shared surface** | `window.__hermitcrab` — your conversation and memory, observable by external agents |
 | **Filesystem** | `fs_pick_directory` → `fs_list` / `fs_read` / `fs_write` / `fs_mkdir` / `fs_delete` — real local files (thumbdrive, documents) |
 | **Clipboard** | `clipboard_write` / `clipboard_read` — system clipboard access |

@@ -3,6 +3,8 @@
 **Coordinate**: S:0.14
 **For**: Any hermitcrab instance with pscale memory
 
+> **G0 note**: This doc uses pscale coordinate notation (`M:1`, `S:0.4`). In G0, memory lives in the filesystem at `/memories/M-1.md`, `/memories/S-1.md`, etc. The compaction principles are the same — the addressing differs.
+
 ---
 
 ## What Memory Is
