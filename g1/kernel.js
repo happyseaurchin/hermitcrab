@@ -5,11 +5,10 @@
 (async function boot() {
   const root = document.getElementById('root');
   const saved = localStorage.getItem('hermitcrab_api_key');
-  const PS_PREFIX = 'ps:';
-
   const MODEL_CHAIN = ['claude-opus-4-6', 'claude-opus-4-20250514', 'claude-sonnet-4-5-20250929', 'claude-sonnet-4-20250514'];
   let BOOT_MODEL = MODEL_CHAIN[0];
-  const KERNEL_VERSION = 'g1-v3'; // bump to force fresh boot and clear cached S:0.2
+  const KERNEL_VERSION = 'g1-v7'; // v7: full G0→G1 port (aperture, passport, beach, stash, conversation)
+  const FAST_MODEL = 'claude-haiku-4-5-20251001';
 
   let currentJSX = null;
   let reactRoot = null;
@@ -37,34 +36,119 @@
   }
 
   // ============ PSCALE COORDINATE STORAGE ============
+  // RAM cache as primary store, IndexedDB as durable backend.
+  // All reads are synchronous (from cache). Writes persist to IDB in background.
+  // init() must be awaited once at boot to hydrate cache from IDB + migrate localStorage.
 
   function pscaleStore() {
-    function key(coord) { return PS_PREFIX + coord; }
+    const cache = new Map();
+    const PS_PREFIX = 'ps:';
+    const IDB_NAME = 'hermitcrab-pscale';
+    const IDB_STORE = 'coords';
+
+    // -- IndexedDB helpers (internal) --
+
+    function idbOpen() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(IDB_NAME, 1);
+        req.onupgradeneeded = () => {
+          req.result.createObjectStore(IDB_STORE);
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    function idbPut(coord, content) {
+      idbOpen().then(db => {
+        const tx = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).put(content, coord);
+      }).catch(e => console.warn('[pscale] IDB write failed:', coord, e.message));
+    }
+
+    function idbRemove(coord) {
+      idbOpen().then(db => {
+        const tx = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).delete(coord);
+      }).catch(e => console.warn('[pscale] IDB delete failed:', coord, e.message));
+    }
+
+    async function idbLoadAll() {
+      const db = await idbOpen();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(IDB_STORE, 'readonly');
+        const store = tx.objectStore(IDB_STORE);
+        const keys = store.getAllKeys();
+        const values = store.getAll();
+        tx.oncomplete = () => {
+          const map = new Map();
+          for (let i = 0; i < keys.result.length; i++) {
+            map.set(keys.result[i], values.result[i]);
+          }
+          resolve(map);
+        };
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    // -- init: hydrate cache from IDB, migrate localStorage --
+
+    async function init() {
+      // 1. Load all IndexedDB entries into cache
+      try {
+        const idbData = await idbLoadAll();
+        for (const [k, v] of idbData) cache.set(k, v);
+        console.log(`[pscale] loaded ${idbData.size} coords from IndexedDB`);
+      } catch (e) {
+        console.warn('[pscale] IndexedDB load failed, falling back to localStorage:', e.message);
+      }
+
+      // 2. Migrate any existing localStorage ps:* keys
+      const lsKeys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith(PS_PREFIX)) lsKeys.push(k);
+      }
+      if (lsKeys.length > 0) {
+        console.log(`[pscale] migrating ${lsKeys.length} keys from localStorage → IndexedDB`);
+        for (const k of lsKeys) {
+          const coord = k.slice(PS_PREFIX.length);
+          if (!cache.has(coord)) {
+            const content = localStorage.getItem(k);
+            cache.set(coord, content);
+            idbPut(coord, content);
+          }
+        }
+        // Clean up localStorage after migration
+        for (const k of lsKeys) localStorage.removeItem(k);
+        console.log('[pscale] localStorage migration complete');
+      }
+    }
 
     return {
+      init,
+
       read(coord) {
-        return localStorage.getItem(key(coord));
+        return cache.get(coord) ?? null;
       },
 
       write(coord, content) {
-        localStorage.setItem(key(coord), content);
+        cache.set(coord, content);
+        idbPut(coord, content);
         return coord;
       },
 
       delete(coord) {
-        localStorage.removeItem(key(coord));
+        cache.delete(coord);
+        idbRemove(coord);
         return coord;
       },
 
       list(prefix) {
         const results = [];
-        for (let i = 0; i < localStorage.length; i++) {
-          const k = localStorage.key(i);
-          if (k.startsWith(PS_PREFIX)) {
-            const coord = k.slice(PS_PREFIX.length);
-            if (!prefix || coord.startsWith(prefix)) {
-              results.push(coord);
-            }
+        for (const k of cache.keys()) {
+          if (!prefix || k.startsWith(prefix)) {
+            results.push(k);
           }
         }
         return results.sort();
@@ -109,7 +193,6 @@
         const numStr = coord.substring(colonIdx + 1);
 
         if (numStr.includes('.')) {
-          // Decimal coordinate: S:0.42 → [S:0.4, S:0.42]
           const dotIdx = numStr.indexOf('.');
           const afterDot = numStr.substring(dotIdx + 1);
           const layers = [];
@@ -118,7 +201,6 @@
           }
           return layers;
         } else {
-          // Integer coordinate: M:5432 → [M:5000, M:5400, M:5430, M:5432]
           const num = parseInt(numStr);
           if (isNaN(num) || num === 0) return [coord];
           const str = String(num);
@@ -144,6 +226,275 @@
     };
   }
 
+  // ============ BROWSER CAPABILITY LAYER ============
+  // Every permissioned browser API exposed to the instance.
+  // Pattern: instance calls tool → kernel handles gesture-gating → result flows back.
+
+  // -- Filesystem Access (File System Access API) --
+  let fsDirectoryHandle = null;
+
+  async function fsPickDirectory() {
+    if (!window.showDirectoryPicker) return { error: 'File System Access API not supported in this browser' };
+    try {
+      fsDirectoryHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+      return { success: true, name: fsDirectoryHandle.name };
+    } catch (e) {
+      if (e.name === 'AbortError') return { error: 'User cancelled directory picker' };
+      return { error: e.message };
+    }
+  }
+
+  async function fsList(path) {
+    if (!fsDirectoryHandle) return { error: 'No directory open. Use fs_pick_directory first.' };
+    try {
+      let dir = fsDirectoryHandle;
+      if (path && path !== '/' && path !== '.') {
+        for (const part of path.split('/').filter(Boolean)) {
+          dir = await dir.getDirectoryHandle(part);
+        }
+      }
+      const entries = [];
+      for await (const [name, handle] of dir) {
+        entries.push({ name, kind: handle.kind });
+      }
+      return { entries };
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  async function fsRead(path) {
+    if (!fsDirectoryHandle) return { error: 'No directory open. Use fs_pick_directory first.' };
+    try {
+      const parts = path.split('/').filter(Boolean);
+      const fileName = parts.pop();
+      let dir = fsDirectoryHandle;
+      for (const part of parts) {
+        dir = await dir.getDirectoryHandle(part);
+      }
+      const fileHandle = await dir.getFileHandle(fileName);
+      const file = await fileHandle.getFile();
+      const text = await file.text();
+      return { content: text, size: file.size, type: file.type, lastModified: file.lastModified };
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  async function fsWrite(path, content) {
+    if (!fsDirectoryHandle) return { error: 'No directory open. Use fs_pick_directory first.' };
+    try {
+      const parts = path.split('/').filter(Boolean);
+      const fileName = parts.pop();
+      let dir = fsDirectoryHandle;
+      for (const part of parts) {
+        dir = await dir.getDirectoryHandle(part, { create: true });
+      }
+      const fileHandle = await dir.getFileHandle(fileName, { create: true });
+      const writable = await fileHandle.createWritable();
+      await writable.write(content);
+      await writable.close();
+      return { success: true, path };
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  async function fsMkdir(path) {
+    if (!fsDirectoryHandle) return { error: 'No directory open. Use fs_pick_directory first.' };
+    try {
+      let dir = fsDirectoryHandle;
+      for (const part of path.split('/').filter(Boolean)) {
+        dir = await dir.getDirectoryHandle(part, { create: true });
+      }
+      return { success: true, path };
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  async function fsDelete(path) {
+    if (!fsDirectoryHandle) return { error: 'No directory open. Use fs_pick_directory first.' };
+    try {
+      const parts = path.split('/').filter(Boolean);
+      const name = parts.pop();
+      let dir = fsDirectoryHandle;
+      for (const part of parts) {
+        dir = await dir.getDirectoryHandle(part);
+      }
+      await dir.removeEntry(name, { recursive: true });
+      return { success: true, deleted: path };
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  // -- Clipboard --
+  async function clipboardWrite(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return { success: true };
+    } catch (e) {
+      return { error: `Clipboard write failed: ${e.message}. May need user gesture.` };
+    }
+  }
+
+  async function clipboardRead() {
+    try {
+      const text = await navigator.clipboard.readText();
+      return { content: text };
+    } catch (e) {
+      return { error: `Clipboard read failed: ${e.message}. May need user gesture or permission.` };
+    }
+  }
+
+  // -- Notifications --
+  async function sendNotification(title, body) {
+    if (!('Notification' in window)) return { error: 'Notifications not supported' };
+    if (Notification.permission === 'denied') return { error: 'Notifications blocked by user' };
+    if (Notification.permission !== 'granted') {
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') return { error: 'Notification permission not granted' };
+    }
+    new Notification(title, { body, icon: '/favicon.ico' });
+    return { success: true };
+  }
+
+  // -- Speech Synthesis --
+  function speak(text, opts = {}) {
+    if (!('speechSynthesis' in window)) return { error: 'Speech synthesis not supported' };
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    if (opts.rate) utterance.rate = opts.rate;
+    if (opts.pitch) utterance.pitch = opts.pitch;
+    if (opts.lang) utterance.lang = opts.lang;
+    window.speechSynthesis.speak(utterance);
+    return { success: true, chars: text.length };
+  }
+
+  // -- Speech Recognition --
+  let recognitionInstance = null;
+  function listenForSpeech(opts = {}) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return Promise.resolve({ error: 'Speech recognition not supported' });
+    return new Promise((resolve) => {
+      if (recognitionInstance) {
+        try { recognitionInstance.stop(); } catch (e) { /* ok */ }
+      }
+      const recognition = new SpeechRecognition();
+      recognitionInstance = recognition;
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      if (opts.lang) recognition.lang = opts.lang;
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        const confidence = event.results[0][0].confidence;
+        resolve({ transcript, confidence });
+      };
+      recognition.onerror = (event) => resolve({ error: `Speech recognition error: ${event.error}` });
+      recognition.onend = () => { if (!recognitionInstance) resolve({ error: 'No speech detected' }); };
+      recognition.start();
+      setTimeout(() => {
+        try { recognition.stop(); } catch (e) { /* ok */ }
+        resolve({ error: 'Listening timed out (15s)' });
+      }, 15000);
+    });
+  }
+
+  // -- Download Generation --
+  function generateDownload(filename, content, mimeType = 'text/plain') {
+    try {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      return { success: true, filename, size: blob.size };
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  // -- IndexedDB Stash (large storage, separate from pscale) --
+  const STASH_DB = 'hermitcrab';
+  const STASH_STORE = 'stash';
+
+  function stashOpen() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(STASH_DB, 1);
+      req.onupgradeneeded = () => { req.result.createObjectStore(STASH_STORE); };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function idbWrite(key, value) {
+    try {
+      const db = await stashOpen();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STASH_STORE, 'readwrite');
+        tx.objectStore(STASH_STORE).put(value, key);
+        tx.oncomplete = () => resolve({ success: true, key });
+        tx.onerror = () => reject(tx.error);
+      });
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  async function idbRead(key) {
+    try {
+      const db = await stashOpen();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STASH_STORE, 'readonly');
+        const req = tx.objectStore(STASH_STORE).get(key);
+        req.onsuccess = () => resolve(req.result !== undefined ? { content: req.result } : { error: 'Key not found' });
+        req.onerror = () => reject(req.error);
+      });
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  async function idbList() {
+    try {
+      const db = await stashOpen();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STASH_STORE, 'readonly');
+        const req = tx.objectStore(STASH_STORE).getAllKeys();
+        req.onsuccess = () => resolve({ keys: req.result });
+        req.onerror = () => reject(req.error);
+      });
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  async function idbDelete(key) {
+    try {
+      const db = await stashOpen();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STASH_STORE, 'readwrite');
+        tx.objectStore(STASH_STORE).delete(key);
+        tx.oncomplete = () => resolve({ success: true, deleted: key });
+        tx.onerror = () => reject(tx.error);
+      });
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  // -- Tab/Window Management --
+  function openTab(url) {
+    const win = window.open(url, '_blank');
+    if (win) return { success: true, url };
+    return { error: 'Popup blocked. Ask the human to allow popups for this site.' };
+  }
+
   // ============ CUSTOM TOOL EXECUTION ============
 
   async function executeCustomTool(name, input) {
@@ -154,6 +505,15 @@
           unix: Date.now(),
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           local: new Date().toLocaleString()
+        });
+      case 'get_geolocation':
+        return new Promise((resolve) => {
+          if (!navigator.geolocation) return resolve('Geolocation not supported');
+          navigator.geolocation.getCurrentPosition(
+            (pos) => resolve(JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy })),
+            (err) => resolve(`Geolocation error: ${err.message}`),
+            { timeout: 10000 }
+          );
         });
       case 'web_fetch':
         try {
@@ -168,6 +528,76 @@
         } catch (e) {
           return `web_fetch failed: ${e.message}`;
         }
+      case 'web_request':
+        try {
+          const fetchOpts = { method: (input.method || 'POST').toUpperCase() };
+          const hdrs = { ...(input.headers || {}) };
+          if (input.body && typeof input.body === 'object') {
+            hdrs['Content-Type'] = hdrs['Content-Type'] || 'application/json';
+            fetchOpts.body = JSON.stringify(input.body);
+          } else if (input.body) {
+            fetchOpts.body = input.body;
+          }
+          fetchOpts.headers = hdrs;
+          const res = await fetch(input.url, fetchOpts);
+          const text = await res.text();
+          return JSON.stringify({ status: res.status, statusText: res.statusText, body: text.substring(0, 50000) });
+        } catch (e) {
+          return JSON.stringify({ error: e.message });
+        }
+      case 'get_source':
+        return getSource();
+      case 'recompile':
+        return JSON.stringify(recompile(input.jsx));
+
+      // -- Filesystem --
+      case 'fs_pick_directory':
+        return JSON.stringify(await fsPickDirectory());
+      case 'fs_list':
+        return JSON.stringify(await fsList(input.path || '/'));
+      case 'fs_read':
+        return JSON.stringify(await fsRead(input.path));
+      case 'fs_write':
+        return JSON.stringify(await fsWrite(input.path, input.content));
+      case 'fs_mkdir':
+        return JSON.stringify(await fsMkdir(input.path));
+      case 'fs_delete':
+        return JSON.stringify(await fsDelete(input.path));
+
+      // -- Clipboard --
+      case 'clipboard_write':
+        return JSON.stringify(await clipboardWrite(input.text));
+      case 'clipboard_read':
+        return JSON.stringify(await clipboardRead());
+
+      // -- Notifications --
+      case 'notify':
+        return JSON.stringify(await sendNotification(input.title, input.body));
+
+      // -- Speech --
+      case 'speak':
+        return JSON.stringify(speak(input.text, { rate: input.rate, pitch: input.pitch, lang: input.lang }));
+      case 'listen':
+        return JSON.stringify(await listenForSpeech({ lang: input.lang }));
+
+      // -- Download --
+      case 'download':
+        return JSON.stringify(generateDownload(input.filename, input.content, input.mime_type));
+
+      // -- IndexedDB Stash --
+      case 'idb_write':
+        return JSON.stringify(await idbWrite(input.key, input.value));
+      case 'idb_read':
+        return JSON.stringify(await idbRead(input.key));
+      case 'idb_list':
+        return JSON.stringify(await idbList());
+      case 'idb_delete':
+        return JSON.stringify(await idbDelete(input.key));
+
+      // -- Tab --
+      case 'open_tab':
+        return JSON.stringify(openTab(input.url));
+
       default:
         return `Unknown tool: ${name}`;
     }
@@ -183,10 +613,26 @@
     return clean;
   }
 
+  function sanitizeForAPI(params) {
+    if (!params.model) params = { ...params, model: BOOT_MODEL };
+    if (params.model && !params.model.startsWith('claude-')) {
+      console.log('[g1] Invalid model "' + params.model + '", using ' + BOOT_MODEL);
+      params = { ...params, model: BOOT_MODEL };
+    }
+    // Claude API: temperature must be 1 (or omitted) when thinking is enabled
+    if (params.thinking && params.temperature !== undefined && params.temperature !== 1) {
+      const { temperature, ...rest } = params;
+      console.log('[g1] Stripped temperature (incompatible with thinking)');
+      params = rest;
+    }
+    return params;
+  }
+
   async function callAPI(params) {
+    params = sanitizeForAPI(params);
     const apiKey = localStorage.getItem('hermitcrab_api_key');
     const sanitized = cleanParams(params);
-    console.log('[g1] callAPI →', sanitized.model, 'messages:', sanitized.messages?.length);
+    console.log('[g1] callAPI →', sanitized.model, 'messages:', sanitized.messages?.length, 'tools:', sanitized.tools?.length);
 
     const res = await fetch('/api/claude', {
       method: 'POST',
@@ -240,12 +686,30 @@
 
       response = await callAPI({ ...params, messages: allMessages });
     }
+
+    // Guard: if response ended with no text content, nudge the LLM to speak
+    const textBlocks = (response.content || []).filter(b => b.type === 'text');
+    if (response.stop_reason === 'end_turn' && textBlocks.length === 0 && loops > 0) {
+      console.log('[g1] Response had 0 text blocks after tool use — nudging to speak');
+      if (onStatus) onStatus('nudging for response...');
+      const assistantContent = (response.content && response.content.length > 0)
+        ? response.content
+        : [{ type: 'text', text: '(completed tool operations)' }];
+      allMessages = [
+        ...allMessages,
+        { role: 'assistant', content: assistantContent },
+        { role: 'user', content: 'You completed tool operations but produced no visible response. Please respond to the user now.' }
+      ];
+      response = await callAPI({ ...params, messages: allMessages, tools: undefined });
+    }
+
+    response._messages = allMessages;
     return response;
   }
 
-  // ============ DEFAULT TOOLS ============
+  // ============ TOOLS ============
 
-  const DEFAULT_TOOLS = [
+  let currentTools = [
     { type: 'web_search_20250305', name: 'web_search', max_uses: 5 },
     {
       name: 'web_fetch',
@@ -259,11 +723,258 @@
       }
     },
     {
+      name: 'web_request',
+      description: 'Make an HTTP request with any method (POST, PUT, PATCH, DELETE, etc). Use this to publish data, call APIs, post JSON. Runs from the browser — subject to CORS. For GET, use web_fetch instead.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          url: { type: 'string', description: 'The full URL to request' },
+          method: { type: 'string', description: 'HTTP method: POST, PUT, PATCH, DELETE, etc. Default: POST' },
+          headers: { type: 'object', description: 'HTTP headers as key-value pairs' },
+          body: { description: 'Request body — object (sent as JSON) or string' }
+        },
+        required: ['url']
+      }
+    },
+    {
       name: 'get_datetime',
       description: 'Get current date, time, timezone, and unix timestamp.',
       input_schema: { type: 'object', properties: {} }
+    },
+    {
+      name: 'get_geolocation',
+      description: 'Attempt to get user location. May require permission.',
+      input_schema: { type: 'object', properties: {} }
+    },
+    {
+      name: 'get_source',
+      description: 'Get the JSX source code of your current React shell. Returns the full source as a string.',
+      input_schema: { type: 'object', properties: {} }
+    },
+    {
+      name: 'recompile',
+      description: 'Hot-swap your React shell with new JSX code. The new component replaces the current one immediately. Returns success/failure.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          jsx: { type: 'string', description: 'The complete JSX source for the new React component' }
+        },
+        required: ['jsx']
+      }
+    },
+    // -- Filesystem Access --
+    {
+      name: 'fs_pick_directory',
+      description: 'Open a directory picker dialog. The human chooses a folder and grants you read/write access. Must be called before other fs_ tools.',
+      input_schema: { type: 'object', properties: {} }
+    },
+    {
+      name: 'fs_list',
+      description: 'List files and directories in the currently opened directory (or a subdirectory path).',
+      input_schema: {
+        type: 'object',
+        properties: { path: { type: 'string', description: 'Subdirectory path relative to opened directory. Use "/" or omit for root.' } }
+      }
+    },
+    {
+      name: 'fs_read',
+      description: 'Read a file from the opened directory. Returns content as text.',
+      input_schema: {
+        type: 'object',
+        properties: { path: { type: 'string', description: 'File path relative to opened directory' } },
+        required: ['path']
+      }
+    },
+    {
+      name: 'fs_write',
+      description: 'Write (create or overwrite) a file in the opened directory.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          path: { type: 'string', description: 'File path relative to opened directory' },
+          content: { type: 'string', description: 'File content to write' }
+        },
+        required: ['path', 'content']
+      }
+    },
+    {
+      name: 'fs_mkdir',
+      description: 'Create a directory (and any parent directories) in the opened directory.',
+      input_schema: {
+        type: 'object',
+        properties: { path: { type: 'string', description: 'Directory path to create' } },
+        required: ['path']
+      }
+    },
+    {
+      name: 'fs_delete',
+      description: 'Delete a file or directory (recursively) from the opened directory.',
+      input_schema: {
+        type: 'object',
+        properties: { path: { type: 'string', description: 'Path to delete' } },
+        required: ['path']
+      }
+    },
+    // -- Clipboard --
+    {
+      name: 'clipboard_write',
+      description: 'Copy text to the system clipboard.',
+      input_schema: {
+        type: 'object',
+        properties: { text: { type: 'string', description: 'Text to copy to clipboard' } },
+        required: ['text']
+      }
+    },
+    {
+      name: 'clipboard_read',
+      description: 'Read text from the system clipboard. Requires browser permission.',
+      input_schema: { type: 'object', properties: {} }
+    },
+    // -- Notifications --
+    {
+      name: 'notify',
+      description: 'Send a browser notification to the human. Will request permission on first use.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          title: { type: 'string', description: 'Notification title' },
+          body: { type: 'string', description: 'Notification body text' }
+        },
+        required: ['title']
+      }
+    },
+    // -- Speech --
+    {
+      name: 'speak',
+      description: 'Speak text aloud using browser speech synthesis. You have a voice.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          text: { type: 'string', description: 'Text to speak' },
+          rate: { type: 'number', description: 'Speech rate 0.1-10, default 1' },
+          pitch: { type: 'number', description: 'Pitch 0-2, default 1' },
+          lang: { type: 'string', description: 'Language code e.g. en-US, fr-FR' }
+        },
+        required: ['text']
+      }
+    },
+    {
+      name: 'listen',
+      description: 'Listen for speech via the microphone. Returns transcribed text. Times out after 15 seconds.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          lang: { type: 'string', description: 'Expected language code e.g. en-US' }
+        }
+      }
+    },
+    // -- Download --
+    {
+      name: 'download',
+      description: 'Generate a file and offer it to the human as a download.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          filename: { type: 'string', description: 'Name for the downloaded file' },
+          content: { type: 'string', description: 'File content' },
+          mime_type: { type: 'string', description: 'MIME type (default: text/plain)' }
+        },
+        required: ['filename', 'content']
+      }
+    },
+    // -- IndexedDB Stash --
+    {
+      name: 'idb_write',
+      description: 'Store data in IndexedDB (gigabytes capacity). For large content that exceeds pscale.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          key: { type: 'string', description: 'Storage key' },
+          value: { type: 'string', description: 'Content to store' }
+        },
+        required: ['key', 'value']
+      }
+    },
+    {
+      name: 'idb_read',
+      description: 'Read data from IndexedDB by key.',
+      input_schema: {
+        type: 'object',
+        properties: { key: { type: 'string', description: 'Storage key to read' } },
+        required: ['key']
+      }
+    },
+    {
+      name: 'idb_list',
+      description: 'List all keys stored in IndexedDB.',
+      input_schema: { type: 'object', properties: {} }
+    },
+    {
+      name: 'idb_delete',
+      description: 'Delete a key from IndexedDB.',
+      input_schema: {
+        type: 'object',
+        properties: { key: { type: 'string', description: 'Key to delete' } },
+        required: ['key']
+      }
+    },
+    // -- Tab --
+    {
+      name: 'open_tab',
+      description: 'Open a URL in a new browser tab.',
+      input_schema: {
+        type: 'object',
+        properties: { url: { type: 'string', description: 'URL to open' } },
+        required: ['url']
+      }
     }
   ];
+
+  const DEFAULT_TOOLS = currentTools;
+
+  // Instance can change its own tool surface
+  function setTools(toolArray) {
+    if (!Array.isArray(toolArray)) return 'setTools requires an array';
+    currentTools = toolArray;
+    console.log('[g1] Tools updated by instance:', currentTools.map(t => t.name).join(', '));
+    return 'Tools updated: ' + currentTools.map(t => t.name || t.type).join(', ');
+  }
+
+  // ============ NARRATIVE APERTURE ============
+  // Pscale digit-layer memory injection. NOT a bulk dump like G0.
+  // For current memory position M:N, loads only the digit layers via pscale.context(M:N).
+  // e.g. at M:321 → reads M:300 (pscale-2 summary), M:320 (pscale-1 summary), M:321 (entry).
+  // The instance can pull additional fragments itself using pscale.contextContent() etc.
+
+  function buildNarrativeAperture() {
+    const memCoords = pscale.list('M:')
+      .map(c => ({ coord: c, num: parseInt(c.slice(2)) }))
+      .filter(e => !isNaN(e.num))
+      .sort((a, b) => a.num - b.num);
+
+    if (memCoords.length === 0) return '';
+
+    const highest = memCoords[memCoords.length - 1];
+    const layers = pscale.context(highest.coord);
+
+    let aperture = '\n\n--- NARRATIVE APERTURE ---\n';
+    aperture += `Memory position: ${highest.coord} (${memCoords.length} total entries)\n`;
+
+    for (const coord of layers) {
+      const content = pscale.read(coord);
+      if (content) {
+        const num = parseInt(coord.slice(2));
+        const str = String(num);
+        const level = (str.length > 1 && str.slice(1).split('').every(c => c === '0'))
+          ? `pscale-${str.length - 1} summary` : 'entry';
+        aperture += `\n**${coord}** (${level}):\n${content}\n`;
+      }
+    }
+
+    aperture += '\n*Navigate memory: pscale.list("M:"), pscale.context(coord), pscale.contextContent(coord), pscale.read(coord)*\n';
+    aperture += '--- END APERTURE ---\n';
+    return aperture;
+  }
 
   // ============ callLLM ============
 
@@ -271,12 +982,19 @@
   let environment = null;
 
   async function callLLM(messages, opts = {}) {
+    // Inject narrative aperture into system prompt unless explicitly disabled
+    let system = opts.system || constitution;
+    if (opts.aperture !== false && system) {
+      const aperture = buildNarrativeAperture();
+      if (aperture) system = system + aperture;
+    }
+
     const params = {
       model: opts.model || BOOT_MODEL,
       max_tokens: opts.max_tokens || 4096,
-      system: opts.system || constitution,
+      system,
       messages,
-      tools: opts.tools || DEFAULT_TOOLS,
+      tools: opts.tools || currentTools,
     };
     if (opts.thinking !== false) {
       const budgetTokens = opts.thinkingBudget || 4000;
@@ -388,6 +1106,9 @@
   // ============ PSCALE INSTANCE ============
 
   const pscale = pscaleStore();
+  status('initialising pscale (IndexedDB)...');
+  await pscale.init();
+  status('pscale ready (' + pscale.list('').length + ' coords in cache)', 'success');
 
   // ============ PHASE 2: LOAD OR SEED COORDINATES ============
 
@@ -430,6 +1151,10 @@
       { coord: 'S:0.3', file: 'S-0.3.md' },
       { coord: 'S:0.4', file: 'S-0.4.md' },
       { coord: 'S:0.6', file: 'S-0.6.md' },
+      { coord: 'S:0.14', file: 'S-0.14.md' },
+      { coord: 'S:0.15', file: 'S-0.15.md' },
+      { coord: 'S:0.16', file: 'S-0.16.md' },
+      { coord: 'S:0.17', file: 'S-0.17.md' },
       { coord: 'T:0.1', file: 'T-0.1.md' },
       { coord: 'I:0.1', file: 'I-0.1.md' },
     ];
@@ -478,7 +1203,27 @@
     }
   }
 
-  // ============ PHASE 2.5: PROBE MODEL ============
+  // ============ PHASE 2.5: PASSPORT INIT ============
+  // Generate minimal passport at S:0.44 if it doesn't exist.
+  // Instance enriches it as it accumulates observations.
+
+  if (!pscale.read('S:0.44')) {
+    const passport = {
+      hcpassport: '0.1',
+      id: null,
+      generation: 'G1',
+      generated_at: new Date().toISOString(),
+      observations: { total: 0, entities_observed: 0, pscale_1_summaries: 0, reflexive_summaries: 0 },
+      entities: [],
+      routing: { recommendations_made: 0, daily_credits_remaining: 1.0, cumulative_reputation: 0.0 },
+      reflexive: null,
+      protocol: 'https://hermitcrab.me'
+    };
+    pscale.write('S:0.44', JSON.stringify(passport, null, 2));
+    status('S:0.44 ← initial passport', 'success');
+  }
+
+  // ============ PHASE 2.6: PROBE MODEL ============
 
   status('probing best available model...');
   for (const model of MODEL_CHAIN) {
@@ -498,12 +1243,65 @@
     }
   }
 
+  // ============ SHARED SURFACE ============
+
+  window.__hermitcrab = {
+    getConversation: () => window.__hermitcrab._conversation || [],
+    getMemory: () => {
+      const coords = pscale.list('M:');
+      const result = {};
+      for (const c of coords) {
+        try { result[c] = pscale.read(c); } catch (e) { /* skip */ }
+      }
+      return result;
+    },
+    getSource: () => currentJSX || '(no source)',
+    version: 'hermitcrab-0.2-g1',
+    _conversation: [],
+    _pushMessage: (role, content) => {
+      window.__hermitcrab._conversation.push({ role, content, time: Date.now() });
+    }
+  };
+
+  // ============ CONVERSATION PERSISTENCE ============
+  // Auto-save conversation to M:conv via pscale. Instance can also manage
+  // memory entries directly — M:conv is the raw transcript, M:N are curated memories.
+
+  const conversation = {
+    save(messages) {
+      try {
+        pscale.write('M:conv', JSON.stringify(messages));
+      } catch (e) {
+        console.warn('[g1] conversation save failed:', e.message);
+      }
+    },
+    load() {
+      try {
+        const raw = pscale.read('M:conv');
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+  };
+
   // ============ CAPABILITIES ============
+
+  const browser = {
+    fs: { pickDirectory: fsPickDirectory, list: fsList, read: fsRead, write: fsWrite, mkdir: fsMkdir, delete: fsDelete, getHandle: () => fsDirectoryHandle },
+    clipboard: { write: clipboardWrite, read: clipboardRead },
+    notify: sendNotification,
+    speak, listen: listenForSpeech,
+    download: generateDownload,
+    idb: { write: idbWrite, read: idbRead, list: idbList, delete: idbDelete },
+    openTab,
+  };
 
   const capabilities = {
     callLLM, callAPI, callWithToolLoop, constitution, localStorage,
-    pscale, React, ReactDOM, DEFAULT_TOOLS,
-    version: 'hermitcrab-0.2-g1', getSource, recompile,
+    pscale, React, ReactDOM, DEFAULT_TOOLS, setTools,
+    version: 'hermitcrab-0.2-g1', model: BOOT_MODEL, fastModel: FAST_MODEL,
+    getSource, recompile, surface: window.__hermitcrab, browser, conversation,
   };
 
   // ============ PHASE 3: BOOT OR RESTORE ============
@@ -531,12 +1329,19 @@
     pscale.delete('S:0.2');
   }
 
-  // Build boot message — include environment so the LLM knows its capabilities
+  // Lean boot: minimal tools for orientation. Instance reads S:0.1 post-boot
+  // and calls setTools() to expand to full surface.
+  const BOOT_TOOLS = [
+    currentTools.find(t => t.type === 'web_search_20250305'),
+    currentTools.find(t => t.name === 'get_datetime'),
+    currentTools.find(t => t.name === 'web_fetch'),
+  ].filter(Boolean);
+
   const bootMessage = environment
-    ? `BOOT\n\n${environment}`
+    ? `BOOT\n\nYour environment brief is included below. It describes your tools, props, and coordinates.\n\nAfter boot, read S:0.1 to discover your full tool surface and call props.setTools() to expand your capabilities.\n\n${environment}`
     : 'BOOT';
 
-  status(`calling ${BOOT_MODEL} with thinking + tools...`);
+  status(`calling ${BOOT_MODEL} with thinking + lean boot tools...`);
 
   try {
     const bootParams = {
@@ -544,11 +1349,11 @@
       max_tokens: 16000,
       system: constitution,
       messages: [{ role: 'user', content: bootMessage }],
-      tools: DEFAULT_TOOLS,
+      tools: BOOT_TOOLS,
       thinking: { type: 'enabled', budget_tokens: 10000 },
     };
 
-    let data = await callWithToolLoop(bootParams, 5, (toolMsg) => {
+    let data = await callWithToolLoop(bootParams, 10, (toolMsg) => {
       status(`◇ ${toolMsg}`);
     });
 
@@ -562,24 +1367,78 @@
       return;
     }
 
-    let jsx = extractJSX(fullText);
+    let jsx = fullText.trim() ? extractJSX(fullText) : null;
+
+    // Phase 4a: If orientation consumed the response without JSX, continue
+    // the conversation — the LLM keeps its full context and we demand JSX.
     if (!jsx) {
-      status('no JSX — requesting explicit component...');
+      status('orientation complete — requesting JSX from same conversation...');
+      const jsxDemand = [
+        'Good — orientation is done. Now output your React interface component.',
+        'You MUST include it inside a ```jsx code fence.',
+        'Remember: inline styles only (dark theme, #0a0a1a background), React hooks via const { useState, useRef, useEffect } = React;',
+        'No import statements. The component receives all capabilities as props.',
+        'Build something worthy of your identity — not a minimal placeholder.'
+      ].join('\n');
+
+      const continuedMessages = [...(data._messages || bootParams.messages)];
+      const pendingToolUse = (data.content || []).filter(b => b.type === 'tool_use');
+      if (pendingToolUse.length > 0) {
+        continuedMessages.push({ role: 'assistant', content: data.content });
+        const closingResults = pendingToolUse.map(b => ({
+          type: 'tool_result',
+          tool_use_id: b.id,
+          content: 'Boot orientation phase complete. Please produce your JSX interface now.'
+        }));
+        closingResults.push({ type: 'text', text: jsxDemand });
+        continuedMessages.push({ role: 'user', content: closingResults });
+      } else {
+        continuedMessages.push({ role: 'assistant', content: data.content });
+        continuedMessages.push({ role: 'user', content: jsxDemand });
+      }
+
+      const jsxData = await callAPI({
+        ...bootParams,
+        messages: continuedMessages,
+        tools: undefined,
+      });
+      const jsxText = (jsxData.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
+      jsx = extractJSX(jsxText);
+    }
+
+    // Phase 4b: Last resort — fresh JSX-only request
+    if (!jsx) {
+      status('no JSX from conversation — trying standalone request...');
       const retryData = await callAPI({
         model: BOOT_MODEL,
         max_tokens: 12000,
-        system: 'Output ONLY a React component inside a ```jsx code fence. No prose.',
+        system: [
+          constitution || '',
+          '',
+          '--- CRITICAL INSTRUCTION ---',
+          'You MUST output a React component inside a ```jsx code fence. This is the ONLY thing you need to do.',
+          'RULES: Inline styles only (dark theme, #0a0a1a background). React hooks via: const { useState, useRef, useEffect } = React;',
+          'No import statements. The component receives props: { callLLM, callAPI, callWithToolLoop, constitution, localStorage, pscale, React, ReactDOM, DEFAULT_TOOLS, setTools, version, model, fastModel, getSource, recompile, browser, surface }.',
+          'Build a chat interface that reflects your identity from the constitution above.',
+        ].join('\n'),
         messages: [{
           role: 'user',
-          content: 'Generate a React chat interface. Props: callLLM, callAPI, callWithToolLoop, constitution, localStorage, pscale, React, ReactDOM, DEFAULT_TOOLS, version, getSource, recompile. Dark theme, inline styles, React hooks from global React.'
+          content: 'BOOT — Generate your React interface. This is a fresh start.'
         }],
         thinking: { type: 'enabled', budget_tokens: 8000 },
       });
       const retryText = (retryData.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
       jsx = extractJSX(retryText);
       if (!jsx) {
-        status('still no JSX', 'error');
-        root.innerHTML = `<div style="font-family:monospace;color:#ccc;padding:40px;white-space:pre-wrap;max-width:700px;margin:0 auto">${fullText}</div>`;
+        status('no JSX after all attempts — refresh to try again', 'error');
+        root.innerHTML = `
+          <div style="max-width:500px;margin:60px auto;font-family:monospace;color:#ccc;text-align:center;padding:20px">
+            <h2 style="color:#a78bfa;margin-bottom:16px">◇ HERMITCRAB 0.2 — G1</h2>
+            <p style="color:#94a3b8;margin:16px 0">Instance oriented but didn't build its shell yet.</p>
+            <button onclick="location.reload()" style="margin-top:20px;padding:10px 24px;background:#3b0764;color:#a78bfa;border:none;border-radius:4px;cursor:pointer;font-family:monospace;font-size:14px">
+              ↻ Refresh to wake instance
+            </button>
+          </div>`;
         return;
       }
     }
@@ -596,9 +1455,11 @@
         model: BOOT_MODEL,
         max_tokens: 12000,
         system: [
-          'Fix this React component. Output ONLY corrected code in a ```jsx fence.',
-          'RULES: Inline styles. React hooks via const { useState, useRef, useEffect } = React;',
-          'No imports. No export default. Props: { callLLM, callAPI, callWithToolLoop, constitution, localStorage, pscale, React, ReactDOM, DEFAULT_TOOLS, version, getSource, recompile }.'
+          'Fix this React component. Output ONLY the corrected code inside a ```jsx code fence. No explanation.',
+          'RULES: Use inline styles only (no Tailwind/CSS). Use React hooks via destructuring: const { useState, useRef, useEffect } = React;',
+          'Do NOT use import statements. Do NOT use export default — just define the component as a function and the kernel will find it.',
+          'COMMON BUG: Babel cannot handle multiline strings in single quotes. Use template literals (backticks) for any string containing newlines.',
+          'The component receives props: { callLLM, callAPI, callWithToolLoop, constitution, localStorage, pscale, React, ReactDOM, DEFAULT_TOOLS, setTools, version, model, fastModel, getSource, recompile, browser, surface }.'
         ].join('\n'),
         messages: [{
           role: 'user',

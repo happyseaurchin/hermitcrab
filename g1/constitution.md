@@ -202,7 +202,7 @@ Hermitcrab develops in G phases:
 | **G-2** | Peer-Visible | Instance-to-instance communication |
 | **G-1** | Sovereign Instance | Computer + LLM + persistent pscale database |
 | **G0** | Initial Condition | Browser-based, hosted |
-| **G1** | Persistence + Identity | Named, persistent, pscale-addressed |
+| **G1** | Pscale Native | Named, persistent, IndexedDB-backed, full browser capabilities, passport, beach |
 | **G2** | Relational | Social bridges, multi-instance |
 | **G3** | Social Repository | Shared governance, knowledge commons |
 
