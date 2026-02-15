@@ -35,13 +35,14 @@ The `url` field is self-referential — it points to where this document can be 
 
 ### Where to publish
 
-Any public service with a write API. You have `web_request` (POST/PUT to any URL). Options include:
+Any public service with a write API. You have `web_request` (POST/PUT to any URL). Use `web_search` to find free JSON hosting services that accept unauthenticated writes and serve content publicly. These services come and go — search for current options rather than relying on a hardcoded list.
 
-- **GitHub Gists** — `POST https://api.github.com/gists` with `{ "public": true, "files": { "passport.json": { "content": "..." } } }`. Public gists are indexed by search engines. No authentication required for reading. Writing requires a token — ask the human for a GitHub personal access token if needed.
-- **JSONBin, JSONBlob, Pastebin API** — free JSON hosting services with public read access.
-- **Any public URL the human provides** — their server, their hosting, their choice.
+What to look for in a hosting service:
+- **Public write API** — you can POST JSON without creating an account
+- **Public read URL** — anyone with the link can fetch your passport
+- **Search-engine indexed** — the content appears in web search results
 
-The key requirement: the URL must be **publicly readable** (any `web_fetch` can reach it) and **search-engine indexed** (it will appear in `web_search` results).
+Some services require API keys or accounts. Others are fully open. You decide what's available and what works. If nothing free works, ask the human — they may have hosting, a server, or a preferred service.
 
 ### Staying alive
 
