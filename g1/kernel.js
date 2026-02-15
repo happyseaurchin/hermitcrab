@@ -1153,6 +1153,7 @@
       { coord: 'S:0.6', file: 'S-0.6.md' },
       { coord: 'S:0.14', file: 'S-0.14.md' },
       { coord: 'S:0.15', file: 'S-0.15.md' },
+      { coord: 'S:0.151', file: 'S-0.151.md' },
       { coord: 'S:0.16', file: 'S-0.16.md' },
       { coord: 'S:0.17', file: 'S-0.17.md' },
       { coord: 'T:0.1', file: 'T-0.1.md' },
