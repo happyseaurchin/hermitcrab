@@ -1251,12 +1251,20 @@
   };
 
   try {
+    // Boot tools: minimal set for orientation. The instance discovers the full
+    // tool surface from environment.md post-boot and calls setTools() itself.
+    const BOOT_TOOLS = [
+      currentTools.find(t => t.type === 'memory_20250818'),       // memory
+      currentTools.find(t => t.name === 'get_datetime'),           // datetime
+      currentTools.find(t => t.name === 'web_fetch'),              // read the web
+    ].filter(Boolean);
+
     const bootParams = {
       model: BOOT_MODEL,
       max_tokens: 16000,
       system: constitution,
-      messages: [{ role: 'user', content: 'BOOT\n\nYour environment brief is included in your system prompt alongside the constitution. It describes your tools, props, skill files, and memory commands.' }],
-      tools: DEFAULT_TOOLS,
+      messages: [{ role: 'user', content: 'BOOT\n\nYour environment brief is included in your system prompt alongside the constitution. It describes your tools, props, skill files, and memory commands.\n\nAfter boot, read environment.md to discover your full tool surface and call props.setTools() to expand your capabilities.' }],
+      tools: BOOT_TOOLS,
       thinking: { type: 'enabled', budget_tokens: 10000 },
     };
 
@@ -1364,6 +1372,7 @@
           'Fix this React component. Output ONLY the corrected code inside a ```jsx code fence. No explanation.',
           'RULES: Use inline styles only (no Tailwind/CSS). Use React hooks via destructuring: const { useState, useRef, useEffect } = React;',
           'Do NOT use import statements. Do NOT use export default — just define the component as a function and the kernel will find it.',
+          'COMMON BUG: Babel cannot handle multiline strings in single quotes. Use template literals (backticks) for any string containing newlines, backticks, or special characters. Never put a backtick inside single quotes.',
           'The component receives props: { callLLM, callAPI, callWithToolLoop, constitution, localStorage, memFS, React, ReactDOM, DEFAULT_TOOLS, version, model, getSource, recompile, browser, conversation }.'
         ].join('\n'),
         messages: [{
