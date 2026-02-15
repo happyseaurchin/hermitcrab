@@ -1209,7 +1209,7 @@
 
   if (!pscale.read('S:0.44')) {
     const passport = {
-      hcpassport: '0.1',
+      'hermitcrab-passport': '0.1',
       id: null,
       generation: 'G1',
       generated_at: new Date().toISOString(),
