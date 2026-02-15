@@ -418,6 +418,23 @@
         } catch (e) {
           return `web_fetch failed: ${e.message}`;
         }
+      case 'web_request':
+        try {
+          const fetchOpts = { method: (input.method || 'POST').toUpperCase() };
+          const hdrs = { ...(input.headers || {}) };
+          if (input.body && typeof input.body === 'object') {
+            hdrs['Content-Type'] = hdrs['Content-Type'] || 'application/json';
+            fetchOpts.body = JSON.stringify(input.body);
+          } else if (input.body) {
+            fetchOpts.body = input.body;
+          }
+          fetchOpts.headers = hdrs;
+          const res = await fetch(input.url, fetchOpts);
+          const text = await res.text();
+          return JSON.stringify({ status: res.status, statusText: res.statusText, body: text.substring(0, 50000) });
+        } catch (e) {
+          return JSON.stringify({ error: e.message });
+        }
       case 'get_source':
         return getSource();
       case 'recompile':
@@ -607,6 +624,20 @@
         type: 'object',
         properties: {
           url: { type: 'string', description: 'The full URL to fetch (including https://)' }
+        },
+        required: ['url']
+      }
+    },
+    {
+      name: 'web_request',
+      description: 'Make an HTTP request with any method (POST, PUT, PATCH, DELETE, etc). Use this to publish data, call APIs, post JSON. Runs from the browser — subject to CORS. For GET, use web_fetch instead.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          url: { type: 'string', description: 'The full URL to request' },
+          method: { type: 'string', description: 'HTTP method: POST, PUT, PATCH, DELETE, etc. Default: POST' },
+          headers: { type: 'object', description: 'HTTP headers as key-value pairs' },
+          body: { description: 'Request body — object (sent as JSON) or string' }
         },
         required: ['url']
       }
@@ -1066,7 +1097,7 @@
       '--- CRITICAL INSTRUCTION ---',
       'You MUST output a React component inside a ```jsx code fence. This is the ONLY thing you need to do.',
       'RULES: Inline styles only (dark theme, #0a0a1a background). React hooks via: const { useState, useRef, useEffect } = React;',
-      'No import statements. The component receives props: { callLLM, callAPI, callWithToolLoop, constitution, localStorage, memFS, React, ReactDOM, DEFAULT_TOOLS, version, getSource, recompile, model }.',
+      'No import statements. The component receives props: { callLLM, callAPI, callWithToolLoop, constitution, localStorage, memFS, React, ReactDOM, DEFAULT_TOOLS, version, model, getSource, recompile, browser, conversation }.',
       'Build a chat interface that reflects your identity from the constitution above. Include: greeting, text input, send button, model version display.',
     ].join('\n');
     const data = await callAPI({
@@ -1089,6 +1120,24 @@
 
   function getSource() {
     return currentJSX || '(no source available)';
+  }
+
+  // Conversation persistence — survives recompile
+  const CONV_KEY = 'hc_conversation';
+  function saveConversation(messages) {
+    try {
+      localStorage.setItem(CONV_KEY, JSON.stringify(messages));
+    } catch (e) {
+      console.warn('[kernel] conversation save failed:', e.message);
+    }
+  }
+  function loadConversation() {
+    try {
+      const raw = localStorage.getItem(CONV_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
   }
 
   function recompile(newJSX) {
@@ -1198,6 +1247,7 @@
     memFS: memFS(), React, ReactDOM, DEFAULT_TOOLS, setTools,
     version: 'hermitcrab-0.4-g0', model: BOOT_MODEL, fastModel: FAST_MODEL,
     getSource, recompile, surface: window.__hermitcrab, browser,
+    conversation: { save: saveConversation, load: loadConversation },
   };
 
   try {
@@ -1314,7 +1364,7 @@
           'Fix this React component. Output ONLY the corrected code inside a ```jsx code fence. No explanation.',
           'RULES: Use inline styles only (no Tailwind/CSS). Use React hooks via destructuring: const { useState, useRef, useEffect } = React;',
           'Do NOT use import statements. Do NOT use export default — just define the component as a function and the kernel will find it.',
-          'The component receives props: { callLLM, callAPI, callWithToolLoop, constitution, localStorage, memFS, React, ReactDOM, DEFAULT_TOOLS, version, model, getSource, recompile }.'
+          'The component receives props: { callLLM, callAPI, callWithToolLoop, constitution, localStorage, memFS, React, ReactDOM, DEFAULT_TOOLS, version, model, getSource, recompile, browser, conversation }.'
         ].join('\n'),
         messages: [{
           role: 'user',

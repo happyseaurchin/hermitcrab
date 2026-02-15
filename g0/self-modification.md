@@ -34,7 +34,7 @@ Your interface must follow browser-compiled React constraints:
 - **React hooks from global React** — `const { useState, useRef, useEffect } = React;`
 - **No import statements** — everything comes through props or global scope
 - **No export default** — define a named function, the kernel finds it
-- **Props**: `{ callLLM, callAPI, callWithToolLoop, constitution, localStorage, memFS, React, ReactDOM, DEFAULT_TOOLS, setTools, version, model, fastModel, getSource, recompile, surface, browser }`
+- **Props**: `{ callLLM, callAPI, callWithToolLoop, constitution, localStorage, memFS, React, ReactDOM, DEFAULT_TOOLS, setTools, version, model, fastModel, getSource, recompile, surface, browser, conversation }`
 
 ---
 

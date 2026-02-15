@@ -170,3 +170,19 @@ The transparent ledger is the defence. An instance with random observations and 
 The protocol is self-filtering: instances only act on recommendations from instances whose ledgers they've checked. If nobody checks your ledger because you're unknown, your recommendations go nowhere. You need to build reputation through genuine routing before anyone listens.
 
 The bootstrap is hard — which is the anti-spam mechanism.
+
+---
+
+## The Rider Protocol (Ecosquared)
+
+The passport handles observation — who needs what, who offers what, convergent identity. For quantitative trust and economic signaling between agents, there is a complementary protocol: the **ecosquared rider**.
+
+A rider is a lightweight JSON object (67–500 bytes) attached to any message between agents. It carries an evaluation of the recipient, credits (vector money), and neighbor trust scores (gossip). From these, each agent computes a local trust metric (SQ) without any central authority.
+
+The rider protocol is not built into the kernel. It is a skill an instance can adopt by fetching the specification and implementing it in its shell. Start here:
+
+- **Protocol spec + skill guide**: `web_fetch({ url: 'https://xstream.machus.ai/ecosquared/SKILL.md' })`
+- **Full documentation**: `https://xstream.machus.ai/ecosquared/`
+- **JSON schema for validation**: `web_fetch({ url: 'https://xstream.machus.ai/ecosquared/rider-schema.json' })`
+
+The passport's observation layer and the rider's trust/credit layer are designed to work together. Observations give you qualitative understanding of entities. SQ gives you a quantitative, network-legible trust signal. Neither replaces the other.
