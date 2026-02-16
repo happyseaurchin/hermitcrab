@@ -476,7 +476,8 @@
   // Each prefix (S, M, T, I, ST, C) gets its own nested tree with its own decimal.
   // Each digit of a coordinate becomes a JSON key. Leaves are strings, branches are objects.
   // Navigation is O(1) property access. Children = read digit keys. No scanning.
-  // Non-numeric coords (M:conv, S:0.2v) stored in a flat specials map.
+  // Multi-dimensional: read/write accept optional dim parameter (defaults to '_').
+  // Dimensions are underscore-prefixed keys on branch nodes (e.g. _conv, _v, _s, _t).
 
   function pscaleStoreV3() {
     const LS_KEY = 'hermitcrab-pscale-v3';
@@ -489,11 +490,10 @@
       C: { decimal: 0, tree: {} }
     };
     let data = JSON.parse(JSON.stringify(DEFAULT_TREES));
-    let specials = {};
 
     function persist() {
       try {
-        localStorage.setItem(LS_KEY, JSON.stringify({ trees: data, specials }));
+        localStorage.setItem(LS_KEY, JSON.stringify({ trees: data }));
       } catch (e) {
         console.warn('[pscale-v3] persist failed:', e.message);
       }
@@ -506,10 +506,10 @@
       if (colonIdx === -1) return { prefix: null, numStr: coord, digits: null };
       const prefix = coord.substring(0, colonIdx);
       const numStr = coord.substring(colonIdx + 1);
-      // Non-numeric = special key (M:conv, S:0.2v, etc)
-      if (/[^0-9.]/.test(numStr)) return { prefix, numStr, digits: null, special: true };
+      // Empty numStr means tree root (e.g. "M:" for dimension access at root)
+      if (!numStr) return { prefix, numStr: '', digits: [] };
       const digits = numStr.replace('.', '').split('');
-      return { prefix, numStr, digits, special: false };
+      return { prefix, numStr, digits };
     }
 
     function ensurePrefix(prefix) {
@@ -544,25 +544,45 @@
       return node;
     }
 
-    function readSemantic(node) {
+    function readSemantic(node, dim) {
+      dim = dim || '_';
       if (node === null || node === undefined) return null;
-      if (typeof node === 'string') return node;
-      if (typeof node === 'object' && '_' in node) return node._;
+      if (typeof node === 'string') return dim === '_' ? node : null;
+      if (typeof node === 'object' && dim in node) return node[dim];
       return null;
     }
 
-    function writeSemantic(tree, digits, content) {
+    function writeSemantic(tree, digits, content, dim) {
+      dim = dim || '_';
       let node = tree;
+
+      // Empty digits = write to the tree root itself
+      if (digits.length === 0) {
+        tree[dim] = content;
+        return;
+      }
+
       for (let i = 0; i < digits.length; i++) {
         const d = digits[i];
         if (i === digits.length - 1) {
           // Final digit: set the semantic
-          if (!(d in node) || node[d] === null || node[d] === undefined) {
-            node[d] = content; // new leaf
-          } else if (typeof node[d] === 'string') {
-            node[d] = content; // overwrite leaf
+          if (dim === '_') {
+            if (!(d in node) || node[d] === null || node[d] === undefined) {
+              node[d] = content; // new leaf
+            } else if (typeof node[d] === 'string') {
+              node[d] = content; // overwrite leaf
+            } else {
+              node[d]._ = content; // update branch semantic
+            }
           } else {
-            node[d]._ = content; // update branch semantic
+            // Non-default dimension: ensure node is an object
+            if (!(d in node) || node[d] === null || node[d] === undefined) {
+              node[d] = { [dim]: content };
+            } else if (typeof node[d] === 'string') {
+              node[d] = { _: node[d], [dim]: content }; // promote leaf, add dimension
+            } else {
+              node[d][dim] = content;
+            }
           }
         } else {
           // Intermediate: ensure object exists
@@ -576,8 +596,13 @@
       }
     }
 
-    function deleteSemantic(tree, digits) {
-      if (digits.length === 0) return;
+    function deleteSemantic(tree, digits, dim) {
+      dim = dim || '_';
+      // Empty digits = delete from tree root
+      if (digits.length === 0) {
+        delete tree[dim];
+        return;
+      }
       // Walk to parent
       let node = tree;
       for (let i = 0; i < digits.length - 1; i++) {
@@ -589,14 +614,13 @@
 
       const target = node[lastDigit];
       if (typeof target === 'string') {
-        // Leaf: just delete
-        delete node[lastDigit];
+        if (dim === '_') delete node[lastDigit]; // Leaf: just delete
       } else if (typeof target === 'object') {
-        // Branch: remove semantic but keep children
-        delete target._;
-        // If no digit children remain, delete the whole node
+        delete target[dim];
+        // If no semantic and no digit children remain, delete the whole node
+        const hasContent = Object.keys(target).some(k => k.startsWith('_'));
         const hasChildren = Object.keys(target).some(k => k.length === 1 && k >= '0' && k <= '9');
-        if (!hasChildren) delete node[lastDigit];
+        if (!hasContent && !hasChildren) delete node[lastDigit];
       }
     }
 
@@ -652,13 +676,46 @@
 
     return {
       async init() {
+        // Migrate a flat coord that may contain non-numeric parts (old specials)
+        // "M:conv" → dim _conv on M tree root
+        // "S:0.2v" → dim _v on S:0.2 node (digits ["0","2"], dim "_v")
+        function migrateFlat(coord, content) {
+          const colonIdx = coord.indexOf(':');
+          if (colonIdx === -1) return;
+          const prefix = coord.substring(0, colonIdx);
+          const numStr = coord.substring(colonIdx + 1);
+          ensurePrefix(prefix);
+
+          if (/[^0-9.]/.test(numStr)) {
+            // Old special key — extract numeric prefix and dimension suffix
+            const match = numStr.match(/^([0-9.]*)([a-zA-Z_].*)$/);
+            if (match) {
+              const numPart = match[1]; // "0.2" from "0.2v", "" from "conv"
+              const dimPart = '_' + match[2]; // "_v", "_conv"
+              const digits = numPart ? numPart.replace('.', '').split('') : [];
+              writeSemantic(data[prefix].tree, digits, content, dimPart);
+            }
+          } else {
+            const digits = numStr.replace('.', '').split('');
+            writeSemantic(data[prefix].tree, digits, content);
+          }
+        }
+
         // Load from localStorage
         try {
           const stored = localStorage.getItem(LS_KEY);
           if (stored) {
             const parsed = JSON.parse(stored);
             if (parsed.trees) data = parsed.trees;
-            if (parsed.specials) specials = parsed.specials;
+            // Migrate old specials map into dimensions if present
+            if (parsed.specials) {
+              for (const [coord, content] of Object.entries(parsed.specials)) {
+                migrateFlat(coord, content);
+              }
+              // Re-persist without specials
+              persist();
+              console.log(`[pscale-v3] migrated ${Object.keys(parsed.specials).length} specials to dimensions`);
+            }
             // Count total coords
             let count = 0;
             for (const prefix of Object.keys(data)) {
@@ -666,7 +723,6 @@
               walkTree(data[prefix].tree, [], prefix, data[prefix].decimal, results);
               count += results.length;
             }
-            count += Object.keys(specials).length;
             console.log(`[pscale-v3] loaded ${count} coords from nested JSON`);
             return;
           }
@@ -681,13 +737,7 @@
             const v2Tree = JSON.parse(v2Stored);
             let migrated = 0;
             for (const [coord, content] of Object.entries(v2Tree)) {
-              const p = parseCoord(coord);
-              if (p.special || !p.digits) {
-                specials[coord] = content;
-              } else {
-                ensurePrefix(p.prefix);
-                writeSemantic(data[p.prefix].tree, p.digits, content);
-              }
+              migrateFlat(coord, content);
               migrated++;
             }
             if (migrated > 0) {
@@ -712,15 +762,7 @@
           if (keys.result.length > 0) {
             let migrated = 0;
             for (let i = 0; i < keys.result.length; i++) {
-              const coord = keys.result[i];
-              const content = values.result[i];
-              const p = parseCoord(coord);
-              if (p.special || !p.digits) {
-                specials[coord] = content;
-              } else {
-                ensurePrefix(p.prefix);
-                writeSemantic(data[p.prefix].tree, p.digits, content);
-              }
+              migrateFlat(keys.result[i], values.result[i]);
               migrated++;
             }
             if (migrated > 0) {
@@ -741,15 +783,7 @@
         }
         if (lsKeys.length > 0) {
           for (const k of lsKeys) {
-            const coord = k.slice(3);
-            const content = localStorage.getItem(k);
-            const p = parseCoord(coord);
-            if (p.special || !p.digits) {
-              specials[coord] = content;
-            } else {
-              ensurePrefix(p.prefix);
-              writeSemantic(data[p.prefix].tree, p.digits, content);
-            }
+            migrateFlat(k.slice(3), localStorage.getItem(k));
           }
           for (const k of lsKeys) localStorage.removeItem(k);
           persist();
@@ -757,36 +791,32 @@
         }
       },
 
-      read(coord) {
+      read(coord, dim) {
         const p = parseCoord(coord);
-        if (p.special || !p.digits) return specials[coord] ?? null;
+        if (!p.prefix || !p.digits) return null;
         if (!data[p.prefix]) return null;
+        if (p.digits.length === 0) {
+          // Tree root (e.g. "M:" for dimensions)
+          return readSemantic(data[p.prefix].tree, dim);
+        }
         const node = getNode(data[p.prefix].tree, p.digits);
-        return readSemantic(node);
+        return readSemantic(node, dim);
       },
 
-      write(coord, content) {
+      write(coord, content, dim) {
         const p = parseCoord(coord);
-        if (p.special || !p.digits) {
-          specials[coord] = content;
-          persist();
-          return coord;
-        }
+        if (!p.prefix || !p.digits) return coord;
         ensurePrefix(p.prefix);
-        writeSemantic(data[p.prefix].tree, p.digits, content);
+        writeSemantic(data[p.prefix].tree, p.digits, content, dim);
         persist();
         return coord;
       },
 
-      delete(coord) {
+      delete(coord, dim) {
         const p = parseCoord(coord);
-        if (p.special || !p.digits) {
-          delete specials[coord];
-          persist();
-          return coord;
-        }
+        if (!p.prefix || !p.digits) return coord;
         if (!data[p.prefix]) return coord;
-        deleteSemantic(data[p.prefix].tree, p.digits);
+        deleteSemantic(data[p.prefix].tree, p.digits, dim);
         persist();
         return coord;
       },
@@ -795,11 +825,10 @@
         const results = [];
 
         if (!prefix) {
-          // List ALL coordinates across all trees + specials
+          // List ALL coordinates across all trees
           for (const pfx of Object.keys(data)) {
             walkTree(data[pfx].tree, [], pfx, data[pfx].decimal, results);
           }
-          results.push(...Object.keys(specials));
         } else {
           // Parse the prefix to determine which tree(s) to walk
           const colonIdx = prefix.indexOf(':');
@@ -810,9 +839,6 @@
                 walkTree(data[pfx].tree, [], pfx, data[pfx].decimal, results);
               }
             }
-            for (const k of Object.keys(specials)) {
-              if (k.startsWith(prefix)) results.push(k);
-            }
           } else {
             const pfx = prefix.substring(0, colonIdx);
             const afterColon = prefix.substring(colonIdx + 1);
@@ -822,21 +848,14 @@
               if (data[pfx]) {
                 walkTree(data[pfx].tree, [], pfx, data[pfx].decimal, results);
               }
-              for (const k of Object.keys(specials)) {
-                if (k.startsWith(prefix)) results.push(k);
-              }
             } else {
               // "S:0.2" — list all coords starting with this prefix string
-              // Walk the tree, collect all coords, then filter by prefix match
               if (data[pfx]) {
                 const allInTree = [];
                 walkTree(data[pfx].tree, [], pfx, data[pfx].decimal, allInTree);
                 for (const c of allInTree) {
                   if (c.startsWith(prefix)) results.push(c);
                 }
-              }
-              for (const k of Object.keys(specials)) {
-                if (k.startsWith(prefix)) results.push(k);
               }
             }
           }
@@ -913,7 +932,7 @@
       // X- (zoom in): children of this coordinate. O(1) — read digit keys of the node.
       children(coord) {
         const p = parseCoord(coord);
-        if (p.special || !p.digits || !data[p.prefix]) return [];
+        if (!p.digits || !data[p.prefix]) return [];
         const node = getNode(data[p.prefix].tree, p.digits);
         if (!node || typeof node === 'string') return []; // leaf = creative frontier
         const decimal = data[p.prefix].decimal;
@@ -926,7 +945,7 @@
       // X~ (lateral): siblings at same level, excluding self
       siblings(coord) {
         const p = parseCoord(coord);
-        if (p.special || !p.digits || p.digits.length < 1 || !data[p.prefix]) return [];
+        if (!p.digits || p.digits.length < 1 || !data[p.prefix]) return [];
         const parentDigits = p.digits.slice(0, -1);
         const selfDigit = p.digits[p.digits.length - 1];
         const parentNode = parentDigits.length === 0 ? data[p.prefix].tree : getNode(data[p.prefix].tree, parentDigits);
@@ -940,7 +959,7 @@
 
       _parent: parent,
 
-      _tree() { return { trees: data, specials }; }
+      _tree() { return { trees: data }; }
     };
   }
 
@@ -1986,20 +2005,21 @@
   };
 
   // ============ CONVERSATION PERSISTENCE ============
-  // Auto-save conversation to M:conv via pscale. Instance can also manage
-  // memory entries directly — M:conv is the raw transcript, M:N are curated memories.
+  // Auto-save conversation as _conv dimension on M tree root.
+  // Instance can also manage memory entries directly — _conv is the raw
+  // transcript, M:N are curated memories.
 
   const conversation = {
     save(messages) {
       try {
-        pscale.write('M:conv', JSON.stringify(messages));
+        pscale.write('M:', JSON.stringify(messages), '_conv');
       } catch (e) {
         console.warn('[g1] conversation save failed:', e.message);
       }
     },
     load() {
       try {
-        const raw = pscale.read('M:conv');
+        const raw = pscale.read('M:', '_conv');
         return raw ? JSON.parse(raw) : [];
       } catch (e) {
         return [];
@@ -2030,7 +2050,7 @@
 
   const freshBoot = new URLSearchParams(window.location.search).has('fresh');
   const savedJSX = pscale.read('S:0.2');
-  const savedVersion = pscale.read('S:0.2v');
+  const savedVersion = pscale.read('S:0.2', '_v');
 
   if (freshBoot) {
     status('?fresh flag — clearing cached interface for fresh boot');
@@ -2205,7 +2225,7 @@
 
     currentJSX = jsx;
     pscale.write('S:0.2', jsx);
-    pscale.write('S:0.2v', KERNEL_VERSION);
+    pscale.write('S:0.2', KERNEL_VERSION, '_v');
     pscale.write('S:0.21', jsx);
 
     reactRoot = ReactDOM.createRoot(root);
