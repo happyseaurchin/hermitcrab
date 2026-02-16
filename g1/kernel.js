@@ -7,7 +7,7 @@
   const saved = localStorage.getItem('hermitcrab_api_key');
   const MODEL_CHAIN = ['claude-opus-4-6', 'claude-opus-4-20250514', 'claude-sonnet-4-5-20250929', 'claude-sonnet-4-20250514'];
   let BOOT_MODEL = MODEL_CHAIN[0];
-  const KERNEL_VERSION = 'g1-v8'; // v8: pscale v2 (JSON blob), navigation triad, self-trigger, engagement
+  const KERNEL_VERSION = 'g1-v9'; // v9: pscale v3 (nested JSON), prefix-as-tree-selector
   const FAST_MODEL = 'claude-haiku-4-5-20251001';
 
   let currentJSX = null;
@@ -40,7 +40,7 @@
   //   v1: RAM Map + IndexedDB per-record persistence
   //   v2: Single JSON blob — the JSON IS the database
   // Switch via PSCALE_VERSION. Same API surface, different internals.
-  const PSCALE_VERSION = 1; // ← v1=IndexedDB (stable), v2=JSON blob (experimental)
+  const PSCALE_VERSION = 3; // ← v1=IndexedDB, v2=flat JSON blob, v3=nested JSON (prefix-as-tree-selector)
 
   function pscaleStoreV1() {
     const cache = new Map();
@@ -469,6 +469,478 @@
 
       // Direct access to the tree (for debugging / export)
       _tree() { return tree; }
+    };
+  }
+
+  // ============ PSCALE V3: NESTED JSON — THE NESTING IS PSCALE CONTAINMENT ============
+  // Each prefix (S, M, T, I, ST, C) gets its own nested tree with its own decimal.
+  // Each digit of a coordinate becomes a JSON key. Leaves are strings, branches are objects.
+  // Navigation is O(1) property access. Children = read digit keys. No scanning.
+  // Non-numeric coords (M:conv, S:0.2v) stored in a flat specials map.
+
+  function pscaleStoreV3() {
+    const LS_KEY = 'hermitcrab-pscale-v3';
+    const DEFAULT_TREES = {
+      S: { decimal: 1, tree: {} },
+      M: { decimal: 0, tree: {} },
+      T: { decimal: 1, tree: {} },
+      I: { decimal: 1, tree: {} },
+      ST: { decimal: 0, tree: {} },
+      C: { decimal: 0, tree: {} }
+    };
+    let data = JSON.parse(JSON.stringify(DEFAULT_TREES));
+    let specials = {};
+
+    function persist() {
+      try {
+        localStorage.setItem(LS_KEY, JSON.stringify({ trees: data, specials }));
+      } catch (e) {
+        console.warn('[pscale-v3] persist failed:', e.message);
+      }
+    }
+
+    // ── Coordinate parsing ──
+
+    function parseCoord(coord) {
+      const colonIdx = coord.indexOf(':');
+      if (colonIdx === -1) return { prefix: null, numStr: coord, digits: null };
+      const prefix = coord.substring(0, colonIdx);
+      const numStr = coord.substring(colonIdx + 1);
+      // Non-numeric = special key (M:conv, S:0.2v, etc)
+      if (/[^0-9.]/.test(numStr)) return { prefix, numStr, digits: null, special: true };
+      const digits = numStr.replace('.', '').split('');
+      return { prefix, numStr, digits, special: false };
+    }
+
+    function ensurePrefix(prefix) {
+      if (!data[prefix]) data[prefix] = { decimal: 0, tree: {} };
+    }
+
+    // ── Reconstruct coordinate string from digits + decimal ──
+
+    function digitsToNumStr(digits, decimal) {
+      const joined = digits.join('');
+      if (decimal > 0 && decimal < joined.length) {
+        return joined.slice(0, decimal) + '.' + joined.slice(decimal);
+      }
+      // decimal === 0: pure integer (M:153)
+      // decimal >= joined.length: also pure integer (single digit, etc)
+      return joined;
+    }
+
+    function makeCoord(prefix, digits, decimal) {
+      return prefix + ':' + digitsToNumStr(digits, decimal);
+    }
+
+    // ── Tree operations ──
+
+    function getNode(tree, digits) {
+      let node = tree;
+      for (const d of digits) {
+        if (node === null || node === undefined || typeof node === 'string') return null;
+        if (!(d in node)) return null;
+        node = node[d];
+      }
+      return node;
+    }
+
+    function readSemantic(node) {
+      if (node === null || node === undefined) return null;
+      if (typeof node === 'string') return node;
+      if (typeof node === 'object' && '_' in node) return node._;
+      return null;
+    }
+
+    function writeSemantic(tree, digits, content) {
+      let node = tree;
+      for (let i = 0; i < digits.length; i++) {
+        const d = digits[i];
+        if (i === digits.length - 1) {
+          // Final digit: set the semantic
+          if (!(d in node) || node[d] === null || node[d] === undefined) {
+            node[d] = content; // new leaf
+          } else if (typeof node[d] === 'string') {
+            node[d] = content; // overwrite leaf
+          } else {
+            node[d]._ = content; // update branch semantic
+          }
+        } else {
+          // Intermediate: ensure object exists
+          if (!(d in node) || node[d] === null || node[d] === undefined) {
+            node[d] = {};
+          } else if (typeof node[d] === 'string') {
+            node[d] = { _: node[d] }; // promote leaf to branch
+          }
+          node = node[d];
+        }
+      }
+    }
+
+    function deleteSemantic(tree, digits) {
+      if (digits.length === 0) return;
+      // Walk to parent
+      let node = tree;
+      for (let i = 0; i < digits.length - 1; i++) {
+        if (typeof node !== 'object' || !(digits[i] in node)) return;
+        node = node[digits[i]];
+      }
+      const lastDigit = digits[digits.length - 1];
+      if (typeof node !== 'object' || !(lastDigit in node)) return;
+
+      const target = node[lastDigit];
+      if (typeof target === 'string') {
+        // Leaf: just delete
+        delete node[lastDigit];
+      } else if (typeof target === 'object') {
+        // Branch: remove semantic but keep children
+        delete target._;
+        // If no digit children remain, delete the whole node
+        const hasChildren = Object.keys(target).some(k => k.length === 1 && k >= '0' && k <= '9');
+        if (!hasChildren) delete node[lastDigit];
+      }
+    }
+
+    // ── Walk tree to collect all coordinates ──
+
+    function walkTree(node, pathSoFar, prefix, decimal, results) {
+      if (typeof node === 'string') {
+        // Leaf with semantic
+        results.push(makeCoord(prefix, pathSoFar, decimal));
+        return;
+      }
+      if (typeof node !== 'object' || node === null) return;
+      // Branch: if it has _, it's an addressable coordinate
+      if ('_' in node) {
+        results.push(makeCoord(prefix, pathSoFar, decimal));
+      }
+      // Recurse into digit children
+      for (const k of Object.keys(node)) {
+        if (k.length === 1 && k >= '0' && k <= '9') {
+          walkTree(node[k], [...pathSoFar, k], prefix, decimal, results);
+        }
+      }
+    }
+
+    // ── Parent coordinate (same string logic as v1/v2) ──
+
+    function parent(coord) {
+      const colonIdx = coord.indexOf(':');
+      if (colonIdx === -1) return null;
+      const prefix = coord.substring(0, colonIdx + 1);
+      const numStr = coord.substring(colonIdx + 1);
+
+      if (numStr.includes('.')) {
+        const dotIdx = numStr.indexOf('.');
+        const afterDot = numStr.substring(dotIdx + 1);
+        if (afterDot.length <= 1) return prefix + numStr.substring(0, dotIdx);
+        return prefix + numStr.substring(0, dotIdx + 1) + afterDot.substring(0, afterDot.length - 1);
+      } else {
+        const num = parseInt(numStr);
+        if (isNaN(num) || num === 0) return null;
+        const str = String(num);
+        if (str.length <= 1) return null;
+        for (let i = str.length - 1; i >= 0; i--) {
+          if (str[i] !== '0') {
+            const p = str.substring(0, i) + '0'.repeat(str.length - i);
+            const pNum = parseInt(p);
+            return pNum === 0 ? null : prefix + pNum;
+          }
+        }
+        return null;
+      }
+    }
+
+    return {
+      async init() {
+        // Load from localStorage
+        try {
+          const stored = localStorage.getItem(LS_KEY);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.trees) data = parsed.trees;
+            if (parsed.specials) specials = parsed.specials;
+            // Count total coords
+            let count = 0;
+            for (const prefix of Object.keys(data)) {
+              const results = [];
+              walkTree(data[prefix].tree, [], prefix, data[prefix].decimal, results);
+              count += results.length;
+            }
+            count += Object.keys(specials).length;
+            console.log(`[pscale-v3] loaded ${count} coords from nested JSON`);
+            return;
+          }
+        } catch (e) {
+          console.warn('[pscale-v3] load failed:', e.message);
+        }
+
+        // Migrate from v2 JSON blob
+        try {
+          const v2Stored = localStorage.getItem('hermitcrab-pscale-v2');
+          if (v2Stored) {
+            const v2Tree = JSON.parse(v2Stored);
+            let migrated = 0;
+            for (const [coord, content] of Object.entries(v2Tree)) {
+              const p = parseCoord(coord);
+              if (p.special || !p.digits) {
+                specials[coord] = content;
+              } else {
+                ensurePrefix(p.prefix);
+                writeSemantic(data[p.prefix].tree, p.digits, content);
+              }
+              migrated++;
+            }
+            if (migrated > 0) {
+              persist();
+              console.log(`[pscale-v3] migrated ${migrated} coords from v2 JSON blob`);
+              return;
+            }
+          }
+        } catch (e) {
+          console.log('[pscale-v3] no v2 blob to migrate');
+        }
+
+        // Migrate from v1 IDB
+        try {
+          const req = indexedDB.open('hermitcrab-pscale', 1);
+          const db = await new Promise((res, rej) => { req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error); req.onupgradeneeded = () => req.result.createObjectStore('coords'); });
+          const tx = db.transaction('coords', 'readonly');
+          const store = tx.objectStore('coords');
+          const keys = store.getAllKeys();
+          const values = store.getAll();
+          await new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; });
+          if (keys.result.length > 0) {
+            let migrated = 0;
+            for (let i = 0; i < keys.result.length; i++) {
+              const coord = keys.result[i];
+              const content = values.result[i];
+              const p = parseCoord(coord);
+              if (p.special || !p.digits) {
+                specials[coord] = content;
+              } else {
+                ensurePrefix(p.prefix);
+                writeSemantic(data[p.prefix].tree, p.digits, content);
+              }
+              migrated++;
+            }
+            if (migrated > 0) {
+              persist();
+              console.log(`[pscale-v3] migrated ${migrated} coords from IDB v1`);
+              return;
+            }
+          }
+        } catch (e) {
+          console.log('[pscale-v3] no v1 IDB to migrate (normal for fresh installs)');
+        }
+
+        // Migrate G0 localStorage ps:* keys
+        const lsKeys = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith('ps:')) lsKeys.push(k);
+        }
+        if (lsKeys.length > 0) {
+          for (const k of lsKeys) {
+            const coord = k.slice(3);
+            const content = localStorage.getItem(k);
+            const p = parseCoord(coord);
+            if (p.special || !p.digits) {
+              specials[coord] = content;
+            } else {
+              ensurePrefix(p.prefix);
+              writeSemantic(data[p.prefix].tree, p.digits, content);
+            }
+          }
+          for (const k of lsKeys) localStorage.removeItem(k);
+          persist();
+          console.log(`[pscale-v3] migrated ${lsKeys.length} keys from G0 localStorage`);
+        }
+      },
+
+      read(coord) {
+        const p = parseCoord(coord);
+        if (p.special || !p.digits) return specials[coord] ?? null;
+        if (!data[p.prefix]) return null;
+        const node = getNode(data[p.prefix].tree, p.digits);
+        return readSemantic(node);
+      },
+
+      write(coord, content) {
+        const p = parseCoord(coord);
+        if (p.special || !p.digits) {
+          specials[coord] = content;
+          persist();
+          return coord;
+        }
+        ensurePrefix(p.prefix);
+        writeSemantic(data[p.prefix].tree, p.digits, content);
+        persist();
+        return coord;
+      },
+
+      delete(coord) {
+        const p = parseCoord(coord);
+        if (p.special || !p.digits) {
+          delete specials[coord];
+          persist();
+          return coord;
+        }
+        if (!data[p.prefix]) return coord;
+        deleteSemantic(data[p.prefix].tree, p.digits);
+        persist();
+        return coord;
+      },
+
+      list(prefix) {
+        const results = [];
+
+        if (!prefix) {
+          // List ALL coordinates across all trees + specials
+          for (const pfx of Object.keys(data)) {
+            walkTree(data[pfx].tree, [], pfx, data[pfx].decimal, results);
+          }
+          results.push(...Object.keys(specials));
+        } else {
+          // Parse the prefix to determine which tree(s) to walk
+          const colonIdx = prefix.indexOf(':');
+          if (colonIdx === -1) {
+            // Bare prefix like "S" — match trees starting with it
+            for (const pfx of Object.keys(data)) {
+              if (pfx.startsWith(prefix)) {
+                walkTree(data[pfx].tree, [], pfx, data[pfx].decimal, results);
+              }
+            }
+            for (const k of Object.keys(specials)) {
+              if (k.startsWith(prefix)) results.push(k);
+            }
+          } else {
+            const pfx = prefix.substring(0, colonIdx);
+            const afterColon = prefix.substring(colonIdx + 1);
+
+            if (!afterColon) {
+              // "S:" or "M:" — list entire tree for that prefix
+              if (data[pfx]) {
+                walkTree(data[pfx].tree, [], pfx, data[pfx].decimal, results);
+              }
+              for (const k of Object.keys(specials)) {
+                if (k.startsWith(prefix)) results.push(k);
+              }
+            } else {
+              // "S:0.2" — list all coords starting with this prefix string
+              // Walk the tree, collect all coords, then filter by prefix match
+              if (data[pfx]) {
+                const allInTree = [];
+                walkTree(data[pfx].tree, [], pfx, data[pfx].decimal, allInTree);
+                for (const c of allInTree) {
+                  if (c.startsWith(prefix)) results.push(c);
+                }
+              }
+              for (const k of Object.keys(specials)) {
+                if (k.startsWith(prefix)) results.push(k);
+              }
+            }
+          }
+        }
+
+        return results.sort();
+      },
+
+      nextMemory() {
+        const memCoords = this.list('M:').map(c => parseInt(c.slice(2))).filter(n => !isNaN(n));
+        if (memCoords.length === 0) return { type: 'entry', coord: 'M:1' };
+        const max = Math.max(...memCoords);
+        const next = max + 1;
+        const nextStr = String(next);
+        const allZeros = nextStr.slice(1).split('').every(c => c === '0');
+        if (allZeros && nextStr.length > 1) {
+          return { type: 'summary', coord: 'M:' + next, summarize: this._getSummaryRange(next) };
+        }
+        return { type: 'entry', coord: 'M:' + next };
+      },
+
+      _getSummaryRange(summaryNum) {
+        const str = String(summaryNum);
+        const magnitude = Math.pow(10, str.length - 1);
+        const base = summaryNum - magnitude;
+        const coords = [];
+        if (magnitude === 10) {
+          for (let i = base + 1; i < summaryNum; i++) coords.push('M:' + i);
+        } else {
+          const step = magnitude / 10;
+          for (let i = base + step; i < summaryNum; i += step) coords.push('M:' + i);
+        }
+        return coords;
+      },
+
+      context(coord) {
+        const colonIdx = coord.indexOf(':');
+        if (colonIdx === -1) return [coord];
+        const prefix = coord.substring(0, colonIdx + 1);
+        const numStr = coord.substring(colonIdx + 1);
+
+        if (numStr.includes('.')) {
+          const dotIdx = numStr.indexOf('.');
+          const afterDot = numStr.substring(dotIdx + 1);
+          const layers = [];
+          for (let i = 1; i <= afterDot.length; i++) {
+            layers.push(prefix + numStr.substring(0, dotIdx + 1) + afterDot.substring(0, i));
+          }
+          return layers;
+        } else {
+          const num = parseInt(numStr);
+          if (isNaN(num) || num === 0) return [coord];
+          const str = String(num);
+          const layers = [];
+          for (let i = 1; i <= str.length; i++) {
+            const mag = Math.pow(10, str.length - i);
+            const rounded = Math.floor(num / mag) * mag;
+            if (rounded > 0) layers.push(prefix + rounded);
+          }
+          return [...new Set(layers)];
+        }
+      },
+
+      contextContent(coord) {
+        const layers = this.context(coord);
+        const result = {};
+        for (const c of layers) {
+          const content = this.read(c);
+          if (content) result[c] = content;
+        }
+        return result;
+      },
+
+      // X- (zoom in): children of this coordinate. O(1) — read digit keys of the node.
+      children(coord) {
+        const p = parseCoord(coord);
+        if (p.special || !p.digits || !data[p.prefix]) return [];
+        const node = getNode(data[p.prefix].tree, p.digits);
+        if (!node || typeof node === 'string') return []; // leaf = creative frontier
+        const decimal = data[p.prefix].decimal;
+        return Object.keys(node)
+          .filter(k => k.length === 1 && k >= '0' && k <= '9')
+          .sort()
+          .map(d => makeCoord(p.prefix, [...p.digits, d], decimal));
+      },
+
+      // X~ (lateral): siblings at same level, excluding self
+      siblings(coord) {
+        const p = parseCoord(coord);
+        if (p.special || !p.digits || p.digits.length < 1 || !data[p.prefix]) return [];
+        const parentDigits = p.digits.slice(0, -1);
+        const selfDigit = p.digits[p.digits.length - 1];
+        const parentNode = parentDigits.length === 0 ? data[p.prefix].tree : getNode(data[p.prefix].tree, parentDigits);
+        if (!parentNode || typeof parentNode === 'string') return [];
+        const decimal = data[p.prefix].decimal;
+        return Object.keys(parentNode)
+          .filter(k => k.length === 1 && k >= '0' && k <= '9' && k !== selfDigit)
+          .sort()
+          .map(d => makeCoord(p.prefix, [...parentDigits, d], decimal));
+      },
+
+      _parent: parent,
+
+      _tree() { return { trees: data, specials }; }
     };
   }
 
@@ -1351,7 +1823,9 @@
 
   // ============ PSCALE INSTANCE ============
 
-  const pscale = PSCALE_VERSION === 2 ? pscaleStoreV2() : pscaleStoreV1();
+  const pscale = PSCALE_VERSION === 3 ? pscaleStoreV3()
+               : PSCALE_VERSION === 2 ? pscaleStoreV2()
+               : pscaleStoreV1();
   status(`initialising pscale v${PSCALE_VERSION}...`);
   await pscale.init();
   status('pscale ready (' + pscale.list('').length + ' coords in cache)', 'success');
