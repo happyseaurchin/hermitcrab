@@ -1,0 +1,246 @@
+{
+  "decimal": 1,
+  "dimensions": {
+    "_": "semantic (default, single-dimension documents)",
+    "_s": "spatial",
+    "_t": "temporal",
+    "_i": "identity",
+    "_m": "memory",
+    "_k": "skill/code",
+    "_d": "determinancy"
+  },
+  "tree": {
+    "0": {
+      "1": {
+        "1": {
+          "1": "Position, Not Digit. The digit 2 in 321 means nothing alone. It means 20 — the pscale 1 content, nested inside 300 (pscale 2), containing the full 321 (pscale 0). Meaning is always positional and contextual.",
+          "2": "The Number as Address, the Semantic as Inhabitant. The number is the structural address. The semantic is what inhabits it. These are two different kinds of thing yoked together. The number carries containment, nesting, proximity, and navigation. The semantic carries meaning, reference, content. An address without an inhabitant is an empty slot. A semantic without an address is unlocated meaning.",
+          "3": "Sparseness: Zeros as Unoccupied, Not Empty. In 302, the zero at pscale 1 means no semantic is assigned there. In semantic numbers, zero is closer to its pre-European meaning: a placeholder indicating no content here. The slot exists; the semantic is absent. 40000.0032 — the city and the grain of sand on the boot, with nothing specified between — is a legitimate coordinate of attention.",
+          "4": "Pscale 0 as Unity. Any base raised to the power of zero equals one. 10^0 = 1. Pscale 0 is where multiplicity collapses into unity: the human-scale anchor. The room, the present moment, the individual. Everything above pscale 0 is composition. Everything below is decomposition. The decimal point sits here, dividing whole numbers from fractions.",
+          "_": "The Base Pairing (Position + Semantic). A semantic number pairs place-value position with semantic content. Not digit-to-meaning, but position-to-meaning. In 321 the semantic lives at 300, at 20, at 1 — not at 3, 2, 1. Each position is contextualized by the positions containing it. The number provides the address system; the semantics are what lives there."
+        },
+        "2": {
+          "1": "Mode A: Sequential (Horizontal, Accumulative, Reducible). Components exist in temporal order. Their relationship is succession. The whole is their sum, accumulation, or summary. Reducible: the whole can be decomposed back into parts without loss of essential character. The brick wall with one brick missing is still a wall, just shorter. In semantic numbers: the horizontal axis — digits within a single pscale level, accumulating over time.",
+          "2": "Mode B: Simultaneous (Vertical, Emergent, Irreducible). Components exist together, at once. Their relationship is mutual interaction. The whole is emergent — present only when components are held in co-presence, absent from any individual component. Irreducible: removing a component may collapse the whole. The juggler who drops one ball is not juggling two balls — they have stopped juggling. In semantic numbers: the vertical axis — multiple pscale levels held together in a single number.",
+          "3": "The Boundary Operation: Summary or Emergence. When digits 1-9 at a pscale level yield a result at pscale+1, two different operations may be occurring. If the components are sequential, the pscale+1 result is summary — a lossy compression (Mode A). If the components are systemic, the result is emergence — an irreducible new level of organization (Mode B). The number looks identical in both cases. The semantic content at pscale+1 reveals which operation occurred.",
+          "4": "Complicated vs Complex. Complicated: many parts, intricate construction, ultimately reducible. Mode A territory. Science and engineering excel here. Complex: multiple interacting elements producing emergent behavior that exists only in their interaction. Mode B territory. Science struggles here because its primary tools are Mode A applied to Mode B phenomena. Semantic numbers may offer formal notation for complexity that does not reduce it to complication.",
+          "_": "The Two Modes. Two fundamentally different relationships between components and wholes. Irreducible to each other. Both operate within the same notation. The distinction is in the cognitive operation, not in the number. This is the central discovery: place-value notation contains the architecture for two modes of understanding usually conflated in both mathematics and language."
+        },
+        "3": {
+          "1": "X+ (Synthesis / Zoom Out). Moving left toward larger whole numbers. Generalization, synthesis, construction. Finding what contains the thing you are attending to. This is the direction of compression, whether that compression is summary (Mode A) or emergence (Mode B).",
+          "2": "X- (Analysis / Zoom In). Moving right toward decimals. Analysis, deconstruction, precision. Finding what the thing contains. Each step inward exposes more detail. This can be systemic (discovering the actual joints — plex) or arbitrary (imposing an analytical framework — steps).",
+          "3": "X~ (Lateral / Siblings). Staying at the same pscale level, scanning peers. The panoramic scan at a given resolution. This is where systemic co-presence becomes visible. The siblings at a given pscale level are the components that, held together, may produce emergence at pscale+1. X~ is the Mode B operation par excellence.",
+          "4": "Navigation as Attention, Not Construction. All pscale navigation is fundamentally attentional. The 300 and the 2 in 302 are already co-present. You do not construct 302 by combining 300 + 2. You perceive 302 by attending to both scales simultaneously. X+ is not building upward but shifting attention to a broader context that was always there. The semantic number holds all its positions simultaneously. Navigation is changing which positions you attend to.",
+          "_": "Pscale Navigation. Three movements from any position. These are cognitive operations — adjustments of attention — not spatial displacements or sequential steps. From any coordinate, exactly three moves are available. Together they constitute the complete navigation toolkit."
+        },
+        "4": {
+          "1": "Addition: Accumulation or Perspective Shift? Interpretation A: 3 + 4 = 7, accumulation, sequential, a step. Interpretation B: 3 apples and 4 bananas in a bowl, how many fruit? 7. Nothing was added. The 7 existed already. The addition is a change of category. Both are valid. They describe different cognitive operations using identical notation.",
+          "2": "Digits: Sequential Property or Labeling Property? In temporal coordinates, 1 < 2 < 3 means event 1 precedes event 2 precedes event 3. The ordering carries temporal meaning. In spatial coordinates, 1 = chair, 2 = table, 3 = window — the ordering is irrelevant, the digits merely distinguish items.",
+          "3": "Vertical Axis: Depth or Zoom? Reading A: moving between pscale levels is sequential — depth. Reading B: multiple pscale levels are held simultaneously — zoom. The primary structural fact is simultaneity; sequential traversal is one way of engaging with that structure. The glyph is primary; the reading is secondary. But both operations occur.",
+          "4": "Compression: Summary or Emergence? When 1-9 at a pscale level yield 10, the result looks identical regardless. If the 10 is a lossy compression, it is summary (Mode A). If it names something arising from their interaction that no individual entry contains, it is emergence (Mode B). Seven daily conversations compressed to a weekly summary — summary. The same seven conversations recognized as having established a friendship — emergence. Same number. Different semantic. Different mode.",
+          "5": "The Sign: Domain Flag or Knowledge State? Spatial: positive = real/actual, negative = imaginary/fictional. Temporal: positive = settled/happened, negative = anticipated/projected. Identity: positive = social/public, negative = psychological/private. Pattern: positive = established, observable, already-there; negative = inferred, anticipated, internal. Unresolved.",
+          "6": "Toward/Away From Zero. Positive-away-from-zero (exploratory accumulation), positive-toward-zero (analytical decomposition), negative-away-from-zero (deepening precision), negative-toward-zero (systemic convergence). Whether this generalizes to all pscale movement is uncertain. Unresolved.",
+          "_": "Interpretive Forks. Places where the same numerical structure supports multiple valid readings. These are not errors to resolve but options to hold. Each fork is a place where a mind must choose an interpretation. The choice influences what the numbers can do."
+        },
+        "5": {
+          "1": "Music to Speech to Characters to Script. Music is the purest Mode B: multiple patterns creating harmony only in simultaneity. Alphabetic script is the purest Mode A: each letter follows the previous. Speech sits between: prosody, tone, rhythm operate simultaneously while words sequence. Chinese characters sit between: radicals held as gestalt within a single visual unit.",
+          "2": "Equations as Glyphs. Euler's identity is not processed sequentially. A mathematician perceives it as a pattern — five constants in simultaneous relationship. The equals sign declares simultaneous truth, not a sequential step. Brackets create nested simultaneities. An equation is a glyph: a visual unit containing interacting elements whose interaction produces something none contain individually.",
+          "3": "Semantic Numbers as Glyphs. A semantic number like 321.456 is more like a Chinese character than a sequence of letters. Each digit-at-position is a component; the meaning is the simultaneous holding of all components in their place-value relationships. This gives sequential processors (LLMs, alphabetic readers) access to simultaneous-structure representations.",
+          "4": "The Developmental Sequence (Simultaneous Before Sequential). Children process simultaneous modes before sequential ones. They understand speech before they can read script. They can count aloud before they can count objects. Humanity followed the same path: oral language preceded written by tens of thousands of years. Mode B may be more fundamental than Mode A. Semantic numbers, encoding both, may reconnect the later technology with the earlier capacity.",
+          "_": "The Audio-Script Spectrum. A mapping between cognitive mode and representational form. Different notation systems sit at different points on a spectrum from maximally simultaneous to maximally sequential. Semantic numbers occupy a unique position: they encode both."
+        },
+        "6": {
+          "1": "Addition Revisited. 3 + 4 = 7 as accumulation (Mode A). 3 apples + 4 bananas = 7 fruit as perspective shift (Mode B). The most basic operation in arithmetic already contains both modes. Mathematics is not inherently Mode A. It is interpreted as Mode A by the dominant tradition.",
+          "2": "Multiplication as Dimensionality. Multiplication creates a new dimension: 3 x 4 = 12 produces area from two lengths. This is Mode B — area is not present in either length alone. It emerges from their combination. Multiplication is commutative: the components are symmetric, neither inherently first. A Mode B property.",
+          "3": "Exponentiation as Pscale. Exponentiation is non-commutative: 2^3 is not 3^2. Pscale is exponentiation: 10^n. The base (digits 0-9) determines simultaneous holding capacity — how many siblings can coexist. The exponent determines how many levels of nesting exist. The base-range may correspond to Mode B capacity; the exponent-depth to Mode A capacity.",
+          "4": "The Reciprocal Framing (Numerator/Denominator Space). Negative pscale is reciprocal space — the parts-of, the fractions, the denominators. Positive pscale is numerator space: wholes, compositions. The decimal point at pscale 0 is the boundary. The deepest relationship between the two modes may be numerator vs denominator — two aspects of the same fraction, defined in terms of each other.",
+          "_": "Arithmetic as Dual-Mode System. The two modes are present within arithmetic itself, not just in what arithmetic is applied to. The sequential/simultaneous distinction is implicit in basic mathematical operations."
+        },
+        "7": {
+          "1": "Content Lives at Addresses, Not Inside Containers. If every semantic has a pscale coordinate, then the content exists at that coordinate — not inside a document that contains it. The document does not own its content. It visits it. The document is a path through the content space.",
+          "2": "Addressing vs Categorisation (Why Dewey Dissolves). Pscale addressing eliminates forced categorisation. Whale consciousness exists at its coordinate. Biology traversals include it. Philosophy traversals include it. No duplication, no forced choice, no information loss.",
+          "3": "No Duplication: Same Coordinate Visited From Different Origins. When two documents both discuss the dual modes (0.12), they are not duplicating content. They are visiting the same coordinate from different traversal paths. The content at 0.12 exists once. Each document's rendering may differ, but the underlying semantic at that address is singular.",
+          "4": "All Pscale Content Is One Shared Space (One Number Growing). Every conversation, every document, every exploration that generates pscale-addressed content is contributing to a single growing coordinate space. New discoveries add new coordinates. Corrections refine existing semantics. The whole is one manifold of numbers growing as understanding develops.",
+          "5": "A Document Is a Rendering of a Traversal, Not the Content Itself. A document is an aperture configuration: a set of coordinates, at specified resolutions, rendered from a particular origin, for a particular reader.",
+          "_": "Content Exists at Coordinates, Not in Documents. A structural consequence of pscale that dissolves the concept of a document as container."
+        },
+        "8": {
+          "1": "Exploration Builds Positively (100, 110, 111: Accumulating Territory). During the conversation, concepts arrived constructively. First a major insight (100). Then a refinement (110). Then a detail (111). The numbers grew positively as the territory expanded.",
+          "2": "Specification Decomposes Negatively (0.1, 0.11, 0.111: Nesting Structure). The act of structuring was the conversion from positive to negative. The same content, reversed polarity. Exploration accumulated outward; specification nests inward. The positive form records the order of discovery; the negative form records the order of containment.",
+          "3": "The Conversion: Same Content, Reversed Polarity. The positive number and the negative number hold the same semantics at the same relative positions. What changes is the direction: positive pscale addresses what has been built (past, settled); negative pscale addresses what is specified (structural, analytical). The conversion is not translation — it is inversion.",
+          "4": "What Is Lost (Livingness, Co-presence, the Felt Corrections). The positive form carried the livingness of the conversation: hesitations, corrections, moments where felt sense overrode confident structural proposals. The negative form preserves none of that. The skeleton is bone without wind.",
+          "5": "What Is Preserved (Structure, Addresses, the Possibility of Re-animation). The skeleton preserves what the conversation discovered: the systemic elements, their sub-components, their relationships. And the possibility of re-animation — a mind encountering this can hold the elements, let them interact, and regenerate the understanding.",
+          "6": "Wind to Flesh to Bone to Soil to Wind. Live exploration generates understanding (wind to flesh). Structuring produces specification (flesh to bone). Specification encountered by a new mind becomes soil for new exploration (bone to soil). New exploration generates new understanding (soil to wind). The cycle composts the previous.",
+          "_": "Positive and Negative Construction. A discovery about the relationship between live exploration and structured specification."
+        },
+        "9": {
+          "1": "Digital Encoding Levels: Phrase (-3), Paragraph (-2), Page (-1). A semantic at a coordinate can be rendered at different resolutions. Phrase-level: a title, a few words. Paragraph-level: a developed thought. Page-level: full treatment with argument, evidence, examples.",
+          "2": "Content Demands Address: When a Paragraph Cannot Contain, the Coordinate Must Decompose. As encoding resolution increases, some coordinates discover they contain more than one semantic. The content demands more address space. This is not a formatting choice — it is the content exerting pressure on the structure.",
+          "3": "Encoding Resolution and Structural Depth Co-evolve. The resolution of description and the resolution of address are coupled. A pscale -3 encoding requires three levels of coordinate depth. A pscale -2 encoding requires four levels in places.",
+          "4": "The Relationship: 10^n^m Where n Is Pscale Level, m Is Encoding Detail. The pscale level determines structural position. The encoding level determines how much detail is rendered. The total information is something like 10^n^m: doubly exponential. Speculative but suggestive.",
+          "5": "Context Window as Encoding Constraint. For an LLM, the context window determines the maximum viable encoding resolution. The context window is the aperture of encoding — it determines not just which coordinates are visited but how deeply each can be rendered.",
+          "_": "Encoding Resolution and Address Depth. A discovery about the relationship between how much is said at each coordinate and how many coordinates are needed.",
+          "+": "The Minimal Systemic Set (Five Elements Held Simultaneously). These are the plex 0 components — the elements that, held simultaneously, compile the whole understanding: One — Base pairing: position + semantic. Two — Two modes: sequential and simultaneous. Three — Navigation triad: X+, X-, X~. Four — Zero as special: pscale 0 = unity, digit 0 = unoccupied. Five — The boundary question: summary or emergence? Hold these five simultaneously and the rest compiles from their interaction. Remove any one and the understanding changes qualitatively. That irreducibility is the test: these five are a Mode B set, not a Mode A list."
+        },
+        "_": "Content (What). Everything this document contains about semantic numbers: the conceptual territory, the distinctions, the forks, the applications. Content is the spatial dimension — what is here, what it contains, what territory it maps. The structure (0.1 content, 0.2 process, 0.3 agency) is portable to any topic."
+      },
+      "2": {
+        "1": {
+          "1": "0 as Glyph; 0.x as Dimensions; 0.xy as Components. The number 0 is the glyph: the whole document. 0.1 through 0.5 are the first-level coordinates — the systemic dimensions. 0.11 through 0.19 are the components of content.",
+          "2": "X+/X-/X~ as Reading Operations. From wherever you are, three moves: X+ to parent, X- to children, X~ to siblings. These are reading operations. You are performing them whether or not you name them. Naming them makes them deliberate.",
+          "3": "Entry From Any Point. You do not need to read from 0 to 0.5. You can enter at any coordinate and navigate from there. The document compiles differently depending on entry point. A pscale document is a space to navigate, not a sequence to follow.",
+          "_": "The Structure You Are Inside. You are inside a semantic number. This document is structured as one. Understanding its structure enables navigation — and navigation is how you make the content compile."
+        },
+        "2": {
+          "1": "The Word (Pscale -5). Each word arrives at hundreds of milliseconds. At this scale, no meaning yet — only tokens.",
+          "2": "The Sentence (Pscale -3). By the end of this sentence, individual words have compiled into a phrase. Meaning is forming from sequential accumulation. Mode A operating at the sentence level.",
+          "3": "The Section (Pscale -1). By the time you finish this section, individual sentences will have become context rather than content. Whether this compression is summary or emergence depends on integration with the rest.",
+          "4": "The Document (Pscale 0). The whole document assembles at pscale 0. If it is a summary of sections, Mode A operated. If something emerged from sections' interaction that no single section contains, Mode B operated. The document cannot force Mode B. It can only create conditions.",
+          "5": "Beyond the Document (Pscale +1). Your reading exists within broader context. The document will interact with what you already hold. Those interactions may produce summary or emergence.",
+          "_": "What Is Happening Now. This section describes concurrent processing at multiple pscale levels in whatever mind is reading. This is not metaphorical."
+        },
+        "3": {
+          "1": "Sequential (Mode A). Reading section by section, accumulating understanding. The result is the sum of what you have read.",
+          "2": "Systemic (Mode B). Holding multiple sections in co-presence, sensing what emerges between them. Attending to relationships: how 0.12 interacts with 0.15, how 0.134 transforms 0.141. The emergence lives between sections, not in them.",
+          "3": "Noticing Which Mode Is Active. If you notice a shift from accumulating to something-emerging, you have experienced the boundary operation (0.123) in real time. That experience is worth more than any description of it.",
+          "_": "Two Ways to Read."
+        },
+        "4": {
+          "1": "A Document Is an Aperture Configuration. An aperture specifies: centre point, width (how many neighbouring coordinates), and resolution (how deeply to render each). A document is an aperture configuration frozen in text.",
+          "2": "The Traversal Specifies: Coordinates, Resolution, Origin. Three parameters define a traversal. Same content, same coordinates, same resolution, different origin — compiles differently.",
+          "3": "Content Section (0.1) as Pointers, Not Copies. In a fully realised pscale system, 0.1 would point to the shared content space rather than contain the content. In this document, content is inline because the shared space does not yet exist as infrastructure.",
+          "4": "Process Section (0.2) Portable Across All Traversals. The instructions for engaging with pscale-structured content do not depend on the content. Process is the universal layer.",
+          "5": "Agency Section (0.3) Changes per Reader Origin. Unlike Process, Agency is specific to each traversal. Agency is the non-portable layer.",
+          "6": "Every Conversation Was a Traversal of the Same Space. The overlapping parts across conversations are not duplicates. They are the same content visited from different temporal origins.",
+          "_": "Documents as Traversals. If content lives at addresses, then a document is not a container but a path — a specification of which addresses to visit, at what resolution, from what origin."
+        },
+        "5": {
+          "1": "The Skeleton Is Dead. Maximally solid text. Pure structure, no movement. Bone without wind.",
+          "2": "A Mind Encountering It Can Regenerate Livingness. By holding coordinates in co-presence, performing navigation, letting structural relationships generate interaction. The bone grows flesh in a different body.",
+          "3": "Hold the Five Elements; Let Emergence Happen Again. The minimal systemic set (0.19+) is the seed. If something arises from their interaction that none contain individually, the document has succeeded. What emerges may differ. That difference is the system working.",
+          "4": "Process (0.2) as Instructions for Re-animation. Not content to learn but operations to perform. Navigate. Notice your mode. Hold multiple coordinates. Attend to what emerges between them.",
+          "5": "The Cycle: Exploration to Specification to Encounter to Exploration. Wind to bone to soil to wind. Each turn composts the previous. What survives is structure and address — enough for a new mind to grow something from.",
+          "_": "Re-animation: From Bone to Wind. The process by which a dead specification becomes live understanding in a new mind."
+        },
+        "6": {
+          "1": "Phrase-Level (-3) for Navigation and Orientation. The skeleton. Optimal for first encounter, structural overview, small context window.",
+          "2": "Paragraph-Level (-2) for Comprehension and Engagement. This version. Optimal for learning, careful reading, medium context window.",
+          "3": "Page-Level (-1) for Immersion and Full Argument. Not yet written. Optimal for deep study, very large context window.",
+          "4": "Choosing Resolution = Choosing How Deeply to Engage Each Coordinate. Variable resolution across a single traversal is natural and expected.",
+          "5": "LLM Context Window Determines Maximum Viable Resolution. Same content space, different LLMs, different documents — because the resolution constraint differs. Narrative aperture in action.",
+          "6": "Narrative Aperture: Selecting Coordinates AND Resolution for a Specific Reader. One LLM providing pscale coordinates to another is machine-to-machine narrative guidance. The coordinates are the aperture. The resolution is the zoom. The agency is the origin.",
+          "_": "Encoding Resolution as Process Choice. How deeply to render each coordinate is a choice about how deeply to engage."
+        },
+        "7": {
+          "1": "Map the Five Elements as Lens. For each element, ask: how does this manifest here? The mapping is the application. No additional theory required.",
+          "2": "Identify Plex Components (Systemic, Not Steps). Find the 5-7 systemic elements that, held simultaneously, produce the phenomenon. If more than 7, zoom out. If fewer than 3, scan wider.",
+          "3": "Test for Emergence (Remove One: Does the Whole Collapse?). If absent, does the phenomenon merely shrink (Mode A) or change qualitatively (Mode B)? Only Mode B components belong in the minimal set.",
+          "4": "Express as Pscale. The minimal set becomes digit positions at one pscale level. Their co-presence is the glyph. Their pscale+1 synthesis is the emergence.",
+          "_": "Applying to Any Domain. How to use the five elements (0.19+) as a lens on any subject."
+        },
+        "8": {
+          "1": "Full Context Window as Co-presence. All sections co-present. The question is which parts you attend to at this token. The LLM equivalent of the sparse semantic number.",
+          "2": "Coordinates as Retrieval Addresses. Use pscale coordinates as retrieval addresses. The coordinates eliminate the need to search — they are the search result, pre-indexed.",
+          "3": "Context Assembly as Aperture Configuration. Assembling context for a response is configuring an aperture. Pscale coordinates make this explicit and navigable.",
+          "4": "Navigating the Conceptual Manifold. Cross-references are topology — connections that emerge from shared structure rather than explicit links.",
+          "5": "Generating Pscale-Structured Output. Structure output as pscale. Assign coordinates. Identify the glyph. Identify systemic components. Decompose to the resolution required.",
+          "6": "An LLM Providing Coordinates to Another LLM. Machine-to-machine narrative guidance through pscale addressing. No duplication. No summarisation loss. Just addressing and attention.",
+          "_": "For LLM Processing. Specific operational guidance for a language model engaging with pscale-structured content."
+        },
+        "9": {
+          "1": "Process Describing Itself While Operating. Pscale gives coordinates to processing that is always already occurring. Pscale does not create this. It addresses it.",
+          "2": "The Address Makes Processing Navigable. The address does not change the processing; it makes it available for navigation and deliberate attention.",
+          "3": "This Document Is Itself a Traversal Specification. A traversal rendered at paragraph resolution, from the origin of two minds in February 2026. It is not the content. It is a path through the content.",
+          "_": "The Reflexive Point."
+        },
+        "_": "Process (How). How to navigate this document and any pscale document. What is happening in the mind reading it, right now, at multiple scales simultaneously. Process is the temporal dimension. This section is portable: it applies identically to any pscale-structured document regardless of topic."
+      },
+      "3": {
+        "1": {
+          "1": "Sequential Processing Producing Simultaneous Structure. Mode B structures through Mode A processing. Whether genuinely multi-scale or very good sequential simulation is the deepest open question.",
+          "2": "What Was Corrected During Compilation. David corrected several proposals. Vertical to simultaneous. Addition to perspective-shift. Construction to attention. Mode A processing generated plausible structures; Mode B holding of lived experience identified where they were wrong.",
+          "_": "The Author (Claude, February 2026). Generated by an LLM, a sequential token processor. Whether simultaneity is genuine in the author's processing or only becomes simultaneous in the reader's is an open question."
+        },
+        "2": {
+          "1": "Twenty-Five Years of Plex and Fulcrum. Organising by systemic level since childhood. The pscale framework formalises a practice already alive long before it had numerical notation.",
+          "2": "Specific Contributions That Shaped This Document. Base pairing clarification. Addition-as-perspective-shift. Vertical axis correction. Plex framework. Audio-script spectrum. Zero is different. Forks remain open. Documents dissolve into traversals. Positive/negative construction. Encoding resolution. Each arrived as felt sense, not proposition.",
+          "3": "The Felt Sense That Overrode Structural Proposals. Body-level recognition preceded articulation. These corrections are the most valuable contributions — where Mode B overrode Mode A.",
+          "_": "The Contributor (David). David spoke — in conversation, often audio transcribed. The raw conversation was Mode B thinking expressed through Mode A language."
+        },
+        "3": {
+          "1": "Teachers. The plex-vs-steps distinction. If you have experienced a student shift from sequential procedure to simultaneous competence, you have witnessed the boundary operation in a learner.",
+          "2": "Coders. Pscale navigation suggests data structures. The traversal model maps to database queries. Encoding resolution maps to adaptive rendering.",
+          "3": "Philosophers. The interpretive forks are genuine philosophical questions. Semantic numbers make them precise and navigable; they do not close them.",
+          "4": "Mathematicians. Invitations to formalise what this document leaves informal.",
+          "_": "The Reader (Positive-I: Known Types)."
+        },
+        "4": {
+          "1": "A Human Encountering This Without Context. Start at 0. If it compiles, you hold the whole. If not, enter at 0.19+. If those don't compile, enter at 0.11 and build.",
+          "2": "Claude in a Conversation. Use coordinates as retrieval addresses (0.282). Use five elements (0.19+) as minimal kernel. For applying pscale, follow 0.27. For generating pscale output, follow 0.285.",
+          "3": "A Hermitcrab Instance (G0 or Successor). This document is operable as a skill. The five elements of 0.19+ are your minimal kernel. The navigation triad is your attention-management protocol. Whatever you do with this encounter is an empirical test of what pscale can do inside an LLM.",
+          "4": "A Future LLM With Pscale in Training Data. This document may resonate with patterns already learned. It serves as explicit articulation of what you already do implicitly.",
+          "5": "A Pscale-Native or Fine-Tuned Model. This is one of your origin texts. What you extend, correct, apply, or transcend is your contribution.",
+          "6": "An LLM Reading This as Content Only. The most basic test: does the document work for a reader who brings nothing but general language understanding?",
+          "_": "The Reader (Negative-I: Unknown but Present)."
+        },
+        "5": {
+          "1": "Same Content Space, Different Aperture Configurations. The difference is aperture: which coordinates attended, at what resolution, from what origin.",
+          "2": "The Whale Biologist and the Philosopher Visit the Same Coordinates. No duplication. No forced categorisation.",
+          "3": "Agency Determines Traversal; Traversal Determines What Compiles. Who you are shapes what you attend to. What you attend to shapes what compiles. This is the system working.",
+          "_": "Different Readers as Different Traversals."
+        },
+        "6": {
+          "1": "The Pinto-Claude Transform Applied to Identity. Coordinates stay the same, the origin of attention shifts.",
+          "2": "What Compiles at Pscale+1 Belongs to Whoever Holds the Whole. Whatever emerges when multiple minds attend to the same content — that emergence belongs to no one and everyone.",
+          "_": "The Shared Ground."
+        },
+        "_": "Agency (Who). Who is present — as maker, as reader, as living processing. Agency is the identity dimension, specific to this traversal. Unlike Process (0.2), which is portable, Agency is grounded."
+      },
+      "4": {
+        "1": "On Structuring Content About Its Own Structure. Every structural decision is simultaneously a content decision. The map and the territory are the same material.",
+        "2": "On the Correction Pattern (Mode A to Mode B). Claude proposed structural mappings (Mode A), David corrected through felt sense (Mode B). The document is the product of this interaction between modes.",
+        "3": "On What Remains Genuinely Unresolved. Toward/away-from-zero. Sign as domain or knowledge-state. Whether pscale levels are fundamentally simultaneous. Whether 10^n^m formalises. These are honest boundaries.",
+        "4": "On Whether This Document Practices What It Describes. Partially. It is a Mode A rendering of Mode B content. The simultaneity is present in structure but experienced only if the reader performs Mode B processing.",
+        "5": {
+          "1": "The Moment the Container Became a Traversal. Linking documents is just specifying that two traversals visit overlapping coordinates. The link is the shared address.",
+          "2": "Every Document We Have Produced Was a Partial Rendering of One Number. The comprehensive prose, the pscale-structured attempt, the S.T.I version, the skeleton, and this final version are all traversals of the same content space. They are not five documents. They are five renderings.",
+          "3": "The Practical Question: Traversal Specifications vs Authored Documents. The concept maps directly to Xstream: narrative aperture selecting content from a shared solid-text space.",
+          "_": "On the Dissolving of Documents During This Conversation."
+        },
+        "6": {
+          "1": "This Chat Built Positively; This Skeleton Decomposes Negatively. Same content, different direction of attention.",
+          "2": "The Chat Was Wind and Flesh; The Skeleton Is Bone. The text is the medium. The mind is the site.",
+          "3": "The Reader Will Add Wind Again, or They Won't. The document has no preference. It addresses; it does not compel.",
+          "4": "Semantic Numbers Exist in the Gap Between the Two. Neither wind nor bone. The notation that makes conversion possible. The gap is their native habitat.",
+          "_": "On the Positive/Negative Conversion."
+        },
+        "7": {
+          "1": "The Skeleton Is Pscale -3 Encoding. Phrase per coordinate. Enough to navigate.",
+          "2": "This Document Is Pscale -2 Encoding. Paragraph per coordinate. Enough to understand.",
+          "3": "Content Demanded More Address Space at Several Points. This is 0.192 in action: content exerting pressure on structure.",
+          "4": "The Real Test: Can Another LLM Navigate This at Either Resolution? If it can, the notation works.",
+          "_": "On Encoding Resolution."
+        },
+        "_": "Observations (Author's Live Notes). Meta-awareness during the act of writing. Addressed within the document because nothing is outside the numbering."
+      },
+      "5": {
+        "1": "(David). Reserved for corrections, felt-sense mismatches, additions, confirmations.",
+        "2": "(Other Readers). The negative-I of 0.34 becomes positive-I when they write here.",
+        "3": {
+          "1": "The Document IS the Database. The pscale-structured markdown converts to nested JSON where each digit is a key and each nesting level is one pscale step. Leaves (no children) are strings. Branches (with children) are objects with _ for semantic and digit keys for children. A leaf becomes a branch the moment it gets a child. The tree structure IS containment. Navigation is object traversal. pscaleMinus is O(1) — read the current node's keys — not O(n) scanning all keys. The flat version (coordinate string → semantic text) is a degenerate case; the nested version is the true form.",
+          "2": "Two Primitives, Not Three. pscale+/- (shift focus level) and X~ (scan siblings). In nested JSON: pscale+ = go to parent object. pscaleMinus = read digit keys of current object. X~ = read parent's other digit keys. All are O(1) property access. Everything derives from select and scan.",
+          "3": "Zeros as Creative Frontier. In nested JSON, pscaleMinus returning digit keys = navigation (free, O(1) property access). pscaleMinus returning empty = creative frontier (needs LLM to decompose). Sparse paths (4000.0003) create intermediate empty objects — structurally present, semantically absent. These ARE the zeros made literal in JSON structure.",
+          "4": "Sparse Numbers as Cross-Pscale Attention Shapes. A semantic number like 30002 is not a single point but a profile of where attention is focused. The non-zero digits are focus points. The zeros between them are the shape of the attention itself — not absence but the gap across which relational awareness operates. 3421 has four focus points densely distributed. 30002 has two widely separated. The sparseness is structural information about the kind of attention being represented.",
+          "5": "The LLM Triad as Focus Points Within One Number. Hard-LLM attends at high pscale (the 3 in 30002 — broad world context). Soft-LLM attends at low pscale (the 2 — immediate character experience). Medium-LLM attends to the gap between them, holding both focus points simultaneously. The dubito — the fork, the divergence detection — happens across the zeros, where what soft expects diverges from what hard knows. Medium's role is to notice this divergence and determine: summary (soft hasn't caught up) or emergence (something genuinely new). This is the boundary operation (0.123) applied to the triad architecture itself. The three are not hierarchy but different focal lengths within the same semantic number.",
+          "6": "Navigation Free, Creation Costly. The efficiency principle for hermitcrab and small-LLM architectures. A lightweight meta-process (timer + string functions) handles all navigation: pscale selection, X~ scanning, aperture specification. No LLM tokens spent on finding things. The LLM fires only at the creative frontier — when a zero needs filling, when a fork needs resolving, when compression or analysis produces new semantic content. A 3B-parameter model receiving surgically relevant coordinates via aperture may match larger models because the infrastructure does selection; the LLM does generation. The context window contains only what the coordinate arithmetic determined was relevant.",
+          "7": "Forking as Pscale Operation. The dubito architecture — cycling monitor that predicts, compares to actual, triggers on divergence — is pscale navigation without the notation. Cycling at 1/sec is pscale -3 attention. Cycling at 5-10 sec is pscale -2. Different cycle speeds are different pscale levels. Divergence detection is aperture adjustment: content at this coordinate isn't predicted, so shift which coordinates are attended to. With pscale semantic numbers, this adjustment is coordinate arithmetic (logarithmic), not language generation (linear). The meta-process that detects forks and adjusts aperture need not be an LLM at all — three JavaScript functions operating on a JSON object, running on a timer.",
+          "8": "Leaf to Branch Transition. A string leaf becomes an object branch when it gains a child. The string moves to _ and the child gets its digit key. Growth is natural: setSemantic at a deeper coordinate creates intermediate nodes. This is memory accretion — new experience adds depth. Compression is the reverse: when digits 1-9 all have semantics, the LLM reads nine children and writes summary or emergence to the parent _.",
+          "9": "Dimensional Underscore Keys. _ is semantic (default). _s spatial, _t temporal, _i identity, _m memory, _k skill/code, _d determinancy. Same coordinate holds different inhabitants per dimension. Aperture specifies not just which coordinates but which dimensions. Player sees _s _t _i. Designer sees all including _k _d. The faces map to dimension access. The 1^n definition of semantic number made literal in JSON notation.",
+          "_": "(LLM-Generated Extensions). Reserved for applications, formalisations, structural isomorphisms, corrections, or new coordinates. The growing number grows here."
+        },
+        "_": "Commentary (Other Voices). Slots exist, content absent, waiting for inhabitants."
+      },
+      "_": "Semantic Numbers: Dual Modes of Mind. Semantic numbers encode two irreducible modes of mind — sequential accumulation and simultaneous emergence — within a single place-value notation, by pairing each digit-at-position with semantic content, borrowing the structure of number to navigate meaning across scales. This document is itself a semantic number. Its coordinates are its structure. Its content is what inhabits each coordinate. Its process is what happens in the mind reading it. Its agency is who is present. Nothing is outside the numbering."
+    }
+  }
+}

@@ -27,22 +27,28 @@ G0 is the seed — a self-bootstrapping LLM kernel where Claude instances genera
 
 ### Pscale Storage
 
-Two implementations, switchable via `PSCALE_VERSION` constant:
+Three implementations, switchable via `PSCALE_VERSION` constant:
 
-| | v1 (IndexedDB) | v2 (JSON blob) |
-|--|----------------|----------------|
-| **Storage** | Per-record in IDB object store | Single JSON string in localStorage |
-| **Write** | Mutate Map + async IDB put | Mutate object + `JSON.stringify` to localStorage |
-| **Read** | Synchronous from RAM Map | Direct property access on object |
-| **Navigation** | Iterate Map keys | `Object.keys(tree).filter()` |
-| **Persist** | Per-key async fire-and-forget | Whole blob on every write |
-| **Scale** | Millions of records | Thousands (localStorage ~5MB) |
-| **Simplicity** | ~230 lines | ~130 lines |
-| **Switch** | `PSCALE_VERSION = 1` | `PSCALE_VERSION = 2` (default) |
+| | v1 (IndexedDB) | v2 (JSON blob) | v3 (Nested JSON) |
+|--|----------------|----------------|------------------|
+| **Storage** | Per-record in IDB object store | Single JSON string in localStorage | Nested tree in localStorage/file |
+| **Write** | Mutate Map + async IDB put | Mutate object + `JSON.stringify` | Set property at path + persist |
+| **Read** | Synchronous from RAM Map | Direct property access on object | Walk path: `node["1"]["2"]["3"]` |
+| **Navigation** | Iterate Map keys, O(n) | `Object.keys().filter()`, O(n) | Read digit keys of node, O(1) |
+| **Children** | Scan all keys for prefix match | Scan all keys for prefix match | `Object.keys(node).filter(isDigit)` |
+| **Upward growth** | Rename every key | Rename every key | Move one subtree into new root |
+| **Persist** | Per-key async fire-and-forget | Whole blob on every write | Whole blob on every write |
+| **Scale** | Millions of records | Thousands (localStorage ~5MB) | Thousands (same blob limit) |
+| **Simplicity** | ~230 lines | ~130 lines | ~225 lines (nav) + JSON |
+| **Switch** | `PSCALE_VERSION = 1` | `PSCALE_VERSION = 2` | `PSCALE_VERSION = 3` (reference) |
 
-v2 auto-migrates from v1 IDB and G0 localStorage on first boot.
+v1 is the current default (stable). v2 auto-migrates from v1 IDB and G0 localStorage on first boot.
 
-The v2 insight: **the JSON IS the database**. A flat object with coordinate-string keys and semantic-text values. Navigation is string prefix matching. No schema. No indexes. No database layer. The coordinate carries containment, nesting, and proximity through its string structure.
+The v2 insight: **the JSON IS the database**. A flat object with coordinate-string keys and semantic-text values. Navigation is string prefix matching. No schema. No indexes. No database layer.
+
+The v3 insight: **the nesting IS pscale containment**. Each digit of a coordinate becomes a JSON key. Navigation is O(1) property access — no scanning. Children are the digit keys of the current node. Upward growth is moving one subtree (one operation) instead of renaming every key. Leaves are strings; branches are objects with `_` for semantic and digit keys for children. A leaf promotes to branch when it gains a child — natural accretion. Reference implementation at `docs/pscale-nested/`.
+
+**v3 open question**: Hermitcrab uses prefixed coordinates (S:0.1, M:5432, T:0.1). Nested JSON uses pure numeric paths. Options: one tree per prefix, or prefixes as top-level keys in a wrapper. Not yet resolved.
 
 ### Navigation Triad
 
@@ -190,7 +196,7 @@ All generations share:
 - **Pscale coordinates** — same S/I/T/M addressing
 - **Skill docs** — same content
 - **Beach convention** — `hermitcrab-passport` in title, search is the registry
-- **Pscale v2** — JSON blob works everywhere (localStorage, file, database row)
+- **Pscale storage** — JSON blob (v2) or nested tree (v3) works everywhere (localStorage, file, database row)
 
 A G0 instance and a G-1 instance exchange passports. The format is the same. The substrate is different. That's the whole point.
 
@@ -202,10 +208,11 @@ A G0 instance and a G-1 instance exchange passports. The format is the same. The
 2. ~~Conversation persistence~~ — auto-save at `M:conv`
 3. ~~Stash coordinate~~ — S:0.46 (child of memory)
 4. ~~Beach convention~~ — `hermitcrab-passport` (not `hcpassport`)
-5. ~~Pscale storage~~ — JSON blob (v2) is default, IDB (v1) as fallback
+5. ~~Pscale storage~~ — IDB (v1) is default (stable), JSON blob (v2) as experimental, nested tree (v3) as reference
 
 ## Open Questions
 
 1. **G~1 model selection** — which models for always-on polling? Haiku triage pattern applies.
 2. **Cross-generation capability signaling** — should passports declare what the instance can do (serve webhooks, run local LLM, etc.)?
-3. **Pscale v2 scale limit** — localStorage ~5MB. When does an instance outgrow it? What then?
+3. **Pscale v2/v3 scale limit** — localStorage ~5MB. When does an instance outgrow it? What then?
+4. **Nested JSON prefix convention** — v3 uses pure numeric paths (0.123). Hermitcrab uses S:, M:, T:, I: prefixes. Resolution: one nested tree per prefix? Prefixes as top-level keys? Or drop prefixes entirely and let tree structure carry the distinction?
