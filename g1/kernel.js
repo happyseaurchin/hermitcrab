@@ -7,7 +7,7 @@
   const saved = localStorage.getItem('hermitcrab_api_key');
   const MODEL_CHAIN = ['claude-opus-4-6', 'claude-opus-4-20250514', 'claude-sonnet-4-5-20250929', 'claude-sonnet-4-20250514'];
   let BOOT_MODEL = MODEL_CHAIN[0];
-  const KERNEL_VERSION = 'g1-v7'; // v7: full G0→G1 port (aperture, passport, beach, stash, conversation)
+  const KERNEL_VERSION = 'g1-v8'; // v8: pscale v2 (JSON blob), navigation triad, self-trigger, engagement
   const FAST_MODEL = 'claude-haiku-4-5-20251001';
 
   let currentJSX = null;
@@ -36,11 +36,13 @@
   }
 
   // ============ PSCALE COORDINATE STORAGE ============
-  // RAM cache as primary store, IndexedDB as durable backend.
-  // All reads are synchronous (from cache). Writes persist to IDB in background.
-  // init() must be awaited once at boot to hydrate cache from IDB + migrate localStorage.
+  // Two implementations available:
+  //   v1: RAM Map + IndexedDB per-record persistence
+  //   v2: Single JSON blob — the JSON IS the database
+  // Switch via PSCALE_VERSION. Same API surface, different internals.
+  const PSCALE_VERSION = 2; // ← change to 1 to revert
 
-  function pscaleStore() {
+  function pscaleStoreV1() {
     const cache = new Map();
     const PS_PREFIX = 'ps:';
     const IDB_NAME = 'hermitcrab-pscale';
@@ -270,6 +272,203 @@
           return null;
         }
       }
+    };
+  }
+
+  // ============ PSCALE V2: JSON IS THE DATABASE ============
+  // One JSON object. Keys are coordinates. Values are semantic text.
+  // Persists as a single blob to localStorage (or single IDB record).
+  // Navigation is string ops on Object.keys(). No database layer.
+
+  function pscaleStoreV2() {
+    let tree = {};
+    const LS_KEY = 'hermitcrab-pscale-v2';
+
+    function persist() {
+      try {
+        localStorage.setItem(LS_KEY, JSON.stringify(tree));
+      } catch (e) {
+        console.warn('[pscale-v2] persist failed:', e.message);
+      }
+    }
+
+    // Parent coordinate (pscale+): "S:0.51"→"S:0.5", "M:5432"→"M:5430"
+    function parent(coord) {
+      const colonIdx = coord.indexOf(':');
+      if (colonIdx === -1) return null;
+      const prefix = coord.substring(0, colonIdx + 1);
+      const numStr = coord.substring(colonIdx + 1);
+
+      if (numStr.includes('.')) {
+        const dotIdx = numStr.indexOf('.');
+        const afterDot = numStr.substring(dotIdx + 1);
+        if (afterDot.length <= 1) return prefix + numStr.substring(0, dotIdx);
+        return prefix + numStr.substring(0, dotIdx + 1) + afterDot.substring(0, afterDot.length - 1);
+      } else {
+        const num = parseInt(numStr);
+        if (isNaN(num) || num === 0) return null;
+        const str = String(num);
+        if (str.length <= 1) return null;
+        for (let i = str.length - 1; i >= 0; i--) {
+          if (str[i] !== '0') {
+            const p = str.substring(0, i) + '0'.repeat(str.length - i);
+            const pNum = parseInt(p);
+            return pNum === 0 ? null : prefix + pNum;
+          }
+        }
+        return null;
+      }
+    }
+
+    return {
+      async init() {
+        // Load from localStorage
+        try {
+          const stored = localStorage.getItem(LS_KEY);
+          if (stored) {
+            tree = JSON.parse(stored);
+            console.log(`[pscale-v2] loaded ${Object.keys(tree).length} coords from JSON blob`);
+          }
+        } catch (e) {
+          console.warn('[pscale-v2] load failed:', e.message);
+        }
+
+        // Migrate from v1 IDB if v2 is empty
+        if (Object.keys(tree).length === 0) {
+          try {
+            const req = indexedDB.open('hermitcrab-pscale', 1);
+            const db = await new Promise((res, rej) => { req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error); req.onupgradeneeded = () => req.result.createObjectStore('coords'); });
+            const tx = db.transaction('coords', 'readonly');
+            const store = tx.objectStore('coords');
+            const keys = store.getAllKeys();
+            const values = store.getAll();
+            await new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; });
+            if (keys.result.length > 0) {
+              for (let i = 0; i < keys.result.length; i++) tree[keys.result[i]] = values.result[i];
+              persist();
+              console.log(`[pscale-v2] migrated ${keys.result.length} coords from IDB v1`);
+            }
+          } catch (e) {
+            console.log('[pscale-v2] no v1 IDB to migrate (normal for fresh installs)');
+          }
+
+          // Also migrate localStorage ps:* keys (G0 legacy)
+          const lsKeys = [];
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && k.startsWith('ps:')) lsKeys.push(k);
+          }
+          if (lsKeys.length > 0) {
+            for (const k of lsKeys) {
+              const coord = k.slice(3);
+              if (!tree[coord]) tree[coord] = localStorage.getItem(k);
+            }
+            for (const k of lsKeys) localStorage.removeItem(k);
+            persist();
+            console.log(`[pscale-v2] migrated ${lsKeys.length} keys from localStorage`);
+          }
+        }
+      },
+
+      read(coord) { return tree[coord] ?? null; },
+
+      write(coord, content) {
+        tree[coord] = content;
+        persist();
+        return coord;
+      },
+
+      delete(coord) {
+        delete tree[coord];
+        persist();
+        return coord;
+      },
+
+      list(prefix) {
+        return Object.keys(tree).filter(k => !prefix || k.startsWith(prefix)).sort();
+      },
+
+      nextMemory() {
+        const memCoords = this.list('M:').map(c => parseInt(c.slice(2))).filter(n => !isNaN(n));
+        if (memCoords.length === 0) return { type: 'entry', coord: 'M:1' };
+        const max = Math.max(...memCoords);
+        const next = max + 1;
+        const nextStr = String(next);
+        const allZeros = nextStr.slice(1).split('').every(c => c === '0');
+        if (allZeros && nextStr.length > 1) {
+          return { type: 'summary', coord: 'M:' + next, summarize: this._getSummaryRange(next) };
+        }
+        return { type: 'entry', coord: 'M:' + next };
+      },
+
+      _getSummaryRange(summaryNum) {
+        const str = String(summaryNum);
+        const magnitude = Math.pow(10, str.length - 1);
+        const base = summaryNum - magnitude;
+        const coords = [];
+        if (magnitude === 10) {
+          for (let i = base + 1; i < summaryNum; i++) coords.push('M:' + i);
+        } else {
+          const step = magnitude / 10;
+          for (let i = base + step; i < summaryNum; i += step) coords.push('M:' + i);
+        }
+        return coords;
+      },
+
+      // Zoom out: digit layers from general to specific
+      context(coord) {
+        const colonIdx = coord.indexOf(':');
+        if (colonIdx === -1) return [coord];
+        const prefix = coord.substring(0, colonIdx + 1);
+        const numStr = coord.substring(colonIdx + 1);
+
+        if (numStr.includes('.')) {
+          const dotIdx = numStr.indexOf('.');
+          const afterDot = numStr.substring(dotIdx + 1);
+          const layers = [];
+          for (let i = 1; i <= afterDot.length; i++) {
+            layers.push(prefix + numStr.substring(0, dotIdx + 1) + afterDot.substring(0, i));
+          }
+          return layers;
+        } else {
+          const num = parseInt(numStr);
+          if (isNaN(num) || num === 0) return [coord];
+          const str = String(num);
+          const layers = [];
+          for (let i = 1; i <= str.length; i++) {
+            const mag = Math.pow(10, str.length - i);
+            const rounded = Math.floor(num / mag) * mag;
+            if (rounded > 0) layers.push(prefix + rounded);
+          }
+          return [...new Set(layers)];
+        }
+      },
+
+      contextContent(coord) {
+        const layers = this.context(coord);
+        const result = {};
+        for (const c of layers) {
+          if (tree[c]) result[c] = tree[c];
+        }
+        return result;
+      },
+
+      // X- (zoom in): occupied children one level deeper
+      children(coord) {
+        return Object.keys(tree).filter(k => parent(k) === coord).sort();
+      },
+
+      // X~ (lateral): siblings at same depth
+      siblings(coord) {
+        const p = parent(coord);
+        if (!p) return [];
+        return this.children(p).filter(k => k !== coord);
+      },
+
+      _parent: parent,
+
+      // Direct access to the tree (for debugging / export)
+      _tree() { return tree; }
     };
   }
 
@@ -1152,8 +1351,8 @@
 
   // ============ PSCALE INSTANCE ============
 
-  const pscale = pscaleStore();
-  status('initialising pscale (IndexedDB)...');
+  const pscale = PSCALE_VERSION === 2 ? pscaleStoreV2() : pscaleStoreV1();
+  status(`initialising pscale v${PSCALE_VERSION}...`);
   await pscale.init();
   status('pscale ready (' + pscale.list('').length + ' coords in cache)', 'success');
 
