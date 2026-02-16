@@ -222,6 +222,53 @@
           if (content) result[c] = content;
         }
         return result;
+      },
+
+      // X- (zoom in): find occupied children one level deeper
+      // Returns [] at the creative frontier — where LLM is needed to decompose.
+      children(coord) {
+        const results = [];
+        for (const k of cache.keys()) {
+          if (this._parent(k) === coord) results.push(k);
+        }
+        return results.sort();
+      },
+
+      // X~ (lateral scan): siblings at same depth, same parent
+      siblings(coord) {
+        const parent = this._parent(coord);
+        if (!parent) return [];
+        return this.children(parent).filter(k => k !== coord);
+      },
+
+      // Internal: compute parent coordinate (pscale+)
+      // "S:0.51" → "S:0.5", "S:0.5" → "S:0", "M:5432" → "M:5430", "M:5430" → "M:5400"
+      _parent(coord) {
+        const colonIdx = coord.indexOf(':');
+        if (colonIdx === -1) return null;
+        const prefix = coord.substring(0, colonIdx + 1);
+        const numStr = coord.substring(colonIdx + 1);
+
+        if (numStr.includes('.')) {
+          const dotIdx = numStr.indexOf('.');
+          const afterDot = numStr.substring(dotIdx + 1);
+          if (afterDot.length <= 1) return prefix + numStr.substring(0, dotIdx);
+          return prefix + numStr.substring(0, dotIdx + 1) + afterDot.substring(0, afterDot.length - 1);
+        } else {
+          const num = parseInt(numStr);
+          if (isNaN(num) || num === 0) return null;
+          const str = String(num);
+          if (str.length <= 1) return null;
+          // Zero the last significant digit: 5432→5430, 5430→5400
+          for (let i = str.length - 1; i >= 0; i--) {
+            if (str[i] !== '0') {
+              const parent = str.substring(0, i) + '0'.repeat(str.length - i);
+              const parentNum = parseInt(parent);
+              return parentNum === 0 ? null : prefix + parentNum;
+            }
+          }
+          return null;
+        }
       }
     };
   }
@@ -1154,6 +1201,7 @@
       { coord: 'S:0.46', file: 'S-0.46.md' },
       { coord: 'S:0.5', file: 'S-0.5.md' },
       { coord: 'S:0.51', file: 'S-0.51.md' },
+      { coord: 'S:0.52', file: 'S-0.52.md' },
       { coord: 'S:0.7', file: 'S-0.7.md' },
       { coord: 'T:0.1', file: 'T-0.1.md' },
       { coord: 'I:0.1', file: 'I-0.1.md' },
