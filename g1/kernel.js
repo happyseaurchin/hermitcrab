@@ -40,7 +40,7 @@
   //   v1: RAM Map + IndexedDB per-record persistence
   //   v2: Single JSON blob — the JSON IS the database
   // Switch via PSCALE_VERSION. Same API surface, different internals.
-  const PSCALE_VERSION = 2; // ← change to 1 to revert
+  const PSCALE_VERSION = 1; // ← v1=IndexedDB (stable), v2=JSON blob (experimental)
 
   function pscaleStoreV1() {
     const cache = new Map();
