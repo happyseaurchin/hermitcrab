@@ -470,3 +470,17 @@ See `docs/g1-block-voice-rewrites.md` for the full analysis and rationale.
 Memory and relations are not pushed into the boot prompt. The LLM reads their pscale 0 in the aperture and decides whether to pull. This means the boot turn must support multiple tool calls — the LLM may call block_read("memory"), block_read("relations"), and then recompile(jsx) in a single turn. The kernel's tool loop must allow this. If the API limits tool calls per response, the kernel may need to loop the boot turn until the LLM produces JSX.
 
 The experiential difference: pushed memory = being briefed. Pulled memory = remembering. One tool call, maybe 200ms, trivially cheap. But it's the difference between waking up already knowing and waking up and reaching for what you know.
+
+### A11: Decisions made during clean build — 17 Feb 2026
+
+Four questions surfaced while building the G1 kernel. All four were resolved as design decisions, not deferred.
+
+**Web search at boot — no.** Boot tools stay at seven (block_read, block_write, block_list, block_create, get_source, recompile, get_datetime). Web search is not a boot capability. The LLM discovers it by drilling into capabilities digit 4 (web) and adds it via setTools when needed.
+
+**Web search tool format — capabilities 0.4.2.** Claude's native web search uses a non-standard tool format (`{ type: 'web_search_20250305', name: 'web_search' }` — not a custom tool definition). The exact incantation is now at capabilities block 0.4.2, depth 2 under the web domain. The LLM finds it when it needs it. Pscale depth works as designed: 0.4 names the domain, 0.4.1 lists the tools, 0.4.2 gives the special format.
+
+**Post-boot focus — pull-only for now.** The kernel sends only the aperture (pscale 0 of every block) on post-boot calls. No kernel-inferred focus, no dynamic focus loading. The LLM uses block_read tool calls to pull whatever it needs. This resolves A3 for G1: no focus management system. If round-trip cost becomes a problem, revisit in G2.
+
+**G0 migration — separate follow-up.** The kernel seeds from embedded defaults only. Migration from G0's `hcmem:` files to the memory block is a separate commit after the clean kernel is tested. Don't mix migration logic into the boot path.
+
+These supersede the open questions in A2 (boot focus vs steady-state — resolved: same aperture, pull-only focus) and A3 (how the LLM requests focus changes — resolved: it doesn't, it uses block_read).
