@@ -38,11 +38,14 @@
 
   async function loadSeed() {
     try {
-      const res = await fetch('seed.json');
-      if (!res.ok) throw new Error(`seed.json: ${res.status}`);
+      // Resolve shell.json relative to kernel.js, not the page URL
+      const scriptSrc = document.querySelector('script[src*="kernel.js"]')?.src || '';
+      const base = scriptSrc ? scriptSrc.replace(/kernel\.js.*$/, '') : '/g1/';
+      const res = await fetch(base + 'shell.json');
+      if (!res.ok) throw new Error(`shell.json: ${res.status}`);
       return await res.json();
     } catch (e) {
-      console.error('[g1] Failed to load seed.json:', e.message);
+      console.error('[g1] Failed to load shell.json:', e.message);
       return null;
     }
   }
@@ -499,11 +502,11 @@
     status('no blocks found — loading seed...');
     const seed = await loadSeed();
     if (!seed) {
-      status('no seed.json found — cannot boot without blocks', 'error');
+      status('no shell.json found — cannot boot without blocks', 'error');
       return;
     }
     const seeded = seedBlocks(seed);
-    status(`seeded ${seeded} blocks from seed.json`, 'success');
+    status(`seeded ${seeded} blocks from shell.json`, 'success');
   } else {
     status(`${existingBlocks.length} blocks loaded from storage`, 'success');
   }
