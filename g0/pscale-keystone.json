@@ -1,0 +1,42 @@
+{
+  "decimal": 1,
+  "tree": {
+    "0": {
+      "_": "This is a pscale JSON block. It is nested JSON where each key is a digit (0-9), each nesting level is one pscale step, and content lives at the underscore key (_). Leaves without children are plain strings. To navigate: go up one level (pscale+), read a node's digit keys to go deeper (pscale-), or read the parent's other digit keys to scan sideways (X~). The node at pscale 0 \u2014 this node \u2014 always describes what the block is and how to use it. Every block you encounter follows this format. Read its pscale 0 first.",
+      "1": {
+        "_": "Structure. How a block is built.",
+        "1": "A block has two fields: decimal (integer saying which nesting depth is pscale 0) and tree (the nested JSON). That is all.",
+        "2": "Digit keys (0-9) are children. The underscore key (_) holds the semantic text. A node with children is an object with _ plus digit keys. A node without children is a plain string.",
+        "3": "A string leaf becomes an object branch when it gains a child. The string moves to _ and the child gets its digit key. This is how blocks grow.",
+        "4": "Pscale level equals decimal minus nesting depth. Above pscale 0 is composition. Below pscale 0 is decomposition. The decimal tells you where the boundary is."
+      },
+      "2": {
+        "_": "Navigation. How to move through a block.",
+        "1": "Pscale+ means go to the parent node. One level up. The containing context.",
+        "2": "Pscale- means read the digit keys of the current node. These are children. If there are none, you have reached the creative frontier \u2014 nothing exists here yet.",
+        "3": "X~ means look at the parent's other digit keys. These are siblings \u2014 things at the same pscale level as where you are.",
+        "4": "Always read pscale 0 first when encountering any block. It tells you what the block is and how it works."
+      },
+      "3": {
+        "_": "Growth. How a block changes over time.",
+        "1": "To add knowledge: find the right pscale level, find an unoccupied digit (1-9), write your text there.",
+        "2": "When digits 1-9 at a node are all occupied, compression triggers. Read all nine. Determine: is the pattern a summary (the parts add up) or an emergence (the whole is more than the parts)? Write the result to the parent's _ text.",
+        "3": "Digit 0 as a child has special meaning: it is always a compression product, never a regular entry.",
+        "4": "Upward growth: when the root level is full and compressed, the existing tree becomes a child of a new root. Decimal increases by 1."
+      },
+      "4": {
+        "_": "Connection. How blocks relate to each other.",
+        "1": "Blocks connect through text references. A node's text may name another block and a coordinate within it. Follow the reference by loading that block and reading its pscale 0.",
+        "2": "Every block is self-describing. You never need external documentation to understand a block. Its pscale 0 tells you what it is, how it grows, and how it connects.",
+        "3": "Different blocks serve different purposes \u2014 documents, memories, spatial maps, skills \u2014 but all use the same format. The pscale 0 text is what differs, not the structure.",
+        "4": "This block \u2014 the one you are reading now \u2014 is the keystone. It teaches you how to use all other blocks. If you forget how blocks work, navigate deeper here."
+      },
+      "5": {
+        "_": "Evolution. The history and development of this block itself.",
+        "1": "v1. Created 17 February 2026 by David Pinto and Claude (Anthropic), in conversation. David provided the architectural vision from 25 years of Fulcrum framework research in social anthropology and mathematics. Claude provided technical implementation and search confirmation that no equivalent format exists.",
+        "2": "The format emerged from a sequence of simplifications: flat JSON, then nested JSON, then removal of dimension keys, then removal of prefix codes, then the discovery that pscale 0 carries the block's own operating instructions. Each step removed complexity. The keystone is what remained.",
+        "3": "This is part of the Xstream project \u2014 a coordination platform for collective narrative. The pscale JSON block format is intended to be open and freely usable by anyone."
+      }
+    }
+  }
+}
