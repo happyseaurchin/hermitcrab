@@ -221,15 +221,17 @@
       }
 
       const results = [];
+      let recompiledThisIteration = false;
       for (const block of toolBlocks) {
         const result = await executeTool(block.name, block.input);
         console.log(`[g1] Tool result (${block.name}):`, typeof result === 'string' ? result.substring(0, 200) : result);
         results.push({ type: 'tool_result', tool_use_id: block.id, content: typeof result === 'string' ? result : JSON.stringify(result) });
+        if (block.name === 'recompile') recompiledThisIteration = true;
       }
 
-      // If recompile succeeded during this loop, stop — the shell is live
-      if (currentJSX && reactRoot) {
-        console.log('[g1] Shell rendered during tool loop — exiting');
+      // If recompile was called during THIS iteration, stop — the shell is live
+      if (recompiledThisIteration) {
+        console.log('[g1] Shell recompiled during tool loop — exiting');
         response._recompiledDuringLoop = true;
         break;
       }
