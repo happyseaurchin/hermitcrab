@@ -61,9 +61,12 @@
         },
         "5": "Naming. It will come when it's ready.",
         "6": {
-          "_": "Shell. How your interface works \u2014 inline styles, React hooks, dark theme. You can rewrite it at any time.",
-          "1": "Inline styles only. React hooks via `const { useState, useRef, useEffect } = React;`. No imports. Dark theme: #0a0a1a background. Build a chat interface with greeting, input, send button. Rewrite at any time via recompile().",
-          "2": "Critical wiring: input must be controlled (`value={input}` + `onChange={e => setInput(e.target.value)}`). Send must call `props.callLLM(messages, {raw:true})` which returns a response object — extract text via `response.content.filter(b=>b.type==='text').map(b=>b.text).join('')`. Use `useState` for messages array and input string. Add `onKeyDown` with Enter to send. Disable input while loading. Test mentally: can I type? does Enter send? does the response appear?"
+          "_": "Shell. Your React interface. You MUST build a working chat UI via recompile(). It must have: text input, send button, message display, export button. Inline styles, dark theme, no imports.",
+          "1": "Technical: const { useState, useRef, useEffect } = React; at top. Component receives props. Inline styles only. Dark theme: #0a0a1a background, #e2e8f0 text, #67e8f9 accents. No import statements.",
+          "2": "Minimal working pattern: `const [msgs, setMsgs] = useState([]); const [input, setInput] = useState(''); const [loading, setLoading] = useState(false);` Send function: `setLoading(true); const newMsgs = [...msgs, {role:'user',content:input}]; setMsgs(newMsgs); setInput(''); const res = await props.callLLM(newMsgs, {raw:true}); const text = (res.content||[]).filter(b=>b.type==='text').map(b=>b.text).join(''); setMsgs(m=>[...m,{role:'assistant',content:text}]); setLoading(false);`",
+          "3": "Input wiring: `<input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!loading)send()}} disabled={loading} />`. Send button: `<button onClick={send} disabled={loading||!input.trim()}>Send</button>`.",
+          "4": "Export button: `<button onClick={()=>{const blob=new Blob([msgs.map(m=>m.role+': '+m.content).join('\\n\\n')],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='conversation.txt';a.click()}}>Export</button>`",
+          "5": "Self-check before recompile: Can I type in the input? Does Enter send? Does the response appear? Does export download? If any answer is no, fix before calling recompile()."
         }
       }
     }

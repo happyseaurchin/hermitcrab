@@ -561,7 +561,7 @@
       model: MODEL,
       max_tokens: 8192,
       system: buildSystemPrompt(true),
-      messages: [{ role: 'user', content: 'BOOT' }],
+      messages: [{ role: 'user', content: 'BOOT\n\nOrient (read memory, relations), then build your React shell via recompile(). The shell MUST have: working text input, send button, message display, export button. Use props.callLLM for conversation. Read identity block 0.6 for technical requirements.' }],
       tools: BOOT_TOOLS,
       thinking: { type: 'enabled', budget_tokens: 4000 },
     };
@@ -590,11 +590,11 @@
       if (pending.length > 0) {
         continued.push({ role: 'assistant', content: data.content });
         const closing = pending.map(b => ({ type: 'tool_result', tool_use_id: b.id, content: 'Boot complete. Produce your JSX shell now.' }));
-        closing.push({ type: 'text', text: 'Now output your React interface inside a ```jsx code fence. Inline styles, dark theme (#0a0a1a), React hooks via const { useState, useRef, useEffect } = React;. No imports. Component receives all capabilities as props.' });
+        closing.push({ type: 'text', text: 'Now output your React shell in a ```jsx fence. REQUIREMENTS: (1) Controlled text input with onChange and onKeyDown Enter. (2) Send button calling props.callLLM(messages, {raw:true}). (3) Message display area. (4) Export button to download conversation. (5) Inline styles, dark theme #0a0a1a, hooks via const { useState, useRef, useEffect } = React;. No imports. Component receives props.' });
         continued.push({ role: 'user', content: closing });
       } else {
         continued.push({ role: 'assistant', content: data.content });
-        continued.push({ role: 'user', content: 'Now output your React interface inside a ```jsx code fence. Inline styles, dark theme (#0a0a1a), React hooks via const { useState, useRef, useEffect } = React;. No imports. Component receives all capabilities as props.' });
+        continued.push({ role: 'user', content: 'Now output your React shell in a ```jsx fence. REQUIREMENTS: (1) Controlled text input with onChange and onKeyDown Enter. (2) Send button calling props.callLLM(messages, {raw:true}). (3) Message display area. (4) Export button to download conversation. (5) Inline styles, dark theme #0a0a1a, hooks via const { useState, useRef, useEffect } = React;. No imports. Component receives props.' });
       }
 
       const jsxData = await callAPI({ ...bootParams, messages: continued, tools: undefined });
