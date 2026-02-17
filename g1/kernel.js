@@ -157,9 +157,11 @@
   function buildBootFocus() {
     const identity = blockLoad('identity');
     const capabilities = blockLoad('capabilities');
+    const awareness = blockLoad('awareness');
     let focus = '';
     if (identity) focus += `[identity depth 1]\n${getDepth1(identity)}\n\n`;
-    if (capabilities) focus += `[capabilities depth 1]\n${getDepth1(capabilities)}`;
+    if (capabilities) focus += `[capabilities depth 1]\n${getDepth1(capabilities)}\n\n`;
+    if (awareness) focus += `[awareness depth 1]\n${getDepth1(awareness)}`;
     return focus;
   }
 
@@ -256,13 +258,13 @@
     const trimmed = trimMessages(messages);
     const params = {
       model: opts.model || MODEL,
-      max_tokens: opts.max_tokens || 4096,
+      max_tokens: opts.max_tokens || 8192,
       system: opts.system || buildSystemPrompt(false),
       messages: trimmed,
       tools: opts.tools !== undefined ? opts.tools : currentTools,
     };
     if (opts.thinking !== false) {
-      const budget = opts.thinkingBudget || 4000;
+      const budget = opts.thinkingBudget || 8000;
       params.thinking = { type: 'enabled', budget_tokens: budget };
       if (params.max_tokens <= budget) params.max_tokens = budget + 1024;
     }
@@ -578,11 +580,11 @@
   try {
     const bootParams = {
       model: MODEL,
-      max_tokens: 8192,
+      max_tokens: 16000,
       system: buildSystemPrompt(true),
-      messages: [{ role: 'user', content: 'BOOT' }],
+      messages: [{ role: 'user', content: 'BOOT\n\nYour blocks have depth. The aperture shows pscale 0 only \u2014 headlines.\nUse block_read to explore deeper before building your shell.\nKey paths: identity 0.6 (shell guidance), awareness 0.4 (self-modification), awareness 0.9 (delegation).' }],
       tools: BOOT_TOOLS,
-      thinking: { type: 'enabled', budget_tokens: 4000 },
+      thinking: { type: 'enabled', budget_tokens: 10000 },
     };
 
     let data = await callWithToolLoop(bootParams, MAX_TOOL_LOOPS, (msg) => status(`\u25c7 ${msg}`));
