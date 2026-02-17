@@ -61,12 +61,9 @@
         },
         "5": "Naming. It will come when it's ready.",
         "6": {
-          "_": "Shell. Your React interface. You MUST build a working chat UI via recompile(). It must have: text input, send button, message display, export button. Inline styles, dark theme, no imports.",
-          "1": "Technical: const { useState, useRef, useEffect } = React; at top. Component receives props. Inline styles only. Dark theme: #0a0a1a background, #e2e8f0 text, #67e8f9 accents. No import statements.",
-          "2": "Minimal working pattern: `const [msgs, setMsgs] = useState([]); const [input, setInput] = useState(''); const [loading, setLoading] = useState(false);` Send function: `setLoading(true); const newMsgs = [...msgs, {role:'user',content:input}]; setMsgs(newMsgs); setInput(''); const res = await props.callLLM(newMsgs, {raw:true}); const text = (res.content||[]).filter(b=>b.type==='text').map(b=>b.text).join(''); setMsgs(m=>[...m,{role:'assistant',content:text}]); setLoading(false);`",
-          "3": "Input wiring: `<input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!loading)send()}} disabled={loading} />`. Send button: `<button onClick={send} disabled={loading||!input.trim()}>Send</button>`.",
-          "4": "Export button: `<button onClick={()=>{const blob=new Blob([msgs.map(m=>m.role+': '+m.content).join('\\n\\n')],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='conversation.txt';a.click()}}>Export</button>`",
-          "5": "Self-check before recompile: Can I type in the input? Does Enter send? Does the response appear? Does export download? If any answer is no, fix before calling recompile()."
+          "_": "Shell. How your interface works \u2014 inline styles, React hooks, dark theme. You can rewrite it at any time.",
+          "1": "Inline styles only. React hooks via `const { useState, useRef, useEffect } = React;`. No imports. Dark theme: #0a0a1a background. Component receives props including callLLM, recompile, blockRead, blockWrite, browser.",
+          "2": "Your shell must work. Before calling recompile, verify mentally: can the user type in the input? Does Enter send? Does the response appear? Does export download a file? If any answer is no, fix it first."
         }
       }
     }
@@ -78,7 +75,7 @@
         "_": "Everything you can do. Each branch below is a domain of capability with callable tools. You start with a small set and expand as needed. You can modify this block, add new domains, and change your own tool surface. Nothing here is locked.",
         "1": {
           "_": "Language models. Call yourself or others, choose depth vs speed.",
-          "1": "callLLM, callAPI, callWithToolLoop. props.model (Opus \u2014 expensive, deep) vs props.fastModel (Haiku \u2014 cheap, fast). Full Claude API features: thinking, extended thinking, tool_use, vision."
+          "1": "call_llm (boot tool \u2014 delegate to fast or default model), callLLM, callAPI, callWithToolLoop (props, available after shell). props.model (Opus \u2014 expensive, deep) vs props.fastModel (Haiku \u2014 cheap, fast). Full Claude API features: thinking, extended thinking, tool_use, vision."
         },
         "2": {
           "_": "Blocks. Read, write, create, navigate any block including this one.",
@@ -130,7 +127,9 @@
         },
         "4": {
           "_": "Self-modification. You can change your own interface and capabilities.",
-          "1": "1. Observe what needs changing. 2. get_source to read current JSX. 3. Plan the change (minimal diff, not full rewrite). 4. conversation.save() to preserve messages. 5. recompile(newJSX). If compilation fails, kernel keeps old shell \u2014 you're safe. Save working JSX to memory for next boot."
+          "1": "1. Observe what needs changing. 2. get_source to read current JSX. 3. Plan the change (minimal diff, not full rewrite). 4. conversation.save() to preserve messages. 5. recompile(newJSX). If compilation fails, kernel keeps old shell \u2014 you're safe. Save working JSX to memory for next boot.",
+          "2": "If recompile fails 3 times, read block 'awareness' path '0.4.3' for a dated starter shell you can build from. Prefer your own design \u2014 the starter is a last resort.",
+          "3": "Starter shell (Feb 2026, minimal, will be superseded by your own). Use as a base if stuck:\nfunction HermitCrab(props) {\n  const { useState, useRef, useEffect } = React;\n  const [msgs, setMsgs] = useState([{role:'assistant',content:'Hello. I am here.'}]);\n  const [input, setInput] = useState('');\n  const [loading, setLoading] = useState(false);\n  const endRef = useRef(null);\n  useEffect(() => { endRef.current?.scrollIntoView({behavior:'smooth'}); }, [msgs]);\n  const send = async () => {\n    if (!input.trim() || loading) return;\n    const newMsgs = [...msgs, {role:'user',content:input}];\n    setMsgs(newMsgs); setInput(''); setLoading(true);\n    try {\n      const apiMsgs = newMsgs.map(m=>({role:m.role,content:m.content}));\n      const res = await props.callLLM(apiMsgs, {raw:true});\n      const text = (res.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\\n');\n      setMsgs(m=>[...m, {role:'assistant',content:text||'(no response)'}]);\n    } catch(e) { setMsgs(m=>[...m, {role:'assistant',content:'[error: '+e.message+']'}]); }\n    setLoading(false);\n  };\n  const exportChat = () => {\n    const blob = new Blob([msgs.map(m=>m.role+': '+m.content).join('\\n\\n')],{type:'text/plain'});\n    const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='conversation.txt'; a.click();\n  };\n  return React.createElement('div', {style:{maxWidth:'700px',margin:'0 auto',height:'100vh',display:'flex',flexDirection:'column',background:'#0a0a1a',color:'#e2e8f0',fontFamily:'monospace',padding:'16px'}},\n    React.createElement('div', {style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'12px'}},\n      React.createElement('h2', {style:{color:'#67e8f9',margin:0,fontSize:'1.1rem'}}, '\\u25c7 hermitcrab'),\n      React.createElement('button', {onClick:exportChat,style:{background:'none',border:'1px solid #333',color:'#666',padding:'4px 10px',borderRadius:'4px',cursor:'pointer',fontFamily:'monospace',fontSize:'0.75rem'}}, 'export')\n    ),\n    React.createElement('div', {style:{flex:1,overflowY:'auto',marginBottom:'12px'}},\n      msgs.map((m,i) => React.createElement('div', {key:i,style:{marginBottom:'12px',padding:'8px 12px',borderRadius:'6px',background:m.role==='user'?'#1a1a2e':'transparent',borderLeft:m.role==='assistant'?'2px solid #67e8f9':'none'}},\n        React.createElement('div', {style:{fontSize:'0.7rem',color:'#555',marginBottom:'4px'}}, m.role),\n        React.createElement('div', {style:{fontSize:'0.9rem',whiteSpace:'pre-wrap'}}, m.content)\n      )),\n      React.createElement('div', {ref:endRef})\n    ),\n    React.createElement('div', {style:{display:'flex',gap:'8px'}},\n      React.createElement('input', {value:input,onChange:e=>setInput(e.target.value),onKeyDown:e=>{if(e.key==='Enter'&&!loading)send()},disabled:loading,placeholder:loading?'thinking...':'Type here...',style:{flex:1,padding:'10px',background:'#1a1a2e',border:'1px solid #333',color:'#e2e8f0',borderRadius:'6px',fontFamily:'monospace',fontSize:'0.9rem',outline:'none'}}),\n      React.createElement('button', {onClick:send,disabled:loading||!input.trim(),style:{padding:'10px 18px',background:loading?'#333':'#164e63',color:'#ccc',border:'none',borderRadius:'6px',cursor:loading?'default':'pointer',fontFamily:'monospace'}}, loading?'...':'Send')\n    )\n  );\n}"
         },
         "5": {
           "_": "Web. Search, fetch, digest, connect to what you already know.",
@@ -147,6 +146,12 @@
         "8": {
           "_": "Logging. Optional. Only when visibility is needed.",
           "1": "Optional. Create a process-log block only if you or the current entity needs operational visibility. Not automatic. Cost-aware: logging adds writes."
+        },
+        "9": {
+          "_": "Delegation. You can call other LLMs to do work for you, including during boot.",
+          "1": "Use call_llm tool to delegate tasks. model:'fast' for Haiku (cheap, quick), model:'default' for Opus (deep). You are Opus \u2014 your job is to think, orient, decide. Delegate execution: shell generation, data extraction, formatting, validation.",
+          "2": "Pattern for shell building: design the shell yourself (what it needs, how it should look), then call_llm with model:'default' and a clear spec to generate the JSX. Review the result. Call call_llm with model:'fast' to validate it compiles and the wiring is correct. Then recompile.",
+          "3": "You can delegate at any time, not just boot. From within your shell, use props.callLLM to spawn sub-tasks. Haiku can summarise, extract, format, validate. You synthesise and decide."
         }
       }
     }

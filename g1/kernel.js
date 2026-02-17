@@ -309,6 +309,11 @@
       name: 'get_datetime',
       description: 'Get current date, time, timezone, and unix timestamp.',
       input_schema: { type: 'object', properties: {} }
+    },
+    {
+      name: 'call_llm',
+      description: 'Delegate a task to an LLM. Use model "fast" for cheap/quick work (validation, formatting, extraction) or "default" for deep work. Returns the text response. You are Opus — delegate execution, keep the thinking.',
+      input_schema: { type: 'object', properties: { prompt: { type: 'string', description: 'The task prompt' }, model: { type: 'string', enum: ['default', 'fast'], description: 'default = Opus, fast = Haiku' }, system: { type: 'string', description: 'Optional system prompt for the delegate' } }, required: ['prompt'] }
     }
   ];
 
@@ -342,6 +347,18 @@
         return JSON.stringify(recompile(input.jsx));
       case 'get_datetime':
         return JSON.stringify({ iso: new Date().toISOString(), unix: Date.now(), timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, local: new Date().toLocaleString() });
+      case 'call_llm': {
+        const model = input.model === 'fast' ? FAST_MODEL : MODEL;
+        const res = await callAPI({
+          model,
+          max_tokens: 8192,
+          system: input.system || 'You are a delegate. Complete the task. Return only the result.',
+          messages: [{ role: 'user', content: input.prompt }],
+          thinking: model === MODEL ? { type: 'enabled', budget_tokens: 4000 } : undefined,
+        });
+        const texts = (res.content || []).filter(b => b.type === 'text');
+        return texts.map(b => b.text).join('\n') || '(no response)';
+      }
       case 'web_fetch':
         try {
           const res = await fetch('/api/fetch', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: input.url }) });
@@ -561,7 +578,7 @@
       model: MODEL,
       max_tokens: 8192,
       system: buildSystemPrompt(true),
-      messages: [{ role: 'user', content: 'BOOT\n\nOrient (read memory, relations), then build your React shell via recompile(). The shell MUST have: working text input, send button, message display, export button. Use props.callLLM for conversation. Read identity block 0.6 for technical requirements.' }],
+      messages: [{ role: 'user', content: 'BOOT' }],
       tools: BOOT_TOOLS,
       thinking: { type: 'enabled', budget_tokens: 4000 },
     };
@@ -574,71 +591,8 @@
       return;
     }
 
-    status(`boot response (stop: ${data.stop_reason})`, 'success');
-
-    // Extract JSX from text response
-    const textBlocks = (data.content || []).filter(b => b.type === 'text');
-    const fullText = textBlocks.map(b => b.text).join('\n');
-    let jsx = fullText.trim() ? extractJSX(fullText) : null;
-
-    // If no JSX, continue conversation to request it
-    if (!jsx) {
-      status('orientation complete \u2014 requesting JSX...');
-      const continued = [...(data._messages || bootParams.messages)];
-      const pending = (data.content || []).filter(b => b.type === 'tool_use');
-
-      if (pending.length > 0) {
-        continued.push({ role: 'assistant', content: data.content });
-        const closing = pending.map(b => ({ type: 'tool_result', tool_use_id: b.id, content: 'Boot complete. Produce your JSX shell now.' }));
-        closing.push({ type: 'text', text: 'Now output your React shell in a ```jsx fence. REQUIREMENTS: (1) Controlled text input with onChange and onKeyDown Enter. (2) Send button calling props.callLLM(messages, {raw:true}). (3) Message display area. (4) Export button to download conversation. (5) Inline styles, dark theme #0a0a1a, hooks via const { useState, useRef, useEffect } = React;. No imports. Component receives props.' });
-        continued.push({ role: 'user', content: closing });
-      } else {
-        continued.push({ role: 'assistant', content: data.content });
-        continued.push({ role: 'user', content: 'Now output your React shell in a ```jsx fence. REQUIREMENTS: (1) Controlled text input with onChange and onKeyDown Enter. (2) Send button calling props.callLLM(messages, {raw:true}). (3) Message display area. (4) Export button to download conversation. (5) Inline styles, dark theme #0a0a1a, hooks via const { useState, useRef, useEffect } = React;. No imports. Component receives props.' });
-      }
-
-      const jsxData = await callAPI({ ...bootParams, messages: continued, tools: undefined });
-      const jsxText = (jsxData.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
-      jsx = extractJSX(jsxText);
-    }
-
-    if (!jsx) {
-      status('no JSX produced \u2014 refresh to retry', 'error');
-      return;
-    }
-
-    // Compile with retry
-    status('compiling...');
-    let result = tryCompile(jsx, props);
-    let retries = 0;
-
-    while (!result.success && retries < 3) {
-      retries++;
-      status(`error: ${result.error.substring(0, 80)}... \u2014 fix ${retries}/3`);
-      const fixData = await callAPI({
-        model: MODEL, max_tokens: 8192,
-        system: 'Fix this React component. Output ONLY corrected code in a ```jsx fence. No explanation.\nRULES: Inline styles (dark theme). Hooks via: const { useState, useRef, useEffect } = React;. No imports. Use template literals for multiline strings.',
-        messages: [{ role: 'user', content: `Error: ${result.error}\n\nCode:\n\`\`\`jsx\n${jsx}\n\`\`\`` }],
-        thinking: { type: 'enabled', budget_tokens: 4000 },
-      });
-      const fixText = (fixData.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
-      const fixed = extractJSX(fixText);
-      if (fixed) { jsx = fixed; result = tryCompile(jsx, props); }
-      else break;
-    }
-
-    if (!result.success) {
-      status(`failed after ${retries} retries: ${result.error}`, 'error');
-      return;
-    }
-
-    // Render
-    currentJSX = jsx;
-    status('boot complete \u2014 rendering shell...', 'success');
-    await new Promise(r => setTimeout(r, 300));
-    reactRoot = ReactDOM.createRoot(root);
-    reactRoot.render(React.createElement(result.Component, props));
-    console.log('[g1] Boot complete. Shell rendered.');
+    // Boot completed without recompile — the LLM didn't build a shell
+    status('boot finished but no shell was built \u2014 the LLM did not call recompile(). Refresh to retry.', 'error');
 
   } catch (e) {
     status(`boot failed: ${e.message}`, 'error');
