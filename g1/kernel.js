@@ -225,6 +225,13 @@
         results.push({ type: 'tool_result', tool_use_id: block.id, content: typeof result === 'string' ? result : JSON.stringify(result) });
       }
 
+      // If recompile succeeded during this loop, stop — the shell is live
+      if (currentJSX && reactRoot) {
+        console.log('[g1] Shell rendered during tool loop — exiting');
+        response._recompiledDuringLoop = true;
+        break;
+      }
+
       allMessages = [...allMessages, { role: 'assistant', content: response.content }, { role: 'user', content: results }];
       response = await callAPI({ ...params, messages: allMessages });
     }
@@ -409,6 +416,10 @@
     code = code.replace(/^import\s+.*?;?\s*$/gm, '');
     code = code.replace(/export\s+default\s+function\s+(\w+)/g, 'function $1');
     code = code.replace(/export\s+default\s+/g, 'module.exports.default = ');
+    // Strip bare "return" before function/class declarations (LLM thinks it's in a wrapper)
+    code = code.replace(/^return\s+(function|class)\s/m, '$1 ');
+    // Strip trailing bare "return ComponentName;" (same issue)
+    code = code.replace(/^return\s+([A-Z]\w+)\s*;?\s*$/m, 'module.exports.default = $1;');
 
     const funcMatch = code.match(/(?:^|\n)\s*function\s+(\w+)/);
     const constMatch = code.match(/(?:^|\n)\s*const\s+(\w+)\s*=\s*(?:\(|function|\(\s*\{|\(\s*props)/);
@@ -554,13 +565,14 @@
     };
 
     let data = await callWithToolLoop(bootParams, MAX_TOOL_LOOPS, (msg) => status(`\u25c7 ${msg}`));
-    status(`boot response (stop: ${data.stop_reason})`, 'success');
 
-    // If recompile was called during boot tool loop, we're done
+    // If recompile succeeded during boot tool loop, the shell is already rendered — don't touch the DOM
     if (currentJSX && reactRoot) {
-      status('shell built via recompile() during boot', 'success');
+      console.log('[g1] Boot complete — shell rendered during tool loop');
       return;
     }
+
+    status(`boot response (stop: ${data.stop_reason})`, 'success');
 
     // Extract JSX from text response
     const textBlocks = (data.content || []).filter(b => b.type === 'text');
