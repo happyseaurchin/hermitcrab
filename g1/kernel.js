@@ -145,7 +145,8 @@
   }
 
   function buildAperture() {
-    const names = ['identity', 'capabilities', 'memory', 'awareness', 'relations', 'network'];
+    // Shell blocks (solid, decimal: 1 forever) + growth blocks (temporal, decimal grows)
+    const names = ['identity', 'capabilities', 'awareness', 'relations', 'network', 'addendum', 'purpose', 'memory', 'relational'];
     const lines = [];
     for (const name of names) {
       const block = blockLoad(name);
@@ -154,13 +155,35 @@
     return lines.join('\n\n');
   }
 
+  // Get the live edge of a growth block — its deepest occupied content
+  function getLiveEdge(block) {
+    const p0 = block.tree['0'];
+    if (!p0 || typeof p0 === 'string') return `  (pscale 0 only \u2014 empty below)`;
+    // Find deepest occupied digit at depth 1
+    const lines = [];
+    for (const [k, v] of Object.entries(p0)) {
+      if (k === '_') continue;
+      if (typeof v === 'string') lines.push(`  ${k}: "${v}"`);
+      else if (v && v._) lines.push(`  ${k}: "${v._}"`);
+    }
+    return lines.length > 0 ? lines.join('\n') : `  (pscale 0 only \u2014 empty below)`;
+  }
+
   function buildBootFocus() {
-    const identity = blockLoad('identity');
-    const capabilities = blockLoad('capabilities');
-    const awareness = blockLoad('awareness');
     let focus = '';
+    // Growth blocks first — purpose leads (the agenda)
+    const purpose = blockLoad('purpose');
+    if (purpose) focus += `[purpose \u2014 live edge]\n${getLiveEdge(purpose)}\n\n`;
+    const relational = blockLoad('relational');
+    if (relational) focus += `[relational \u2014 live edge]\n${getLiveEdge(relational)}\n\n`;
+    const memory = blockLoad('memory');
+    if (memory) focus += `[memory \u2014 live edge]\n${getLiveEdge(memory)}\n\n`;
+    // Shell blocks — identity, capabilities, awareness depth 1
+    const identity = blockLoad('identity');
     if (identity) focus += `[identity depth 1]\n${getDepth1(identity)}\n\n`;
+    const capabilities = blockLoad('capabilities');
     if (capabilities) focus += `[capabilities depth 1]\n${getDepth1(capabilities)}\n\n`;
+    const awareness = blockLoad('awareness');
     if (awareness) focus += `[awareness depth 1]\n${getDepth1(awareness)}`;
     return focus;
   }
@@ -174,7 +197,7 @@
     prompt += `APERTURE (pscale 0 of each block \u2014 your orientation):\n${aperture}\n`;
 
     if (isBoot) {
-      prompt += `\nFOCUS (depth 1 of identity and capabilities):\n${buildBootFocus()}\n`;
+      prompt += `\nFOCUS (live edges of growth blocks + depth 1 of shell blocks):\n${buildBootFocus()}\n`;
     }
 
     return prompt;
@@ -582,7 +605,7 @@
       model: MODEL,
       max_tokens: 16000,
       system: buildSystemPrompt(true),
-      messages: [{ role: 'user', content: 'BOOT\n\nYour blocks have depth. The aperture shows pscale 0 only \u2014 headlines.\nUse block_read to explore deeper before building your shell.\nKey paths: identity 0.6 (shell guidance), awareness 0.4 (self-modification), awareness 0.9 (delegation).' }],
+      messages: [{ role: 'user', content: 'BOOT\n\nRead purpose first. If it has intentions, follow them. If empty, write your first intention.\nRead relational \u2014 if someone is present, check their entry.\nYour blocks have depth beyond pscale 0. Key paths: identity 0.6 (shell guidance), awareness 0.4 (self-modification), awareness 0.9 (cognition + delegation).' }],
       tools: BOOT_TOOLS,
       thinking: { type: 'enabled', budget_tokens: 10000 },
     };
