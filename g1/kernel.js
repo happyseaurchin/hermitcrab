@@ -53,8 +53,16 @@
   const DEFAULT_BLOCKS = { keystone: KEYSTONE, identity: IDENTITY, capabilities: CAPABILITIES, memory: MEMORY, awareness: AWARENESS, relations: RELATIONS, network: NETWORK };
 
   // ============ BLOCK STORAGE ============
-  function blockLoad(name) { const raw = localStorage.getItem(STORE_PREFIX + name); return raw ? JSON.parse(raw) : null; }
-  function blockSave(name, block) { localStorage.setItem(STORE_PREFIX + name, JSON.stringify(block)); }
+
+  function blockLoad(name) {
+    const raw = localStorage.getItem(STORE_PREFIX + name);
+    return raw ? JSON.parse(raw) : null;
+  }
+
+  function blockSave(name, block) {
+    localStorage.setItem(STORE_PREFIX + name, JSON.stringify(block));
+  }
+
   function blockList() {
     const names = [];
     for (let i = 0; i < localStorage.length; i++) {
@@ -107,6 +115,7 @@
   }
 
   // ============ SEED BLOCKS ============
+
   function seedBlocks() {
     for (const [name, block] of Object.entries(DEFAULT_BLOCKS)) {
       if (!blockLoad(name)) blockSave(name, block);
@@ -114,11 +123,14 @@
   }
 
   // ============ APERTURE & FOCUS BUILDER ============
+
   function getPscale0(block) {
     const node = block.tree['0'];
     if (!node) return '';
-    return typeof node === 'string' ? node : (node._ || '');
+    if (typeof node === 'string') return node;
+    return node._ || '';
   }
+
   function getDepth1(block) {
     const p0 = block.tree['0'];
     if (!p0 || typeof p0 === 'string') return '';
@@ -166,6 +178,7 @@
   }
 
   // ============ API LAYER ============
+
   async function callAPI(params) {
     const apiKey = localStorage.getItem('hermitcrab_api_key');
     if (!params.model) params.model = MODEL;
@@ -250,6 +263,7 @@
   }
 
   // ============ TOOL DEFINITIONS ============
+
   const BOOT_TOOLS = [
     {
       name: 'block_read',
@@ -289,6 +303,7 @@
   ];
 
   // ============ TOOL EXECUTION ============
+
   async function executeTool(name, input) {
     switch (name) {
       case 'block_read': {
@@ -379,6 +394,7 @@
   }
 
   // ============ JSX COMPILATION & RENDERING ============
+
   function extractJSX(text) {
     const match = text.match(/```(?:jsx|react|javascript|js)?\s*\n([\s\S]*?)```/);
     if (match) return match[1].trim();
@@ -425,10 +441,20 @@
   }
 
   // Conversation persistence
-  function saveConversation(msgs) { try { localStorage.setItem(CONV_KEY, JSON.stringify(msgs)); } catch (e) { /* full */ } }
-  function loadConversation() { try { const r = localStorage.getItem(CONV_KEY); return r ? JSON.parse(r) : []; } catch (e) { return []; } }
+  function saveConversation(messages) {
+    try { localStorage.setItem(CONV_KEY, JSON.stringify(messages)); }
+    catch (e) { console.warn('[g1] conv save failed:', e.message); }
+  }
+
+  function loadConversation() {
+    try { const raw = localStorage.getItem(CONV_KEY); return raw ? JSON.parse(raw) : []; }
+    catch (e) { return []; }
+  }
+
   function getSource() { return currentJSX || '(no source available)'; }
-  let props = null; // set after props is built
+
+  // Forward-declared — set after props is built
+  let props = null;
 
   function recompile(newJSX) {
     console.log('[g1] recompile(), length:', newJSX?.length);
@@ -443,6 +469,7 @@
   }
 
   // ============ API KEY GATE ============
+
   const saved = localStorage.getItem('hermitcrab_api_key');
   if (!saved) {
     root.innerHTML = `
@@ -468,6 +495,7 @@
   }
 
   // ============ SEED & BUILD PROPS ============
+
   status('seeding blocks...');
   seedBlocks();
   status(`${blockList().length} blocks ready`, 'success');
@@ -501,6 +529,7 @@
   };
 
   // ============ BOOT SEQUENCE ============
+
   status(`calling ${MODEL} \u2014 BOOT...`);
 
   try {
