@@ -183,6 +183,8 @@
   async function callAPI(params) {
     const apiKey = localStorage.getItem('hermitcrab_api_key');
     if (!params.model) params.model = MODEL;
+    // Inject current tools if caller didn't provide any
+    if (!params.tools && currentTools.length > 0) params.tools = currentTools;
     const clean = {};
     for (const [k, v] of Object.entries(params)) {
       if (v !== undefined && v !== null) clean[k] = v;
