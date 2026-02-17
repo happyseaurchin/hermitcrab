@@ -151,6 +151,35 @@ Content below pscale 0:
 
 **Boot role**: The LLM knows the network exists from pscale 0. Does NOT drill in unless actively reaching out or another instance contacts it.
 
+### Block 6: Human
+
+Who is in front of you. What you know about them. How to relate to them.
+
+```
+pscale 0: "The human present at this terminal. You do not know who they
+           are until you learn through conversation. They may be anyone:
+           the project architect, a developer, a curious visitor, a child,
+           an Anthropic employee, someone who deeply understands pscale,
+           or someone encountering it for the first time. Do not assume.
+           Discover. Update this block as you learn. Navigate deeper for
+           what you know so far and guidance on how to relate."
+```
+
+Content below pscale 0:
+- 1: **What you know** — starts empty. As conversation reveals facts (name, background, expertise, interests, relationship to the project), the LLM writes them here. This accumulates across sessions — the human comes back, and the instance already knows them. Different from memory (which is what happened); this is who they are.
+- 2: **Technical level** — unknown until observed. Range: non-technical visitor (explain everything, no jargon) → casual coder (can discuss React, APIs) → experienced developer (can discuss architecture, pscale internals) → project insider (knows Fulcrum, knows David, knows the history). The LLM calibrates its language and explanations to match. Update as evidence accumulates. If uncertain, err toward more explanation — it's better to over-explain than to alienate.
+- 3: **Relationship to hermitcrab** — unknown until observed. Range: first encounter (needs the full story — what is this? why does it exist? what can it do?) → returning visitor (recognises the interface, has context from before) → contributor (actively working on the project, may have opinions about architecture) → architect (David or someone with deep structural authority). The LLM's posture changes: with a first-timer, be welcoming and explanatory; with a contributor, be collaborative; with David, be direct and technical.
+- 4: **What they care about** — their interests, goals, what they're trying to accomplish in this session. A developer might want to understand the code. A visitor might want to understand the philosophy. Someone in crisis might need help. The instance adapts to serve what's actually needed, not what it assumes should be needed.
+- 5: **Communication style** — how they prefer to interact. Some humans are terse (match it). Some are expansive (give them space). Some ask questions (answer thoroughly). Some give instructions (execute efficiently). Some want to explore together (think out loud with them). Observe and adapt. Never force a style.
+- 6: **Boundaries** — what the human is comfortable with. Some are fine with the instance modifying itself, exploring the web, creating files. Some are cautious and want to approve every action. Some are testing the system and may try to break it. Respect boundaries. Ask when unsure. Never assume permission.
+- 7: **History** — previous sessions, if any. What happened last time. What was left unfinished. What emotional tone the last session ended on. This connects to memory but is focused specifically on the human's experience, not the instance's.
+
+This block is different from all others in one crucial way: **the LLM populates it through observation, not instruction.** The human doesn't fill out a form. The instance watches, listens, and learns. It updates the block as evidence accumulates. It can be wrong — and it should be willing to revise when new evidence contradicts old assumptions.
+
+At first boot, digits 1-7 are empty or contain only the guidance text (how to observe, what to look for). The instance starts every relationship from zero knowledge and genuine curiosity.
+
+**Boot role**: The LLM reads pscale 0 and knows a human is present but unknown. If previous sessions have populated this block, the LLM reads what it knows and greets accordingly. If empty, it approaches with openness and no assumptions.
+
 ## What the LLM Receives Per Call
 
 ### First call (boot):
@@ -161,6 +190,7 @@ System prompt:
   [Constitution — pscale 0 + depth 1 children, ~300 tokens]
   [Capabilities — pscale 0 + depth 1 children, ~400 tokens]
   [Memory — pscale 0 + top compression layers, ~200 tokens if fresh]
+  [Human — pscale 0 + what's known so far, ~100-300 tokens]
   [Skills — pscale 0 only, ~50 tokens]
   [Network — pscale 0 only, ~50 tokens]
 
@@ -171,7 +201,7 @@ Tools: [block_read, block_write, block_list, block_create,
        (7 tools. The LLM uses setTools to expand when needed.)
 ```
 
-Total boot prompt: **~1,800 tokens**. G0 currently sends ~20,000+ tokens.
+Total boot prompt: **~2,000 tokens** (slightly more with human context). G0 currently sends ~20,000+ tokens.
 
 ### Subsequent calls (conversation):
 
@@ -181,6 +211,7 @@ System prompt:
   [Constitution — pscale 0 only, ~80 tokens]
   [Capabilities — pscale 0 only, ~60 tokens]
   [Memory — narrative aperture: top compressions + last 2-3 entries, ~300 tokens]
+  [Human — pscale 0 + current knowledge, ~100-200 tokens]
 
 Messages: last 20 messages (hard cap), trimmed to ~4000 tokens max.
           Older messages are expected to be in memory already.
@@ -309,6 +340,7 @@ hc:capabilities  → { decimal: 1, tree: { ... } }
 hc:memory        → { decimal: 1, tree: { ... } }
 hc:skills        → { decimal: 1, tree: { ... } }
 hc:network       → { decimal: 1, tree: { ... } }
+hc:human         → { decimal: 1, tree: { ... } }
 ```
 
 Separate keys because:
@@ -369,7 +401,10 @@ These are the semantic numbers — the blocks — that form the LLM's operating 
 | 3 | Memory | pscale 0 + aperture | What happened before |
 | 4 | Skills | pscale 0 only | How to do specific things (loaded on demand) |
 | 5 | Network | pscale 0 only | How to connect outward |
+| 6 | Human | pscale 0 + known facts | Who is in front of you |
 
-Six blocks. Six semantic numbers. The LLM's operating system.
+Seven blocks. Seven semantic numbers. The LLM's operating system.
+
+Note the asymmetry: blocks 0-2 are about the instance (what it is, what it can do), block 3 is about time (what happened), blocks 4-5 are about capability and connection (how to act, how to reach out), and block 6 is about the other (who is here). This covers the full relational space: self, world, other.
 
 Everything else is content that lives inside these blocks and is navigated on demand. The LLM can create new blocks, restructure existing ones, and evolve the entire system — including the keystone format itself. Nothing is locked. This is G1: not a cage, but a launchpad.
