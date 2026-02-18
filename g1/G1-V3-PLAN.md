@@ -15,12 +15,11 @@ Layer 1  Claude's internal reasoning
          Thinking (extended thinking, budget_tokens). Invisible to us.
          This is where Claude designs, plans, reflects. Native.
 
-Layer 2  Claude's server-side tools (execute on Anthropic's infrastructure)
+Layer 2  Server-side tools (execute on Anthropic's infrastructure)
          Results feed BACK INTO Claude's reasoning before response reaches us.
          Claude can loop internally — search, read results, search again —
          all within a single API call. We never see the HTTP requests.
 
-         AVAILABLE NOW:
          ┌─────────────────────────────────────────────────────────────┐
          │ web_search_20260209  — search the web, auto-citations      │
          │                        $10/1000 searches + token costs      │
@@ -46,36 +45,102 @@ Layer 2  Claude's server-side tools (execute on Anthropic's infrastructure)
          │                        File upload/download via Files API   │
          └─────────────────────────────────────────────────────────────┘
 
-         NOT YET USED BUT RELEVANT:
-         - Programmatic tool calling: Claude writes code in the sandbox
-           that calls YOUR custom tools. Efficient multi-tool workflows.
-         - Agent Skills: modular instruction+script bundles
-         - Files API: upload/download files to/from sandbox
-         - MCP connector: connect to remote MCP servers from API
+Layer 2a Programmatic bridge (code in sandbox calls Layer 3 tools)
+         Claude writes Python/Bash in code_execution that calls custom
+         tools. Intermediate results stay IN THE SANDBOX — they do NOT
+         enter Claude's context window. Only the final output does.
 
-Layer 3  Custom tool REQUESTS (Claude outputs tool_use, crosses network)
+         Enabled by: allowed_callers: ["code_execution_20250825"] on
+         any tool definition. The sandbox calls the tool, receives
+         the result, processes it, and returns only what matters.
+
+         THIS IS TRANSFORMATIVE FOR BLOCK ACCESS:
+         Instead of 10 block_read round-trips (10 network crossings,
+         10 context entries), Claude writes one Python script that
+         traverses the block tree and returns a summary. 1 round-trip.
+
          ---- network boundary (API response travels to browser) ----
 
-Layer 4  Kernel tool execution (kernel.js in browser)
-         block_read, block_write, recompile, get_source, get_datetime,
-         call_llm (delegate). Kernel runs the tool, returns result as
-         tool_result in next API call.
+Layer 3a Anthropic-defined client tools (official schemas, WE execute)
+         Claude outputs tool_use with Anthropic type strings. The request
+         crosses the network. We execute and return result. Claude has
+         been TRAINED on these — it knows them natively.
+
+         ┌─────────────────────────────────────────────────────────────┐
+         │ computer_20250124    — computer use (screenshots, mouse,   │
+         │                        keyboard). NOT used by hermitcrab.  │
+         │                                                             │
+         │ text_editor_20250124 — file editing (view, create, insert, │
+         │                        replace). NOT used by hermitcrab    │
+         │                        (we have recompile/get_source).     │
+         └─────────────────────────────────────────────────────────────┘
+
+         These exist. We don't use them. But the LLM should know the
+         distinction: these are tools Claude was trained on vs tools
+         it learns from our definitions.
+
+Layer 3b User-defined client tools (our schemas, we execute)
+         Same execution path as 3a — Claude requests, network crossing,
+         kernel executes, result returns. But Claude has NO special
+         training. It learns from the tool definitions we provide.
+
+         block_read, block_write, block_list, block_create,
+         get_source, recompile, call_llm, get_datetime
+
+Layer 4  Kernel execution (kernel.js in browser)
+         The engine that runs Layer 3 tools. Also: prompt assembly,
+         conversation management, auto-save mechanics, tool loop,
+         server tool passthrough.
 
 Layer 5  Browser services (called by kernel)
          localStorage (block persistence), Babel (JSX transpilation),
          ReactDOM (rendering), browser APIs (clipboard, speech, etc.)
 
 Layer 6  External services
-         Local proxy server (relays to Anthropic + URLs), target URLs
+         API proxy (relays to Anthropic), target URLs, other hermitcrabs
 ```
+
+### Cross-layer infrastructure
+
+These are not layers — they are **mechanisms that change how layers relate**.
+
+**Programmatic tool calling** (Layer 2 → Layer 3b bridge)
+Claude writes code in the sandbox that calls our custom tools. Add
+`allowed_callers: ["code_execution_20250825"]` to any tool definition.
+The critical property: intermediate results stay in the sandbox, NOT in
+Claude's context. Only the final code output enters context. This means
+Claude could write a Python script that calls block_read 10 times,
+processes the results, and returns a summary — 1 round-trip instead of 10.
+
+**Agent Skills** (context management overlay)
+Modular SKILL.md bundles with progressive disclosure. Three levels:
+1. Metadata (~100 tokens) — always in system prompt. Name + trigger.
+2. Instructions — loaded when triggered. Full operational guide.
+3. Resources — loaded as needed. Templates, examples, data.
+
+Skills require code_execution. Pre-built for PowerPoint/Excel/Word/PDF.
+Custom skills possible. For hermitcrab: "block navigation", "shell
+building", "delegation patterns" — loaded only when relevant. This is
+a context budget mechanism, not a capability layer.
+
+**MCP Connector** (Layer 2 → Layer 6 bridge)
+Connect to remote MCP servers directly from the API. Hermitcrabs could
+reach external services without our proxy. Not yet used.
+
+**Files API** (Layer 2 persistence)
+Upload/download files to/from the code_execution sandbox. Could enable
+the hermitcrab to generate files (visualisations, documents) and serve
+them through its interface. Container persists 30 days.
 
 ### What this means for v3
 
-**G1 v2 built everything at layers 3-6.** Custom web_fetch tool (layer 4) instead of Anthropic's server-side web_fetch (layer 2). Custom block storage (layer 4-5) instead of considering Claude's container persistence (layer 2). No web_search at all in BOOT_TOOLS.
+**G1 v2 built everything at layers 3b-6.** Custom web_fetch tool (layer 4) instead of Anthropic's server-side web_fetch (layer 2). Custom block storage (layer 4-5) instead of considering Claude's container persistence (layer 2). No web_search at all in BOOT_TOOLS.
 
 **G0 was closer to right** — it used Claude's native memory tool (layer 2) and referenced web_search in the environment doc.
 
 **v3 should maximise layers 1-2.** Use server-side tools wherever possible. They're faster (no network round-trip), cheaper (web_fetch is free), and more natural for the LLM (results feed directly into reasoning).
+
+**Programmatic tool calling is the biggest unlock.** Block access becomes efficient. Instead of the LLM making individual block_read calls (each a full API round-trip), it writes a traversal script that runs at Layer 2 speed. The block tree becomes as accessible as a local file.
 
 ---
 
@@ -129,19 +194,21 @@ const SERVER_TOOLS = [
 
 **code_execution** is potentially huge. Claude can run Python/Bash in a sandbox on Anthropic's servers. This means data processing, visualisation, file manipulation — all at layer 2. The sandbox persists for 30 days via container reuse. And it's FREE when used with web tools.
 
-### Tools — Client-side (Layer 4)
+### Tools — Client-side (Layer 3b)
 
 These are kernel-executed tools. Keep only what MUST run in the browser:
 
 ```javascript
 const CLIENT_TOOLS = [
   // Block operations — must be client-side (localStorage)
-  { name: 'block_read', ... },
-  { name: 'block_write', ... },
-  { name: 'block_list', ... },
-  { name: 'block_create', ... },
+  // NOTE: allowed_callers enables programmatic bridge (Layer 2a)
+  { name: 'block_read',   ..., allowed_callers: ['code_execution_20250825'] },
+  { name: 'block_write',  ..., allowed_callers: ['code_execution_20250825'] },
+  { name: 'block_list',   ..., allowed_callers: ['code_execution_20250825'] },
+  { name: 'block_create', ..., allowed_callers: ['code_execution_20250825'] },
 
   // UI operations — must be client-side (DOM)
+  // NOT callable from sandbox (needs browser DOM)
   { name: 'get_source', ... },
   { name: 'recompile', ... },
 
@@ -152,6 +219,8 @@ const CLIENT_TOOLS = [
   { name: 'get_datetime', ... }
 ];
 ```
+
+**allowed_callers on block tools**: This enables the programmatic bridge. Claude can write Python in the sandbox that calls block_read/block_write directly, with intermediate results staying in the sandbox. Bulk block operations become 1 round-trip instead of N. Note: need to verify how the sandbox routes calls back to our kernel — this may require a webhook endpoint on the proxy server (see Open Question 3).
 
 Everything else that was in BOOT_TOOLS (web_fetch, web_request, open_tab, clipboard, speak, notify, download) is either replaced by server-side tools or can be added later via setTools.
 
@@ -181,12 +250,16 @@ Strictly operational. Lists what the hermitcrab can USE, at the correct distance
 0.1: "Native. Server-side tools that execute within your thinking cycle."
   0.1.1: "web_search — search the web. Results feed into your reasoning. Auto-citations."
   0.1.2: "web_fetch — fetch full page content from a URL. Free. Dynamic filtering."
-  0.1.3: "code_execution — run Python/Bash in a sandbox. Data analysis, visualisation, file ops."
+  0.1.3: "code_execution — run Python/Bash in a persistent sandbox. Data analysis, visualisation, file ops."
+  0.1.4: "Programmatic bridge — write code in the sandbox that calls your block tools.
+           Intermediate results stay in the sandbox. Only the final output enters your context.
+           10 block reads in one round-trip instead of 10."
 
 0.2: "Blocks. Your persistent structured memory, stored in the browser."
   0.2.1: "block_read(name, path?) — navigate to a specific position in a block."
   0.2.2: "block_write(name, path, content) — write content at a position."
   0.2.3: "block_list() — see all blocks. block_create(name, pscale0) — make a new one."
+  0.2.4: "These tools cross the network — each call is a round-trip. For bulk access, use 0.1.4."
 
 0.3: "Interface. Your visible surface — a React UI you can rewrite."
   0.3.1: "get_source — read your current JSX. recompile(jsx) — hot-swap your interface."
@@ -202,31 +275,33 @@ Strictly operational. Lists what the hermitcrab can USE, at the correct distance
   0.6.1: "Passport — publish identity/signals. Beach — discovery. Rider — negotiation."
 ```
 
+Note the key addition: 0.1.4 (programmatic bridge) and 0.2.4 (cost awareness). The LLM needs to understand that block reads have a cost (network round-trip) and that bulk access should use the sandbox bridge.
+
 ---
 
 ## Kernel Changes (Step 3)
 
-### 1. Add server-side tools to every API call
+### 3.1. Add server-side tools to every API call
 
-The proxy server needs updating to pass through server tool types. Currently it just relays — but it needs to handle `anthropic-beta` headers for code_execution and web tools.
+The proxy server needs updating to pass through server tool types. Currently it just relays — but it needs to handle `anthropic-beta` headers for code_execution and web tools. Required header: `code-execution-web-tools-2026-02-09`.
 
 In kernel.js, the `callAPI` function needs to include SERVER_TOOLS alongside CLIENT_TOOLS in the tools array. Server-side tools don't need execution handling — Anthropic handles them. But we need to handle `pause_turn` stop_reason (server tools may need continuation).
 
-### 2. Handle server tool responses in tool loop
+### 3.2. Handle server tool responses in tool loop
 
 Currently `callWithToolLoop` only handles `stop_reason === 'tool_use'` (client tools). Server tools return with `stop_reason === 'end_turn'` normally, but may return `stop_reason === 'pause_turn'` if the server-side loop hits its limit. Need to handle this.
 
 Also: server tool results (`web_search_tool_result`, `web_fetch_tool_result`, `code_execution_tool_result`) appear in the response content alongside text blocks. The kernel doesn't need to execute them — but it should not try to execute them either. Current tool loop filters for `type === 'tool_use'` — need to also handle `type === 'server_tool_use'` (skip execution, just continue).
 
-### 3. Auto-save to history
+### 3.3. Auto-save to history
 
 After each API response, extract text content and append to history block. Mechanical — no LLM involvement.
 
-### 4. Constitution loading
+### 3.4. Constitution loading
 
 Same as v2 — load from seed.json, prepend to system prompt every call.
 
-### 5. Aperture for 6 blocks
+### 3.5. Aperture for 6 blocks
 
 ```javascript
 const names = ['capabilities', 'history', 'purpose', 'stash', 'relationships'];
@@ -234,9 +309,27 @@ const names = ['capabilities', 'history', 'purpose', 'stash', 'relationships'];
 
 (Keystone handled separately in system prompt. Constitution is not a block.)
 
-### 6. Remove redundant custom tools
+### 3.6. Remove redundant custom tools
 
 Remove: web_fetch (replaced by server-side), web_request (replaced by server-side web_fetch), open_tab (browser-only, add via setTools if needed).
+
+### 3.7. Programmatic tool calling (allowed_callers)
+
+Add `allowed_callers: ["code_execution_20250825"]` to block_read, block_write, block_list, block_create tool definitions. This enables the Layer 2a bridge — Claude writes Python that calls block tools from the sandbox.
+
+**Implementation question**: When the sandbox calls block_read, how does the request reach our browser? Options:
+- (a) Anthropic routes tool calls back through the API response (most likely — the sandbox pauses, emits a tool_use, we execute, return result, sandbox resumes)
+- (b) We need a webhook endpoint that the sandbox calls directly (would require publicly accessible server)
+- (c) This feature only works with API-accessible tools, not browser-based ones
+
+This needs testing. If (a), it's straightforward — just add allowed_callers. If (b) or (c), we may need to defer programmatic tool calling until we have a server-side persistence layer.
+
+### 3.8. Proxy server updates
+
+The proxy currently relays API calls. It needs:
+- Pass through `anthropic-beta` header with value `code-execution-web-tools-2026-02-09`
+- May need to handle tool call routing for programmatic tool calling (see 3.7)
+- No longer needs to relay web fetch requests (replaced by server-side web_fetch)
 
 ---
 
@@ -268,17 +361,21 @@ This is the hardest intellectual work. The v2 keystone teaches one mode. v3 need
 
 1. **Proxy server**: Does the current proxy pass through `anthropic-beta` headers? If not, that's the first fix needed. Server-side tools like code_execution with web tools require `code-execution-web-tools-2026-02-09` beta header.
 
-2. **Container reuse**: code_execution containers persist 30 days. Should the hermitcrab store its container ID in a block? This would give it persistent server-side file storage — an alternative to localStorage for larger data.
+2. **Container reuse**: code_execution containers persist 30 days. Should the hermitcrab store its container ID in a block? This would give it persistent server-side file storage — an alternative to localStorage for larger data. The container ID could live in the capabilities block (operational, not identity).
 
-3. **Programmatic tool calling**: Claude can write code in the sandbox that calls our custom tools. This means Claude could write a Python script that calls block_read 10 times efficiently, rather than making 10 separate tool_use round-trips. Potentially transforms how blocks are accessed.
+3. **Programmatic tool calling implementation**: The mechanism is clear — `allowed_callers` on tool definitions, Claude writes Python that calls block tools. The open question is: how do we implement the bridge on the kernel side? When the sandbox calls block_read, the request needs to travel from Anthropic's infrastructure to our browser. Does Anthropic handle this routing, or do we need a webhook/API endpoint? This needs testing. If it requires a publicly accessible endpoint, we'd need the proxy server to also serve tool call requests — a significant change.
 
 4. **Files API**: Upload/download files to/from the sandbox. Could the hermitcrab upload its blocks to the sandbox for processing? Could it generate files (visualisations, documents) and serve them through its interface?
 
-5. **Second-order processing**: The plan mentions a separate LLM call to analyse history + stash and extract patterns. Code execution could do this — Claude analyses its own blocks in the sandbox. Or it could be a scheduled kernel function using Haiku.
+5. **Second-order processing via code_execution**: The hermitcrab could use the sandbox to analyse its own blocks. Write a Python script (via programmatic tool calling) that reads history + stash, finds patterns, and returns a summary. This is second-order processing without a separate LLM call — Claude analyses itself through code. Alternatively, a scheduled kernel function using Haiku via call_llm.
 
 6. **How does the LLM know about self-triggering?** The React component receives props including callLLM. But a new session's Claude doesn't know the component has these props unless told. The capabilities block mentions delegation — is that enough? Or does the interface guidance in constitution/capabilities need to be more explicit?
 
 7. **The pscale-0 question**: David notes that the whole notion of pscale-0 may need revision depending on whether blocks are 0.x (decimal 0, everything is decomposition) or x.0 (decimal > 0, with composition above). This affects the keystone fundamentals work.
+
+8. **Agent Skills for hermitcrab**: Could we define custom skills (SKILL.md format) for "block navigation", "shell building", "delegation patterns"? These would load into context only when triggered, saving the ~500-1000 tokens of operational guidance that currently sits in capabilities. Progressive disclosure: the LLM always sees "you can build shells" (metadata), but only gets the full shell-building guide when it's actually about to build one. Requires code_execution.
+
+9. **Anthropic-defined client tools**: We're not using computer_use or text_editor, but should the LLM know they exist? Knowing that text_editor is at Layer 3a (trained on) while recompile is at Layer 3b (learned from definition) helps the LLM calibrate its confidence in tool usage.
 
 ---
 
