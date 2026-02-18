@@ -45,9 +45,9 @@
       const res = await fetch(base + 'shell.json');
       if (!res.ok) throw new Error(`shell.json: ${res.status}`);
       const seed = await res.json();
-      // v2 format: { constitution: "...", blocks: { ... } }
-      if (seed.constitution) {
-        CONSTITUTION = seed.constitution;
+      // v3/v2 format: { blocks: { ... }, constitution?: "..." }
+      if (seed.blocks) {
+        if (seed.constitution) CONSTITUTION = seed.constitution;
         return seed.blocks;
       }
       // v1 fallback: flat { blockName: blockData, ... }
@@ -443,19 +443,27 @@
     return response;
   }
 
-  // Auto-save assistant responses to history (kernel-level, not LLM-initiated)
+  // Auto-save assistant responses to history block (kernel-level, not LLM-initiated)
+  // Writes to the pscale history block at the next unoccupied digit under pscale 0.
+  // When digits 1-9 are full, stops writing (compression must be triggered explicitly).
   function autoSaveToHistory(response) {
     try {
       const texts = (response.content || []).filter(b => b.type === 'text');
       if (texts.length === 0) return;
-      const historyKey = STORE_PREFIX + 'history';
-      const existing = localStorage.getItem(historyKey);
-      const entry = { ts: new Date().toISOString(), text: texts.map(b => b.text).join('\n').substring(0, 2000) };
-      let history = [];
-      if (existing) { try { history = JSON.parse(existing); } catch (e) { history = []; } }
-      history.push(entry);
-      if (history.length > 100) history = history.slice(-100);
-      localStorage.setItem(historyKey, JSON.stringify(history));
+      const block = blockLoad('history');
+      if (!block) return;
+      // Find pscale 0 node
+      const p0Path = (block.decimal || 0) === 0 ? '' : '0';
+      const slot = findUnoccupiedDigit(block, p0Path);
+      if (slot.full) {
+        console.log('[g1] history block full at pscale 0 — compression needed');
+        return;
+      }
+      const entry = `[${new Date().toISOString()}] ${texts.map(b => b.text).join('\n').substring(0, 500)}`;
+      const writePath = p0Path ? `${p0Path}.${slot.digit}` : slot.digit;
+      blockWriteNode(block, writePath, entry);
+      blockSave('history', block);
+      console.log(`[g1] auto-saved to history at ${writePath}`);
     } catch (e) { console.error('[g1] auto-save failed:', e); }
   }
 
