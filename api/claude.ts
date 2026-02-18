@@ -15,6 +15,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const allowedOrigins = [
     'https://hermitcrab.me',
     'https://www.hermitcrab.me',
+    'https://seed.machus.ai',
     'http://localhost:5173',
     'http://localhost:3000',
   ];
@@ -91,7 +92,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
       // Enable ALL beta features the instance might use
-      'anthropic-beta': 'web-fetch-2025-09-10,code-execution-2025-08-25,context-management-2025-06-27',
+      // Server-side tools: web search, web fetch, code execution
+      'anthropic-beta': 'web-search-2025-03-05,web-fetch-2025-09-10,code-execution-2025-08-25,code-execution-web-tools-2026-02-09,context-management-2025-06-27',
     };
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {

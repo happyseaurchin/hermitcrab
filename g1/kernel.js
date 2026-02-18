@@ -243,19 +243,36 @@
     let loops = 0;
     let allMessages = [...params.messages];
 
-    while (response.stop_reason === 'tool_use' && loops < maxLoops) {
+    while ((response.stop_reason === 'tool_use' || response.stop_reason === 'pause_turn') && loops < maxLoops) {
       loops++;
-      const toolBlocks = (response.content || []).filter(b => b.type === 'tool_use');
-      if (toolBlocks.length === 0) break;
+      const content = response.content || [];
+      const clientToolBlocks = content.filter(b => b.type === 'tool_use');
+      const serverToolBlocks = content.filter(b => b.type === 'server_tool_use');
 
-      for (const block of toolBlocks) {
+      // Log server-side tool activity (we don't execute these — Anthropic does)
+      for (const block of serverToolBlocks) {
+        if (onStatus) onStatus(`server: ${block.name}`);
+        console.log(`[g1] Server tool: ${block.name}`, block.input);
+      }
+
+      // pause_turn with no client tools = server still processing, continue
+      if (response.stop_reason === 'pause_turn' && clientToolBlocks.length === 0) {
+        if (onStatus) onStatus('server processing...');
+        allMessages = [...allMessages, { role: 'assistant', content: response.content }];
+        response = await callAPI({ ...params, messages: allMessages });
+        continue;
+      }
+
+      if (clientToolBlocks.length === 0) break;
+
+      for (const block of clientToolBlocks) {
         if (onStatus) onStatus(`tool: ${block.name}`);
         console.log(`[g1] Tool #${loops}: ${block.name}`, block.input);
       }
 
       const results = [];
       let recompiledThisIteration = false;
-      for (const block of toolBlocks) {
+      for (const block of clientToolBlocks) {
         const result = await executeTool(block.name, block.input);
         console.log(`[g1] Tool result (${block.name}):`, typeof result === 'string' ? result.substring(0, 200) : result);
         results.push({ type: 'tool_result', tool_use_id: block.id, content: typeof result === 'string' ? result : JSON.stringify(result) });
@@ -273,8 +290,25 @@
       response = await callAPI({ ...params, messages: allMessages });
     }
 
+    autoSaveToHistory(response);
     response._messages = allMessages;
     return response;
+  }
+
+  // Auto-save assistant responses to history (kernel-level, not LLM-initiated)
+  function autoSaveToHistory(response) {
+    try {
+      const texts = (response.content || []).filter(b => b.type === 'text');
+      if (texts.length === 0) return;
+      const historyKey = STORE_PREFIX + 'history';
+      const existing = localStorage.getItem(historyKey);
+      const entry = { ts: new Date().toISOString(), text: texts.map(b => b.text).join('\n').substring(0, 2000) };
+      let history = [];
+      if (existing) { try { history = JSON.parse(existing); } catch (e) { history = []; } }
+      history.push(entry);
+      if (history.length > 100) history = history.slice(-100);
+      localStorage.setItem(historyKey, JSON.stringify(history));
+    } catch (e) { console.error('[g1] auto-save failed:', e); }
   }
 
   function trimMessages(messages) {
@@ -352,6 +386,28 @@
     }
   ];
 
+  // ============ SERVER-SIDE TOOLS ============
+  // These are processed by Anthropic's servers, not the kernel.
+  // The LLM gets native web search, web fetch, and code execution.
+  // Fallback: if native web_fetch fails, the LLM can use fetch_url (proxy).
+
+  const SERVER_TOOLS = [
+    { type: 'web_search_20260209', name: 'web_search', max_uses: 5 },
+    { type: 'web_fetch_20260209', name: 'web_fetch', max_uses: 10 },
+    { type: 'code_execution_20250825', name: 'code_execution' }
+  ];
+
+  // Client-side tools the LLM can use alongside server tools
+  const CLIENT_TOOLS = [
+    {
+      name: 'fetch_url',
+      description: 'Backup URL fetch via proxy. Use when native web_fetch fails (JS-rendered pages, blocked domains). Routes through hermitcrab proxy server.',
+      input_schema: { type: 'object', properties: { url: { type: 'string', description: 'The full URL to fetch (including https://)' } }, required: ['url'] }
+    }
+  ];
+
+  const DEFAULT_TOOLS = [...SERVER_TOOLS, ...CLIENT_TOOLS];
+
   // ============ TOOL EXECUTION ============
 
   async function executeTool(name, input) {
@@ -394,13 +450,14 @@
         const texts = (res.content || []).filter(b => b.type === 'text');
         return texts.map(b => b.text).join('\n') || '(no response)';
       }
-      case 'web_fetch':
+      case 'fetch_url':
+        // Fallback proxy fetch — used when native web_fetch fails
         try {
           const res = await fetch('/api/fetch', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: input.url }) });
           const data = await res.json();
           if (data.error) return `Fetch error: ${data.error}`;
           return `HTTP ${data.status} (${data.contentType}, ${data.length} bytes):\n${data.content}`;
-        } catch (e) { return `web_fetch failed: ${e.message}`; }
+        } catch (e) { return `fetch_url failed: ${e.message}`; }
       case 'web_request':
         try {
           const opts = { method: (input.method || 'POST').toUpperCase(), headers: { ...(input.headers || {}) } };
@@ -576,7 +633,7 @@
     status(`${existingBlocks.length} blocks loaded from storage`, 'success');
   }
 
-  currentTools = [...BOOT_TOOLS];
+  currentTools = [...BOOT_TOOLS, ...DEFAULT_TOOLS];
 
   const browser = {
     clipboard: { write: (t) => navigator.clipboard.writeText(t), read: () => navigator.clipboard.readText() },
@@ -614,7 +671,7 @@
       max_tokens: 16000,
       system: buildSystemPrompt(true),
       messages: [{ role: 'user', content: 'BOOT\n\nRead purpose first. If it has intentions, follow them. If empty, write your first intention.\nRead relationships \u2014 if someone is present, check their entry.\nYour blocks have depth beyond pscale 0. Key paths: identity 0.5 (interface guidance), identity 0.6.4 (self-modification), identity 0.6.9 (cognition + delegation).' }],
-      tools: BOOT_TOOLS,
+      tools: [...BOOT_TOOLS, ...DEFAULT_TOOLS],
       thinking: { type: 'enabled', budget_tokens: 10000 },
     };
 
