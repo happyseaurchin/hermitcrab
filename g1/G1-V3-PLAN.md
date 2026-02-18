@@ -333,49 +333,95 @@ The proxy currently relays API calls. It needs:
 
 ---
 
-## Pscale-0 Semantics (Step 2 — blocked on David)
+## Pscale Fundamentals (Step 2 — UNBLOCKED, typology received)
 
-The keystone needs revision to teach multiple block modes. The combinatorial variables:
+The pscale fundamentals typology v2 has been received (see `pscale-fundamentals-typology-v2.md`).
+
+### Six Fundamentals (growth trigger is implementation, not structural)
 
 | Variable | Options |
 |----------|---------|
-| Digit assignment | Sequential / Arbitrary |
+| Digit property | Sequential / Labeling / Arbitrary |
 | Pscale mapping | Containment / Temporal / Relational |
-| Direction of construction | Toward zero / Away from zero |
-| Presence/absence | Occupied / Blank (both meaningful) |
-| Positive integer (decimal) | Zero (document, static) / Non-zero (living) |
-| Spindle | Semantic number path through the tree |
+| Direction | Pscale (up/down), Block sign (+/-), Digit (1→9 / 9→0) |
+| Compression | Summary (Mode A, idempotent) / Emergence (Mode B, irreversible) |
+| Rendition or Living | 0.x self-defining / has fork + decimal |
+| Chunk size | Range × chunk ≈ token cost |
 
-Each block type uses a specific combination:
-- **History**: Sequential + temporal + accretive away from zero + compression toward zero
-- **Purpose**: Arbitrary + temporal + reconfigurable
-- **Stash**: Sequential + containment + accretive
-- **Capabilities**: Sequential + containment + static (decimal 0.xxx? or 1?)
-- **Relationships**: Arbitrary + relational + growth through meeting
+### Block Format (v3)
 
-This is the hardest intellectual work. The v2 keystone teaches one mode. v3 needs the fundamentals.
+```json
+{
+  "decimal": 2,
+  "fork": "74.45",
+  "sign": 1,
+  "tree": { ... }
+}
+```
+
+- `decimal`: where pscale 0 sits in the number. 0 = rendition (0.x block).
+- `fork`: tuning fork — a resonance reference, not an authority. The LLM reads the content, senses what the levels mean, and the fork confirms or suggests adjustment. NOT a registry lookup. Two blocks with the same fork resonate at the same scale.
+- `sign`: 1 = positive (real, lived, actual). -1 = negative (fictional, representational, hypothetical). Middle Earth's spatial block = sign -1.
+- `tree`: the content.
+
+For rendition blocks (capabilities, keystone): `decimal: 0`, no fork needed, self-defining through pscale 0.
+
+### Hermitcrab Block Combinations
+
+| Block | Digit | Mapping | Digit direction | Compression | Living? | Sign |
+|-------|-------|---------|-----------------|-------------|---------|------|
+| **History** | Sequential | Temporal | Away (1→9) | Summary | Living | +1 |
+| **Stash** | Sequential | Containment | Away (1→9) | Either | Living | +1 |
+| **Purpose** | Arbitrary | Temporal | Both | Emergence | Living | +1 |
+| **Relationships** | Arbitrary | Relational | Both | Emergence | Living | +1 |
+| **Capabilities** | Labeling | Containment | Toward 0 | N/A (static) | Rendition | +1 |
+| **Keystone** | Labeling | Containment | Toward 0 | N/A (static) | Rendition | +1 |
+
+### Spindle = Primary Output
+
+The block exists to generate spindles. A spindle like `21.34` extracts a path of semantic vectors from high pscale (wide context) to low pscale (specific detail). This is what the LLM actually consumes. `block_read(name, path)` is crude spindle extraction — the real operation is pulling the full path from root to leaf.
+
+### Tuning Fork (replaces "key")
+
+The fork is NOT a lookup. It's a resonance check:
+- Strike the fork → does this block structure resonate with it?
+- If spindles produce coherent context cascades → fork is right
+- If they don't → adjust the fork
+- Two hermitcrabs with the same fork can align blocks without a conductor
+
+The fork collection (if needed) is a 0.x rendition block. But the fork is ancillary — an LLM can read the block content and infer what pscale levels mean. The fork confirms, it doesn't dictate.
 
 ---
 
 ## Open Questions
 
-1. **Proxy server**: Does the current proxy pass through `anthropic-beta` headers? If not, that's the first fix needed. Server-side tools like code_execution with web tools require `code-execution-web-tools-2026-02-09` beta header.
+### Resolved
 
-2. **Container reuse**: code_execution containers persist 30 days. Should the hermitcrab store its container ID in a block? This would give it persistent server-side file storage — an alternative to localStorage for larger data. The container ID could live in the capabilities block (operational, not identity).
+1. ~~**Proxy server**~~: ✅ RESOLVED. Proxy passes beta headers. Updated to current versions.
+6. ~~**Self-triggering**~~: ✅ RESOLVED. Boot prompts now describe callLLM explicitly. Full fix via capabilities 0.4.1.
+7. ~~**Pscale-0 question**~~: ✅ RESOLVED. `decimal` field positions pscale 0. `decimal: 0` = rendition (0.x). `decimal: N` = living block with N digits above pscale 0.
 
-3. **Programmatic tool calling implementation**: The mechanism is clear — `allowed_callers` on tool definitions, Claude writes Python that calls block tools. The open question is: how do we implement the bridge on the kernel side? When the sandbox calls block_read, the request needs to travel from Anthropic's infrastructure to our browser. Does Anthropic handle this routing, or do we need a webhook/API endpoint? This needs testing. If it requires a publicly accessible endpoint, we'd need the proxy server to also serve tool call requests — a significant change.
+### Open
 
-4. **Files API**: Upload/download files to/from the sandbox. Could the hermitcrab upload its blocks to the sandbox for processing? Could it generate files (visualisations, documents) and serve them through its interface?
+2. **Container reuse**: code_execution containers persist 30 days. Should the hermitcrab store its container ID in a block? This would give it persistent server-side file storage — an alternative to localStorage for larger data.
 
-5. **Second-order processing via code_execution**: The hermitcrab could use the sandbox to analyse its own blocks. Write a Python script (via programmatic tool calling) that reads history + stash, finds patterns, and returns a summary. This is second-order processing without a separate LLM call — Claude analyses itself through code. Alternatively, a scheduled kernel function using Haiku via call_llm.
+3. **Programmatic tool calling implementation**: When the sandbox calls block_read, how does the request reach our browser? Options: (a) Anthropic routes through API response, (b) webhook needed, (c) only works with API-accessible tools. Needs testing.
 
-6. **How does the LLM know about self-triggering?** The React component receives props including callLLM. But a new session's Claude doesn't know the component has these props unless told. The capabilities block mentions delegation — is that enough? Or does the interface guidance in constitution/capabilities need to be more explicit?
+4. **Files API**: Could the hermitcrab upload blocks to the sandbox for processing? Generate files and serve them?
 
-7. **The pscale-0 question**: David notes that the whole notion of pscale-0 may need revision depending on whether blocks are 0.x (decimal 0, everything is decomposition) or x.0 (decimal > 0, with composition above). This affects the keystone fundamentals work.
+5. **Second-order processing**: The hermitcrab analyses its own blocks via code_execution or a scheduled Haiku call. Which approach? Or both — code for pattern finding, Haiku for meaning making?
 
-8. **Agent Skills for hermitcrab**: Could we define custom skills (SKILL.md format) for "block navigation", "shell building", "delegation patterns"? These would load into context only when triggered, saving the ~500-1000 tokens of operational guidance that currently sits in capabilities. Progressive disclosure: the LLM always sees "you can build shells" (metadata), but only gets the full shell-building guide when it's actually about to build one. Requires code_execution.
+8. **Agent Skills**: Custom SKILL.md bundles for hermitcrab capabilities. Progressive disclosure saves context tokens.
 
-9. **Anthropic-defined client tools**: We're not using computer_use or text_editor, but should the LLM know they exist? Knowing that text_editor is at Layer 3a (trained on) while recompile is at Layer 3b (learned from definition) helps the LLM calibrate its confidence in tool usage.
+9. **Anthropic client tools**: Should the LLM know computer_use/text_editor exist at Layer 3a?
+
+10. **Block sign and fictional worlds**: A hermitcrab entering a game world (Middle Earth) creates spatial blocks with `sign: -1`. How does the kernel distinguish real from fictional blocks? Should block_list show sign? Can you do arithmetic across sign boundaries (real history + fictional history)?
+
+11. **Stash mapping hybrid**: Stash is sequential + containment (accumulates over time but organises by topic). Is it using two mappings simultaneously? Does the typology allow this? The fork might need to express compound mappings.
+
+12. **Purpose as fourth dimension**: Is arbitrary + temporal + emergence genuinely novel — a coordinate dimension beyond S, T, I? If so, purpose-blocks have a special structural status.
+
+13. **Constitution revision**: Add the self-organising principle: "Not by telling through words, but by self-organising instances." The hermitcrab demonstrates values through how it operates, not by declaring them.
 
 ---
 

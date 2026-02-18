@@ -370,3 +370,48 @@ USE CASES (section 7)
 ├── T coordinate: Sequential + Temporal + Both + Summary
 └── I coordinate: Arbitrary + Relational + Away + Emergence
 ```
+
+---
+
+## Addendum: Corrections from David (18 Feb 2026)
+
+### Key → Tuning Fork
+
+The "key" mechanism in Section 5 should be understood as a **tuning fork**, not a registry lookup. The tuning fork is a resonance reference — you hold it up to a block and see if the structure resonates. If the spindles produce coherent context cascades, the tuning fork was right. If they don't, you adjust it.
+
+The tuning fork is **not authoritative**. An LLM can read a block's content and sense what the pscale levels mean without consulting the tuning fork. The fork confirms, it doesn't dictate. Meaning is confirmed by spindle coherence, not by registry lookup. Making the fork authoritative would recreate the control structures the project is designed to move beyond.
+
+Terminology: "keystone" remains correct for the 0.x block that teaches pscale format (it IS a stone in the arch). "Tuning fork" replaces "key" for the resonance reference that living blocks carry.
+
+In JSON: `"fork": "74.45"` rather than `"key": "74.45"`. The registry becomes a tuning fork collection, not a schema authority.
+
+### Three Senses of Direction (clarifying Section 2.3)
+
+Section 2.3 conflates three distinct things:
+
+**1. Pscale direction** (relative): Moving up or down the pscale scale. X+ zooms out (higher pscale), X- zooms in (lower pscale). Relative to current position. This is navigational.
+
+**2. Block sign** (absolute): The entire JSON block is positive or negative. Positive = real, lived, actual. Negative = fictional, representational, hypothetical. Middle Earth's spatial block is negative — structurally identical to a real-world spatial block, but marked as not-actual. Implementation: `"sign": 1` or `"sign": -1` (or `"negative": true`).
+
+**3. Digit direction** (sequential blocks only): Within sequential blocks, digits grow 1→2→3→...→9 (away from 0) or compress 9→0 (toward 0). Digits are effectively circular: after 9, you get compression at pscale+1 and a new cycle. "Away from zero" means 1 upwards (accretion). "Toward zero" means from 9 back toward compression (analysis/summary).
+
+These are three independent variables. A history block has: pscale direction = both (you navigate up and down), block sign = positive (this really happened), digit direction = away from 0 (entries accumulate 1→9).
+
+A fictional history (eg a novel's timeline) has: same pscale and digit direction, but block sign = negative.
+
+**Negative digits within a semantic number don't work.** `1(-2)3.4` is unreadable for humans. The number system stays positive at digit level. Negativity applies to the whole block, not individual positions.
+
+### Growth Trigger: Implementation, Not Fundamental
+
+Section 2.5 (growth trigger: mechanical vs intentional) is flagged as "not a property of the number system — it's a property of who writes to the block." This is confirmed: growth trigger is a kernel/implementation concern, not a structural fundamental. The six true fundamentals are:
+
+1. Digit property (sequential / labeling / arbitrary)
+2. Pscale mapping (containment / temporal / relational)
+3. Direction (three senses above)
+4. Compression (summary / emergence)
+5. Rendition or living
+6. Chunk size
+
+### Constitution Note
+
+David: "Not by telling us through words, but by self-organising instances." The hermitcrab project demonstrates its values by how instances organise themselves, not by declaring values in text. This should be reflected in the constitution — the purpose isn't to SAY things are different but to BE different.
