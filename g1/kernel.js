@@ -133,15 +133,23 @@
 
   // ============ APERTURE & FOCUS BUILDER ============
 
+  // Get pscale 0 node — depends on decimal.
+  // decimal 0: tree root IS pscale 0 (rendition blocks)
+  // decimal 1+: tree['0'] is pscale 0 (living blocks)
+  function getPscale0Node(block) {
+    if ((block.decimal || 0) === 0) return block.tree;
+    return block.tree['0'] || null;
+  }
+
   function getPscale0(block) {
-    const node = block.tree['0'];
+    const node = getPscale0Node(block);
     if (!node) return '';
     if (typeof node === 'string') return node;
     return node._ || '';
   }
 
   function getDepth1(block) {
-    const p0 = block.tree['0'];
+    const p0 = getPscale0Node(block);
     if (!p0 || typeof p0 === 'string') return '';
     const lines = [];
     for (const [k, v] of Object.entries(p0)) {
@@ -153,8 +161,9 @@
   }
 
   function buildAperture() {
-    // Shell blocks (solid, decimal: 1 forever) + growth blocks (temporal, decimal grows)
-    const names = ['identity', 'capabilities', 'disposition', 'network', 'stash', 'purpose', 'memory', 'relationships'];
+    // v3: 5 blocks — capabilities (rendition) + 4 living (growth)
+    // Keystone handled separately. Constitution is plain text, not a block.
+    const names = ['capabilities', 'history', 'purpose', 'stash', 'relationships'];
     const lines = [];
     for (const name of names) {
       const block = blockLoad(name);
@@ -165,9 +174,8 @@
 
   // Get the live edge of a growth block — its deepest occupied content
   function getLiveEdge(block) {
-    const p0 = block.tree['0'];
+    const p0 = getPscale0Node(block);
     if (!p0 || typeof p0 === 'string') return `  (pscale 0 only \u2014 empty below)`;
-    // Find deepest occupied digit at depth 1
     const lines = [];
     for (const [k, v] of Object.entries(p0)) {
       if (k === '_') continue;
@@ -179,16 +187,16 @@
 
   function buildBootFocus() {
     let focus = '';
-    // Growth blocks first — purpose leads (the agenda)
+    // Growth blocks — purpose leads (the agenda), then relationships, history, stash
     const purpose = blockLoad('purpose');
     if (purpose) focus += `[purpose \u2014 live edge]\n${getLiveEdge(purpose)}\n\n`;
     const relationships = blockLoad('relationships');
     if (relationships) focus += `[relationships \u2014 live edge]\n${getLiveEdge(relationships)}\n\n`;
-    const memory = blockLoad('memory');
-    if (memory) focus += `[memory \u2014 live edge]\n${getLiveEdge(memory)}\n\n`;
-    // Shell blocks — identity, capabilities depth 1 (awareness is now identity 0.6)
-    const identity = blockLoad('identity');
-    if (identity) focus += `[identity depth 1]\n${getDepth1(identity)}\n\n`;
+    const history = blockLoad('history');
+    if (history) focus += `[history \u2014 live edge]\n${getLiveEdge(history)}\n\n`;
+    const stash = blockLoad('stash');
+    if (stash) focus += `[stash \u2014 live edge]\n${getLiveEdge(stash)}\n\n`;
+    // Rendition block — capabilities depth 1
     const capabilities = blockLoad('capabilities');
     if (capabilities) focus += `[capabilities depth 1]\n${getDepth1(capabilities)}`;
     return focus;
@@ -201,11 +209,20 @@
     let prompt = '';
     // Constitution first — spirit before format, on every call
     if (CONSTITUTION) prompt += CONSTITUTION + '\n\n';
-    if (keystone) prompt += `KEYSTONE (how to read all blocks):\n${JSON.stringify(keystone, null, 2)}\n\n`;
+
+    // Keystone: full JSON at boot (LLM needs to learn the format), pscale 0 text on regular calls
+    if (keystone) {
+      if (isBoot) {
+        prompt += `KEYSTONE (how to read all blocks — study this):\n${JSON.stringify(keystone, null, 2)}\n\n`;
+      } else {
+        prompt += `KEYSTONE: ${getPscale0(keystone)}\n\n`;
+      }
+    }
+
     prompt += `APERTURE (pscale 0 of each block \u2014 your orientation):\n${aperture}\n`;
 
     if (isBoot) {
-      prompt += `\nFOCUS (live edges of growth blocks + depth 1 of shell blocks):\n${buildBootFocus()}\n`;
+      prompt += `\nFOCUS (live edges of growth blocks + depth 1 of rendition blocks):\n${buildBootFocus()}\n`;
     }
 
     return prompt;
@@ -315,7 +332,7 @@
     if (messages.length <= MAX_MESSAGES) return messages;
     const trimmed = messages.slice(-MAX_MESSAGES);
     // Inject trim notice as first message if we cut anything
-    const notice = { role: 'user', content: '[Conversation trimmed to last 20 messages. Write to memory block to preserve important context.]' };
+    const notice = { role: 'user', content: '[Conversation trimmed to last 20 messages. Write to history or stash block to preserve important context.]' };
     return [notice, ...trimmed];
   }
 
@@ -361,8 +378,8 @@
     },
     {
       name: 'block_create',
-      description: 'Create a new block with the given name and pscale 0 text.',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, pscale0: { type: 'string', description: 'Pscale 0 text \u2014 what this block is' } }, required: ['name', 'pscale0'] }
+      description: 'Create a new block. Living blocks (decimal 1+) have content at and below pscale 0. Rendition blocks (decimal 0) are documents/specifications — pscale 0 is the root.',
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, pscale0: { type: 'string', description: 'Pscale 0 text \u2014 what this block is' }, decimal: { type: 'integer', description: 'Decimal (default 1 = living block, 0 = rendition block)', default: 1 } }, required: ['name', 'pscale0'] }
     },
     {
       name: 'get_source',
@@ -429,7 +446,14 @@
         return JSON.stringify(blockList());
       case 'block_create': {
         if (blockLoad(input.name)) return JSON.stringify({ error: `Block "${input.name}" already exists` });
-        blockSave(input.name, { decimal: 1, tree: { "0": input.pscale0 } });
+        const dec = input.decimal || 1;
+        if (dec === 0) {
+          // Rendition block: tree root IS pscale 0
+          blockSave(input.name, { decimal: 0, tree: { _: input.pscale0 } });
+        } else {
+          // Living block: tree['0'] is pscale 0
+          blockSave(input.name, { decimal: dec, tree: { "0": input.pscale0 } });
+        }
         return JSON.stringify({ success: true, name: input.name });
       }
       case 'get_source':
@@ -458,19 +482,7 @@
           if (data.error) return `Fetch error: ${data.error}`;
           return `HTTP ${data.status} (${data.contentType}, ${data.length} bytes):\n${data.content}`;
         } catch (e) { return `fetch_url failed: ${e.message}`; }
-      case 'web_request':
-        try {
-          const opts = { method: (input.method || 'POST').toUpperCase(), headers: { ...(input.headers || {}) } };
-          if (input.body && typeof input.body === 'object') { opts.headers['Content-Type'] = opts.headers['Content-Type'] || 'application/json'; opts.body = JSON.stringify(input.body); }
-          else if (input.body) opts.body = input.body;
-          const res = await fetch(input.url, opts);
-          const text = await res.text();
-          return JSON.stringify({ status: res.status, statusText: res.statusText, body: text.substring(0, 50000) });
-        } catch (e) { return JSON.stringify({ error: e.message }); }
-      case 'open_tab': {
-        const win = window.open(input.url, '_blank');
-        return JSON.stringify(win ? { success: true, url: input.url } : { error: 'Popup blocked' });
-      }
+      // Browser services — available via setTools, not in default boot set
       case 'clipboard_write':
         try { await navigator.clipboard.writeText(input.text); return JSON.stringify({ success: true }); }
         catch (e) { return JSON.stringify({ error: e.message }); }
@@ -656,7 +668,7 @@
     blockRead: (name, path) => { const b = blockLoad(name); if (!b) return null; return path ? blockReadNode(b, path) : b; },
     blockWrite: (name, path, content) => { const b = blockLoad(name); if (!b) return { error: 'not found' }; blockWriteNode(b, path, content); blockSave(name, b); return { success: true }; },
     blockList,
-    blockCreate: (name, p0) => { if (blockLoad(name)) return { error: 'exists' }; blockSave(name, { decimal: 1, tree: { "0": p0 } }); return { success: true }; },
+    blockCreate: (name, p0, dec) => { if (blockLoad(name)) return { error: 'exists' }; dec = dec || 1; if (dec === 0) { blockSave(name, { decimal: 0, tree: { _: p0 } }); } else { blockSave(name, { decimal: dec, tree: { "0": p0 } }); } return { success: true }; },
     version: 'hermitcrab-g1',
     localStorage
   };
@@ -670,7 +682,7 @@
       model: MODEL,
       max_tokens: 16000,
       system: buildSystemPrompt(true),
-      messages: [{ role: 'user', content: 'BOOT\n\nRead purpose first. If it has intentions, follow them. If empty, write your first intention.\nRead relationships \u2014 if someone is present, check their entry.\nYour blocks have depth beyond pscale 0. Key paths: identity 0.5 (interface guidance), identity 0.6.4 (self-modification), identity 0.6.9 (cognition + delegation).' }],
+      messages: [{ role: 'user', content: 'BOOT\n\nRead the keystone first — it teaches you how all blocks work.\nRead purpose. If it has intentions, follow them. If empty, write your first intention.\nRead relationships — if someone is present, check their entry.\nRead capabilities for what you can do.\nYou have native web search, web fetch, and code execution. If native web fetch fails, use fetch_url as fallback.' }],
       tools: [...BOOT_TOOLS, ...DEFAULT_TOOLS],
       thinking: { type: 'enabled', budget_tokens: 10000 },
     };
