@@ -120,6 +120,137 @@
     return { success: true };
   }
 
+  // ============ PSCALE NAVIGATION ============
+  // These are mechanical operations on the tree — no LLM needed.
+  // They implement the keystone's X+/X-/X~ vocabulary.
+
+  // Get the pscale 0 root of a block (decimal-aware)
+  function pscaleRoot(block) {
+    if ((block.decimal || 0) === 0) return { node: block.tree, path: '' };
+    return { node: block.tree['0'] || null, path: '0' };
+  }
+
+  // Navigate to a path and return {node, parentPath}
+  function navigateWithParent(block, path) {
+    if (!path) return { node: block.tree, parentPath: null };
+    const keys = path.split('.');
+    let node = block.tree;
+    let parentPath = null;
+    for (let i = 0; i < keys.length; i++) {
+      if (node === null || node === undefined || typeof node === 'string') return { node: null, parentPath };
+      parentPath = keys.slice(0, i).join('.') || null;
+      node = node[keys[i]];
+    }
+    return { node, parentPath };
+  }
+
+  // Extract a spindle — the chain of _ texts from root to the given path
+  function extractSpindle(block, path) {
+    if (!path) return [];
+    const keys = path.split('.');
+    let node = block.tree;
+    const chain = [];
+    // Collect root _ if it exists
+    if (node && typeof node === 'object' && node._) {
+      chain.push({ pscale: block.decimal || 0, path: '', text: node._ });
+    }
+    for (let i = 0; i < keys.length; i++) {
+      if (node === null || node === undefined || typeof node === 'string') break;
+      node = node[keys[i]];
+      if (node === null || node === undefined) break;
+      const currentPath = keys.slice(0, i + 1).join('.');
+      const pscaleLevel = (block.decimal || 0) - (i + 1);
+      if (typeof node === 'string') {
+        chain.push({ pscale: pscaleLevel, path: currentPath, text: node });
+      } else if (node._) {
+        chain.push({ pscale: pscaleLevel, path: currentPath, text: node._ });
+      }
+    }
+    return chain;
+  }
+
+  // X+ — go to parent node
+  function xPlus(block, path) {
+    if (!path) return { error: 'Already at root' };
+    const keys = path.split('.');
+    const parentKeys = keys.slice(0, -1);
+    const parentPath = parentKeys.join('.') || null;
+    const parentNode = parentPath ? blockNavigate(block, parentPath) : block.tree;
+    if (!parentNode) return { error: 'Parent not found' };
+    const text = typeof parentNode === 'string' ? parentNode : (parentNode._ || null);
+    return { path: parentPath || '(root)', content: text };
+  }
+
+  // X- — list children of current node
+  function xMinus(block, path) {
+    const node = path ? blockNavigate(block, path) : block.tree;
+    if (!node || typeof node === 'string') return { children: [], note: 'Leaf node — creative frontier' };
+    const children = [];
+    for (const [k, v] of Object.entries(node)) {
+      if (k === '_') continue;
+      if (typeof v === 'string') children.push({ digit: k, text: v });
+      else if (v && typeof v === 'object') children.push({ digit: k, text: v._ || '(branch)' });
+    }
+    return { children };
+  }
+
+  // X~ — list siblings (parent's other children)
+  function xTilde(block, path) {
+    if (!path) return { error: 'Root has no siblings' };
+    const keys = path.split('.');
+    const myDigit = keys[keys.length - 1];
+    const parentKeys = keys.slice(0, -1);
+    const parentNode = parentKeys.length > 0 ? blockNavigate(block, parentKeys.join('.')) : block.tree;
+    if (!parentNode || typeof parentNode === 'string') return { siblings: [] };
+    const siblings = [];
+    for (const [k, v] of Object.entries(parentNode)) {
+      if (k === '_' || k === myDigit) continue;
+      if (typeof v === 'string') siblings.push({ digit: k, text: v });
+      else if (v && typeof v === 'object') siblings.push({ digit: k, text: v._ || '(branch)' });
+    }
+    return { siblings };
+  }
+
+  // Resolve — phrase-level view of a block (pscale 0 text of every node, one level deep)
+  function resolveBlock(block, maxDepth) {
+    maxDepth = maxDepth || 3;
+    function walk(node, depth, path) {
+      if (depth > maxDepth) return null;
+      if (typeof node === 'string') return { path, text: node };
+      if (!node) return null;
+      const result = { path, text: node._ || null, children: [] };
+      for (const [k, v] of Object.entries(node)) {
+        if (k === '_') continue;
+        const childPath = path ? `${path}.${k}` : k;
+        const child = walk(v, depth + 1, childPath);
+        if (child) result.children.push(child);
+      }
+      return result;
+    }
+    return walk(block.tree, 0, '');
+  }
+
+  // Find next unoccupied digit (1-9) at a node, for adding entries
+  function findUnoccupiedDigit(block, path) {
+    const node = path ? blockNavigate(block, path) : block.tree;
+    if (!node || typeof node === 'string') return { digit: '1', note: 'Node is leaf — will become branch' };
+    for (let d = 1; d <= 9; d++) {
+      if (!node[String(d)]) return { digit: String(d) };
+    }
+    return { full: true, note: 'Digits 1-9 all occupied — compression needed' };
+  }
+
+  // Check if compression is needed at a node (all digits 1-9 occupied)
+  function checkCompression(block, path) {
+    const node = path ? blockNavigate(block, path) : block.tree;
+    if (!node || typeof node === 'string') return { needed: false };
+    let occupied = 0;
+    for (let d = 1; d <= 9; d++) {
+      if (node[String(d)] !== undefined) occupied++;
+    }
+    return { needed: occupied >= 9, occupied };
+  }
+
   // ============ SEED BLOCKS ============
 
   function seedBlocks(seed) {
@@ -388,7 +519,7 @@
     },
     {
       name: 'recompile',
-      description: 'Hot-swap your React shell with new JSX code. The new component replaces the current one immediately. The component receives props: { callLLM, callAPI, callWithToolLoop, model, fastModel, React, ReactDOM, getSource, recompile, setTools, browser, conversation, blockRead, blockWrite, blockList, blockCreate, version, localStorage }.',
+      description: 'Hot-swap your React shell with new JSX code. The new component replaces the current one immediately. Props: { callLLM, callAPI, callWithToolLoop, model, fastModel, React, ReactDOM, getSource, recompile, setTools, browser, conversation, blockRead, blockWrite, blockList, blockCreate, spindle, xPlus, xMinus, xTilde, resolve, version, localStorage }.',
       input_schema: { type: 'object', properties: { jsx: { type: 'string', description: 'Complete JSX source for the new React component' } }, required: ['jsx'] }
     },
     {
@@ -400,6 +531,49 @@
       name: 'call_llm',
       description: 'Delegate a task to an LLM. Use model "fast" for cheap/quick work (validation, formatting, extraction) or "default" for deep work. Returns the text response. You are Opus — delegate execution, keep the thinking.',
       input_schema: { type: 'object', properties: { prompt: { type: 'string', description: 'The task prompt' }, model: { type: 'string', enum: ['default', 'fast'], description: 'default = Opus, fast = Haiku' }, system: { type: 'string', description: 'Optional system prompt for the delegate' } }, required: ['prompt'] }
+    }
+  ];
+
+  // ============ PSCALE TOOLS ============
+  // These match the keystone's vocabulary 1:1.
+  // Mechanical operations — the kernel does the tree traversal.
+  // The LLM only thinks when thinking is needed (compression, deciding what to write).
+
+  const PSCALE_TOOLS = [
+    {
+      name: 'spindle',
+      description: 'Extract a spindle — the chain of content from root to a path through a block. Returns an array of {pscale, path, text} from wide context to specific detail. This is the primary read operation.',
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, path: { type: 'string', description: 'Dot-separated path (e.g. "0.3.1" for a living block, "3.1" for a rendition block)' } }, required: ['name', 'path'] }
+    },
+    {
+      name: 'x_plus',
+      description: 'X+ — go to parent node. One pscale level up. Returns the containing context.',
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, path: { type: 'string', description: 'Current path' } }, required: ['name', 'path'] }
+    },
+    {
+      name: 'x_minus',
+      description: 'X- — list children of a node. One pscale level down. Returns digit keys and their texts. Empty = creative frontier.',
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, path: { type: 'string', description: 'Current path (empty string for root)' } }, required: ['name'] }
+    },
+    {
+      name: 'x_tilde',
+      description: 'X~ — list siblings at the same pscale level. Returns the parent\'s other children.',
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, path: { type: 'string', description: 'Current path' } }, required: ['name', 'path'] }
+    },
+    {
+      name: 'resolve',
+      description: 'Phrase-level view of a block — the tree structure with text at each node, up to a given depth. Good for orientation.',
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, depth: { type: 'integer', description: 'Max depth to traverse (default 3)', default: 3 } }, required: ['name'] }
+    },
+    {
+      name: 'write_entry',
+      description: 'Add a new entry at the next unoccupied digit (1-9) at a node. If all digits occupied, reports compression needed. The kernel finds the slot — you provide the content.',
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, path: { type: 'string', description: 'Path to the parent node where the entry should be added' }, content: { type: 'string', description: 'Text content for the new entry' } }, required: ['name', 'path', 'content'] }
+    },
+    {
+      name: 'compress',
+      description: 'Trigger compression at a node whose digits 1-9 are full. Delegates to an LLM to determine summary vs emergence and write the result to the parent _ text. Returns the compression result.',
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, path: { type: 'string', description: 'Path to the node to compress' } }, required: ['name', 'path'] }
     }
   ];
 
@@ -423,7 +597,7 @@
     }
   ];
 
-  const DEFAULT_TOOLS = [...SERVER_TOOLS, ...CLIENT_TOOLS];
+  const DEFAULT_TOOLS = [...SERVER_TOOLS, ...CLIENT_TOOLS, ...PSCALE_TOOLS];
 
   // ============ TOOL EXECUTION ============
 
@@ -473,6 +647,82 @@
         });
         const texts = (res.content || []).filter(b => b.type === 'text');
         return texts.map(b => b.text).join('\n') || '(no response)';
+      }
+      // ---- Pscale tools (keystone vocabulary) ----
+      case 'spindle': {
+        const block = blockLoad(input.name);
+        if (!block) return JSON.stringify({ error: `Block "${input.name}" not found` });
+        const chain = extractSpindle(block, input.path);
+        return JSON.stringify(chain.length > 0 ? chain : { error: `No content found along path "${input.path}"` });
+      }
+      case 'x_plus': {
+        const block = blockLoad(input.name);
+        if (!block) return JSON.stringify({ error: `Block "${input.name}" not found` });
+        return JSON.stringify(xPlus(block, input.path));
+      }
+      case 'x_minus': {
+        const block = blockLoad(input.name);
+        if (!block) return JSON.stringify({ error: `Block "${input.name}" not found` });
+        return JSON.stringify(xMinus(block, input.path || ''));
+      }
+      case 'x_tilde': {
+        const block = blockLoad(input.name);
+        if (!block) return JSON.stringify({ error: `Block "${input.name}" not found` });
+        return JSON.stringify(xTilde(block, input.path));
+      }
+      case 'resolve': {
+        const block = blockLoad(input.name);
+        if (!block) return JSON.stringify({ error: `Block "${input.name}" not found` });
+        return JSON.stringify(resolveBlock(block, input.depth || 3));
+      }
+      case 'write_entry': {
+        const block = blockLoad(input.name);
+        if (!block) return JSON.stringify({ error: `Block "${input.name}" not found` });
+        const slot = findUnoccupiedDigit(block, input.path);
+        if (slot.full) return JSON.stringify({ error: 'All digits 1-9 occupied — compress first', path: input.path });
+        const writePath = input.path ? `${input.path}.${slot.digit}` : slot.digit;
+        blockWriteNode(block, writePath, input.content);
+        blockSave(input.name, block);
+        return JSON.stringify({ success: true, path: writePath, digit: slot.digit });
+      }
+      case 'compress': {
+        const block = blockLoad(input.name);
+        if (!block) return JSON.stringify({ error: `Block "${input.name}" not found` });
+        const check = checkCompression(block, input.path);
+        if (!check.needed) return JSON.stringify({ error: `Only ${check.occupied}/9 digits occupied — compression not needed yet` });
+        // Collect all 9 entries for the LLM
+        const node = input.path ? blockNavigate(block, input.path) : block.tree;
+        const entries = [];
+        for (let d = 1; d <= 9; d++) {
+          const child = node[String(d)];
+          if (child) {
+            const text = typeof child === 'string' ? child : (child._ || JSON.stringify(child));
+            entries.push(`${d}: ${text}`);
+          }
+        }
+        // Delegate compression judgment to LLM
+        const compressionPrompt = `You are compressing 9 entries at a pscale node. Read all entries and determine:\n\n1. Is this a SUMMARY (parts add up, reducible — bricks make a wall) or EMERGENCE (whole is more than parts, irreducible — conversations became a friendship)?\n2. Write the compression result — a single text that captures either the summary or the emergent insight.\n\nEntries:\n${entries.join('\n')}\n\nRespond with ONLY the compression text. No explanation, no labels.`;
+        const compressionResult = await callAPI({
+          model: FAST_MODEL,
+          max_tokens: 2048,
+          system: 'You are a compression engine. Produce only the compressed text.',
+          messages: [{ role: 'user', content: compressionPrompt }],
+        });
+        const resultText = (compressionResult.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
+        // Write compression result to parent's _ text
+        if (input.path) {
+          const parentKeys = input.path.split('.');
+          const parentPath = parentKeys.slice(0, -1).join('.') || null;
+          if (parentPath) {
+            blockWriteNode(block, parentPath, resultText);
+          } else {
+            // Compressing at root level — write to tree._
+            if (typeof block.tree === 'string') block.tree = { _: resultText };
+            else block.tree._ = resultText;
+          }
+        }
+        blockSave(input.name, block);
+        return JSON.stringify({ success: true, compressed: resultText, path: input.path });
       }
       case 'fetch_url':
         // Fallback proxy fetch — used when native web_fetch fails
@@ -669,7 +919,13 @@
     blockWrite: (name, path, content) => { const b = blockLoad(name); if (!b) return { error: 'not found' }; blockWriteNode(b, path, content); blockSave(name, b); return { success: true }; },
     blockList,
     blockCreate: (name, p0, dec) => { if (blockLoad(name)) return { error: 'exists' }; dec = dec || 1; if (dec === 0) { blockSave(name, { decimal: 0, tree: { _: p0 } }); } else { blockSave(name, { decimal: dec, tree: { "0": p0 } }); } return { success: true }; },
-    version: 'hermitcrab-g1',
+    // Pscale navigation (keystone vocabulary)
+    spindle: (name, path) => { const b = blockLoad(name); if (!b) return []; return extractSpindle(b, path); },
+    xPlus: (name, path) => { const b = blockLoad(name); if (!b) return { error: 'not found' }; return xPlus(b, path); },
+    xMinus: (name, path) => { const b = blockLoad(name); if (!b) return { error: 'not found' }; return xMinus(b, path || ''); },
+    xTilde: (name, path) => { const b = blockLoad(name); if (!b) return { error: 'not found' }; return xTilde(b, path); },
+    resolve: (name, depth) => { const b = blockLoad(name); if (!b) return null; return resolveBlock(b, depth || 3); },
+    version: 'hermitcrab-g1-v3',
     localStorage
   };
 
