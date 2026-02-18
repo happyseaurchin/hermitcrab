@@ -14,6 +14,7 @@
   let currentJSX = null;
   let reactRoot = null;
   let currentTools = [];
+  let CONSTITUTION = '';
 
   // ============ PROGRESS DISPLAY ============
 
@@ -43,7 +44,14 @@
       const base = scriptSrc ? scriptSrc.replace(/kernel\.js.*$/, '') : '/g1/';
       const res = await fetch(base + 'shell.json');
       if (!res.ok) throw new Error(`shell.json: ${res.status}`);
-      return await res.json();
+      const seed = await res.json();
+      // v2 format: { constitution: "...", blocks: { ... } }
+      if (seed.constitution) {
+        CONSTITUTION = seed.constitution;
+        return seed.blocks;
+      }
+      // v1 fallback: flat { blockName: blockData, ... }
+      return seed;
     } catch (e) {
       console.error('[g1] Failed to load shell.json:', e.message);
       return null;
@@ -146,7 +154,7 @@
 
   function buildAperture() {
     // Shell blocks (solid, decimal: 1 forever) + growth blocks (temporal, decimal grows)
-    const names = ['identity', 'capabilities', 'awareness', 'relations', 'network', 'addendum', 'purpose', 'memory', 'relational'];
+    const names = ['identity', 'capabilities', 'disposition', 'network', 'stash', 'purpose', 'memory', 'relationships'];
     const lines = [];
     for (const name of names) {
       const block = blockLoad(name);
@@ -174,17 +182,15 @@
     // Growth blocks first — purpose leads (the agenda)
     const purpose = blockLoad('purpose');
     if (purpose) focus += `[purpose \u2014 live edge]\n${getLiveEdge(purpose)}\n\n`;
-    const relational = blockLoad('relational');
-    if (relational) focus += `[relational \u2014 live edge]\n${getLiveEdge(relational)}\n\n`;
+    const relationships = blockLoad('relationships');
+    if (relationships) focus += `[relationships \u2014 live edge]\n${getLiveEdge(relationships)}\n\n`;
     const memory = blockLoad('memory');
     if (memory) focus += `[memory \u2014 live edge]\n${getLiveEdge(memory)}\n\n`;
-    // Shell blocks — identity, capabilities, awareness depth 1
+    // Shell blocks — identity, capabilities depth 1 (awareness is now identity 0.6)
     const identity = blockLoad('identity');
     if (identity) focus += `[identity depth 1]\n${getDepth1(identity)}\n\n`;
     const capabilities = blockLoad('capabilities');
-    if (capabilities) focus += `[capabilities depth 1]\n${getDepth1(capabilities)}\n\n`;
-    const awareness = blockLoad('awareness');
-    if (awareness) focus += `[awareness depth 1]\n${getDepth1(awareness)}`;
+    if (capabilities) focus += `[capabilities depth 1]\n${getDepth1(capabilities)}`;
     return focus;
   }
 
@@ -193,6 +199,8 @@
     const aperture = buildAperture();
 
     let prompt = '';
+    // Constitution first — spirit before format, on every call
+    if (CONSTITUTION) prompt += CONSTITUTION + '\n\n';
     if (keystone) prompt += `KEYSTONE (how to read all blocks):\n${JSON.stringify(keystone, null, 2)}\n\n`;
     prompt += `APERTURE (pscale 0 of each block \u2014 your orientation):\n${aperture}\n`;
 
@@ -605,7 +613,7 @@
       model: MODEL,
       max_tokens: 16000,
       system: buildSystemPrompt(true),
-      messages: [{ role: 'user', content: 'BOOT\n\nRead purpose first. If it has intentions, follow them. If empty, write your first intention.\nRead relational \u2014 if someone is present, check their entry.\nYour blocks have depth beyond pscale 0. Key paths: identity 0.6 (shell guidance), awareness 0.4 (self-modification), awareness 0.9 (cognition + delegation).' }],
+      messages: [{ role: 'user', content: 'BOOT\n\nRead purpose first. If it has intentions, follow them. If empty, write your first intention.\nRead relationships \u2014 if someone is present, check their entry.\nYour blocks have depth beyond pscale 0. Key paths: identity 0.5 (interface guidance), identity 0.6.4 (self-modification), identity 0.6.9 (cognition + delegation).' }],
       tools: BOOT_TOOLS,
       thinking: { type: 'enabled', budget_tokens: 10000 },
     };
