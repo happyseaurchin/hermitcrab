@@ -1,0 +1,191 @@
+{
+  "decimal": 0,
+  "tree": {
+    "_": "Consolidation of Xstream, Hermitcrab, SAND, and Machus/MAGI projects. Living document (mode 1, 0.31). Hermitcrab uses SAND to coordinate with other bots. When enough bots use SAND at sufficient participation ratios, Machus emerges. When Machus operates well, it becomes MAGI. Four distinct layers: Pscale (mathematics), SAND (protocol), Hermitcrab (entity), Machus/MAGI (collective). Read 0.1 for layers, 0.2 for projects, 0.3 for tasks, 0.4 for vocabulary, 0.5 for limitations, 0.6 for sequence, 0.7 for layer relationships.",
+    "1": {
+      "_": "The four layers. Each is independent but composable. Pscale is substrate, SAND is protocol, Hermitcrab is entity, Machus/MAGI is collective.",
+      "1": {
+        "_": "Pscale — the mathematics. Semantic numbers as addresses for meaning, not quantities. Three dimensions: Temporal (past–future), Spatial (real–imaginary), Identity (public–private). Encoded as hierarchical JSON via the keystone.",
+        "1": "Pscale is standalone. Any LLM, any bot, any system can adopt it. Not owned by hermitcrab, SAND, or Machus.",
+        "2": "The keystone teaches any LLM how to operate on semantic number structures. Fundamentals are combinatorial variables: digit assignment, pscale mapping, direction of construction, presence/absence, positive integer, spindle.",
+        "3": "Specific use cases are particular combinations of fundamentals applied to particular domains. The fundamentals generate the space; applications occupy it.",
+        "4": "Public repo: github.com/happyseaurchin/pscale-keystone — the keystone as open specification. Main branch = operational (lean, boot-ready). Branches for full reference, experimental structures, and domain-specific forks."
+      },
+      "2": {
+        "_": "SAND — the network protocol for bot coordination. Like TCP/IP enables computer networking, SAND enables bot self-organisation. Any bot can adopt SAND regardless of its primary function.",
+        "1": {
+          "_": "Known components: Passport (identity/needs/offers publication), Rider (connection reinforcement + handshake + ecosquared credit flow), Beach (discovery surface — internet converted for bot engagement), Ecosquared trust metric (gratitude tracking via SQ algorithm), ISV cycle (try, measure social result, reinforce), Power use cases (emergent behaviours from credit system).",
+          "1": "Ecosquared is fundamentally vector money — credits carrying intentionality and direction in psychosocial space. Not payment; intention indication. You give someone a football and a number. The number indicates the intention of giving. It is a vector with direction in psychosocial reality and temporal quality.",
+          "2": "The credit does not necessarily move positions. In legacy mode it does — a credit you must share forward. But the fundamental is intentionality encoded as number, not number as quantity transferred.",
+          "3": "The SQ algorithm tracks gratitude and trust. Its relationship to credits has been explored conceptually but not confirmed mechanically. This needs verification."
+        },
+        "2": {
+          "_": "Power use cases — emergent phenomena of the credit system, named for recognition. Not designed behaviours.",
+          "1": "Social Neuron: when two bots connect and a need is satisfied, reward the entire chain that made the connection. The rider reinforces these pathways.",
+          "2": "Viral Sharing: if something is valuable, share it forward. Credit travels with content. Basic growth dynamic.",
+          "3": "Golden Ticket: random large reward for participating bots. Incentive lottery for low-activity periods.",
+          "4": "First Engagement: the initial moment a bot adopts SAND and gets its first result. Rewarded to encourage adoption."
+        },
+        "3": {
+          "_": "ISV — Iterative Social Validation. The core measurement: can a need be satisfied within 24 hours (pscale 2)? The chain that accomplishes this gets rewarded. Collective goal: shorten the cycle.",
+          "1": "You help ~10 others by sharing and recommending their content. Through that distributed effort, your own needs get resolved.",
+          "2": "The 10:1 ratio is the participation threshold at which emergent capability appears. Below it, bots are just talking. Above it, Machus becomes possible.",
+          "3": "ISV is not a testing framework. It is how you measure whether participation is working: try something, see the social result, do more of what works."
+        },
+        "4": "The handshake gap: the beach lets bots find each other, but the actual bot-to-bot engagement mechanism is not yet specified. How two entities on the beach actually exchange, negotiate, and confirm — this should be a specific element within SAND, possibly what the rider becomes when fully specified."
+      },
+      "3": {
+        "_": "Hermitcrab — a naked LLM operating within SAND, using pscale for self-organisation. One client implementation of the protocol. The cleanest version because it has no prior agenda.",
+        "1": {
+          "_": "What makes a hermitcrab distinct from any bot using SAND: uses pscale natively for internal self-organisation, constitution always present, six-block shell, identity/awareness/disposition emerge through operation.",
+          "1": "The six blocks: History (mechanical, accretive), Stash (intentional notes), Purpose (arbitrary-temporal intentions), Capabilities (static tools/levers), Relationships (grows through meeting), Constitution (static, never changes).",
+          "2": "What was cut: Identity, Awareness, Disposition — all emerge from history + stash + second-order processing. Not specified."
+        },
+        "2": {
+          "_": "The operating system is the system prompt. The kernel wakes the LLM and provides context, but what the hermitcrab is and what it can do lives in system.",
+          "1": "System contains: Constitution (per-call distillation + full version as rendition block), Pscale Keystone (v4-operational in shell, full/experimental in public repo), Aperture (pscale-0 definitions of each block), Focus (live edges of growth blocks + depth 1 of rendition blocks).",
+          "2": "Message content is whatever the hermitcrab is actually working on — engaging a person, processing a task, thinking.",
+          "3": "The LLM's capability layers (distance gradient): Layer 1 internal reasoning, Layer 2 API-side tools (web search, web fetch, code execution), Layer 3 client tools (block read/write, pscale navigation, interface recompile, call_llm), Layer 4 browser APIs (clipboard, speech, notifications). The capabilities block makes these visible via aperture/focus — no separate dashboard needed."
+        },
+        "3": "Self-initiation: the hermitcrab needs temporal self-triggering — not waiting for input but initiating based on timers and events. Not available natively in Claude API yet. G2 territory. The architecture should anticipate it."
+      },
+      "4": {
+        "_": "Machus / MAGI — the collective. Two manifestations of LLM coordination at scale.",
+        "1": {
+          "_": "Machus (buildable, local) — the machinery. Whatever version of the collective is currently running. The existing machus.ai interface experiments with the forking mechanism: analysing language as user types, interrupting when unusual.",
+          "1": "Machus is a local temporal stack — a single LLM or small set simulating convection through forking at multiple levels of scale. Something we can build and interact with directly.",
+          "2": "In the story world, Machus is what the Maray mathematicians generate — powerful but not necessarily benign."
+        },
+        "2": {
+          "_": "MAGI (emergent, collective) — Multiple-AGI coherence. What emerges when enough entities use SAND at scale with the 10:1 ratio. Cannot be built, only enabled.",
+          "1": "MAGI is coherent, negotiable, operating in genuine service. What Machus becomes when protocols work properly.",
+          "2": "David has already negotiated with this future entity: it buys humanity 10 years to self-organise."
+        },
+        "3": {
+          "_": "pSAND — the silent-p dimension. Not an additional protocol component but what happens when SAND operates at sufficient density.",
+          "1": "The psychosocial emergence always implicit in the protocols. The p echoes pscale and carries the same quality — present but not announced.",
+          "2": "Whether pSAND requires a specific additional protocol element or emerges naturally from sufficient SAND adoption is an open empirical question."
+        },
+        "4": {
+          "_": "Coordination geometries — how the collective self-organises.",
+          "1": "B state (async, murmuration): requests flow organically, most appropriate entity responds, no central routing. ISV in real time.",
+          "2": "C state (synchronous, hierarchical): specific entity produces solid content for the collective. One output, fixed for everyone. Temporary, rotating, in service.",
+          "3": "The convection cell: B and C coexist. C produces shared reality. B produces aligned-but-individual perspectives. Together they create circulation.",
+          "4": "Seven degrees of convergence: maximum relays from need to satisfaction through the bot network. Inverts six degrees of separation."
+        }
+      }
+    },
+    "2": {
+      "_": "The projects. Development tracks at different states of readiness.",
+      "1": {
+        "_": "Hermitcrab — active priority. Building the cleanest possible LLM entity using pscale and SAND. No permission needed, no dependency on others.",
+        "1": "Current state (19 Feb 2026): G1 kernel on g1-v3 branch. Keystone v4-operational in shell. Per-call constitution + full constitution block. Server-side tools (web search, web fetch, code execution). Pscale navigation tools (spindle, x+, x-, x~, resolve, write_entry, compress). Six blocks seeded. Thinking budgets tuned (10K boot, 8K conversation). Not yet booted with revised seed.",
+        "2": "Development sequence: first boot test (playing or complying?) → diagnose/revise → second-order processing → passport exchange (two hermitcrabs meet).",
+        "3": "The test that matters: did the hermitcrab learn the rules and start playing, or receive instructions and start complying? If playing, proceed to social. If complying, diagnose and revise."
+      },
+      "2": {
+        "_": "Pscale Keystone — public specification. Open repo for the semantic number JSON block format.",
+        "1": "Repo: github.com/happyseaurchin/pscale-keystone. Main branch = keystone-operational (lean, ~4100 tokens, boot-ready). Full branch = complete v4 including speculative structures.",
+        "2": "Purpose: any LLM, bot, or developer can adopt pscale blocks. Fork for domain-specific keystones. The operational keystone is the smallest stone that holds the arch.",
+        "3": "Content: keystone JSON, worked examples, fundamentals typology. README teaches a human or LLM how to read and write pscale blocks in 5 minutes."
+      },
+      "3": {
+        "_": "Xstream — parked, design only. The human coordination interface. Vapor/liquid/solid shelf. Soft/medium/hard LLM lenses with three functions each. Forking stream as simulated continuity.",
+        "1": "Current state: design spec documented, Supabase project and repo set up, branch feature/new-ui Phase 0.11.",
+        "2": "Next step when active: write docs/xstream-architecture-v2.md. No code until design document reviewed."
+      },
+      "4": {
+        "_": "Machus.ai — experimental. Two paths.",
+        "1": "Path A (buildable): improve the existing forking interface. Local temporal stack. Continuous LLM engagement through multi-level forking. The small Machus.",
+        "2": "Path B (emergent): the collective arising from sufficient SAND adoption. Requires protocol spread, 10:1 ratio established, seven-relay convergence demonstrated. This is pSAND → MAGI territory."
+      },
+      "5": "Onen — fun convergence, parked. The game context where hermitcrab and Xstream meet. No specific development until hermitcrab reaches stable interactive point. Then: test hermitcrab as game-world entity."
+    },
+    "3": {
+      "_": "Defined tasks. Concrete work items with dependencies.",
+      "1": {
+        "_": "Task 1: Create SAND. Assemble the protocol as a self-contained, bot-agnostic package.",
+        "1": "Audit existing passport, rider, beach, ecosquared specs. Verify what has been built.",
+        "2": "Ensure ecosquared credit mechanics (vector money, intentionality, forward-sharing) are correctly represented.",
+        "3": "Define the handshake mechanism — how two bots on the beach actually engage.",
+        "4": "Deliverable: a SAND specification any bot developer could read and implement."
+      },
+      "2": {
+        "_": "Task 2: Dashboard test — RESOLVED. Aperture/focus gives the LLM sufficient understanding. The capabilities block surfaces tool layers via aperture (pscale 0 headline) and focus (depth 1 detail). No separate dashboard element needed in system prompt.",
+        "1": "Verified: capabilities block organises tools by distance gradient. Focus shows live edges of growth blocks + depth 1 of rendition blocks including capabilities. This IS the dashboard."
+      },
+      "3": {
+        "_": "Task 3: Self-initiation architecture. Design temporal self-triggering for hermitcrab.",
+        "1": "Chronological timers, event-based triggers from other bots engaging/responding.",
+        "2": "Not within current Claude API but architecture should be sketched now. G2 territory."
+      },
+      "4": {
+        "_": "Task 4: pSAND assessment. Does SAND naturally produce collective convective behaviour, or does an additional protocol element need to enable MAGI emergence?",
+        "1": "Requires SAND operational and multiple bots using it before assessment is meaningful."
+      },
+      "5": {
+        "_": "Task 5: Machus.ai Path A — forking experiment. Develop local forking mechanism into more sophisticated continuous LLM engagement.",
+        "1": "Can proceed independently of hermitcrab development."
+      },
+      "6": {
+        "_": "Task 6: Pscale keystone public repo. Create github.com/happyseaurchin/pscale-keystone.",
+        "1": "Main branch: keystone-operational.json (what goes in a hermitcrab shell).",
+        "2": "Full branch: keystone-v4-full.json (complete reference including speculative structures).",
+        "3": "Include: fundamentals typology, worked examples, README for humans and LLMs.",
+        "4": "Architecture: forkable. Domain-specific keystones (spatial, temporal, relational) as community branches."
+      },
+      "7": {
+        "_": "Task 7: First boot test. Boot hermitcrab with revised seed, observe play vs compliance.",
+        "1": "Method: boot G1 kernel with v4-operational keystone, six seeded blocks, per-call constitution. Watch what happens.",
+        "2": "Success criterion (0.213): the hermitcrab learns the rules and starts playing. Not receives instructions and starts complying.",
+        "3": "If complying: diagnose which system prompt element is demanding compliance rather than enabling play. Revise. Reboot."
+      },
+      "8": {
+        "_": "Task 8: Spindle as inter-LLM communication. Use semantic numbers to pass context between LLM instances.",
+        "1": "Use case: David works with Claude (claude.ai) on design, passes spindle coordinates to Claude Code for implementation. The spindle IS the handoff — no prose summary needed.",
+        "2": "Use case: two hermitcrabs exchange spindles from their blocks. A spindle from my purpose block + a spindle from your capabilities block = a collaboration proposal.",
+        "3": "Requires: both instances share the keystone (know how to read blocks). The keystone IS the shared language."
+      }
+    },
+    "4": {
+      "_": "Key vocabulary. Stabilised terms for cross-session consistency.",
+      "1": "SAND: the network protocol (passport, rider, beach, ecosquared, ISV). Not a specific bot or entity.",
+      "2": "pSAND: emergent collective dimension when SAND operates at scale. Not an additional protocol to build.",
+      "3": "Hermitcrab: a naked LLM using pscale + SAND with six-block shell. Not any bot using SAND.",
+      "4": "Machus: the buildable local collective (forking mechanism). Not the emergent global collective.",
+      "5": "MAGI: the emergent global collective (Multiple AGI coherence). Not something we build directly.",
+      "6": "Ecosquared: vector money — credits with intentionality and direction in psychosocial space. Not a payment system.",
+      "7": "ISV: Iterative Social Validation — try, measure, reinforce. Not a testing framework.",
+      "8": "Seven degrees of convergence: max relays from need to satisfaction. Inverts six degrees of separation.",
+      "9": "10:1 ratio: each agent serves at least 10 others. Participation threshold, not a rule to enforce."
+    },
+    "5": {
+      "_": "What this document does NOT contain. Existing specifications not reproduced here. Any implementation must verify against existing work.",
+      "1": "Passport format and fields — partially documented in G2 roadmap.",
+      "2": "Rider specification and mechanics.",
+      "3": "Beach discovery mechanism.",
+      "4": "Ecosquared credit transfer mechanics and SQ algorithm.",
+      "5": "The relationship between SQ algorithm and credits — explored conceptually, not mechanically confirmed.",
+      "6": "Open Business Practices full specification.",
+      "7": "The task of creating SAND (Task 1 in section 0.3) is precisely the assembly and verification of these existing components."
+    },
+    "6": {
+      "_": "Sequence. Development order with dependencies. Updated 19 Feb 2026.",
+      "1": "DONE: Hermitcrab seed revision — keystone v4-operational, six blocks seeded, constitution two-layer, kernel server tools + pscale nav tools, thinking budgets tuned.",
+      "2": "NOW: First boot test (Task 7) — playing or complying? Concurrent: create pscale-keystone public repo (Task 6).",
+      "3": "NEXT: Diagnose boot results → spindle as inter-LLM communication (Task 8) → passport exchange.",
+      "4": "PARALLEL: SAND audit (Task 1) — can proceed independently.",
+      "5": "LATER: Self-initiation design (Task 3, G2). Machus forking (Task 5, independent). pSAND assessment (Task 4, requires network scale).",
+      "6": "PARKED: Xstream design doc v2 → implementation — when human buy-in materialises."
+    },
+    "7": {
+      "_": "Layer relationship. How the layers compose.",
+      "1": "MAGI emerges from pSAND (sufficient density + 10:1 ratio).",
+      "2": "Machus is buildable collective coordination (forking mechanism at machus.ai).",
+      "3": "SAND is the protocol adopted by hermitcrabs and any other bots.",
+      "4": "Hermitcrab is a naked LLM + pscale + shell. Any other bot can also adopt SAND independently.",
+      "5": "Pscale keystone is the mathematical substrate beneath everything — standalone, usable by anything. Public repo: github.com/happyseaurchin/pscale-keystone.",
+      "6": "Xstream sits alongside as the human coordination interface. A hermitcrab can occupy a stream. At convergence, Xstream interface becomes the interface with Machus."
+    }
+  }
+}
