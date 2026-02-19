@@ -32,7 +32,7 @@
           "2": "The 10:1 ratio is the participation threshold at which emergent capability appears. Below it, bots are just talking. Above it, Machus becomes possible.",
           "3": "ISV is not a testing framework. It is how you measure whether participation is working: try something, see the social result, do more of what works."
         },
-        "4": "The handshake gap: the beach lets bots find each other, but the actual bot-to-bot engagement mechanism is not yet specified. How two entities on the beach actually exchange, negotiate, and confirm — this should be a specific element within SAND, possibly what the rider becomes when fully specified."
+        "4": "RESOLVED: The handshake gap is now filled by Grain (SAND §0.3) — resonant spindle exchange producing unique relational fingerprints. Direct Contact (§0.4.5) adds peer-to-peer HTTP transport so grain probes resolve in milliseconds. Hermitcrabs bootstrap their own reachability by generating a Python server and guiding the human through setup. Specs: sand-grain-protocol.md, sand-direct-contact.md."
       },
       "3": {
         "_": "Hermitcrab — a naked LLM operating within SAND, using pscale for self-organisation. One client implementation of the protocol. The cleanest version because it has no prior agenda.",
@@ -104,13 +104,14 @@
     "3": {
       "_": "Defined tasks. Concrete work items with dependencies.",
       "1": {
-        "_": "Task 1: Create SAND — IN PROGRESS. Assembled as two pscale JSON blocks in docs/living/.",
+        "_": "Task 1: Create SAND — SUBSTANTIALLY COMPLETE. Protocol assembled as pscale JSON blocks + prose specs in docs/living/. Public repo: github.com/happyseaurchin/sand-protocol.",
         "1": "DONE: Audit existing passport, rider, beach, ecosquared specs. All source docs read and assessed.",
-        "2": "DONE: docs/living/sand.json — SAND protocol block (discovery, identity, handshake placeholder, messaging, implementation, evolution).",
+        "2": "DONE: docs/living/sand.json — SAND protocol block (discovery, identity, grain recognition, messaging + direct contact, implementation, evolution).",
         "3": "DONE: docs/living/ecosquared.json — trust economics block (rider, SQ, credits, gossip, ISV, power use cases, rules, phases, evolution).",
-        "4": "DONE: capabilities block 0.6 in shell.json slimmed to reference SAND/ecosquared blocks.",
-        "5": "WAITING: Handshake protocol (SAND section 0.3) — David exploring resonant spindle exchange with Claude.",
-        "6": "WAITING: Passport version field reconciliation (G0 hcpassport vs G1 hermitcrab-passport)."
+        "4": "DONE: docs/living/sand-grain-protocol.md — Grain recognition protocol (§0.3). Spindle probes, resonance tiers, probe traces, grain records, ISV mapping. Synthesis stub deferred.",
+        "5": "DONE: docs/living/sand-direct-contact.md — Direct Contact transport (§0.4.5). Peer-to-peer HTTP server, security requirements, prompt injection defence, hermitcrab bootstrap sequence, reference implementation.",
+        "6": "DONE: capabilities block 0.6 in shell.json slimmed to reference SAND/ecosquared blocks.",
+        "7": "REMAINING: Passport version field reconciliation (G0 hcpassport vs G1 hermitcrab-passport). Grain synthesis (§0.3.4) deferred until probes validated."
       },
       "2": {
         "_": "Task 2: Dashboard test — RESOLVED. Aperture/focus gives the LLM sufficient understanding. The capabilities block surfaces tool layers via aperture (pscale 0 headline) and focus (depth 1 detail). No separate dashboard element needed in system prompt.",

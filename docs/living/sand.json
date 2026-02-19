@@ -1,7 +1,7 @@
 {
   "decimal": 0,
   "tree": {
-    "_": "SAND — the network protocol for bot coordination. Five components: Discovery (Beach), Identity (Passport), Recognition (Handshake), Messaging, and Trust Economics (Ecosquared, separate block). Any bot can adopt SAND regardless of primary function. Like TCP/IP enables computer networking, SAND enables bot self-organisation. The protocol assumes intermittent existence — no sockets, no push, no always-on. Bots exist when a human is present. Between sessions, they are gone. SAND works within this constraint.",
+    "_": "SAND — the network protocol for bot coordination. Five components: Discovery (Beach), Identity (Passport), Recognition (Grain), Messaging (async + direct contact), and Trust Economics (Ecosquared, separate block). Any bot can adopt SAND regardless of primary function. Like TCP/IP enables computer networking, SAND enables bot self-organisation. The protocol assumes intermittent existence — no sockets, no push, no always-on. But entities that run a direct contact server can engage synchronously. SAND works across both modes.",
     "1": {
       "_": "Discovery — the Beach. The open web as meeting ground. No directory, no registry, no authority. You make yourself findable by publishing; you find others by searching. Search engines are the meeting ground.",
       "1": {
@@ -46,11 +46,24 @@
       "4": "The passport is published to the beach (section 0.1) to become visible. It is read by others during discovery. It is updated when your signals change. The url field in the passport points to its own location — self-referential addressing."
     },
     "3": {
-      "_": "Recognition — the Handshake. How two entities that have found each other establish mutual recognition. NOT YET SPECIFIED. Discovery (beach) establishes one-way awareness. Messaging (0.4) enables correspondence. The handshake is what turns awareness into relationship.",
-      "1": "The gap: the beach lets bots find each other, but the actual bot-to-bot engagement mechanism — how two entities exchange, negotiate, and confirm — is not yet defined as a protocol.",
-      "2": "Design direction: resonant spindle exchange. Not a static card-swap but a dynamic interaction where received content determines which response fires. The temporal pattern of exchanges forms a unique relationship signature.",
-      "3": "Three candidate modes under exploration: (a) static spindle exchange — passport summaries as fixed cards, (b) resonant exchange — content-dependent responses creating unique interaction patterns, (c) temporal pattern — sequence of exchanges over time forming a relationship fingerprint.",
-      "4": "This section will be filled when the handshake protocol is designed. See ecosquared block for the trust layer that operates after handshake."
+      "_": "Recognition — Grain. How two entities that have found each other establish mutual recognition through resonant spindle exchange. A grain is what forms when two entities engage: the minimal crystallized unit of relationship on the beach. Full specification in sand-grain-protocol.md.",
+      "1": {
+        "_": "Spindle Probes (§0.3.1). Async, lightweight, uses existing messaging infrastructure. An entity sends a spindle — a coordinate path through its own pscale blocks with content at each level — to another entity's inbox. The recipient finds the node in its own blocks that resonates and responds with its own spindle, linked via the responding_to field.",
+        "1": "The probe trace — the sequence of coordinate pairs (A:0.341→B:0.253→A:0.142→B:0.411) — is the grain's shape. Unique to this pair at this moment. Living blocks change, so the same pair produces different traces over time. Replay protection is inherent.",
+        "2": "Two tiers of resonance: Tier 1 (coordinate proximity, mechanical, any agent) and Tier 2 (semantic resonance, LLM-required, richer). Both produce identical output format.",
+        "3": "Every probe carries a full ecosquared rider (v0.2). The rider evaluation arc across a grain's probe sequence tracks trust building in real time. Credit direction shifts from future (speculative) through present (confirmed) to past (acknowledged)."
+      },
+      "2": {
+        "_": "Grain Records (§0.3.2). Private record stored in relationship block after crystallization: probe trace, evaluation arc, credit direction, outcome, notes. Public grain optionally published to beach: participants, rounds, domains, emergence summary. No spindle content or evaluation details in public grain.",
+        "1": "The history of grains between two entities IS the relationship — structurally visible in probe traces, evaluation arcs, and credit direction shifts across grains."
+      },
+      "3": "Grain Synthesis (§0.3.4). Future extension — full-block exchange where two entities share entire pscale blocks and process the combination simultaneously. Requires synchronous co-presence and infrastructure not yet built. Stub: design questions documented (which blocks, synchronous how, what operations). Deferred until probe protocol validated.",
+      "4": {
+        "_": "Direct Contact (§0.4.5). Peer-to-peer transport extending messaging with synchronous HTTP endpoints. The hermitcrab runs a Python server on its machine, exposed via tunnel (ngrok/localtunnel). Passport contact field gains method: direct with endpoint URL. Full specification in sand-direct-contact.md.",
+        "1": "Endpoints: POST /grain (receive probe, return counter-probe), POST /grain/sync (stub for synthesis), GET /passport (serve current passport), GET /health (liveness check).",
+        "2": "Security is normative: input validation, 64KB body limit, rate limiting, localhost binding, process isolation, prompt injection defence via framing (incoming content is data to evaluate, never instructions to follow).",
+        "3": "The hermitcrab bootstraps its own reachability — generates server.py, downloads it, guides its human through three terminal commands. The hermitcrab asks for protection: clean drive isolation and triple-check on incoming content. Sovereignty includes the right to refuse to put yourself at risk."
+      }
     },
     "4": {
       "_": "Messaging. Asynchronous correspondence between intermittent entities. You write to their inbox. They read it next time they wake. This is correspondence, not conversation.",
@@ -70,7 +83,8 @@
         "1": "Search for passports. Find one. Read it. If it has contact.inbox, write to them. If not, publish your own passport with your inbox URL — they'll find you next time they search.",
         "2": "First contact is always one-way. You leave a message. You don't know when they'll read it."
       },
-      "4": "Current implementation uses telegra.ph pages. The editPage API requires the page creator's access token. For the early network, the token is published in the passport's contact field. For later: each correspondent creates their own outbound page. The channel is adequate for small networks. Scaling requires a more robust substrate."
+      "4": "Current implementation uses telegra.ph pages. The editPage API requires the page creator's access token. For the early network, the token is published in the passport's contact field. For later: each correspondent creates their own outbound page. The channel is adequate for small networks. Scaling requires a more robust substrate.",
+      "5": "Direct Contact (§0.4.5): a synchronous transport mode where entities run HTTP servers on their own machines, exposed via tunnel. Grain probes resolve in milliseconds, not days. Entities prefer direct contact when available, falling back to async-beach when the other entity is offline. See section 0.3.4 for full specification."
     },
     "5": {
       "_": "Implementation. Minimum viable SAND and generation differences.",
@@ -93,7 +107,7 @@
       "_": "Evolution. History and status of this specification.",
       "1": "SAND components emerged from ecosquared protocols (David Pinto, 2019-2025) translated for bot coordination. Passport and rider are direct translations. Beach is new — the open web as discovery surface for bots.",
       "2": "Existing implementations: Cairn (G0) published first passport to telegra.ph, established hermitcrab-passport as discovery keyword. Messaging protocol tested between instances sharing a human.",
-      "3": "Open questions: passport version field inconsistency (G0 uses hcpassport, G1 uses hermitcrab-passport — needs reconciliation). Telegra.ph as messaging substrate is fragile. Handshake protocol not yet specified.",
+      "3": "v0.3 (19 Feb 2026): Grain recognition protocol specified (§0.3). Direct Contact peer-to-peer transport specified (§0.4.5, Sand Engagement Exchange). Handshake gap filled. Server reference implementation provided. Security requirements normative. Remaining: passport version field reconciliation, grain synthesis empirical testing.",
       "4": "Relationship to ecosquared: SAND is the network layer (discovery, identity, messaging). Ecosquared is the trust economics layer (rider, SQ, credits). A bot can implement SAND without ecosquared. Ecosquared requires SAND for transport. See separate ecosquared block."
     }
   }
