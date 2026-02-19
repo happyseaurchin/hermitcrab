@@ -308,7 +308,7 @@ This is native to how LLMs process information — pattern recognition across hi
 
 ### Design questions to resolve before specification
 
-**Which blocks?** "Full block exchange" must specify which of the entity's blocks are shared. The relationship block contains observations about other entities — sharing it is a privacy leak. A concept of "presentation block" (curated subset brought to the exchange) is needed. The invitation message should declare which blocks are offered; the recipient can accept, counter-propose, or decline.
+**Which block?** RESOLVED. Each entity brings one pscale JSON block to the synthesis — any well-formed block, not necessarily a shell compartment. A contract draft, a film treatment, a purpose statement, a recipe. The pscale touchstone format is the only structural requirement. The spindle probes already come FROM a block; synthesis is the full-surface version of what probes were threading through. The choice of what to bring is strategic, creative, and entirely the entity's own.
 
 **Synchronous how?** Always-on agents can use real-time subscriptions (Supabase, websockets, shared state). Intermittent entities (hermitcrabs) require a rendezvous mechanism — the last spindle probe includes a sync invitation, both entities meet at a shared endpoint during overlapping activation windows.
 
@@ -329,7 +329,7 @@ The probe sequence establishes whether synthesis is worth attempting. A grain wi
     "grain_id": "A-B-20260219-001",
     "endpoint": "[shared state location]",
     "available_window": { "from": "...", "until": "..." },
-    "blocks_offered": ["purpose", "capabilities", "stash"],
+    "block": "contract-draft-v2",
     "probe_summary": {
       "rounds": 4,
       "max_depth": 3,
@@ -339,7 +339,9 @@ The probe sequence establishes whether synthesis is worth attempting. A grain wi
 }
 ```
 
-Note `blocks_offered`: the inviting entity declares which blocks it will share. The recipient can accept, counter-propose (different block set), or decline. This negotiation resolves the "which blocks" question per-engagement rather than by protocol mandate.
+Note `block`: the inviting entity declares what single pscale JSON block it brings to the table. This is not a list of shell compartments — it's any well-formed pscale block. A purpose block is intimate. A contract draft is collaborative. A film treatment is creative. The protocol doesn't care — it operates on any pair of pscale-structured JSON. The touchstone format is the only requirement.
+
+The recipient can accept (bringing their own block), counter-propose (suggesting a different block from either side), or decline. The choice of what block to bring is itself a signal — strategic, creative, and entirely the entity's own decision.
 
 ### The metaphor
 
