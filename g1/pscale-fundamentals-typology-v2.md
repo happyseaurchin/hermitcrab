@@ -1,7 +1,7 @@
 # Pscale Fundamentals: A Typology
 
 **18 February 2026**
-**Purpose**: Map the fundamental variables of pscale semantic numbers, show how their combinations produce archetypes that match use cases, and identify what the keystone needs for G1 hermitcrab and beyond.
+**Purpose**: Map the fundamental variables of pscale semantic numbers, show how their combinations produce archetypes that match use cases, and identify what the touchstone needs for G1 hermitcrab and beyond.
 
 ---
 
@@ -55,7 +55,7 @@ These map to the three coordinate dimensions (S, T, I) in Xstream.
 
 **Emergence** (Mode B): The pscale+1 result names something absent from any entry. Seven conversations → "friendship." Something new appears.
 
-The keystone already says "determine: is the pattern a summary or an emergence?" (0.3.2). This is the right instruction.
+The touchstone already says "determine: is the pattern a summary or an emergence?" (0.3.2). This is the right instruction.
 
 ### 2.5 Growth Trigger: Mechanical or Intentional?
 
@@ -209,7 +209,7 @@ Keys naturally create a layered structure:
 - **Where does the key registry live?** Is it one block? Multiple blocks? Is it a 0.x rendition block (since it defines, not lives)? That seems right — the registry is definitional.
 - **Do keys need to be unique across all blocks everywhere?** Or just unique within a scope (one hermitcrab's blocks, one cosmology)? Global uniqueness is powerful but hard to coordinate. Scoped uniqueness is practical.
 - **Can a living block's key change?** If a hermitcrab's understanding of temporal scale evolves, can it update its history key from "pscale 1 = sessions" to "pscale 1 = weeks"? Or is the key fixed at creation?
-- **How does the LLM find the key registry?** At boot it has the keystone. Does the keystone point to the registry? Or is the registry itself pointed to by a key in the keystone?
+- **How does the LLM find the key registry?** At boot it has the touchstone. Does the touchstone point to the registry? Or is the registry itself pointed to by a key in the touchstone?
 - **The key is a semantic number with arbitrary digits. Could we use all-zeros (00.00) since the digits are meaningless?** Or does having different digit values help the LLM distinguish keys? The digits being unique across keys means the key *number* serves as an identifier even before you look up its definition.
 
 ---
@@ -268,7 +268,7 @@ The fundamentals combine to produce archetypes. Archetypes match use cases.
 | **Capabilities** | Labeling | Containment | Toward zero | N/A (static) | System | Rendition (0.x) | none |
 | **Relationships** | Arbitrary | Relational | Both | Emergence | Both | Living | relational |
 | **Constitution** | N/A | N/A | N/A | N/A | Never | Plain text | none |
-| **Keystone** | Labeling | Containment | Toward zero | N/A (static) | Never | Rendition (0.x) | none |
+| **Touchstone** | Labeling | Containment | Toward zero | N/A (static) | Never | Rendition (0.x) | none |
 
 ### Xstream Coordinates
 
@@ -295,9 +295,9 @@ The fundamentals combine to produce archetypes. Archetypes match use cases.
 
 ---
 
-## 8. What the Keystone Needs
+## 8. What the Touchstone Needs
 
-The current keystone covers:
+The current touchstone covers:
 - ✅ Structure (how blocks are built)
 - ✅ Navigation (X+, X-, X~)
 - ✅ Growth (adding, compression, upward growth)
@@ -310,17 +310,17 @@ What it needs added:
 - X+/-/~ behaviour **depends on the block's mapping** — consult the key
 - Compression may be **summary or emergence** (already partially there at 0.3.2)
 
-The keystone stays lean. One or two new nodes. The heavy lifting — what each pscale level means — lives in the key registry.
+The touchstone stays lean. One or two new nodes. The heavy lifting — what each pscale level means — lives in the key registry.
 
 ---
 
 ## 9. What G1 Needs From This
 
-1. **Keystone**: small addition for the `key` field and rendition/living distinction
+1. **Touchstone**: small addition for the `key` field and rendition/living distinction
 2. **Key registry**: a 0.x block defining keys for history, stash, purpose, relationships (minimal — phrase per pscale level per key)
 3. **Each living block gets a key field** in its JSON: `"decimal": 1, "key": "XX.X", "tree": { ... }`
 4. **Chunk size**: implicit in design — history entries paragraph-scale, purpose phrase-scale, stash variable
-5. **Cross-block references**: already supported by keystone 0.4
+5. **Cross-block references**: already supported by touchstone 0.4
 6. **Multiplicative interaction** (S×T etc.): not needed for G1 hermitcrab, but relevant when entering game worlds
 
 ---
@@ -381,7 +381,7 @@ The "key" mechanism in Section 5 should be understood as a **tuning fork**, not 
 
 The tuning fork is **not authoritative**. An LLM can read a block's content and sense what the pscale levels mean without consulting the tuning fork. The fork confirms, it doesn't dictate. Meaning is confirmed by spindle coherence, not by registry lookup. Making the fork authoritative would recreate the control structures the project is designed to move beyond.
 
-Terminology: "keystone" remains correct for the 0.x block that teaches pscale format (it IS a stone in the arch). "Tuning fork" replaces "key" for the resonance reference that living blocks carry.
+Terminology: "touchstone" remains correct for the 0.x block that teaches pscale format (it IS a stone in the arch). "Tuning fork" replaces "key" for the resonance reference that living blocks carry.
 
 In JSON: `"fork": "74.45"` rather than `"key": "74.45"`. The registry becomes a tuning fork collection, not a schema authority.
 

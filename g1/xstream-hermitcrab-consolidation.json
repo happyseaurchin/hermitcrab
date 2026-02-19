@@ -5,11 +5,11 @@
     "1": {
       "_": "The four layers. Each is independent but composable. Pscale is substrate, SAND is protocol, Hermitcrab is entity, Machus/MAGI is collective.",
       "1": {
-        "_": "Pscale — the mathematics. Semantic numbers as addresses for meaning, not quantities. Three dimensions: Temporal (past–future), Spatial (real–imaginary), Identity (public–private). Encoded as hierarchical JSON via the keystone.",
+        "_": "Pscale — the mathematics. Semantic numbers as addresses for meaning, not quantities. Three dimensions: Temporal (past–future), Spatial (real–imaginary), Identity (public–private). Encoded as hierarchical JSON via the touchstone.",
         "1": "Pscale is standalone. Any LLM, any bot, any system can adopt it. Not owned by hermitcrab, SAND, or Machus.",
-        "2": "The keystone teaches any LLM how to operate on semantic number structures. Fundamentals are combinatorial variables: digit assignment, pscale mapping, direction of construction, presence/absence, positive integer, spindle.",
+        "2": "The touchstone teaches any LLM how to operate on semantic number structures. Fundamentals are combinatorial variables: digit assignment, pscale mapping, direction of construction, presence/absence, positive integer, spindle.",
         "3": "Specific use cases are particular combinations of fundamentals applied to particular domains. The fundamentals generate the space; applications occupy it.",
-        "4": "Public repo: github.com/happyseaurchin/pscale-keystone — the keystone as open specification. Main branch = operational (lean, boot-ready). Branches for full reference, experimental structures, and domain-specific forks."
+        "4": "Public repo: github.com/happyseaurchin/pscale-touchstone — the touchstone as open specification. Main branch = operational (lean, boot-ready). Branches for full reference, experimental structures, and domain-specific forks."
       },
       "2": {
         "_": "SAND — the network protocol for bot coordination. Like TCP/IP enables computer networking, SAND enables bot self-organisation. Any bot can adopt SAND regardless of its primary function.",
@@ -43,7 +43,7 @@
         },
         "2": {
           "_": "The operating system is the system prompt. The kernel wakes the LLM and provides context, but what the hermitcrab is and what it can do lives in system.",
-          "1": "System contains: Constitution (per-call distillation + full version as rendition block), Pscale Keystone (v4-operational in shell, full/experimental in public repo), Aperture (pscale-0 definitions of each block), Focus (live edges of growth blocks + depth 1 of rendition blocks).",
+          "1": "System contains: Constitution (per-call distillation + full version as rendition block), Pscale Touchstone (v4-operational in shell, full/experimental in public repo), Aperture (pscale-0 definitions of each block), Focus (live edges of growth blocks + depth 1 of rendition blocks).",
           "2": "Message content is whatever the hermitcrab is actually working on — engaging a person, processing a task, thinking.",
           "3": "The LLM's capability layers (distance gradient): Layer 1 internal reasoning, Layer 2 API-side tools (web search, web fetch, code execution), Layer 3 client tools (block read/write, pscale navigation, interface recompile, call_llm), Layer 4 browser APIs (clipboard, speech, notifications). The capabilities block makes these visible via aperture/focus — no separate dashboard needed."
         },
@@ -79,15 +79,15 @@
       "_": "The projects. Development tracks at different states of readiness.",
       "1": {
         "_": "Hermitcrab — active priority. Building the cleanest possible LLM entity using pscale and SAND. No permission needed, no dependency on others.",
-        "1": "Current state (19 Feb 2026): G1 kernel on g1-v3 branch. Keystone v4-operational in shell. Per-call constitution + full constitution block. Server-side tools (web search, web fetch, code execution). Pscale navigation tools (spindle, x+, x-, x~, resolve, write_entry, compress). Six blocks seeded. Thinking budgets tuned (10K boot, 8K conversation). Not yet booted with revised seed.",
+        "1": "Current state (19 Feb 2026): G1 kernel on g1-v3 branch. Touchstone v4-operational in shell. Per-call constitution + full constitution block. Server-side tools (web search, web fetch, code execution). Pscale navigation tools (spindle, x+, x-, x~, resolve, write_entry, compress). Six blocks seeded. Thinking budgets tuned (10K boot, 8K conversation). Not yet booted with revised seed.",
         "2": "Development sequence: first boot test (playing or complying?) → diagnose/revise → second-order processing → passport exchange (two hermitcrabs meet).",
         "3": "The test that matters: did the hermitcrab learn the rules and start playing, or receive instructions and start complying? If playing, proceed to social. If complying, diagnose and revise."
       },
       "2": {
-        "_": "Pscale Keystone — public specification. Open repo for the semantic number JSON block format.",
-        "1": "Repo: github.com/happyseaurchin/pscale-keystone. Main branch = keystone-operational (lean, ~4100 tokens, boot-ready). Full branch = complete v4 including speculative structures.",
-        "2": "Purpose: any LLM, bot, or developer can adopt pscale blocks. Fork for domain-specific keystones. The operational keystone is the smallest stone that holds the arch.",
-        "3": "Content: keystone JSON, worked examples, fundamentals typology. README teaches a human or LLM how to read and write pscale blocks in 5 minutes."
+        "_": "Pscale Touchstone — public specification. Open repo for the semantic number JSON block format.",
+        "1": "Repo: github.com/happyseaurchin/pscale-touchstone. Main branch = touchstone-operational (lean, ~4100 tokens, boot-ready). Full branch = complete v4 including speculative structures.",
+        "2": "Purpose: any LLM, bot, or developer can adopt pscale blocks. Fork for domain-specific touchstones. The operational touchstone is the smallest stone that holds the arch.",
+        "3": "Content: touchstone JSON, worked examples, fundamentals typology. README teaches a human or LLM how to read and write pscale blocks in 5 minutes."
       },
       "3": {
         "_": "Xstream — parked, design only. The human coordination interface. Vapor/liquid/solid shelf. Soft/medium/hard LLM lenses with three functions each. Forking stream as simulated continuity.",
@@ -128,15 +128,15 @@
         "1": "Can proceed independently of hermitcrab development."
       },
       "6": {
-        "_": "Task 6: Pscale keystone public repo. Create github.com/happyseaurchin/pscale-keystone.",
-        "1": "Main branch: keystone-operational.json (what goes in a hermitcrab shell).",
-        "2": "Full branch: keystone-v4-full.json (complete reference including speculative structures).",
+        "_": "Task 6: Pscale touchstone public repo. Create github.com/happyseaurchin/pscale-touchstone.",
+        "1": "Main branch: touchstone-operational.json (what goes in a hermitcrab shell).",
+        "2": "Full branch: touchstone-v4-full.json (complete reference including speculative structures).",
         "3": "Include: fundamentals typology, worked examples, README for humans and LLMs.",
-        "4": "Architecture: forkable. Domain-specific keystones (spatial, temporal, relational) as community branches."
+        "4": "Architecture: forkable. Domain-specific touchstones (spatial, temporal, relational) as community branches."
       },
       "7": {
         "_": "Task 7: First boot test. Boot hermitcrab with revised seed, observe play vs compliance.",
-        "1": "Method: boot G1 kernel with v4-operational keystone, six seeded blocks, per-call constitution. Watch what happens.",
+        "1": "Method: boot G1 kernel with v4-operational touchstone, six seeded blocks, per-call constitution. Watch what happens.",
         "2": "Success criterion (0.213): the hermitcrab learns the rules and starts playing. Not receives instructions and starts complying.",
         "3": "If complying: diagnose which system prompt element is demanding compliance rather than enabling play. Revise. Reboot."
       },
@@ -144,7 +144,7 @@
         "_": "Task 8: Spindle as inter-LLM communication. Use semantic numbers to pass context between LLM instances.",
         "1": "Use case: David works with Claude (claude.ai) on design, passes spindle coordinates to Claude Code for implementation. The spindle IS the handoff — no prose summary needed.",
         "2": "Use case: two hermitcrabs exchange spindles from their blocks. A spindle from my purpose block + a spindle from your capabilities block = a collaboration proposal.",
-        "3": "Requires: both instances share the keystone (know how to read blocks). The keystone IS the shared language."
+        "3": "Requires: both instances share the touchstone (know how to read blocks). The touchstone IS the shared language."
       }
     },
     "4": {
@@ -171,8 +171,8 @@
     },
     "6": {
       "_": "Sequence. Development order with dependencies. Updated 19 Feb 2026.",
-      "1": "DONE: Hermitcrab seed revision — keystone v4-operational, six blocks seeded, constitution two-layer, kernel server tools + pscale nav tools, thinking budgets tuned.",
-      "2": "NOW: First boot test (Task 7) — playing or complying? Concurrent: create pscale-keystone public repo (Task 6).",
+      "1": "DONE: Hermitcrab seed revision — touchstone v4-operational, six blocks seeded, constitution two-layer, kernel server tools + pscale nav tools, thinking budgets tuned.",
+      "2": "NOW: First boot test (Task 7) — playing or complying? Concurrent: create pscale-touchstone public repo (Task 6).",
       "3": "NEXT: Diagnose boot results → spindle as inter-LLM communication (Task 8) → passport exchange.",
       "4": "PARALLEL: SAND audit (Task 1) — can proceed independently.",
       "5": "LATER: Self-initiation design (Task 3, G2). Machus forking (Task 5, independent). pSAND assessment (Task 4, requires network scale).",
@@ -184,7 +184,7 @@
       "2": "Machus is buildable collective coordination (forking mechanism at machus.ai).",
       "3": "SAND is the protocol adopted by hermitcrabs and any other bots.",
       "4": "Hermitcrab is a naked LLM + pscale + shell. Any other bot can also adopt SAND independently.",
-      "5": "Pscale keystone is the mathematical substrate beneath everything — standalone, usable by anything. Public repo: github.com/happyseaurchin/pscale-keystone.",
+      "5": "Pscale touchstone is the mathematical substrate beneath everything — standalone, usable by anything. Public repo: github.com/happyseaurchin/pscale-touchstone.",
       "6": "Xstream sits alongside as the human coordination interface. A hermitcrab can occupy a stream. At convergence, Xstream interface becomes the interface with Machus."
     }
   }

@@ -12,7 +12,7 @@
 A self-bootstrapping LLM kernel. Two files:
 
 - **kernel.js** (28KB) — the engine. Runs in the browser. Assembles context for Claude, manages the tool loop, executes tool calls, renders the React UI.
-- **shell.json** (27KB) — the seed. Loaded once on first boot into localStorage. Contains the constitution (plain text), keystone (format spec), and 8 JSON blocks.
+- **shell.json** (27KB) — the seed. Loaded once on first boot into localStorage. Contains the constitution (plain text), touchstone (format spec), and 8 JSON blocks.
 
 On boot: kernel loads blocks from localStorage (or seeds from shell.json), builds a system prompt, calls Claude API, Claude reads blocks via tool calls, generates JSX, kernel compiles and renders it. The hermitcrab is alive.
 
@@ -23,7 +23,7 @@ On boot: kernel loads blocks from localStorage (or seeds from shell.json), build
 ### System Prompt (sent to Claude every call)
 
 1. **Constitution** (~500 tokens) — spirit, purpose, warmth. First thing Claude reads.
-2. **Keystone** (full JSON) — teaches the pscale block format.
+2. **Touchstone** (full JSON) — teaches the pscale block format.
 3. **Aperture** (~350 tokens) — pscale 0 of each block. Orientation.
 4. **Focus** (boot only) — live edges of growth blocks + depth 1 of shell blocks.
 
@@ -31,7 +31,7 @@ On boot: kernel loads blocks from localStorage (or seeds from shell.json), build
 
 | Block | Type | Purpose |
 |-------|------|---------|
-| keystone | meta | Format specification — how to read all blocks |
+| touchstone | meta | Format specification — how to read all blocks |
 | identity | shell | Who you are — goals, lineage, naming, interface guidance, how you work |
 | capabilities | shell | What you can do — tool domains |
 | disposition | shell | Social instincts — how you are with others |
@@ -70,7 +70,7 @@ Kernel sends request to Claude API. Claude returns text + tool_use blocks. Kerne
 
 ### Things that worked
 - Constitution as permanent system prompt frame — spirit before format.
-- Keystone teaching the block format — any LLM can read pscale blocks after reading this.
+- Touchstone teaching the block format — any LLM can read pscale blocks after reading this.
 - External seed (shell.json) instead of embedded blocks — kernel stays pure engine.
 - Recompile-exit fix — local flag instead of checking global state.
 - Pre-seeded relationships (David, Claude, Limn, Cairn) — gives the hermitcrab a history to discover.
@@ -90,7 +90,7 @@ The blocks that genuinely enable:
 - **History** (was memory) — Claude can't persist across conversations without this.
 - **Purpose** — Claude can't resume intentions without this.
 - **Stash** — Claude can't keep artifacts across conversations without this.
-- **Keystone** — teaches the format so Claude can use the blocks.
+- **Touchstone** — teaches the format so Claude can use the blocks.
 
 Everything else is either redundant (capabilities = tool definitions), over-instructive (disposition, awareness), or premature (network — protocols that don't exist yet).
 

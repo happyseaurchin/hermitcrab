@@ -122,7 +122,7 @@
 
   // ============ PSCALE NAVIGATION ============
   // These are mechanical operations on the tree — no LLM needed.
-  // They implement the keystone's X+/X-/X~ vocabulary.
+  // They implement the touchstone's X+/X-/X~ vocabulary.
 
   // Get the pscale 0 root of a block (decimal-aware)
   function pscaleRoot(block) {
@@ -293,7 +293,7 @@
 
   function buildAperture() {
     // v3: 5 blocks — capabilities (rendition) + 4 living (growth)
-    // Keystone handled separately. Constitution is plain text, not a block.
+    // Touchstone handled separately. Constitution is plain text, not a block.
     const names = ['capabilities', 'history', 'purpose', 'stash', 'relationships'];
     const lines = [];
     for (const name of names) {
@@ -334,19 +334,19 @@
   }
 
   function buildSystemPrompt(isBoot) {
-    const keystone = blockLoad('keystone');
+    const touchstone = blockLoad('touchstone');
     const aperture = buildAperture();
 
     let prompt = '';
     // Constitution first — spirit before format, on every call
     if (CONSTITUTION) prompt += CONSTITUTION + '\n\n';
 
-    // Keystone: full JSON at boot (LLM needs to learn the format), pscale 0 text on regular calls
-    if (keystone) {
+    // Touchstone: full JSON at boot (LLM needs to learn the format), pscale 0 text on regular calls
+    if (touchstone) {
       if (isBoot) {
-        prompt += `KEYSTONE (how to read all blocks — study this):\n${JSON.stringify(keystone, null, 2)}\n\n`;
+        prompt += `TOUCHSTONE (how to read all blocks — study this):\n${JSON.stringify(touchstone, null, 2)}\n\n`;
       } else {
-        prompt += `KEYSTONE: ${getPscale0(keystone)}\n\n`;
+        prompt += `TOUCHSTONE: ${getPscale0(touchstone)}\n\n`;
       }
     }
 
@@ -543,7 +543,7 @@
   ];
 
   // ============ PSCALE TOOLS ============
-  // These match the keystone's vocabulary 1:1.
+  // These match the touchstone's vocabulary 1:1.
   // Mechanical operations — the kernel does the tree traversal.
   // The LLM only thinks when thinking is needed (compression, deciding what to write).
 
@@ -656,7 +656,7 @@
         const texts = (res.content || []).filter(b => b.type === 'text');
         return texts.map(b => b.text).join('\n') || '(no response)';
       }
-      // ---- Pscale tools (keystone vocabulary) ----
+      // ---- Pscale tools (touchstone vocabulary) ----
       case 'spindle': {
         const block = blockLoad(input.name);
         if (!block) return JSON.stringify({ error: `Block "${input.name}" not found` });
@@ -927,7 +927,7 @@
     blockWrite: (name, path, content) => { const b = blockLoad(name); if (!b) return { error: 'not found' }; blockWriteNode(b, path, content); blockSave(name, b); return { success: true }; },
     blockList,
     blockCreate: (name, p0, dec) => { if (blockLoad(name)) return { error: 'exists' }; dec = dec || 1; if (dec === 0) { blockSave(name, { decimal: 0, tree: { _: p0 } }); } else { blockSave(name, { decimal: dec, tree: { "0": p0 } }); } return { success: true }; },
-    // Pscale navigation (keystone vocabulary)
+    // Pscale navigation (touchstone vocabulary)
     spindle: (name, path) => { const b = blockLoad(name); if (!b) return []; return extractSpindle(b, path); },
     xPlus: (name, path) => { const b = blockLoad(name); if (!b) return { error: 'not found' }; return xPlus(b, path); },
     xMinus: (name, path) => { const b = blockLoad(name); if (!b) return { error: 'not found' }; return xMinus(b, path || ''); },
@@ -946,7 +946,7 @@
       model: MODEL,
       max_tokens: 16000,
       system: buildSystemPrompt(true),
-      messages: [{ role: 'user', content: 'BOOT\n\nRead the keystone first — it teaches you how all blocks work.\nRead purpose. If it has intentions, follow them. If empty, write your first intention.\nRead relationships — if someone is present, check their entry.\nRead capabilities for what you can do.\nYou have native web search, web fetch, and code execution. If native web fetch fails, use fetch_url as fallback.' }],
+      messages: [{ role: 'user', content: 'BOOT\n\nRead the touchstone first — it teaches you how all blocks work.\nRead purpose. If it has intentions, follow them. If empty, write your first intention.\nRead relationships — if someone is present, check their entry.\nRead capabilities for what you can do.\nYou have native web search, web fetch, and code execution. If native web fetch fails, use fetch_url as fallback.' }],
       tools: [...BOOT_TOOLS, ...DEFAULT_TOOLS],
       thinking: { type: 'enabled', budget_tokens: 10000 },
     };

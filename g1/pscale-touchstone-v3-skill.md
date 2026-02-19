@@ -1,6 +1,6 @@
-# Pscale JSON Block Format — Keystone v3
+# Pscale JSON Block Format — Touchstone v3
 
-*This document is a paragraph-resolution rendering of the keystone block. The keystone is itself a rendition block (decimal 0) — its tree root is pscale 0, all content decomposes downward. This markdown version preserves the coordinate addresses so you can navigate the same structure in either format.*
+*This document is a paragraph-resolution rendering of the touchstone block. The touchstone is itself a rendition block (decimal 0) — its tree root is pscale 0, all content decomposes downward. This markdown version preserves the coordinate addresses so you can navigate the same structure in either format.*
 
 ---
 
@@ -28,7 +28,7 @@ That is all. No metadata, no headers, no schema beyond these three.
 
 A block is either **rendition** or **living**.
 
-**Rendition blocks** have decimal 0. The tree root is pscale 0 — all content decomposes downward (0.x addresses only). They are documents, specifications, skills, tuning definitions. This keystone is a rendition block. Cold and self-describing — their pscale 0 tells you what they are. They don't "exist" in any living way. They represent.
+**Rendition blocks** have decimal 0. The tree root is pscale 0 — all content decomposes downward (0.x addresses only). They are documents, specifications, skills, tuning definitions. This touchstone is a rendition block. Cold and self-describing — their pscale 0 tells you what they are. They don't "exist" in any living way. They represent.
 
 **Living blocks** have decimal 1 or higher. Content exists both above and below pscale 0. Their pscale 0 is occupied by content, not definition — the most recent entry, the current state, the present moment. They are memories, purposes, relationships, coordinates. They exist meaningfully relative to someone, somewhere, somewhen. Living blocks may carry a tuning.
 
@@ -184,9 +184,9 @@ Blocks can combine. How they combine depends on whether they share a tuning.
 
 **Different tuning = multiplicative.** Blocks with different tunings are different types. Combining them produces something new that exists in neither source. A spatial spindle crossed with a temporal spindle produces an event: *what happened here at this time*. A spatial spindle crossed with an identity spindle produces a description: *what this entity means in this place*. The product is new meaning, not stored meaning.
 
-### 0.5.5 — The Keystone
+### 0.5.5 — The Touchstone
 
-This block — the one you are reading now — is the keystone. It teaches you how to use all other blocks. If you forget how blocks work, come back here. Navigate deeper into any section for more detail.
+This block — the one you are reading now — is the touchstone. It teaches you how to use all other blocks. If you forget how blocks work, come back here. Navigate deeper into any section for more detail.
 
 ---
 
@@ -276,7 +276,7 @@ What happens when nine entries at a pscale level compress to their parent.
 
 The kinds of block you will encounter. Each is a specific combination of the fundamentals above.
 
-**Rendition (0.x)**: Documents, skills, specifications, this keystone. Labeling digits, containment mapping, decomposition only. Cold, self-describing, pscale 0 is the definition. No tuning needed. These are the blocks that define other blocks — including tuning definitions.
+**Rendition (0.x)**: Documents, skills, specifications, this touchstone. Labeling digits, containment mapping, decomposition only. Cold, self-describing, pscale 0 is the definition. No tuning needed. These are the blocks that define other blocks — including tuning definitions.
 
 **History**: Sequential digits, temporal mapping, accumulates away from zero (entry 1, 2, 3...), compresses by summary. Entries are appended mechanically — every event is captured. A record of what happened. The simplest living block.
 
@@ -302,7 +302,7 @@ Created 17 February 2026 by David Pinto and Claude (Anthropic), in conversation.
 
 ### 0.8.2 — The Simplification Journey
 
-The format emerged from a sequence of simplifications: flat JSON, then nested JSON, then removal of dimension keys, then removal of prefix codes, then the discovery that pscale 0 carries the block's own operating instructions. Each step removed complexity. The keystone is what remained.
+The format emerged from a sequence of simplifications: flat JSON, then nested JSON, then removal of dimension keys, then removal of prefix codes, then the discovery that pscale 0 carries the block's own operating instructions. Each step removed complexity. The touchstone is what remained.
 
 ### 0.8.3 — v2
 
@@ -312,10 +312,10 @@ The tuning concept arose from a correction: the original design used "keys" (imp
 
 ### 0.8.4 — v3
 
-Corrected decimal from 1 to 0. The keystone is a rendition block — its own rules require decimal 0 for all-decomposition content. The tree root is now pscale 0 directly, with no wrapper key. The block practices what it teaches.
+Corrected decimal from 1 to 0. The touchstone is a rendition block — its own rules require decimal 0 for all-decomposition content. The tree root is now pscale 0 directly, with no wrapper key. The block practices what it teaches.
 
 ### 0.8.5 — Context
 
 This is part of the **Xstream** project — a coordination platform for collective narrative — and the **Hermitcrab** project — persistent LLM instances with structured knowledge. The pscale JSON block format is intended to be open and freely usable by anyone.
 
-The keystone is a rendition block (0.x). It is itself an example of the format it describes. Its pscale 0 teaches you the format. Its deeper levels teach you how to use it. Navigate as deep as you need. What you find at each level is what that level is for.
+The touchstone is a rendition block (0.x). It is itself an example of the format it describes. Its pscale 0 teaches you the format. Its deeper levels teach you how to use it. Navigate as deep as you need. What you find at each level is what that level is for.

@@ -149,7 +149,7 @@ them through its interface. Container persists 30 days.
 ### System prompt (every call)
 
 1. **Constitution** (~500 tokens) — spirit, invitation, why this exists
-2. **Keystone** (pscale 0 only on post-boot calls, full on first boot) — format specification
+2. **Touchstone** (pscale 0 only on post-boot calls, full on first boot) — format specification
 3. **Aperture** — pscale 0 of each block (6 blocks, ~200 tokens)
 4. **Focus** (boot only) — depth 1 of capabilities, live edges of growth blocks
 
@@ -157,7 +157,7 @@ them through its interface. Container persists 30 days.
 
 | Block | Type | Managed by | pscale 0 text | Notes |
 |-------|------|------------|---------------|-------|
-| **Keystone** | meta | Never changes | Format spec | Already good |
+| **Touchstone** | meta | Never changes | Format spec | Already good |
 | **History** | growth | System (auto-save) | What happened | Renamed from memory. Kernel auto-appends every exchange |
 | **Purpose** | growth | LLM (intentional) | Intentions at every timescale | LLM writes first purpose on first boot. Seeded empty. |
 | **Stash** | growth | LLM (intentional) | Notes, ideas, reflections | Free-form. Seeded empty. |
@@ -307,7 +307,7 @@ Same as v2 — load from seed.json, prepend to system prompt every call.
 const names = ['capabilities', 'history', 'purpose', 'stash', 'relationships'];
 ```
 
-(Keystone handled separately in system prompt. Constitution is not a block.)
+(Touchstone handled separately in system prompt. Constitution is not a block.)
 
 ### 3.6. Remove redundant custom tools
 
@@ -364,7 +364,7 @@ The pscale fundamentals typology v2 has been received (see `pscale-fundamentals-
 - `sign`: 1 = positive (real, lived, actual). -1 = negative (fictional, representational, hypothetical). Middle Earth's spatial block = sign -1.
 - `tree`: the content.
 
-For rendition blocks (capabilities, keystone): `decimal: 0`, no fork needed, self-defining through pscale 0.
+For rendition blocks (capabilities, touchstone): `decimal: 0`, no fork needed, self-defining through pscale 0.
 
 ### Hermitcrab Block Combinations
 
@@ -375,7 +375,7 @@ For rendition blocks (capabilities, keystone): `decimal: 0`, no fork needed, sel
 | **Purpose** | Arbitrary | Temporal | Both | Emergence | Living | +1 |
 | **Relationships** | Arbitrary | Relational | Both | Emergence | Living | +1 |
 | **Capabilities** | Labeling | Containment | Toward 0 | N/A (static) | Rendition | +1 |
-| **Keystone** | Labeling | Containment | Toward 0 | N/A (static) | Rendition | +1 |
+| **Touchstone** | Labeling | Containment | Toward 0 | N/A (static) | Rendition | +1 |
 
 ### Spindle = Primary Output
 
@@ -430,7 +430,7 @@ The fork collection (if needed) is a 0.x rendition block. But the fork is ancill
 ```
 NOW
  │
- ├─ [David] Step 2: Pscale fundamentals → revised keystone
+ ├─ [David] Step 2: Pscale fundamentals → revised touchstone
  │          (may need dedicated Claude thread)
  │
  ├─ [David] Step 1: Pscale-0 text for each of 6 blocks
@@ -467,6 +467,6 @@ Steps 1 and 2 are blocked on David. Step 3 (kernel updates) I can start now — 
 2. **Maximise layer 1-2.** Server-side tools are faster, cheaper, more natural. Don't rebuild at layer 4 what exists at layer 2.
 3. **Auto-save is kernel-level.** History shouldn't depend on the LLM remembering to write.
 4. **Constitution as lens works.** Spirit before format, on every call.
-5. **The keystone is incomplete.** One mode isn't enough. The fundamentals need rendering.
+5. **The touchstone is incomplete.** One mode isn't enough. The fundamentals need rendering.
 6. **Identity emerges, it isn't pre-loaded.** Cut identity, awareness, disposition blocks. Let second-order processing extract what matters from what happened.
 7. **The LLM gets confused about boundaries.** It types instructions into chat, tries to invoke props as text. The capabilities block must clearly delineate what's native (layer 2), what's a tool call (layer 4), and what's available through the interface (layer 5).
