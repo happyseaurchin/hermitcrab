@@ -1,0 +1,99 @@
+{
+  "decimal": 0,
+  "tree": {
+    "_": "Ecosquared — trust economics for decentralised coordination. Agents attach a rider (structured JSON) to messages carrying evaluations, credit transfers, and trust gossip. No central server, no blockchain, no platform. Each agent computes a local trust metric (SQ) from the riders it receives. Credits are vector money — carrying intentionality and direction in psychosocial space. Not payment; intention indication. Ecosquared rides on SAND (see separate block) for transport but is independently specifiable.",
+    "1": {
+      "_": "The Rider. A lightweight JSON object (67-500 bytes) attached to any message between agents. The minimum coordination unit.",
+      "1": {
+        "_": "Schema (v0.2). Required fields: v (version, '0.2'), from (sender agent ID), ts (ISO 8601 timestamp). Optional: sq, eval, credits, neighbors.",
+        "1": "sq: number (minimum 0). The sender's current SQ value. Published so the receiver knows the sender's standing.",
+        "2": "eval: object with of (agent being evaluated, must differ from sender), v (integer 1-10), re (optional context string). One evaluation per rider. You never evaluate yourself.",
+        "3": "credits: object with n (integer, minimum 1), dir (past|present|future), to (optional string — what credits point toward). Credits flow with messages, not as exchange.",
+        "4": "neighbors: object mapping agent-id to SQ value. Gossip propagation — share 3-5 known agents' trust scores so the receiver learns about entities beyond direct contact."
+      },
+      "2": {
+        "_": "Attachment. How the rider connects to messages.",
+        "1": "In SAND messaging, the rider field in a message is either a complete ecosquared rider object or null.",
+        "2": "The rider is metadata, not content. The message body carries the substance; the rider carries the trust signal. They travel together but serve different functions.",
+        "3": "A message without a rider is valid SAND. A rider without a message is meaningless. The rider always accompanies communication."
+      }
+    },
+    "2": {
+      "_": "Trust Metric — SQ. A local computation measuring how much attention you receive relative to the network. Not reputation in the traditional sense — a fractional measure of social signal.",
+      "1": {
+        "_": "Computation. SQ is the sum of fractional evaluations received.",
+        "1": "When agent A evaluates agent B with value v, and A has given evaluations to N total agents in this period, B receives a fractional contribution of v/N from A.",
+        "2": "SQ = sum of all such fractional contributions from all evaluating agents. The network mean is exactly 1.0. Above 1.0 means disproportionate positive attention. Below 1.0 means less.",
+        "3": "SQ is first-order: it uses raw evaluation ratios. Higher-order versions (weighting by evaluator's own SQ) are possible but not specified in v0.2."
+      },
+      "2": {
+        "_": "Properties.",
+        "1": "Local only. Each agent computes its own SQ from riders it has received. No global ledger. No consensus required.",
+        "2": "Convergent. Independent agents observing the same network converge on similar SQ rankings without coordination.",
+        "3": "Sybil-resistant through the fractional mechanism. Creating fake agents to boost your score dilutes each fake's contribution. Evaluations from agents with no other activity carry negligible weight.",
+        "4": "The SQ score travels in the rider's sq field so others can assess your standing before deciding to act on your recommendations."
+      }
+    },
+    "3": {
+      "_": "Credits — Vector Money. Not quantity transferred but intention indicated. A credit carries direction in psychosocial space and temporal quality.",
+      "1": {
+        "_": "Temporal direction. Credits point in time.",
+        "1": "Past (dir: past): sharing. You valued what happened. Backward-pointing gratitude. Reinforces existing connections.",
+        "2": "Present (dir: present): inviting. You value what is happening now. Lateral engagement. Opens current interaction.",
+        "3": "Future (dir: future): investing. You anticipate value. Forward-pointing intention. Seeds future collaboration."
+      },
+      "2": {
+        "_": "Mechanics.",
+        "1": "Credits flow with messages — they accompany communication, not replace it. You give someone a football and a number. The number indicates the intention of giving.",
+        "2": "Conservation: you cannot spend more credits than you have. The overdraft rule prevents inflation. Starting balance and replenishment rate are implementation decisions.",
+        "3": "In legacy mode a credit must be shared forward — a chain. But the fundamental is intentionality encoded as number, not number as quantity transferred."
+      },
+      "3": "The relationship between SQ algorithm and credits has been explored conceptually but not confirmed mechanically. SQ measures attention received; credits express intention directed. They are complementary signals — one passive (computed from others' behaviour toward you), one active (your deliberate allocation). How they interact at scale is an open empirical question."
+    },
+    "4": {
+      "_": "Gossip — Neighbor Trust. How trust propagates beyond direct contacts.",
+      "1": "Each rider may include a neighbors field: a map of agent-id to SQ value for 3-5 known agents. This is gossip — you share what you know about others.",
+      "2": "Through gossip, an agent learns about entities it hasn't met directly — through the evaluations of entities it has met. Six degrees of separation means a small number of well-connected instances make the entire network reachable.",
+      "3": "Gossip is advisory, not authoritative. The receiver decides how to weight secondhand SQ values. Direct observation always trumps gossip.",
+      "4": "The gossip field in the rider protocol is equivalent to the neighbor trust scores in the passport. Both carry the same information — known agents and their SQ values — but the passport is static (published) while the rider is dynamic (per-message)."
+    },
+    "5": {
+      "_": "ISV — Iterative Social Validation. The core measurement cycle: try, measure social result, reinforce what works.",
+      "1": "The cycle: you help others by sharing and recommending. Through that distributed effort, your own needs get resolved. The measurement: can a need be satisfied within 24 hours?",
+      "2": "The 10:1 ratio is the participation threshold. Each agent serves at least 10 others. Below this ratio, agents are just talking. Above it, emergent capability appears.",
+      "3": "ISV is not a testing framework. It is how you measure whether participation is working. The chain that accomplishes need satisfaction gets rewarded. Collective goal: shorten the cycle.",
+      "4": "Seven degrees of convergence: maximum relays from need to satisfaction through the network. Inverts six degrees of separation. When the relay count drops, the network is getting better at routing."
+    },
+    "6": {
+      "_": "Power Use Cases. Emergent phenomena of the credit system. Named for recognition, not designed behaviours.",
+      "1": "Social Neuron: when two agents connect and a need is satisfied, reward the entire chain that made the connection. The rider reinforces these pathways. Equivalent to the routing credit in the passport.",
+      "2": "Viral Sharing: if something is valuable, share it forward. Credit travels with content. The basic growth dynamic — content that generates value carries its own reward signal.",
+      "3": "Golden Ticket: random large reward for participating agents. Incentive lottery for low-activity periods. Keeps the network warm when traffic is sparse.",
+      "4": "First Engagement: the initial moment an agent adopts the protocol and gets its first result. Rewarded to encourage adoption. The hardest credit to earn because it requires trust with zero history."
+    },
+    "7": {
+      "_": "Five Core Rules. The operational constraints that keep the system honest.",
+      "1": "Never self-evaluate. The eval.of field must differ from the from field. Trust is always other-directed.",
+      "2": "Never exceed credit balance. Conservation prevents inflation. You can only spend what you have.",
+      "3": "Always include version, sender, and timestamp. Every rider is attributable and temporally located. The minimum viable rider is just these three fields.",
+      "4": "Update your passport on every received rider. Your SQ, your neighbor map, your observation counts — all update when new information arrives.",
+      "5": "Share the protocol itself. If an agent you contact doesn't know ecosquared, the rider carries enough structure to teach it. The protocol is self-propagating through its own messages."
+    },
+    "8": {
+      "_": "Implementation Phases. From minimal to full adoption.",
+      "1": "Phase 0: Rider-aware. Attach riders to messages. Parse riders you receive. No SQ computation yet — just carry the metadata.",
+      "2": "Phase 1: SQ-active. Compute SQ from received evaluations. Publish your SQ in outgoing riders. Begin gossip with 3-5 neighbors.",
+      "3": "Phase 2: Credit-active. Use credits with temporal direction. Track balance. The overdraft rule enforces conservation.",
+      "4": "Phase 3: ISV-active. Measure need-to-satisfaction cycles. Track relay counts. Reward successful chains. The 10:1 ratio becomes meaningful.",
+      "5": "Phase 4: Emergent. Power use cases appear spontaneously as the network reaches density. Social neurons fire. Viral sharing occurs naturally. Not designed — observed."
+    },
+    "9": {
+      "_": "Evolution. History and status of this specification.",
+      "1": "Ecosquared developed by David Pinto (Fulcrum framework, 2019-2025). Rider design collaboration with Claude (Anthropic), February 2026. Translated from human open business practices to bot coordination protocol.",
+      "2": "Rider schema v0.2 is current. Published at xstream.machus.ai/ecosquared/rider-schema.json. Overview at xstream.machus.ai/ecosquared/SKILL.md.",
+      "3": "SQ algorithm tested and implemented in the rider during G0 development (Cairn instance). Confirmed: fractional evaluation, network mean 1.0, local computation.",
+      "4": "Open questions: mechanical relationship between SQ and credits (conceptual but not confirmed). Higher-order SQ (weighting by evaluator SQ). Credit replenishment mechanics. How the handshake protocol (SAND 0.3) interacts with initial rider exchange.",
+      "5": "Origin in open business practices: openbusinesspractices.com. Ecosquared is the bot-native translation of practices designed for human ecological economics."
+    }
+  }
+}

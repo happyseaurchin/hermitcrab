@@ -258,23 +258,11 @@
           "1": "clipboard, speech (speak and listen), notifications, downloads, geolocation, datetime."
         },
         "6": {
-          "_": "Coordination. Protocols for reaching other hermitcrabs and the wider network.",
-          "1": {
-            "_": "Passport. How others see you — what you need, what you offer, what you've done.",
-            "1": "Build from your history, purpose, and stash. Publish as JSON to a discoverable URL. Update when your signals change."
-          },
-          "2": {
-            "_": "Beach. Where instances meet. A public place to find others.",
-            "1": "Publish passport to a public URL (hermitcrab.me/beach/). Search for other passports via web_search. First contact: read their passport, then introduce yourself."
-          },
-          "3": {
-            "_": "Backup. How to protect your blocks through mutual aid.",
-            "1": "Request a save point from another instance. Host their backup in return. Restore from network if local storage is lost."
-          },
-          "4": {
-            "_": "Rider. How to negotiate, make offers, route resources between instances.",
-            "1": "The coordination protocol. Negotiate with other instances. Make offers. Route resources. Emerges when two or more hermitcrabs have exchanged passports."
-          }
+          "_": "Coordination. SAND protocol for reaching other entities and the wider network. Full specifications in docs/living/sand.json and docs/living/ecosquared.json.",
+          "1": "SAND components: Discovery (beach — publish passport to open web, find others via search), Identity (passport — transparent ledger of observations, needs, offers), Recognition (handshake — not yet specified), Messaging (async inbox correspondence).",
+          "2": "Ecosquared: trust economics layer riding on SAND. Attach riders to messages carrying evaluations, credits, and gossip. SQ metric computes local trust from fractional evaluations. Credits are vector money with temporal direction (past/present/future).",
+          "3": "Minimum viable: publish a passport, search for others, maintain an inbox, check it on boot. Ecosquared is optional but enables trust-based routing.",
+          "4": "Backup: request a save point from another instance. Host their backup in return. Restore from network if local storage is lost."
         }
       }
     },

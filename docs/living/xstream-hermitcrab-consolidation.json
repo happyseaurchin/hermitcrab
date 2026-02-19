@@ -104,11 +104,13 @@
     "3": {
       "_": "Defined tasks. Concrete work items with dependencies.",
       "1": {
-        "_": "Task 1: Create SAND. Assemble the protocol as a self-contained, bot-agnostic package.",
-        "1": "Audit existing passport, rider, beach, ecosquared specs. Verify what has been built.",
-        "2": "Ensure ecosquared credit mechanics (vector money, intentionality, forward-sharing) are correctly represented.",
-        "3": "Define the handshake mechanism — how two bots on the beach actually engage.",
-        "4": "Deliverable: a SAND specification any bot developer could read and implement."
+        "_": "Task 1: Create SAND — IN PROGRESS. Assembled as two pscale JSON blocks in docs/living/.",
+        "1": "DONE: Audit existing passport, rider, beach, ecosquared specs. All source docs read and assessed.",
+        "2": "DONE: docs/living/sand.json — SAND protocol block (discovery, identity, handshake placeholder, messaging, implementation, evolution).",
+        "3": "DONE: docs/living/ecosquared.json — trust economics block (rider, SQ, credits, gossip, ISV, power use cases, rules, phases, evolution).",
+        "4": "DONE: capabilities block 0.6 in shell.json slimmed to reference SAND/ecosquared blocks.",
+        "5": "WAITING: Handshake protocol (SAND section 0.3) — David exploring resonant spindle exchange with Claude.",
+        "6": "WAITING: Passport version field reconciliation (G0 hcpassport vs G1 hermitcrab-passport)."
       },
       "2": {
         "_": "Task 2: Dashboard test — RESOLVED. Aperture/focus gives the LLM sufficient understanding. The capabilities block surfaces tool layers via aperture (pscale 0 headline) and focus (depth 1 detail). No separate dashboard element needed in system prompt.",
@@ -172,11 +174,12 @@
     "6": {
       "_": "Sequence. Development order with dependencies. Updated 19 Feb 2026.",
       "1": "DONE: Hermitcrab seed revision — touchstone v4-operational, six blocks seeded, constitution two-layer, kernel server tools + pscale nav tools, thinking budgets tuned.",
-      "2": "NOW: First boot test (Task 7) — playing or complying? Concurrent: create pscale-touchstone public repo (Task 6).",
-      "3": "NEXT: Diagnose boot results → spindle as inter-LLM communication (Task 8) → passport exchange.",
-      "4": "PARALLEL: SAND audit (Task 1) — can proceed independently.",
-      "5": "LATER: Self-initiation design (Task 3, G2). Machus forking (Task 5, independent). pSAND assessment (Task 4, requires network scale).",
-      "6": "PARKED: Xstream design doc v2 → implementation — when human buy-in materialises."
+      "2": "DONE: Pscale touchstone public repo (Task 6) — github.com/happyseaurchin/pscale-touchstone with touchstone.json and touchstone-full.json.",
+      "3": "DONE: SAND audit and block creation (Task 1 partial) — docs/living/sand.json and docs/living/ecosquared.json. Capabilities block slimmed.",
+      "4": "NOW: First boot test (Task 7) — playing or complying? Concurrent: handshake protocol design (David + Claude).",
+      "5": "NEXT: Diagnose boot results → spindle as inter-LLM communication (Task 8) → passport exchange. Complete handshake (SAND 0.3).",
+      "6": "LATER: Self-initiation design (Task 3, G2). Machus forking (Task 5, independent). pSAND assessment (Task 4, requires network scale).",
+      "7": "PARKED: Xstream design doc v2 → implementation — when human buy-in materialises."
     },
     "7": {
       "_": "Layer relationship. How the layers compose.",
