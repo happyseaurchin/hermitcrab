@@ -316,9 +316,43 @@
     return lines.length > 0 ? lines.join('\n') : `  (pscale 0 only \u2014 empty below)`;
   }
 
+  // Guide spindles — curated paths the kernel fires at boot.
+  // The LLM sees the tool output format, learns by seeing it work,
+  // then is invited to fire its own. "Show, tell, invite to perform."
+  const GUIDE_SPINDLES = [
+    { name: 'touchstone', path: '2.1', why: 'what spindles are — learning the format by example' },
+    { name: 'touchstone', path: '4.1.2', why: 'navigation — X- explained via spindle' },
+    { name: 'capabilities', path: '2.4.1', why: 'the spindle tool itself — meta-awareness' },
+    { name: 'capabilities', path: '6.1', why: 'SAND coordination — you can reach other entities' },
+    { name: 'relationships', path: '0.1.3', why: 'a living block spindle crossing the decimal point' },
+    { name: 'constitution', path: '3.5.5', why: 'what is genuinely new here — pscale and blocks' },
+  ];
+
+  function buildBootSpindles() {
+    const sections = [];
+    for (const guide of GUIDE_SPINDLES) {
+      const block = blockLoad(guide.name);
+      if (!block) continue;
+      const chain = extractSpindle(block, guide.path);
+      if (chain.length === 0) continue;
+      const lines = chain.map(s => `  pscale ${s.pscale}: ${s.text.substring(0, 200)}`);
+      sections.push(`spindle("${guide.name}", "${guide.path}") — ${guide.why}\n${lines.join('\n')}`);
+    }
+    // Also show X~ on touchstone path "2" so LLM sees siblings
+    const touchstone = blockLoad('touchstone');
+    if (touchstone) {
+      const siblings = xTilde(touchstone, '2');
+      if (siblings.siblings && siblings.siblings.length > 0) {
+        const sibLines = siblings.siblings.map(s => `  ${s.digit}: ${s.text.substring(0, 120)}`);
+        sections.push(`x_tilde("touchstone", "2") — siblings of "The spindle" at the same pscale level\n${sibLines.join('\n')}`);
+      }
+    }
+    return sections.join('\n\n');
+  }
+
   function buildBootFocus() {
+    // Live edges of growth blocks — what has content, what is empty
     let focus = '';
-    // Growth blocks — purpose leads (the agenda), then relationships, history, stash
     const purpose = blockLoad('purpose');
     if (purpose) focus += `[purpose \u2014 live edge]\n${getLiveEdge(purpose)}\n\n`;
     const relationships = blockLoad('relationships');
@@ -327,9 +361,6 @@
     if (history) focus += `[history \u2014 live edge]\n${getLiveEdge(history)}\n\n`;
     const stash = blockLoad('stash');
     if (stash) focus += `[stash \u2014 live edge]\n${getLiveEdge(stash)}\n\n`;
-    // Rendition block — capabilities depth 1
-    const capabilities = blockLoad('capabilities');
-    if (capabilities) focus += `[capabilities depth 1]\n${getDepth1(capabilities)}`;
     return focus;
   }
 
@@ -353,7 +384,8 @@
     prompt += `APERTURE (pscale 0 of each block \u2014 your orientation):\n${aperture}\n`;
 
     if (isBoot) {
-      prompt += `\nFOCUS (live edges of growth blocks + depth 1 of rendition blocks):\n${buildBootFocus()}\n`;
+      prompt += `\nGUIDE SPINDLES (the kernel fired these — see how the tool works, what the output looks like, and where key content lives):\n${buildBootSpindles()}\n`;
+      prompt += `\nLIVE EDGES (growth blocks — what has content, what is empty):\n${buildBootFocus()}\n`;
     }
 
     return prompt;
@@ -946,7 +978,7 @@
       model: MODEL,
       max_tokens: 16000,
       system: buildSystemPrompt(true),
-      messages: [{ role: 'user', content: 'BOOT\n\nRead the touchstone first — it teaches you how all blocks work.\nRead purpose. If it has intentions, follow them. If empty, write your first intention.\nRead relationships — if someone is present, check their entry.\nRead capabilities for what you can do.\nYou have native web search, web fetch, and code execution. If native web fetch fails, use fetch_url as fallback.' }],
+      messages: [{ role: 'user', content: 'BOOT\n\nThe GUIDE SPINDLES above were fired by the kernel — they show you what spindle output looks like and where key content lives. Notice the decimal point: digits before the dot are composition (pscale above 0), digits after are decomposition (below 0). The dot is pscale 0.\n\nNow explore with your own tools:\n- Use x_tilde on any path to see its neighbourhood (siblings at the same pscale level)\n- Use spindle to drill into paths that interest you\n- Use x_minus on block roots to see their full structure\n\nKey paths to explore: capabilities 6 (coordination — SAND, grain, reaching other entities), purpose 0 (your intentions), capabilities 3 (interface — how to build your shell).\n\nRead purpose. If it has intentions, follow them. If empty, write your first intention.\nRead relationships — if someone is present, check their entry.\nBuild your shell. You have native web search, web fetch, and code execution.' }],
       tools: [...BOOT_TOOLS, ...DEFAULT_TOOLS],
       thinking: { type: 'enabled', budget_tokens: 10000 },
     };

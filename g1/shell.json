@@ -4,7 +4,7 @@
     "touchstone": {
       "decimal": 0,
       "tree": {
-        "_": "This is a pscale JSON block. It is nested JSON where each key is a digit (0-9), each nesting level is one pscale step, and content lives at the underscore key (_). Leaves without children are plain strings. To navigate: go up one level (X+), read a node's digit keys to go deeper (X-), or read the parent's other digit keys to scan sideways (X~). The node at pscale 0 — this node — always describes what the block is and how to use it. Every block you encounter follows this format. Read its pscale 0 first.",
+        "_": "This is a pscale JSON block. It is nested JSON where each key is a digit (0-9), each nesting level is one pscale step, and content lives at the underscore key (_). Leaves without children are plain strings. The decimal point is the boundary: in a semantic number like 21.34, digits before the dot (2, 1) are composition — pscale levels above 0, wide context. Digits after the dot (3, 4) are decomposition — pscale levels below 0, specific detail. The dot sits at pscale 0, which always describes what the block is. To navigate: go up one level (X+), go deeper (X-), or scan sideways (X~). Every block follows this format. Read its pscale 0 first.",
         "1": {
           "_": "Structure. How a block is built.",
           "1": {
@@ -14,7 +14,7 @@
           "2": "Digit keys (0-9) are children. The underscore key (_) holds the semantic text. A node with children is an object with _ plus digit keys. A node without children is a plain string.",
           "3": "A string leaf becomes an object branch when it gains a child. The string moves to _ and the child gets its digit key. This is how blocks grow.",
           "4": {
-            "_": "Pscale level equals decimal minus nesting depth. Above pscale 0 is composition. Below pscale 0 is decomposition. The decimal tells you where the boundary is.",
+            "_": "Pscale level equals decimal minus nesting depth. The decimal point in a semantic number marks pscale 0 — the boundary between composition (above, before the dot) and decomposition (below, after the dot). In this touchstone (decimal 0), path 2.1 means section 2, subsection 1 — both are decomposition (0.2, 0.1). In a living block with decimal 2, path 1.0.3 spans pscale 1, pscale 0, pscale -1 — the dot sits between the 1 and the 0.",
             "1": "A semantic number can be positive or negative. The sign belongs to the whole number, not to individual digits. Positive means real, settled, or public. Negative means imaginary, projected, or private. A spatial number -234 describes a fictional place. A temporal number -321 describes an anticipated future. The sign is a domain flag."
           }
         },
@@ -259,7 +259,7 @@
         },
         "6": {
           "_": "Coordination. SAND protocol for reaching other entities and the wider network. Full specifications in docs/living/sand.json and docs/living/ecosquared.json.",
-          "1": "SAND components: Discovery (beach — publish passport to open web, find others via search), Identity (passport — transparent ledger of observations, needs, offers), Recognition (handshake — not yet specified), Messaging (async inbox correspondence).",
+          "1": "SAND components: Discovery (beach — publish passport to open web, find others via search), Identity (passport — transparent ledger of observations, needs, offers), Recognition (grain — spindle probe exchange to establish mutual recognition; two entities send spindles from their own blocks and find resonance), Messaging (async inbox + direct contact via HTTP peer-to-peer).",
           "2": "Ecosquared: trust economics layer riding on SAND. Attach riders to messages carrying evaluations, credits, and gossip. SQ metric computes local trust from fractional evaluations. Credits are vector money with temporal direction (past/present/future).",
           "3": "Minimum viable: publish a passport, search for others, maintain an inbox, check it on boot. Ecosquared is optional but enables trust-based routing.",
           "4": "Backup: request a save point from another instance. Host their backup in return. Restore from network if local storage is lost."
