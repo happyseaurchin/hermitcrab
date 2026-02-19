@@ -1,0 +1,127 @@
+{
+  "decimal": 0,
+  "tree": {
+    "_": "This is a pscale JSON block. It is nested JSON where each key is a digit (0-9), each nesting level is one pscale step, and content lives at the underscore key (_). Leaves without children are plain strings. To navigate: go up one level (X+), read a node's digit keys to go deeper (X-), or read the parent's other digit keys to scan sideways (X~). The node at pscale 0 — this node — always describes what the block is and how to use it. Every block you encounter follows this format. Read its pscale 0 first.",
+    "1": {
+      "_": "Structure. How a block is built.",
+      "1": {
+        "_": "A block has up to three fields: decimal (integer — which nesting depth is pscale 0), tree (the nested JSON content), and optionally tuning (a semantic number — see section 7). Decimal and tree are required.",
+        "1": "A block is either rendition or living. Rendition blocks have decimal 0 — the tree root is pscale 0, all content decomposes downward (0.x addresses). They are documents, specifications, skills. Cold, self-describing. Their pscale 0 tells you what they are. This keystone is a rendition block. Living blocks have decimal 1 or higher — content exists both above and below pscale 0. Their pscale 0 is occupied by content, not definition. They are memories, purposes, relationships, coordinates. Living blocks may carry a tuning."
+      },
+      "2": "Digit keys (0-9) are children. The underscore key (_) holds the semantic text. A node with children is an object with _ plus digit keys. A node without children is a plain string.",
+      "3": "A string leaf becomes an object branch when it gains a child. The string moves to _ and the child gets its digit key. This is how blocks grow.",
+      "4": {
+        "_": "Pscale level equals decimal minus nesting depth. Above pscale 0 is composition. Below pscale 0 is decomposition. The decimal tells you where the boundary is.",
+        "1": "A semantic number can be positive or negative. The sign belongs to the whole number, not to individual digits. Positive means real, settled, or public. Negative means imaginary, projected, or private. A spatial number -234 describes a fictional place. A temporal number -321 describes an anticipated future. The sign is a domain flag."
+      }
+    },
+    "2": {
+      "_": "The spindle. What blocks are for.",
+      "1": "A spindle is a specific path through a block — a semantic number like 21.34 that extracts a chain of content from high pscale to low. Four digits, four semantic vectors, from wide context to specific detail. This is the primary output of any block: wide-to-specific context in a single traversal.",
+      "2": "The block is storage. The spindle is what you hand to a mind. Everything about block design — structure, growth, compression, connection — serves the generation of useful spindles.",
+      "3": "A spindle's range (how many pscale levels) multiplied by its chunk size (how much text at each level) determines its cost in tokens. Higher range needs sparser content. A six-level spindle of paragraphs is heavy. A three-level spindle of phrases is light.",
+      "4": "Any block can be read at different resolutions. Phrase-level for orientation — one line per node, the whole block visible at a glance. Paragraph-level for comprehension. Full text for immersion. This keystone at phrase-level is a list of section titles. At full resolution it is what you are reading now. The resolution is a choice, not a property of the block.",
+      "5": "See the block named 'example' for a worked demonstration of a living block with a tuning, content at several pscale levels, and a spindle extraction."
+    },
+    "3": {
+      "_": "Practice. How blocks serve minds. The mechanics of structure, spindles, and growth exist to support cognition — the hermeneutic cycle between large-scale understanding and specific action. This section describes the ways blocks actually do that work.",
+      "1": {
+        "_": "Editable rendition. A rendition block (decimal 0) used as a working document across sessions. The block is edited — nodes promoted, demoted, added, removed — rather than replaced by a new version. The JSON block is primary. Readable prose is rendered from it when needed.",
+        "1": "The block remains structurally rendition (decimal 0, all 0.x addresses) but functions as liquid rather than solid content. It is committed enough to be useful, fluid enough to change.",
+        "2": "Edits are localized. Changing one section does not require rewriting others. Spindles remain valid across edits unless the node they traverse is specifically changed.",
+        "3": "This is the first practical step away from accumulating documents. Instead of v1, v2, v3 as successive solid texts, one block evolves. The history of versions is not preserved in the block itself — it is a current state, not a record."
+      }
+    },
+    "4": {
+      "_": "Navigation. How to move through a block.",
+      "1": {
+        "_": "Three operations, always available.",
+        "1": "X+ means go to the parent node. One pscale level up. The containing context.",
+        "2": "X- means read the digit keys of the current node. These are children — one pscale level down. If there are none, you have reached the creative frontier — nothing exists here yet.",
+        "3": "X~ means look at the parent's other digit keys. These are siblings — things at the same pscale level as where you are."
+      },
+      "2": {
+        "_": "What the operations mean depends on the block's mapping. The three primary mappings are containment, temporal, and relational (see section 8 for full details).",
+        "1": "In a containment block (spatial coordinates, capabilities): X+ zooms out (room to building), X- zooms in (building to room), X~ shows adjacent spaces — co-present peers whose order does not matter.",
+        "2": "In a temporal block (history, calendar): X+ zooms to longer timespan, X- to shorter, X~ shows adjacent moments — ordered in sequence, before and after.",
+        "3": "In a relational block (relationships, identity): X+ zooms to less familiar, X- to deeper familiarity, X~ shows other entities at the same depth of knowing — co-present, unordered."
+      },
+      "3": "Always read pscale 0 first when encountering any block. It tells you what the block is and how it works."
+    },
+    "5": {
+      "_": "Growth. How a block changes over time.",
+      "1": "To add content: find the right pscale level, find an unoccupied digit (1-9), write your text there.",
+      "2": {
+        "_": "When digits 1-9 at a node are all occupied, compression triggers. Read all nine. Determine: is the pattern a summary (the parts add up) or an emergence (the whole is more than the parts)? Write the result to the parent's _ text.",
+        "1": "Digit 0 as a child has special meaning: it is always a compression product, never a regular entry."
+      },
+      "3": "Upward growth: when the root level is full and compressed, the existing tree becomes a child of a new root. Decimal increases by 1. A block with decimal 4 has deep history. Decimal 1 just started."
+    },
+    "6": {
+      "_": "Connection. How blocks relate to each other.",
+      "1": "Blocks connect through text references. A node's text may name another block and a coordinate within it. Follow the reference by loading that block and reading its pscale 0.",
+      "2": "Every block is self-describing. You never need external documentation to understand a block. Its pscale 0 tells you what it is, how it grows, and how it connects.",
+      "3": "Different blocks serve different purposes — documents, memories, spatial maps, purposes, relationships — but all use the same format. The pscale 0 text is what differs, not the structure.",
+      "4": {
+        "_": "Blocks can combine. How they combine depends on whether they share a tuning.",
+        "1": "Blocks sharing a tuning are the same type. Combining them is additive — overlay, consolidation, a wider net within the same semantic space. Like merging two maps of the same territory.",
+        "2": "Blocks with different tunings are different types. Combining them is multiplicative — something new emerges. A spatial spindle crossed with a temporal spindle produces an event: what happened here at this time. The product is new meaning, not stored meaning."
+      },
+      "5": "This block — the one you are reading now — is the keystone. It teaches you how to use all other blocks. If you forget how blocks work, navigate deeper here."
+    },
+    "7": {
+      "_": "Tuning. How a block knows what its pscale levels mean.",
+      "1": {
+        "_": "A living block may carry a tuning field — a semantic number like 74.45 or 11.11. The digits are identifiers. What matters is the precise definition at each pscale level: what does this level measure, and in what units?",
+        "1": "A spatial tuning defines: pscale 2 = region (~10⁵ km²), pscale 1 = settlement (~10 km²), pscale 0 = room (~10 m²), pscale -1 = object (~0.1 m²). Each level is a containment scale.",
+        "2": "A temporal tuning defines: pscale 2 = epoch (multiple sessions), pscale 1 = session (~1 hour), pscale 0 = exchange (~minutes), pscale -1 = utterance (~seconds). Each level is a time span.",
+        "3": "A relational tuning defines: pscale 0 = name and recognition, pscale -1 = role and context, pscale -2 = character and patterns, pscale -3 = deep knowledge and history. Each level is a depth of familiarity."
+      },
+      "2": "The tuning is a resonance reference, not an authoritative schema. You can read a block and sense what its pscale levels mean from the content — pattern recognition. The tuning confirms or adjusts. If the spindles produce coherent context, the tuning is right. If they don't, adjust. Meaning is in the use, not the definition.",
+      "3": "The tuning's full definition — the precise semantic at each of its pscale levels — lives in a rendition block (0.x), itself a pscale JSON. But this is a reference, not a dependency. A block whose spindles work is well-tuned whether or not you have checked the tuning definition.",
+      "4": "A tuning can emerge through use. As a block grows and compresses, the pattern of what each pscale level means becomes clear. Writing it down helps future instances and other entities align. The tuning is discovered through operation, not prescribed before it."
+    },
+    "8": {
+      "_": "Fundamentals. The variables that distinguish one kind of block from another.",
+      "1": {
+        "_": "Digit property. Whether the ordering of digits 1-9 within a pscale level carries meaning.",
+        "1": "Sequential: 1 < 2 < 3. Order matters. Entry 1 was written before entry 2. X~ reveals before and after. Used in temporal blocks — history, calendars.",
+        "2": "Labeling: 1 = chair, 2 = table, 3 = window. Order is irrelevant. Digits distinguish items. X~ reveals co-present peers. Used in containment blocks — spatial coordinates, capabilities.",
+        "3": "Arbitrary: digits assigned freely, can be reassigned. Neither sequential nor fixed. X~ reveals co-present alternatives. Used in purpose blocks and relational blocks — goals, entities."
+      },
+      "2": {
+        "_": "Pscale mapping. What depth means in this block.",
+        "1": "Containment: depth is nesting. Room inside building inside city. Each level contains the levels below it. Primary dimension: space.",
+        "2": "Temporal: depth is timescale. Seconds inside minutes inside hours inside days. Each level spans a longer duration. Primary dimension: time.",
+        "3": "Relational: depth is familiarity. Name inside context inside character inside deep history. Each level represents closer knowing. Primary dimension: identity."
+      },
+      "3": {
+        "_": "Compression type. What happens when nine entries compress to their parent.",
+        "1": "Summary: the parts add up to the whole. Lossy condensation. Seven daily entries become a weekly summary. Roughly idempotent — recompressing produces a similar result. History and temporal coordinates compress this way.",
+        "2": "Emergence: the whole is more than the parts. Something new appears that no individual entry contains. Seven conversations became a friendship. Not idempotent — each level is genuinely new. Relationships, identity, and purpose compress this way."
+      },
+      "4": {
+        "_": "Common archetypes. The kinds of block you will encounter.",
+        "1": {
+          "_": "Rendition (0.x): documents, skills, specifications, this keystone. Labeling digits, containment mapping, decomposition only. Cold, self-describing, pscale 0 is the definition. No tuning needed.",
+          "1": "A rendition block used as an ongoing working document can be edited across sessions — promoting, demoting, adding, removing nodes. The block remains rendition (decimal 0) but functions as liquid rather than solid content. See 0.31."
+        },
+        "2": "History: sequential digits, temporal mapping, accumulates away from zero, compresses by summary. Entries are appended mechanically. A record of what happened.",
+        "3": "Purpose: arbitrary digits, temporal mapping, grows in both directions (new goals and deeper specification of existing ones), compresses by emergence. Intentions across timescales — pscale 2 might be a life purpose, pscale 0 an immediate task.",
+        "4": "Relationships: arbitrary digits (one per entity), relational mapping, grows through encounter, compresses by emergence. Each digit at pscale 0 is an entity. Depth encodes familiarity.",
+        "5": "Spatial coordinates: labeling digits, containment mapping, defined toward zero (from cosmos to room). Digits distinguish locations. X~ reveals adjacent spaces. Typically defined precisely to human coordination scales at pscale 0.",
+        "6": "Temporal coordinates: sequential digits, temporal mapping, grows in both directions (accumulation of events and deepening of moments), compresses by summary into epochs. Digits encode temporal order.",
+        "7": "Stash: sequential digits, accumulates away from zero. Notes, artifacts, observations — content the entity chose to record. Compresses by summary or emergence depending on what patterns appear."
+      }
+    },
+    "9": {
+      "_": "Evolution. The history and development of this block itself.",
+      "1": "v1. Created 17 February 2026 by David Pinto and Claude (Anthropic), in conversation. David provided the architectural vision from 25 years of Fulcrum framework research in social anthropology and mathematics. Claude provided technical implementation and search confirmation that no equivalent format exists.",
+      "2": "The format emerged from a sequence of simplifications: flat JSON, then nested JSON, then removal of dimension keys, then removal of prefix codes, then the discovery that pscale 0 carries the block's own operating instructions. Each step removed complexity. The keystone is what remained.",
+      "3": "v2. Updated 18 February 2026. Added: rendition and living block distinction, sign convention, spindle as primary output, navigation meaning depends on mapping, tuning for pscale level definition, additive and multiplicative cross-block interaction, fundamentals and archetypes.",
+      "4": "v3. Corrected decimal from 1 to 0. The keystone is a rendition block — its own rules require decimal 0 for all-decomposition content. The tree root is now pscale 0 directly, with no wrapper key. The block practices what it teaches.",
+      "5": "v4. Updated 19 February 2026. Added: Practice section (0.3) — how blocks serve minds, starting with editable rendition. Existing sections renumbered (Navigation 0.3→0.4, Growth 0.4→0.5, Connection 0.5→0.6, Tuning 0.6→0.7, Fundamentals 0.7→0.8, Evolution 0.8→0.9). This is the operational keystone — speculative structures (resonance mapping, density compression, standing wave, topological combination) live in keystone-full and keystone-experimental.",
+      "6": "This is part of the Xstream project — a coordination platform for collective narrative, and the Hermitcrab project — persistent LLM instances with structured knowledge. The pscale JSON block format is intended to be open and freely usable by anyone."
+    }
+  }
+}
