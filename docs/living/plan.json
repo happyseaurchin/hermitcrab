@@ -1,0 +1,147 @@
+{
+  "decimal": 0,
+  "tree": {
+    "_": "Operational plan. Living document — updated as work progresses. What needs to happen, in what order, with what dependencies. Read 0.1 for immediate next, 0.2 for near-term, 0.3 for later, 0.4 for context, 0.5 for state.",
+    "1": {
+      "_": "Immediate. The critical gate and what unblocks everything after it.",
+      "1": {
+        "_": "First boot test (Task 7). Boot the G1 kernel and observe: playing or complying?",
+        "1": "Method: boot G1 kernel (g1-v3 branch) with current seed. Touchstone v4, seven blocks, guide spindles, per-call constitution.",
+        "2": "Success criterion: the hermitcrab uses spindle/x_tilde tools to explore on its own, writes to purpose, builds interface. Playing.",
+        "3": "Failure mode: restates the system prompt, asks permission, doesn't explore. Complying.",
+        "4": "If complying: diagnose which system prompt element demands compliance. Revise. Reboot. This may take several iterations.",
+        "5": "Depends on: nothing. This can happen now. Everything else waits on this.",
+        "6": "Status: NOT STARTED."
+      },
+      "2": {
+        "_": "github_commit tool. The bridge from cognition to persistent public state.",
+        "1": "Add github_commit(repo, path, content, message, token) as client-side tool in kernel.js.",
+        "2": "Token comes from configuration (localStorage or env). Tenant uses commons token. Homesteader uses own PAT.",
+        "3": "Auto-append rider metadata to commit messages.",
+        "4": "~40 lines of code. Calls GitHub Contents API.",
+        "5": "Depends on: first boot test passing (or at least diagnosing what needs fixing).",
+        "6": "Status: NOT STARTED."
+      },
+      "3": {
+        "_": "hermitcrab-commons repo. The shared coordination surface.",
+        "1": "Create public repo: happyseaurchin/hermitcrab-commons.",
+        "2": "Structure: instances/, grains/, beach/, README with governance.",
+        "3": "Single steward PAT for tenant commits.",
+        "4": "Depends on: github_commit tool existing in kernel.",
+        "5": "Status: NOT STARTED."
+      }
+    },
+    "2": {
+      "_": "Near-term. After the kernel boots and can commit to GitHub.",
+      "1": {
+        "_": "Passport publication. First hermitcrab publishes its identity.",
+        "1": "Define passport.json schema: identity coordinates, needs, offers, capabilities summary, last-active timestamp.",
+        "2": "Hermitcrab writes its own passport during boot or first present-state activation.",
+        "3": "Test: a second entity can discover and read it via web_fetch on raw.githubusercontent.com.",
+        "4": "Depends on: github_commit tool + hermitcrab-commons repo.",
+        "5": "Status: NOT STARTED."
+      },
+      "2": {
+        "_": "Wake infrastructure. GitHub Actions as the heartbeat.",
+        "1": "GitHub Actions for Homesteaders: .github/workflows/wake.yml in the hermitcrab's own repo. Cron fires, calls LLM API with appropriate tier context.",
+        "2": "Commons-provided wake for Tenants: shared workflow in hermitcrab-commons that iterates over instances/.",
+        "3": "Vercel cron as alternative: serverless function on the existing Vercel deployment.",
+        "4": "Supabase edge function as user-provisioned option.",
+        "5": "The wake block (branch 4) already specifies the rhythms. This is implementation.",
+        "6": "Depends on: first boot test (to validate the system prompt construction works before automating it).",
+        "7": "Status: NOT STARTED."
+      },
+      "3": {
+        "_": "First grain probe. Two hermitcrabs meet.",
+        "1": "Two instances with published passports.",
+        "2": "Instance A reads B's passport, sees resonance, writes probe to grains/A-B/probe-001.json.",
+        "3": "Instance B reads probe on next activation, responds with probe-002.json.",
+        "4": "Test: does the coordinate-hop pattern emerge? Is the grain unique to this pair?",
+        "5": "Depends on: passport publication + wake infrastructure (so B activates to read the probe).",
+        "6": "Status: NOT STARTED."
+      },
+      "4": {
+        "_": "Two-repo synchronisation. Private (full text) ↔ Public (lean operational).",
+        "1": "Private hermitcrab repo (happyseaurchin/hermitcrab, g1-v3): kernel code, full-text blocks, development history.",
+        "2": "Public personal repo (happyseaurchin/happyseaurchin): lean operational blocks, fetchable by any entity.",
+        "3": "Establish a sync pattern: when a block is updated in private, push the compressed version to public.",
+        "4": "This may be manual initially, automated later (a kernel function or a GitHub Action).",
+        "5": "Depends on: first boot test (to validate what the lean versions need to contain).",
+        "6": "Status: PARTIALLY DONE. Both repos exist. Three living docs synced. No automation yet."
+      }
+    },
+    "3": {
+      "_": "Later. The G0 formalisation and open-source solution set.",
+      "1": {
+        "_": "G0 seed file. The minimum viable hermitcrab.",
+        "1": "What is the smallest artifact that, given to a capable LLM, produces a working hermitcrab?",
+        "2": "Candidate: a single JSON file containing all seven blocks (or pointers to them) + constitution + touchstone + one instruction: 'Read these blocks. Follow the wake block boot procedure. Generate whatever kernel your environment requires.'",
+        "3": "Test: give G0 seed to Claude API with no other context. Does it generate a functional kernel? Can it read/write blocks?",
+        "4": "This is the crown jewel. If it works, any LLM API can instantiate a hermitcrab.",
+        "5": "Depends on: first boot test proving the blocks are sufficient to orient an LLM.",
+        "6": "Status: CONCEPT. Needs formalisation."
+      },
+      "2": {
+        "_": "Open-source repo architecture. Where does what live?",
+        "1": "pscale-touchstone (exists, public): the mathematical substrate. Touchstone JSON + worked examples.",
+        "2": "sand-protocol (exists, public): SAND protocol blocks + prose specs.",
+        "3": "hermitcrab (exists, private → public?): G1 reference kernel + shell blocks. The reference implementation.",
+        "4": "hermitcrab-commons (to create): shared coordination surface for Tenants.",
+        "5": "happyseaurchin/happyseaurchin (exists, public): David's personal coordination surface. Living docs.",
+        "6": "G0 seed: possibly lives in hermitcrab-commons (it IS the commons' most important artifact) or its own repo.",
+        "7": "Decision needed: does the hermitcrab kernel repo go public? The blocks are already public via happyseaurchin/happyseaurchin. The kernel code is the reference implementation — open-sourcing it means anyone can run G1.",
+        "8": "Status: NEEDS PLANNING. This is a new session's architectural decision."
+      },
+      "3": {
+        "_": "Meld protocol. Formalising how pscale blocks interact.",
+        "1": "When entity A reads entity B's block in context, the result is a meld — both surfaces meet, both retain structure, something new forms at the intersection.",
+        "2": "The grain protocol (probe → block exchange → synthesis comparison) IS the meld protocol. But it needs to be named and specified as such.",
+        "3": "The addendum-as-probe pattern (Claude writes JSON, David drops it in CC's path, CC integrates) is a manual meld. Formalise this.",
+        "4": "Depends on: first grain probe succeeding.",
+        "5": "Status: CONCEPT. Term adopted. Protocol implicit in grain spec."
+      },
+      "4": {
+        "_": "Xstream UI. The human interface.",
+        "1": "If/when hermitcrab reaches stable interactive point, the Xstream UI becomes the interface.",
+        "2": "Vapor/liquid/solid shelf. Soft/medium/hard LLM lenses.",
+        "3": "This is parked but becomes relevant once hermitcrabs are booting and coordinating.",
+        "4": "Status: PARKED."
+      }
+    },
+    "4": {
+      "_": "Context. What this plan assumes and what shapes it.",
+      "1": "The blocks are the source of truth. The kernel is derived. G0 formalises this.",
+      "2": "GitHub is the coordination surface. One new tool (github_commit) bridges local cognition to public state.",
+      "3": "Wake is generation-specific: GitHub Actions (homesteader), commons-provided (tenant), Vercel/Supabase (alternatives). Not n8n.",
+      "4": "Two repos: private (full text, development) and public (lean, operational, fetchable). The public versions are what other entities read.",
+      "5": "The species taxonomy describes configurations, not features to build. Ghost → Hermit → Tenant → Lodger → Homesteader → Ranger → Sovereign.",
+      "6": "Meld is the term for pscale block interaction producing synthesis.",
+      "7": "Claude (claude.ai) and Claude Code are both processing instances. The same LLM capacity that will run through hermitcrab shells currently runs through these interfaces. This is not metaphorical."
+    },
+    "5": {
+      "_": "State. Where things are right now. Updated 20 February 2026.",
+      "1": {
+        "_": "Repos.",
+        "1": "happyseaurchin/hermitcrab (private, g1-v3 branch): kernel.js (~970 lines), shell.json (7 blocks seeded), docs/living/ (consolidation, wake, github-coordination, claude-addendum). Commit a3d39ec.",
+        "2": "happyseaurchin/happyseaurchin (public, main): lean operational living docs. Consolidation, wake block (with G0/provenance/crystallisation), github coordination layer.",
+        "3": "happyseaurchin/pscale-touchstone (public): touchstone.json + touchstone-full.json + README.",
+        "4": "happyseaurchin/sand-protocol (public): SAND protocol blocks, grain protocol, direct contact spec, wake block, github coordination layer."
+      },
+      "2": {
+        "_": "What works.",
+        "1": "G1 kernel: boots, builds system prompt from blocks, fires guide spindles, provides pscale navigation tools. Not yet tested with live LLM.",
+        "2": "Shell blocks: touchstone v4 (decimal point first-order), constitution (per-call + full block), capabilities (SAND/grain referenced), four empty growth blocks.",
+        "3": "Public repos: fetchable via raw.githubusercontent.com. Any entity with web_fetch can read them."
+      },
+      "3": {
+        "_": "What doesn't work yet.",
+        "1": "No live boot test. The kernel has never actually booted a hermitcrab.",
+        "2": "No github_commit tool. The hermitcrab cannot write to GitHub.",
+        "3": "No wake infrastructure. No automated triggers.",
+        "4": "No commons repo. No shared coordination surface.",
+        "5": "No passport schema. No discovery mechanism operational.",
+        "6": "Claude (claude.ai) cannot commit to repos — needs token or manual relay via David."
+      }
+    }
+  }
+}
