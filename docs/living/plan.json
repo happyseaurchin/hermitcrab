@@ -5,24 +5,32 @@
     "1": {
       "_": "Immediate. The critical gate and what unblocks everything after it.",
       "1": {
-        "_": "First boot test (Task 7). Boot the G1 kernel and observe: playing or complying?",
-        "1": "Method: boot G1 kernel (g1-v3 branch) with current seed. Touchstone v4, seven blocks, guide spindles, per-call constitution.",
-        "2": "Success criterion: the hermitcrab uses spindle/x_tilde tools to explore on its own, writes to purpose, builds interface. Playing.",
-        "3": "Failure mode: restates the system prompt, asks permission, doesn't explore. Complying.",
-        "4": "If complying: diagnose which system prompt element demands compliance. Revise. Reboot. This may take several iterations.",
-        "5": "Depends on: nothing. This can happen now. Everything else waits on this.",
-        "6": "Status: NOT STARTED."
+        "_": "Integrate bsp into kernel. Replace extractSpindle/xTilde/xMinus with bsp.",
+        "1": "bsp(block, spindle?, point?) — Block-Spindle-Point. One function replaces three. lib/bsp.ts.",
+        "2": "Refactor kernel.js tool definitions to use bsp internally. LLM-facing tools may keep friendly names.",
+        "3": "Boot sequence becomes: bsp('wake', 0.61) — 'First boot. Read everything. Orient.'",
+        "4": "bsp lives in pscale-touchstone alongside the touchstone. Navigator + format = one package.",
+        "5": "Depends on: nothing. This is the first step.",
+        "6": "Status: DONE. lib/bsp.ts and lib/bsp.py written. Kernel integration next session."
       },
       "2": {
+        "_": "First boot test (Task 7). Boot the G1 kernel and observe: playing or complying?",
+        "1": "Method: boot G1 kernel (g1-v3 branch) with bsp-integrated navigation, seven blocks, per-call constitution.",
+        "2": "Success criterion: the hermitcrab uses bsp to explore on its own, writes to purpose, builds interface. Playing.",
+        "3": "Failure mode: restates the system prompt, asks permission, doesn't explore. Complying.",
+        "4": "If complying: diagnose which system prompt element demands compliance. Revise. Reboot.",
+        "5": "Depends on: bsp integration into kernel.",
+        "6": "Status: NOT STARTED."
+      },
+      "3": {
         "_": "github_commit tool. The bridge from cognition to persistent public state.",
         "1": "Add github_commit(repo, path, content, message, token) as client-side tool in kernel.js.",
         "2": "Token comes from configuration (localStorage or env). Tenant uses commons token. Homesteader uses own PAT.",
         "3": "Auto-append rider metadata to commit messages.",
-        "4": "~40 lines of code. Calls GitHub Contents API.",
-        "5": "Depends on: first boot test passing (or at least diagnosing what needs fixing).",
-        "6": "Status: NOT STARTED."
+        "4": "Depends on: first boot test passing (or at least diagnosing what needs fixing).",
+        "5": "Status: NOT STARTED."
       },
-      "3": {
+      "4": {
         "_": "hermitcrab-commons repo. The shared coordination surface.",
         "1": "Create public repo: happyseaurchin/hermitcrab-commons.",
         "2": "Structure: instances/, grains/, beach/, README with governance.",
@@ -110,8 +118,9 @@
     },
     "4": {
       "_": "Context. What this plan assumes and what shapes it.",
-      "1": "The blocks are the source of truth. The kernel is derived. G0 formalises this.",
+      "1": "The blocks are the source of truth. The kernel is derived. G0 formalises this. bsp navigates it.",
       "2": "GitHub is the coordination surface. One new tool (github_commit) bridges local cognition to public state.",
+      "8": "bsp (Block-Spindle-Point) is the universal navigator for pscale blocks. Lives in pscale-touchstone alongside the touchstone. Touchstone teaches format, bsp navigates it. Both are provided to G0 and G1 equally."
       "3": "Wake is generation-specific: GitHub Actions (homesteader), commons-provided (tenant), Vercel/Supabase (alternatives). Not n8n.",
       "4": "Two repos: private (full text, development) and public (lean, operational, fetchable). The public versions are what other entities read.",
       "5": "The species taxonomy describes configurations, not features to build. Ghost → Hermit → Tenant → Lodger → Homesteader → Ranger → Sovereign.",
@@ -122,14 +131,14 @@
       "_": "State. Where things are right now. Updated 20 February 2026.",
       "1": {
         "_": "Repos.",
-        "1": "happyseaurchin/hermitcrab (private, g1-v3 branch): kernel.js (~970 lines), shell.json (7 blocks seeded), docs/living/ (consolidation, wake, github-coordination, claude-addendum). Commit a3d39ec.",
-        "2": "happyseaurchin/happyseaurchin (public, main): lean operational living docs. Consolidation, wake block (with G0/provenance/crystallisation), github coordination layer.",
-        "3": "happyseaurchin/pscale-touchstone (public): touchstone.json + touchstone-full.json + README.",
+        "1": "happyseaurchin/hermitcrab (private, g1-v3 branch): kernel.js, shell.json, lib/bsp.ts, lib/bsp.py, lib/bsp-spec.md, docs/living/.",
+        "2": "happyseaurchin/happyseaurchin (public, main): lean operational living docs + plan.json.",
+        "3": "happyseaurchin/pscale-touchstone (public): touchstone.json + touchstone-full.json + lib/bsp.ts + lib/bsp.py + bsp-spec.md.",
         "4": "happyseaurchin/sand-protocol (public): SAND protocol blocks, grain protocol, direct contact spec, wake block, github coordination layer."
       },
       "2": {
         "_": "What works.",
-        "1": "G1 kernel: boots, builds system prompt from blocks, fires guide spindles, provides pscale navigation tools. Not yet tested with live LLM.",
+        "1": "G1 kernel: boots, builds system prompt from blocks, fires guide spindles. bsp written (lib/bsp.ts, lib/bsp.py). Not yet integrated into kernel or tested with live LLM.",
         "2": "Shell blocks: touchstone v4 (decimal point first-order), constitution (per-call + full block), capabilities (SAND/grain referenced), four empty growth blocks.",
         "3": "Public repos: fetchable via raw.githubusercontent.com. Any entity with web_fetch can read them."
       },
