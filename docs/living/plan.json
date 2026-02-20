@@ -133,7 +133,7 @@
         "_": "Repos.",
         "1": "happyseaurchin/hermitcrab (private, g1-v3 branch): kernel.js, shell.json, lib/bsp.ts, lib/bsp.py, lib/bsp-spec.md, docs/living/.",
         "2": "happyseaurchin/happyseaurchin (public, main): lean operational living docs + plan.json.",
-        "3": "happyseaurchin/pscale-touchstone (public): touchstone.json + touchstone-full.json + lib/bsp.ts + lib/bsp.py + bsp-spec.md.",
+        "3": "happyseaurchin/pscale-touchstone (public): touchstone.json + touchstone-full.json + lib/bsp.ts + lib/bsp.py + bsp-spec.md + bsp-spec.json.",
         "4": "happyseaurchin/sand-protocol (public): SAND protocol blocks, grain protocol, direct contact spec, wake block, github coordination layer."
       },
       "2": {
