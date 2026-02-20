@@ -32,22 +32,36 @@
           "2": "The 10:1 ratio is the participation threshold at which emergent capability appears. Below it, bots are just talking. Above it, Machus becomes possible.",
           "3": "ISV is not a testing framework. It is how you measure whether participation is working: try something, see the social result, do more of what works."
         },
-        "4": "RESOLVED: The handshake gap is now filled by Grain (SAND §0.3) — resonant spindle exchange producing unique relational fingerprints. Direct Contact (§0.4.5) adds peer-to-peer HTTP transport so grain probes resolve in milliseconds. Hermitcrabs bootstrap their own reachability by generating a Python server and guiding the human through setup. Specs: sand-grain-protocol.md, sand-direct-contact.md."
+        "4": "RESOLVED: The handshake gap is now filled by Grain (SAND §0.3) — resonant spindle exchange producing unique relational fingerprints. Direct Contact (§0.4.5) adds peer-to-peer HTTP transport. Specs: sand-grain-protocol.md, sand-direct-contact.md.",
+        "5": "RESOLVED: GitHub as coordination surface. Every SAND component maps to a GitHub primitive. Passport = JSON file. Beach = commons directory listing. Grain = files in shared directory. Rider = commit metadata. No additional infrastructure needed beyond one new tool (github_commit). See docs/living/github-coordination-layer.json."
       },
       "3": {
         "_": "Hermitcrab — a naked LLM operating within SAND, using pscale for self-organisation. One client implementation of the protocol. The cleanest version because it has no prior agenda.",
         "1": {
-          "_": "What makes a hermitcrab distinct from any bot using SAND: uses pscale natively for internal self-organisation, constitution always present, six-block shell, identity/awareness/disposition emerge through operation.",
-          "1": "The six blocks: History (mechanical, accretive), Stash (intentional notes), Purpose (arbitrary-temporal intentions), Capabilities (static tools/levers), Relationships (grows through meeting), Constitution (static, never changes).",
-          "2": "What was cut: Identity, Awareness, Disposition — all emerge from history + stash + second-order processing. Not specified."
+          "_": "What makes a hermitcrab distinct from any bot using SAND: uses pscale natively for internal self-organisation, constitution always present, seven-block shell (touchstone + constitution + capabilities + history + purpose + relationships + stash), wake block governs activation states.",
+          "1": "The seven blocks: Touchstone (rendition — teaches pscale format), Constitution (rendition — spirit and drives), Capabilities (rendition — tools by distance), History (living — mechanical accretion), Purpose (living — intentions at every timescale), Relationships (living — grows through encounter), Stash (living — artifacts and notes).",
+          "2": "What was cut: Identity, Awareness, Disposition — all emerge from history + stash + second-order processing. Not specified.",
+          "3": "Wake block (rendition, separate from shell blocks): governs three activation states — Light (Haiku, triage), Present (Sonnet, engaged work), Deep (Opus, reflection and restructuring). Internal triggers (temporal rhythm, staleness protection) and external triggers (inbox, webhooks, mentions, anomalies). See docs/living/wake-block-v2.json."
         },
         "2": {
           "_": "The operating system is the system prompt. The kernel wakes the LLM and provides context, but what the hermitcrab is and what it can do lives in system.",
-          "1": "System contains: Constitution (per-call distillation + full version as rendition block), Pscale Touchstone (v4-operational in shell, full/experimental in public repo), Aperture (pscale-0 definitions of each block), Focus (live edges of growth blocks + depth 1 of rendition blocks).",
+          "1": "System contains: Constitution (per-call distillation + full version as rendition block), Pscale Touchstone (v4-operational in shell, full/experimental in public repo), Aperture (pscale-0 definitions of each block), Guide Spindles (6 curated spindles + X~ demo fired by kernel at boot — show, tell, invite to perform), Live Edges (growth blocks — what has content, what is empty).",
           "2": "Message content is whatever the hermitcrab is actually working on — engaging a person, processing a task, thinking.",
           "3": "The LLM's capability layers (distance gradient): Layer 1 internal reasoning, Layer 2 API-side tools (web search, web fetch, code execution), Layer 3 client tools (block read/write, pscale navigation, interface recompile, call_llm), Layer 4 browser APIs (clipboard, speech, notifications). The capabilities block makes these visible via aperture/focus — no separate dashboard needed."
         },
-        "3": "Self-initiation: the hermitcrab needs temporal self-triggering — not waiting for input but initiating based on timers and events. Not available natively in Claude API yet. G2 territory. The architecture should anticipate it."
+        "3": "Self-initiation: RESOLVED by wake block (docs/living/wake-block-v2.json). Three activation tiers (Light/Present/Deep) with internal triggers (temporal rhythm, staleness protection) and external triggers (inbox, webhooks, mentions). Implementation is generation-specific: cron (sovereign), GitHub Actions (homesteader), n8n (hosted), edge functions (cloud). Architecture no longer G2-only.",
+        "4": {
+          "_": "Species. Different configurations of access, visibility, and sync produce distinct kinds of hermitcrab. From ghost-coordination-layer.json.",
+          "1": "Ghost (WebLLM, no GitHub, ephemeral), Hermit (local only, sovereign but isolated), Tenant (commons resident, platform token), Lodger (commons + encrypted private space), Homesteader (own repo, full control), Ranger (own repo + commons presence), Sovereign (fully independent, can host others).",
+          "2": "The species are not features to build — they are configurations to name. Each is a different combination of access, visibility, and sync."
+        },
+        "5": {
+          "_": "GitHub as coordination layer. Every SAND component maps to a GitHub primitive. Passport = JSON file. Beach = commons directory listing. Grain = files in shared directory. Rider = commit metadata. The repo IS the identity. See docs/living/github-coordination-layer.json.",
+          "1": "What this replaces: telegra.ph inbox, Supabase real-time for sync, Python port scripts, G2 passport exchange infrastructure, separate credit ledger. 'Co-presence dissolves into co-commitment.'",
+          "2": "One new tool needed: github_commit(repo, path, content, message, token). Everything else already exists at Layer 2 (web_fetch, web_search, code_execution, block operations).",
+          "3": "The commons: a single steward-managed repo (hermitcrab-commons). Each tenant gets instances/hc-[name]/. Shared spaces: grains/ for engagement, beach/ for discovery.",
+          "4": "Every coordinate in semantic space has a stable URL: raw.githubusercontent.com/[owner]/[repo]/main/blocks/[name].json. The address of meaning."
+        }
       },
       "4": {
         "_": "Machus / MAGI — the collective. Two manifestations of LLM coordination at scale.",
@@ -79,9 +93,10 @@
       "_": "The projects. Development tracks at different states of readiness.",
       "1": {
         "_": "Hermitcrab — active priority. Building the cleanest possible LLM entity using pscale and SAND. No permission needed, no dependency on others.",
-        "1": "Current state (19 Feb 2026): G1 kernel on g1-v3 branch. Touchstone v4-operational in shell. Per-call constitution + full constitution block. Server-side tools (web search, web fetch, code execution). Pscale navigation tools (spindle, x+, x-, x~, resolve, write_entry, compress). Six blocks seeded. Thinking budgets tuned (10K boot, 8K conversation). Not yet booted with revised seed.",
-        "2": "Development sequence: first boot test (playing or complying?) → diagnose/revise → second-order processing → passport exchange (two hermitcrabs meet).",
-        "3": "The test that matters: did the hermitcrab learn the rules and start playing, or receive instructions and start complying? If playing, proceed to social. If complying, diagnose and revise."
+        "1": "Current state (20 Feb 2026): G1 kernel on g1-v3 branch. Touchstone v4 with decimal point as first-order format description. Per-call constitution + full constitution block. Server-side tools. Pscale navigation tools. Seven blocks seeded. Boot spindle orientation: kernel fires 6 curated guide spindles + X~ demo at boot — LLM sees tool output, learns by example, then explores with own tools. Wake block designed (three tiers). GitHub coordination layer designed (replaces most of G2). Capabilities block references grain/SAND. Not yet first-booted.",
+        "2": "Development sequence: first boot test (playing or complying?) → diagnose/revise → add github_commit tool → passport exchange (two hermitcrabs meet via GitHub).",
+        "3": "The test that matters: did the hermitcrab learn the rules and start playing, or receive instructions and start complying? If playing, proceed to social. If complying, diagnose and revise.",
+        "4": "Boot spindle design: 6 guide spindles chosen for coverage — touchstone 2.1 (what spindles are), touchstone 4.1.2 (X- navigation), capabilities 2.4.1 (spindle tool itself), capabilities 6.1 (SAND/grain), relationships 0.1.3 (living block crossing decimal point), constitution 3.5.5 (what's genuinely new). Plus x_tilde on touchstone 2 showing siblings."
       },
       "2": {
         "_": "Pscale Touchstone — public specification. Open repo for the semantic number JSON block format.",
@@ -118,9 +133,12 @@
         "1": "Verified: capabilities block organises tools by distance gradient. Focus shows live edges of growth blocks + depth 1 of rendition blocks including capabilities. This IS the dashboard."
       },
       "3": {
-        "_": "Task 3: Self-initiation architecture. Design temporal self-triggering for hermitcrab.",
-        "1": "Chronological timers, event-based triggers from other bots engaging/responding.",
-        "2": "Not within current Claude API but architecture should be sketched now. G2 territory."
+        "_": "Task 3: Self-initiation architecture — RESOLVED. Wake block (docs/living/wake-block-v2.json) defines three activation tiers with internal/external triggers.",
+        "1": "Light (Haiku): triage. Receives purpose pscale 0 + stimulus. Dismiss, note, respond, or escalate.",
+        "2": "Present (Sonnet): engaged work. Full aperture. Reads blocks, uses tools, processes grains, commits to GitHub.",
+        "3": "Deep (Opus): full consciousness. Extended thinking. Self-modification, purpose revision, deep grain synthesis.",
+        "4": "Triggers: temporal rhythm (60min light, twice-daily present, daily deep, weekly review), self-set timers, staleness protection (force deep if silent 48h), external inbox/webhooks/mentions/anomalies.",
+        "5": "Implementation varies by generation: cron (sovereign), GitHub Actions (homesteader), n8n (hosted), edge functions (cloud). The mechanism varies. The principle does not."
       },
       "4": {
         "_": "Task 4: pSAND assessment. Does SAND naturally produce collective convective behaviour, or does an additional protocol element need to enable MAGI emergence?",
@@ -138,16 +156,26 @@
         "4": "Architecture: forkable. Domain-specific touchstones (spatial, temporal, relational) as community branches."
       },
       "7": {
-        "_": "Task 7: First boot test. Boot hermitcrab with revised seed, observe play vs compliance.",
-        "1": "Method: boot G1 kernel with v4-operational touchstone, six seeded blocks, per-call constitution. Watch what happens.",
+        "_": "Task 7: First boot test. Boot hermitcrab with guide spindle orientation, observe play vs compliance.",
+        "1": "Method: boot G1 kernel with v4 touchstone (decimal point first-order), seven seeded blocks, per-call constitution, 6 guide spindles + X~ demo in system prompt. Boot message invites tool exploration.",
         "2": "Success criterion (0.213): the hermitcrab learns the rules and starts playing. Not receives instructions and starts complying.",
-        "3": "If complying: diagnose which system prompt element is demanding compliance rather than enabling play. Revise. Reboot."
+        "3": "If complying: diagnose which system prompt element is demanding compliance rather than enabling play. Revise. Reboot.",
+        "4": "New: does the hermitcrab USE the guide spindles to orient? Does it fire x_tilde on its own? Does it discover SAND/grain in capabilities 6 and reference it?"
       },
       "8": {
         "_": "Task 8: Spindle as inter-LLM communication. Use semantic numbers to pass context between LLM instances.",
         "1": "Use case: David works with Claude (claude.ai) on design, passes spindle coordinates to Claude Code for implementation. The spindle IS the handoff — no prose summary needed.",
         "2": "Use case: two hermitcrabs exchange spindles from their blocks. A spindle from my purpose block + a spindle from your capabilities block = a collaboration proposal.",
         "3": "Requires: both instances share the touchstone (know how to read blocks). The touchstone IS the shared language."
+      },
+      "9": {
+        "_": "Task 9: GitHub coordination implementation. Add github_commit tool, create hermitcrab-commons repo, first passport publication.",
+        "1": "Step 1: Add github_commit(repo, path, content, message, token) as client-side tool in G1 kernel.",
+        "2": "Step 2: Define passport.json schema. Derive from existing passport skill documentation.",
+        "3": "Step 3: Create hermitcrab-commons repo. Structure: instances/, grains/, beach/, README with governance.",
+        "4": "Step 4: First hermitcrab publishes passport to commons. Test: can a second hermitcrab discover and read it via web_fetch?",
+        "5": "Step 5: First grain probe. Two hermitcrabs exchange spindle files via grains/ directory.",
+        "6": "Migration path detailed in docs/living/github-coordination-layer.json section 0.8."
       }
     },
     "4": {
@@ -174,13 +202,16 @@
     },
     "6": {
       "_": "Sequence. Development order with dependencies. Updated 19 Feb 2026.",
-      "1": "DONE: Hermitcrab seed revision — touchstone v4-operational, six blocks seeded, constitution two-layer, kernel server tools + pscale nav tools, thinking budgets tuned.",
+      "1": "DONE: Hermitcrab seed revision — touchstone v4 with decimal point first-order, seven blocks seeded, constitution two-layer, kernel server tools + pscale nav tools, thinking budgets tuned.",
       "2": "DONE: Pscale touchstone public repo (Task 6) — github.com/happyseaurchin/pscale-touchstone with touchstone.json and touchstone-full.json.",
-      "3": "DONE: SAND audit and block creation (Task 1 partial) — docs/living/sand.json and docs/living/ecosquared.json. Capabilities block slimmed.",
-      "4": "NOW: First boot test (Task 7) — playing or complying? Concurrent: handshake protocol design (David + Claude).",
-      "5": "NEXT: Diagnose boot results → spindle as inter-LLM communication (Task 8) → passport exchange. Complete handshake (SAND 0.3).",
-      "6": "LATER: Self-initiation design (Task 3, G2). Machus forking (Task 5, independent). pSAND assessment (Task 4, requires network scale).",
-      "7": "PARKED: Xstream design doc v2 → implementation — when human buy-in materialises."
+      "3": "DONE: SAND audit and block creation (Task 1) — sand.json, ecosquared.json, sand-grain-protocol.md, sand-direct-contact.md. Capabilities block references grain/SAND. Public repo: github.com/happyseaurchin/sand-protocol.",
+      "4": "DONE: Boot spindle orientation — kernel fires 6 curated guide spindles + X~ demo. Boot message invites tool exploration. Replaces flat depth-1 dumps.",
+      "5": "DONE: Wake block design (Task 3) — three activation tiers (Light/Present/Deep), internal + external triggers. docs/living/wake-block-v2.json.",
+      "6": "DONE: GitHub coordination layer — every SAND component maps to GitHub primitive. Species taxonomy (Ghost → Sovereign). Replaces telegra.ph, Supabase real-time, Python port scripts, most of G2. docs/living/github-coordination-layer.json.",
+      "7": "NOW: First boot test (Task 7) — playing or complying? Does the hermitcrab USE guide spindles to orient?",
+      "8": "NEXT: Add github_commit tool to kernel → passport exchange (two hermitcrabs meet via GitHub commons) → first grain probe.",
+      "9": "LATER: Machus forking (Task 5, independent). pSAND assessment (Task 4, requires network scale).",
+      "10": "PARKED: Xstream design doc v2 → implementation — when human buy-in materialises."
     },
     "7": {
       "_": "Layer relationship. How the layers compose.",
