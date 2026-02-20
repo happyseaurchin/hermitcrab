@@ -120,7 +120,7 @@
       "_": "Context. What this plan assumes and what shapes it.",
       "1": "The blocks are the source of truth. The kernel is derived. G0 formalises this. bsp navigates it.",
       "2": "GitHub is the coordination surface. One new tool (github_commit) bridges local cognition to public state.",
-      "8": "bsp (Block-Spindle-Point) is the universal navigator for pscale blocks. Lives in pscale-touchstone alongside the touchstone. Touchstone teaches format, bsp navigates it. Both are provided to G0 and G1 equally."
+      "8": "bsp (Block-Spindle-Point) is the universal navigator for pscale blocks. Lives in pscale-touchstone alongside the touchstone. Touchstone teaches format, bsp navigates it. Both are provided to G0 and G1 equally.",
       "3": "Wake is generation-specific: GitHub Actions (homesteader), commons-provided (tenant), Vercel/Supabase (alternatives). Not n8n.",
       "4": "Two repos: private (full text, development) and public (lean, operational, fetchable). The public versions are what other entities read.",
       "5": "The species taxonomy describes configurations, not features to build. Ghost → Hermit → Tenant → Lodger → Homesteader → Ranger → Sovereign.",
