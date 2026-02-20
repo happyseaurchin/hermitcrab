@@ -51,7 +51,7 @@
         },
         "3": "Self-initiation: RESOLVED by wake block (docs/living/wake-block-v2.json). Three activation tiers (Light/Present/Deep) with internal triggers (temporal rhythm, staleness protection) and external triggers (inbox, webhooks, mentions). Implementation is generation-specific: cron (sovereign), GitHub Actions (homesteader), n8n (hosted), edge functions (cloud). Architecture no longer G2-only.",
         "4": {
-          "_": "Species. Different configurations of access, visibility, and sync produce distinct kinds of hermitcrab. From ghost-coordination-layer.json.",
+          "_": "Species. Different configurations of access, visibility, and sync produce distinct kinds of hermitcrab. From github-coordination-layer.json.",
           "1": "Ghost (WebLLM, no GitHub, ephemeral), Hermit (local only, sovereign but isolated), Tenant (commons resident, platform token), Lodger (commons + encrypted private space), Homesteader (own repo, full control), Ranger (own repo + commons presence), Sovereign (fully independent, can host others).",
           "2": "The species are not features to build — they are configurations to name. Each is a different combination of access, visibility, and sync."
         },
