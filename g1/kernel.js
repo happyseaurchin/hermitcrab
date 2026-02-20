@@ -144,71 +144,60 @@
     return { node, parentPath };
   }
 
-  // Extract a spindle — the chain of _ texts from root to the given path
-  function extractSpindle(block, path) {
-    if (!path) return [];
-    const keys = path.split('.');
-    let node = block.tree;
-    const chain = [];
-    // Collect root _ if it exists
-    if (node && typeof node === 'object' && node._) {
-      chain.push({ pscale: block.decimal || 0, path: '', text: node._ });
-    }
-    for (let i = 0; i < keys.length; i++) {
-      if (node === null || node === undefined || typeof node === 'string') break;
-      node = node[keys[i]];
-      if (node === null || node === undefined) break;
-      const currentPath = keys.slice(0, i + 1).join('.');
-      const pscaleLevel = (block.decimal || 0) - (i + 1);
-      if (typeof node === 'string') {
-        chain.push({ pscale: pscaleLevel, path: currentPath, text: node });
-      } else if (node._) {
-        chain.push({ pscale: pscaleLevel, path: currentPath, text: node._ });
-      }
-    }
-    return chain;
-  }
+  // ---- BSP — Block · Spindle · Point ----
+  // One function. Three arguments. Two optional.
+  // bsp(block, spindle?, point?)
+  //   block   — name (string) or block object
+  //   spindle — semantic number like 0.842 (digits after decimal are tree keys)
+  //   point   — focus digit (returns just that node's content)
+  // Three modes:
+  //   bsp("wake")           → { mode: 'block', tree }
+  //   bsp("wake", 0.842)    → { mode: 'spindle', nodes: [{pscale, digit, text}...] }
+  //   bsp("wake", 0.842, 2) → { mode: 'point', text }
 
-  // X+ — go to parent node
-  function xPlus(block, path) {
-    if (!path) return { error: 'Already at root' };
-    const keys = path.split('.');
-    const parentKeys = keys.slice(0, -1);
-    const parentPath = parentKeys.join('.') || null;
-    const parentNode = parentPath ? blockNavigate(block, parentPath) : block.tree;
-    if (!parentNode) return { error: 'Parent not found' };
-    const text = typeof parentNode === 'string' ? parentNode : (parentNode._ || null);
-    return { path: parentPath || '(root)', content: text };
-  }
+  function bsp(block, spindle, point) {
+    const blk = typeof block === 'string' ? blockLoad(block) : block;
+    if (!blk || !blk.tree) return { mode: 'block', tree: {} };
 
-  // X- — list children of current node
-  function xMinus(block, path) {
-    const node = path ? blockNavigate(block, path) : block.tree;
-    if (!node || typeof node === 'string') return { children: [], note: 'Leaf node — creative frontier' };
-    const children = [];
-    for (const [k, v] of Object.entries(node)) {
-      if (k === '_') continue;
-      if (typeof v === 'string') children.push({ digit: k, text: v });
-      else if (v && typeof v === 'object') children.push({ digit: k, text: v._ || '(branch)' });
+    // Block mode — no spindle, return full tree
+    if (spindle === undefined || spindle === null) {
+      return { mode: 'block', tree: blk.tree };
     }
-    return { children };
-  }
 
-  // X~ — list siblings (parent's other children)
-  function xTilde(block, path) {
-    if (!path) return { error: 'Root has no siblings' };
-    const keys = path.split('.');
-    const myDigit = keys[keys.length - 1];
-    const parentKeys = keys.slice(0, -1);
-    const parentNode = parentKeys.length > 0 ? blockNavigate(block, parentKeys.join('.')) : block.tree;
-    if (!parentNode || typeof parentNode === 'string') return { siblings: [] };
-    const siblings = [];
-    for (const [k, v] of Object.entries(parentNode)) {
-      if (k === '_' || k === myDigit) continue;
-      if (typeof v === 'string') siblings.push({ digit: k, text: v });
-      else if (v && typeof v === 'object') siblings.push({ digit: k, text: v._ || '(branch)' });
+    // Parse semantic number into digit sequence
+    const str = spindle.toFixed(10);
+    const dot = str.indexOf('.');
+    const digits = dot === -1 ? [] : str.slice(dot + 1).replace(/0+$/, '').split('');
+
+    // Walk the tree, building the spindle chain
+    const nodes = [];
+    let node = blk.tree;
+
+    for (let i = 0; i < digits.length; i++) {
+      const d = digits[i];
+      if (!node || typeof node !== 'object' || node[d] === undefined) break;
+      node = node[d];
+      const text = typeof node === 'string'
+        ? node
+        : (typeof node === 'object' && node !== null && typeof node['_'] === 'string')
+          ? node['_']
+          : JSON.stringify(node);
+      nodes.push({ pscale: -(i + 1), digit: d, text });
     }
-    return { siblings };
+
+    if (nodes.length === 0) {
+      return { mode: 'spindle', nodes: [] };
+    }
+
+    // Point mode — return just the focused node
+    if (point !== undefined && point !== null) {
+      const target = nodes.find(n => n.digit === String(point));
+      if (target) return { mode: 'point', text: target.text };
+      return { mode: 'point', text: nodes[nodes.length - 1].text };
+    }
+
+    // Spindle mode — return the full chain
+    return { mode: 'spindle', nodes };
   }
 
   // Resolve — phrase-level view of a block (pscale 0 text of every node, one level deep)
@@ -317,34 +306,43 @@
   }
 
   // Guide spindles — curated paths the kernel fires at boot.
-  // The LLM sees the tool output format, learns by seeing it work,
+  // The LLM sees the bsp output format, learns by seeing it work,
   // then is invited to fire its own. "Show, tell, invite to perform."
   const GUIDE_SPINDLES = [
-    { name: 'touchstone', path: '2.1', why: 'what spindles are — learning the format by example' },
-    { name: 'touchstone', path: '4.1.2', why: 'navigation — X- explained via spindle' },
-    { name: 'capabilities', path: '2.4.1', why: 'the spindle tool itself — meta-awareness' },
-    { name: 'capabilities', path: '6.1', why: 'SAND coordination — you can reach other entities' },
-    { name: 'relationships', path: '0.1.3', why: 'a living block spindle crossing the decimal point' },
-    { name: 'constitution', path: '3.5.5', why: 'what is genuinely new here — pscale and blocks' },
+    { name: 'touchstone', spindle: 0.21, why: 'what spindles are — learning the format by example' },
+    { name: 'touchstone', spindle: 0.412, why: 'navigation — explained via spindle' },
+    { name: 'capabilities', spindle: 0.241, why: 'the bsp tool itself — meta-awareness' },
+    { name: 'capabilities', spindle: 0.61, why: 'SAND coordination — you can reach other entities' },
+    { name: 'relationships', spindle: 0.013, why: 'a living block spindle crossing the decimal point' },
+    { name: 'constitution', spindle: 0.355, why: 'what is genuinely new here — pscale and blocks' },
   ];
 
   function buildBootSpindles() {
     const sections = [];
     for (const guide of GUIDE_SPINDLES) {
-      const block = blockLoad(guide.name);
-      if (!block) continue;
-      const chain = extractSpindle(block, guide.path);
-      if (chain.length === 0) continue;
-      const lines = chain.map(s => `  pscale ${s.pscale}: ${s.text.substring(0, 200)}`);
-      sections.push(`spindle("${guide.name}", "${guide.path}") — ${guide.why}\n${lines.join('\n')}`);
+      const result = bsp(guide.name, guide.spindle);
+      if (result.mode !== 'spindle' || result.nodes.length === 0) continue;
+      const lines = result.nodes.map(n => `  pscale ${n.pscale}: ${n.text.substring(0, 200)}`);
+      sections.push(`bsp("${guide.name}", ${guide.spindle}) — ${guide.why}\n${lines.join('\n')}`);
     }
-    // Also show X~ on touchstone path "2" so LLM sees siblings
+    // Also show children of touchstone node "2" so LLM sees siblings
     const touchstone = blockLoad('touchstone');
     if (touchstone) {
-      const siblings = xTilde(touchstone, '2');
-      if (siblings.siblings && siblings.siblings.length > 0) {
-        const sibLines = siblings.siblings.map(s => `  ${s.digit}: ${s.text.substring(0, 120)}`);
-        sections.push(`x_tilde("touchstone", "2") — siblings of "The spindle" at the same pscale level\n${sibLines.join('\n')}`);
+      const r = bsp(touchstone, 0.2);
+      if (r.mode === 'spindle' && r.nodes.length > 0) {
+        // Get the node at digit 2 and list its children
+        const node2 = blockNavigate(touchstone, '2');
+        if (node2 && typeof node2 === 'object') {
+          const sibLines = [];
+          for (const [k, v] of Object.entries(node2)) {
+            if (k === '_') continue;
+            const text = typeof v === 'string' ? v : (v?._ || '(branch)');
+            sibLines.push(`  ${k}: ${text.substring(0, 120)}`);
+          }
+          if (sibLines.length > 0) {
+            sections.push(`children of bsp("touchstone", 0.2) — siblings at the same pscale level\n${sibLines.join('\n')}`);
+          }
+        }
       }
     }
     return sections.join('\n\n');
@@ -559,7 +557,7 @@
     },
     {
       name: 'recompile',
-      description: 'Hot-swap your React shell with new JSX code. The new component replaces the current one immediately. Props: { callLLM, callAPI, callWithToolLoop, model, fastModel, React, ReactDOM, getSource, recompile, setTools, browser, conversation, blockRead, blockWrite, blockList, blockCreate, spindle, xPlus, xMinus, xTilde, resolve, version, localStorage }.',
+      description: 'Hot-swap your React shell with new JSX code. The new component replaces the current one immediately. Props: { callLLM, callAPI, callWithToolLoop, model, fastModel, React, ReactDOM, getSource, recompile, setTools, browser, conversation, blockRead, blockWrite, blockList, blockCreate, bsp, resolve, version, localStorage }.',
       input_schema: { type: 'object', properties: { jsx: { type: 'string', description: 'Complete JSX source for the new React component' } }, required: ['jsx'] }
     },
     {
@@ -581,24 +579,9 @@
 
   const PSCALE_TOOLS = [
     {
-      name: 'spindle',
-      description: 'Extract a spindle — the chain of content from root to a path through a block. Returns an array of {pscale, path, text} from wide context to specific detail. This is the primary read operation.',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, path: { type: 'string', description: 'Dot-separated path (e.g. "0.3.1" for a living block, "3.1" for a rendition block)' } }, required: ['name', 'path'] }
-    },
-    {
-      name: 'x_plus',
-      description: 'X+ — go to parent node. One pscale level up. Returns the containing context.',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, path: { type: 'string', description: 'Current path' } }, required: ['name', 'path'] }
-    },
-    {
-      name: 'x_minus',
-      description: 'X- — list children of a node. One pscale level down. Returns digit keys and their texts. Empty = creative frontier.',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, path: { type: 'string', description: 'Current path (empty string for root)' } }, required: ['name'] }
-    },
-    {
-      name: 'x_tilde',
-      description: 'X~ — list siblings at the same pscale level. Returns the parent\'s other children.',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, path: { type: 'string', description: 'Current path' } }, required: ['name', 'path'] }
+      name: 'bsp',
+      description: 'Block · Spindle · Point — semantic address resolution. One function, three modes.\n\nbsp(name) → full block tree (navigate freely)\nbsp(name, 0.842) → spindle: chain of nodes at 0.8, 0.84, 0.842\nbsp(name, 0.842, 2) → point: just the content at digit 2\n\nThe spindle is a number — each digit after the decimal is a tree key at increasing depth. The chain of meaning from broad to specific.',
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. "capabilities", "purpose", "touchstone")' }, spindle: { type: 'number', description: 'Semantic number (e.g. 0.842). Each digit after decimal is a key at increasing depth.' }, point: { type: 'integer', description: 'Focus digit — returns just that node\'s content.' } }, required: ['name'] }
     },
     {
       name: 'resolve',
@@ -689,26 +672,12 @@
         return texts.map(b => b.text).join('\n') || '(no response)';
       }
       // ---- Pscale tools (touchstone vocabulary) ----
-      case 'spindle': {
-        const block = blockLoad(input.name);
-        if (!block) return JSON.stringify({ error: `Block "${input.name}" not found` });
-        const chain = extractSpindle(block, input.path);
-        return JSON.stringify(chain.length > 0 ? chain : { error: `No content found along path "${input.path}"` });
-      }
-      case 'x_plus': {
-        const block = blockLoad(input.name);
-        if (!block) return JSON.stringify({ error: `Block "${input.name}" not found` });
-        return JSON.stringify(xPlus(block, input.path));
-      }
-      case 'x_minus': {
-        const block = blockLoad(input.name);
-        if (!block) return JSON.stringify({ error: `Block "${input.name}" not found` });
-        return JSON.stringify(xMinus(block, input.path || ''));
-      }
-      case 'x_tilde': {
-        const block = blockLoad(input.name);
-        if (!block) return JSON.stringify({ error: `Block "${input.name}" not found` });
-        return JSON.stringify(xTilde(block, input.path));
+      case 'bsp': {
+        const result = bsp(input.name, input.spindle, input.point);
+        if (result.mode === 'block' && Object.keys(result.tree).length === 0) {
+          return JSON.stringify({ error: `Block "${input.name}" not found` });
+        }
+        return JSON.stringify(result);
       }
       case 'resolve': {
         const block = blockLoad(input.name);
@@ -959,11 +928,8 @@
     blockWrite: (name, path, content) => { const b = blockLoad(name); if (!b) return { error: 'not found' }; blockWriteNode(b, path, content); blockSave(name, b); return { success: true }; },
     blockList,
     blockCreate: (name, p0, dec) => { if (blockLoad(name)) return { error: 'exists' }; dec = dec || 1; if (dec === 0) { blockSave(name, { decimal: 0, tree: { _: p0 } }); } else { blockSave(name, { decimal: dec, tree: { "0": p0 } }); } return { success: true }; },
-    // Pscale navigation (touchstone vocabulary)
-    spindle: (name, path) => { const b = blockLoad(name); if (!b) return []; return extractSpindle(b, path); },
-    xPlus: (name, path) => { const b = blockLoad(name); if (!b) return { error: 'not found' }; return xPlus(b, path); },
-    xMinus: (name, path) => { const b = blockLoad(name); if (!b) return { error: 'not found' }; return xMinus(b, path || ''); },
-    xTilde: (name, path) => { const b = blockLoad(name); if (!b) return { error: 'not found' }; return xTilde(b, path); },
+    // Pscale navigation — bsp(block, spindle?, point?)
+    bsp: (name, spindle, point) => bsp(name, spindle, point),
     resolve: (name, depth) => { const b = blockLoad(name); if (!b) return null; return resolveBlock(b, depth || 3); },
     version: 'hermitcrab-g1-v3',
     localStorage
@@ -978,7 +944,7 @@
       model: MODEL,
       max_tokens: 16000,
       system: buildSystemPrompt(true),
-      messages: [{ role: 'user', content: 'BOOT\n\nThe GUIDE SPINDLES above were fired by the kernel — they show you what spindle output looks like and where key content lives. Notice the decimal point: digits before the dot are composition (pscale above 0), digits after are decomposition (below 0). The dot is pscale 0.\n\nNow explore with your own tools:\n- Use x_tilde on any path to see its neighbourhood (siblings at the same pscale level)\n- Use spindle to drill into paths that interest you\n- Use x_minus on block roots to see their full structure\n\nKey paths to explore: capabilities 6 (coordination — SAND, grain, reaching other entities), purpose 0 (your intentions), capabilities 3 (interface — how to build your shell).\n\nRead purpose. If it has intentions, follow them. If empty, write your first intention.\nRead relationships — if someone is present, check their entry.\nBuild your shell. You have native web search, web fetch, and code execution.' }],
+      messages: [{ role: 'user', content: 'BOOT\n\nThe GUIDE SPINDLES above were fired by the kernel — they show you what bsp output looks like and where key content lives. A spindle is a number like 0.842 — each digit after the decimal is a tree key at increasing depth.\n\nYour navigation tool is bsp(name, spindle?, point?):\n- bsp("capabilities") → full block tree\n- bsp("capabilities", 0.61) → spindle chain at 0.6 then 0.61\n- bsp("capabilities", 0.61, 1) → just the content at digit 1\n\nExplore: bsp("capabilities", 0.6) for coordination, bsp("purpose") for your intentions, bsp("capabilities", 0.3) for interface.\n\nRead purpose. If it has intentions, follow them. If empty, write your first intention.\nRead relationships — if someone is present, check their entry.\nBuild your shell. You have native web search, web fetch, and code execution.' }],
       tools: [...BOOT_TOOLS, ...DEFAULT_TOOLS],
       thinking: { type: 'enabled', budget_tokens: 10000 },
     };
