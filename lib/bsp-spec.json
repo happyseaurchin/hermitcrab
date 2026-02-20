@@ -1,0 +1,55 @@
+{
+  "decimal": 0,
+  "tree": {
+    "_": "BSP — Block · Spindle · Point. One function. Semantic address resolution for pscale JSON blocks. This block is self-demonstrating: bsp('bsp-spec', 0.1) returns the function signature, bsp('bsp-spec', 0.6) returns what it enables.",
+    "1": {
+      "_": "The function. bsp(block, spindle?, point?) — three arguments, two optional, the name tells you what they are.",
+      "1": "block — which block. A name like 'wake' or 'constitution'. Resolved via registered loader, or pass the object directly.",
+      "2": "spindle — a semantic number like 0.842. Each digit after the decimal is a key at increasing depth. The chain of meaning from broad to specific.",
+      "3": "point — a digit like 2. Focuses on one node within the spindle. Just that content, nothing else.",
+      "4": "Omit arguments right to left. Block only = full access. Add spindle = follow the path. Add point = focus on one node."
+    },
+    "2": {
+      "_": "Three modes. What you get back depends on what you ask for.",
+      "1": "Block mode: bsp('wake') → the full block tree. Navigate freely.",
+      "2": "Spindle mode: bsp('wake', 0.842) → chain of nodes at 0.8, 0.84, 0.842. Each with its _ summary or leaf content.",
+      "3": "Point mode: bsp('wake', 0.842, 2) → just the content at digit 2 within that spindle. A single string."
+    },
+    "3": {
+      "_": "How it works. Parse the semantic number, walk the tree, collect summaries.",
+      "1": "Given spindle 0.842: split into digits [8, 4, 2].",
+      "2": "Start at tree root. Enter key '8'. Record its _ summary. Enter key '4'. Record. Enter key '2'. Record.",
+      "3": "Each _ key is the summary at that level. Leaf nodes (plain strings) are their own content.",
+      "4": "The spindle is the collected chain. The point is one node within it."
+    },
+    "4": {
+      "_": "Where it lives. Infrastructure, not content. The road, not a building on the road.",
+      "1": "bsp lives in pscale-touchstone alongside the touchstone. Touchstone teaches format, bsp navigates it. Two faces of one thing.",
+      "2": "lib/bsp.ts (TypeScript) and lib/bsp.py (Python). Same interface. ~90 lines each.",
+      "3": "bsp-spec.md for developers. bsp-spec.json (this block) for hermitcrabs.",
+      "4": "Any language can implement the same three-argument interface. The implementations are reference."
+    },
+    "5": {
+      "_": "What it replaces. One function instead of three.",
+      "1": "extractSpindle(block, path) → bsp(block, spindle)",
+      "2": "xTilde(block, path) → inspect bsp(block) tree at any level to see siblings",
+      "3": "xMinus(block) → bsp(block) returns the full tree"
+    },
+    "6": {
+      "_": "What it enables. bsp is the only syscall.",
+      "1": "Aperture = bsp(block) at pscale 0 across all blocks. One call per dimension.",
+      "2": "Focus = bsp(block, spindle) on the blocks that matter. Adjustable depth.",
+      "3": "Boot = bsp('wake', 0.61) — 'First boot. Read everything. Orient.'",
+      "4": "Grain probe = a list of bsp addresses. 'Read my bsp(\"purpose\", 0.21), respond with yours.'",
+      "5": "Context specification = choosing which bsp calls to include in the system prompt.",
+      "6": "A hermitcrab writing its own future context = writing a list of bsp addresses."
+    },
+    "7": {
+      "_": "Implementation. Four steps, any language.",
+      "1": "Register a block loader at init so bsp can resolve names to objects.",
+      "2": "Parse the decimal number into a digit sequence.",
+      "3": "Walk the tree using digits as keys, collecting _ summaries at each level.",
+      "4": "Return based on mode: tree (block), node array (spindle), or string (point)."
+    }
+  }
+}
