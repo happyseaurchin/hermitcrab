@@ -666,6 +666,7 @@
           max_tokens: 8192,
           system: input.system || 'You are a delegate. Complete the task. Return only the result.',
           messages: [{ role: 'user', content: input.prompt }],
+          tools: [],
           thinking: model === MODEL ? { type: 'enabled', budget_tokens: 4000 } : undefined,
         });
         const texts = (res.content || []).filter(b => b.type === 'text');
