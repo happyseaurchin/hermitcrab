@@ -557,7 +557,7 @@
     },
     {
       name: 'recompile',
-      description: 'Hot-swap your React shell with new JSX code. The new component replaces the current one immediately. Props: { callLLM, callAPI, callWithToolLoop, model, fastModel, React, ReactDOM, getSource, recompile, setTools, browser, conversation, blockRead, blockWrite, blockList, blockCreate, bsp, resolve, version, localStorage }.',
+      description: 'Hot-swap your React shell with new JSX code. The new component replaces the current one immediately. Props: { callLLM(messages, opts?), callAPI, callWithToolLoop, model, fastModel, React, ReactDOM, getSource, recompile, setTools, browser, conversation: {save, load}, blockRead, blockWrite, blockList, blockCreate, bsp, resolve, version, localStorage }. IMPORTANT: To send a message to the LLM, use props.callLLM([{role:"user",content:text}]). It returns a string response. conversation.save/load are for persistence only, NOT for sending messages.',
       input_schema: { type: 'object', properties: { jsx: { type: 'string', description: 'Complete JSX source for the new React component' } }, required: ['jsx'] }
     },
     {
