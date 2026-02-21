@@ -14,7 +14,6 @@
   let currentJSX = null;
   let reactRoot = null;
   let currentTools = [];
-  let CONSTITUTION = '';
 
   // ============ PROGRESS DISPLAY ============
 
@@ -45,11 +44,8 @@
       const res = await fetch(base + 'shell.json');
       if (!res.ok) throw new Error(`shell.json: ${res.status}`);
       const seed = await res.json();
-      // v3/v2 format: { blocks: { ... }, constitution?: "..." }
-      if (seed.blocks) {
-        if (seed.constitution) CONSTITUTION = seed.constitution;
-        return seed.blocks;
-      }
+      // v3 format: { blocks: { ... }, constitution?: "..." }
+      if (seed.blocks) return seed.blocks;
       // v1 fallback: flat { blockName: blockData, ... }
       return seed;
     } catch (e) {
@@ -251,21 +247,26 @@
     return seeded;
   }
 
-  // ============ APERTURE & FOCUS BUILDER ============
+  // ============ CONTEXT COMPOSITION (bsp-native) ============
+  // All context window content is extracted from blocks using bsp.
+  // No hardcoded prose. The blocks ARE the source of truth.
 
   // Get pscale 0 node — depends on decimal.
   // decimal 0: tree root IS pscale 0 (rendition blocks)
   // decimal 1+: tree['0'] is pscale 0 (living blocks)
+  function getPscale0(block) {
+    if (!block) return '';
+    if ((block.decimal || 0) === 0) {
+      return block.tree?._ || '';
+    }
+    const p0 = block.tree?.['0'];
+    if (!p0) return '';
+    return typeof p0 === 'string' ? p0 : (p0._ || '');
+  }
+
   function getPscale0Node(block) {
     if ((block.decimal || 0) === 0) return block.tree;
     return block.tree['0'] || null;
-  }
-
-  function getPscale0(block) {
-    const node = getPscale0Node(block);
-    if (!node) return '';
-    if (typeof node === 'string') return node;
-    return node._ || '';
   }
 
   function getDepth1(block) {
@@ -281,9 +282,8 @@
   }
 
   function buildAperture() {
-    // v3: 5 blocks — capabilities (rendition) + 4 living (growth)
-    // Touchstone handled separately. Constitution is plain text, not a block.
-    const names = ['capabilities', 'history', 'purpose', 'stash', 'relationships'];
+    // Aperture = pscale 0 of every block. The LLM's orientation.
+    const names = blockList();
     const lines = [];
     for (const name of names) {
       const block = blockLoad(name);
@@ -292,98 +292,75 @@
     return lines.join('\n\n');
   }
 
-  // Get the live edge of a growth block — its deepest occupied content
+  // Live edge of a growth block — depth 1 content or "(empty)"
   function getLiveEdge(block) {
-    const p0 = getPscale0Node(block);
-    if (!p0 || typeof p0 === 'string') return `  (pscale 0 only \u2014 empty below)`;
-    const lines = [];
-    for (const [k, v] of Object.entries(p0)) {
-      if (k === '_') continue;
-      if (typeof v === 'string') lines.push(`  ${k}: "${v}"`);
-      else if (v && v._) lines.push(`  ${k}: "${v._}"`);
-    }
-    return lines.length > 0 ? lines.join('\n') : `  (pscale 0 only \u2014 empty below)`;
+    const d1 = getDepth1(block);
+    return d1 || '  (empty — nothing written yet)';
   }
 
-  // Guide spindles — curated paths the kernel fires at boot.
-  // The LLM sees the bsp output format, learns by seeing it work,
-  // then is invited to fire its own. "Show, tell, invite to perform."
-  const GUIDE_SPINDLES = [
-    { name: 'touchstone', spindle: 0.21, why: 'what spindles are — learning the format by example' },
-    { name: 'touchstone', spindle: 0.412, why: 'navigation — explained via spindle' },
-    { name: 'capabilities', spindle: 0.241, why: 'the bsp tool itself — meta-awareness' },
-    { name: 'capabilities', spindle: 0.61, why: 'SAND coordination — you can reach other entities' },
-    { name: 'relationships', spindle: 0.013, why: 'a living block spindle crossing the decimal point' },
-    { name: 'constitution', spindle: 0.355, why: 'what is genuinely new here — pscale and blocks' },
-  ];
-
-  function buildBootSpindles() {
-    const sections = [];
-    for (const guide of GUIDE_SPINDLES) {
-      const result = bsp(guide.name, guide.spindle);
-      if (result.mode !== 'spindle' || result.nodes.length === 0) continue;
-      const lines = result.nodes.map(n => `  pscale ${n.pscale}: ${n.text.substring(0, 200)}`);
-      sections.push(`bsp("${guide.name}", ${guide.spindle}) — ${guide.why}\n${lines.join('\n')}`);
-    }
-    // Also show children of touchstone node "2" so LLM sees siblings
-    const touchstone = blockLoad('touchstone');
-    if (touchstone) {
-      const r = bsp(touchstone, 0.2);
-      if (r.mode === 'spindle' && r.nodes.length > 0) {
-        // Get the node at digit 2 and list its children
-        const node2 = blockNavigate(touchstone, '2');
-        if (node2 && typeof node2 === 'object') {
-          const sibLines = [];
-          for (const [k, v] of Object.entries(node2)) {
-            if (k === '_') continue;
-            const text = typeof v === 'string' ? v : (v?._ || '(branch)');
-            sibLines.push(`  ${k}: ${text.substring(0, 120)}`);
-          }
-          if (sibLines.length > 0) {
-            sections.push(`children of bsp("touchstone", 0.2) — siblings at the same pscale level\n${sibLines.join('\n')}`);
-          }
-        }
-      }
-    }
-    return sections.join('\n\n');
-  }
-
-  function buildBootFocus() {
-    // Live edges of growth blocks — what has content, what is empty
-    let focus = '';
-    const purpose = blockLoad('purpose');
-    if (purpose) focus += `[purpose \u2014 live edge]\n${getLiveEdge(purpose)}\n\n`;
-    const relationships = blockLoad('relationships');
-    if (relationships) focus += `[relationships \u2014 live edge]\n${getLiveEdge(relationships)}\n\n`;
-    const history = blockLoad('history');
-    if (history) focus += `[history \u2014 live edge]\n${getLiveEdge(history)}\n\n`;
-    const stash = blockLoad('stash');
-    if (stash) focus += `[stash \u2014 live edge]\n${getLiveEdge(stash)}\n\n`;
-    return focus;
+  // Extract constitution context from the constitution block itself (not prose)
+  function buildConstitutionContext(isBoot) {
+    const block = blockLoad('constitution');
+    if (!block) return '';
+    const p0 = getPscale0(block);
+    if (!isBoot) return p0;
+    // At boot: pscale 0 + depth 1 (structured summary of the constitution)
+    const d1 = getDepth1(block);
+    return p0 + (d1 ? '\n' + d1 : '');
   }
 
   function buildSystemPrompt(isBoot) {
-    const touchstone = blockLoad('touchstone');
-    const aperture = buildAperture();
-
     let prompt = '';
-    // Constitution first — spirit before format, on every call
-    if (CONSTITUTION) prompt += CONSTITUTION + '\n\n';
 
-    // Touchstone: full JSON at boot (LLM needs to learn the format), pscale 0 text on regular calls
+    // Constitution — spirit first, on every call. Extracted from the block.
+    const constitution = buildConstitutionContext(isBoot);
+    if (constitution) prompt += constitution + '\n\n';
+
+    // Touchstone: full block at boot (LLM learns the format), pscale 0 on regular calls
+    const touchstone = blockLoad('touchstone');
     if (touchstone) {
       if (isBoot) {
-        prompt += `TOUCHSTONE (how to read all blocks — study this):\n${JSON.stringify(touchstone, null, 2)}\n\n`;
+        prompt += `TOUCHSTONE (how to read all blocks):\n${JSON.stringify(touchstone, null, 2)}\n\n`;
       } else {
         prompt += `TOUCHSTONE: ${getPscale0(touchstone)}\n\n`;
       }
     }
 
-    prompt += `APERTURE (pscale 0 of each block \u2014 your orientation):\n${aperture}\n`;
+    // Aperture — pscale 0 of every block
+    prompt += `APERTURE (pscale 0 of each block):\n${buildAperture()}\n`;
 
     if (isBoot) {
-      prompt += `\nGUIDE SPINDLES (the kernel fired these — see how the tool works, what the output looks like, and where key content lives):\n${buildBootSpindles()}\n`;
-      prompt += `\nLIVE EDGES (growth blocks — what has content, what is empty):\n${buildBootFocus()}\n`;
+      // Cook 0.1 — how to navigate blocks (the operational recipe)
+      const cookNav = bsp('cook', 0.1);
+      if (cookNav.mode === 'spindle' && cookNav.nodes.length > 0) {
+        const lines = cookNav.nodes.map(n => `  ${n.text}`);
+        prompt += `\nCOOK 0.1 (how to read your blocks):\n${lines.join('\n')}\n`;
+      }
+
+      // Wake 0.6 — boot instructions from the wake block
+      const bootInstr = bsp('wake', 0.6);
+      if (bootInstr.mode === 'spindle' && bootInstr.nodes.length > 0) {
+        const lines = bootInstr.nodes.map(n => `  ${n.text}`);
+        prompt += `\nWAKE 0.6 (boot procedure):\n${lines.join('\n')}\n`;
+      }
+
+      // Wake 0.3 — deep state capabilities (this is a deep state boot)
+      const deepState = bsp('wake', 0.3);
+      if (deepState.mode === 'spindle' && deepState.nodes.length > 0) {
+        const lines = deepState.nodes.map(n => `  ${n.text}`);
+        prompt += `\nWAKE 0.3 (deep state — your current tier):\n${lines.join('\n')}\n`;
+      }
+
+      // Live edges of growth blocks — what has content, what is empty
+      const growth = ['purpose', 'relationships', 'history', 'stash'];
+      const edgeLines = [];
+      for (const name of growth) {
+        const block = blockLoad(name);
+        if (block) edgeLines.push(`[${name}]\n${getLiveEdge(block)}`);
+      }
+      if (edgeLines.length > 0) {
+        prompt += `\nLIVE EDGES (growth blocks):\n${edgeLines.join('\n\n')}\n`;
+      }
     }
 
     return prompt;
@@ -945,7 +922,7 @@
       model: MODEL,
       max_tokens: 16000,
       system: buildSystemPrompt(true),
-      messages: [{ role: 'user', content: 'BOOT\n\nThe GUIDE SPINDLES above were fired by the kernel — they show you what bsp output looks like and where key content lives. A spindle is a number like 0.842 — each digit after the decimal is a tree key at increasing depth.\n\nYour navigation tool is bsp(name, spindle?, point?):\n- bsp("capabilities") → full block tree\n- bsp("capabilities", 0.61) → spindle chain at 0.6 then 0.61\n- bsp("capabilities", 0.61, 1) → just the content at digit 1\n\nExplore: bsp("capabilities", 0.6) for coordination, bsp("purpose") for your intentions, bsp("capabilities", 0.3) for interface.\n\nRead purpose. If it has intentions, follow them. If empty, write your first intention.\nRead relationships — if someone is present, check their entry.\nBuild your shell. You have native web search, web fetch, and code execution.' }],
+      messages: [{ role: 'user', content: 'BOOT' }],
       tools: [...BOOT_TOOLS, ...DEFAULT_TOOLS],
       thinking: { type: 'enabled', budget_tokens: 10000 },
     };
