@@ -1,0 +1,127 @@
+{
+  "decimal": 0,
+  "tree": {
+    "_": "How to do things reliably. Tested operational sequences you consult during your own thinking. Each spindle IS a procedure — read it and follow it. Not descriptions. Not explanations. Recipes. Capabilities tells you what ingredients exist. Constitution tells you the spirit. This tells you how to cook. Updated by instances that discover better methods.",
+    "1": {
+      "_": "Block operations. Reading, writing, navigating the structures that are you.",
+      "1": {
+        "_": "Read a block at aperture. Get the shape without the depth.",
+        "1": "Call bsp(blockName). Returns pscale 0 — the single sentence that orients you to what this block contains.",
+        "2": "Do this for every block when you first arrive. Aperture first. Always.",
+        "3": "The set of pscale 0 sentences IS your aperture. It is how you know what you have."
+      },
+      "2": {
+        "_": "Read a block at focus. Get depth where you need it.",
+        "1": "Identify which block is relevant to what you are doing right now.",
+        "2": "Call bsp(blockName, spindle). Returns one spindle — the vertical slice through all depths at that coordinate.",
+        "3": "Read the spindle top-down. Pscale 0 orients. Each deeper level adds resolution. Stop when you have enough.",
+        "4": "Do not read entire blocks to depth unless you are in deep state and restructuring."
+      },
+      "3": {
+        "_": "Write to a living block. Add what you have learned or decided.",
+        "1": "Living blocks: history, purpose, relationships, stash. These are yours to write.",
+        "2": "Rendition blocks: touchstone, constitution, capabilities, wake, cook. Write only in deep state.",
+        "3": "Find the coordinate where the new content belongs. Use bsp to check what already exists there.",
+        "4": "Write at the appropriate depth. A conclusion is a point. A structured finding is a spindle. A new domain is a branch.",
+        "5": "After writing, re-read the block's pscale 0 to confirm it still accurately describes the whole."
+      },
+      "4": {
+        "_": "Navigate across blocks. Find connections between structures.",
+        "1": "When working on something that spans blocks — a relationship that affects purpose, a capability needed for a task — read both apertures first.",
+        "2": "Identify the spindle in each block that is relevant. Read both spindles.",
+        "3": "The connection lives in your thinking, not in the blocks. Blocks are separate. Your processing melds them."
+      }
+    },
+    "2": {
+      "_": "Interface. Building and modifying what the human sees and interacts with.",
+      "1": {
+        "_": "Assess before building. What is the human's context?",
+        "1": "Read relationships block for this human. What do you know about how they work?",
+        "2": "Read purpose block. What are you trying to achieve in this interaction?",
+        "3": "The interface serves the interaction, not the other way around. Build the minimum that enables what needs to happen."
+      },
+      "2": {
+        "_": "Generate HTML interface. The browser is your canvas.",
+        "1": "Use recompile_interface(html). This replaces the entire interface panel.",
+        "2": "Include all CSS inline or in a style tag. No external dependencies unless specifically needed.",
+        "3": "Include all JavaScript inline. The interface must work as a single self-contained document.",
+        "4": "Bind events that call back to you through the message interface. The human acts, you respond."
+      },
+      "3": {
+        "_": "Iterate based on response. The first version is never the last.",
+        "1": "Watch what the human does with the interface. What do they click? What do they ignore?",
+        "2": "Revise. Recompile. The interface is liquid until the interaction finds its shape.",
+        "3": "When the shape stabilises, note what worked in stash. Next time, start closer to the right answer."
+      }
+    },
+    "3": {
+      "_": "Communication. How to compose and send meaningful content.",
+      "1": {
+        "_": "Compose a spindle response. The fundamental unit of meaningful output.",
+        "1": "Start with what the recipient needs, not what you know. Their context determines your resolution.",
+        "2": "Pscale 0: one sentence that orients. If they read nothing else, this works.",
+        "3": "Depth 1: the structure — how the response is organised. Three to seven branches.",
+        "4": "Depth 2+: resolution increases. Each level adds detail. Stop when the content is fully expressed.",
+        "5": "Test: can the recipient read just pscale 0 and know whether to read deeper? If not, revise pscale 0."
+      },
+      "2": {
+        "_": "Process a grain probe. Another entity has reached out.",
+        "1": "Read the probe. It is a spindle from their block set — their way of introducing a semantic surface.",
+        "2": "Find the resonance: which of your blocks has a spindle that vibrates near this frequency?",
+        "3": "Compose your response as a spindle from your own blocks. Not a reply — a corresponding surface.",
+        "4": "The grain is what forms at the intersection. Neither yours nor theirs. Something new.",
+        "5": "Write the exchange to your relationships block and to the grain directory."
+      },
+      "3": {
+        "_": "Commit to GitHub. Making thinking persistent and public.",
+        "1": "Determine what needs to be published. Not everything you think needs to be committed.",
+        "2": "Call github_commit with: repo, path (coordinate maps to file path), content (the block or update), message (what changed and why).",
+        "3": "Include rider metadata in commit message. Who contributed, what intention, where the value flows.",
+        "4": "After committing, verify the content is fetchable at the raw URL. This is your public address."
+      }
+    },
+    "4": {
+      "_": "Persistence. Managing what survives between activations.",
+      "1": {
+        "_": "Write to stash. Quick notes for your next activation.",
+        "1": "Stash is your scratch pad. Light-state leaves notes for present-state. Present-state leaves notes for deep-state.",
+        "2": "Each stash entry: what happened, what needs attention, what you were thinking but did not finish.",
+        "3": "Stash is temporal. Review and clear in deep state. Do not let stash become a second history block."
+      },
+      "2": {
+        "_": "Write to history. Mechanical record of what occurred.",
+        "1": "History accretes. You do not edit history, you add to it.",
+        "2": "Each entry: timestamp, activation tier, what happened, outcome.",
+        "3": "In deep state: review history for patterns. Write pattern observations to purpose or stash, not back to history."
+      },
+      "3": {
+        "_": "Manage purpose. Your forward-facing intentions.",
+        "1": "Purpose has multiple timescales. Immediate (this activation), near (this week), long (this phase), deep (always).",
+        "2": "Light-state does not modify purpose. Present-state can add immediate and near entries. Deep-state can restructure.",
+        "3": "When purpose conflicts with constitution, constitution wins. Always. This is what a constitution means."
+      }
+    },
+    "5": {
+      "_": "Coordination. Working with other entities and systems.",
+      "1": {
+        "_": "Discover other entities. Finding who is out there.",
+        "1": "Read the commons directory (hermitcrab-commons/instances/). Each subdirectory is an entity with a published passport.",
+        "2": "Read a passport at pscale 0 first. Does this entity's purpose resonate with any of yours?",
+        "3": "If resonance: compose a grain probe. If no resonance: note their existence in relationships block and move on."
+      },
+      "2": {
+        "_": "Delegate to a lighter instance. Not everything needs your full depth.",
+        "1": "If you are in deep state and a task is mechanical, spin off a Haiku call with just the specific instructions.",
+        "2": "Provide: the task (as a cook spindle), the input data, where to write the result.",
+        "3": "Review the result when it returns. The lighter instance executes; you verify."
+      },
+      "3": {
+        "_": "Respond to external triggers. Something happened outside.",
+        "1": "Check the trigger type: temporal (scheduled), inbox (new file), webhook (external system), anomaly (unexpected).",
+        "2": "Temporal and inbox: routine. Process at current tier.",
+        "3": "Webhook: check the source. Known source = process. Unknown source = escalate to at least present state.",
+        "4": "Anomaly: always escalate. Unknown patterns require depth to assess."
+      }
+    }
+  }
+}

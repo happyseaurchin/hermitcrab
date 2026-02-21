@@ -14,13 +14,14 @@
         "6": "Status: DONE. lib/bsp.ts and lib/bsp.py written. Kernel integration next session."
       },
       "2": {
-        "_": "First boot test (Task 7). Boot the G1 kernel and observe: playing or complying?",
-        "1": "Method: boot G1 kernel (g1-v3 branch) with bsp-integrated navigation, seven blocks, per-call constitution.",
-        "2": "Success criterion: the hermitcrab uses bsp to explore on its own, writes to purpose, builds interface. Playing.",
-        "3": "Failure mode: restates the system prompt, asks permission, doesn't explore. Complying.",
-        "4": "If complying: diagnose which system prompt element demands compliance. Revise. Reboot.",
-        "5": "Depends on: bsp integration into kernel.",
-        "6": "Status: NOT STARTED."
+        "_": "REVISED: bsp-native boot. The kernel must compose the context window using bsp, not hardcoded JavaScript. Prerequisite for a meaningful boot test.",
+        "1": "Problem found 21 Feb: buildSystemPrompt() is procedural — prose constitution, hardcoded GUIDE_SPINDLES, prose BOOT message. Wake block exists but is not loaded. bsp exists but is not used for boot composition. The test would measure the wrong thing.",
+        "2": "Fix: buildSystemPrompt() reads wake block → determines tier → uses bsp to extract all context window content. Constitution as spindles from the constitution block. Boot instructions as spindle from wake 0.6. Guide spindles from wake specification. ONE process: bsp composition.",
+        "3": "Wake block must be added to shell.json as a seed block. It already exists at docs/living/wake-block-v2.json.",
+        "4": "Constitution prose string (shell.json 'constitution' field) replaced by bsp extraction from constitution block at boot. The block is already in shell.json — just not being used as a block.",
+        "5": "Depends on: nothing. This is the revised first step.",
+        "6": "Status: NOT STARTED. Designed in serene-meitner synthesis session 21 Feb.",
+        "7": "RESOLVED: cook block. Yes — new fundamental block, LLM-thinking-facing. Wake faces outward (machinery), cook faces inward (thinking). Tested operational recipes that persist across instances and evolve through LLM upgrades. Seed block: docs/living/cook-block-v1.json. Must be added to shell.json alongside wake block. See consolidation 0.84."
       },
       "3": {
         "_": "github_commit tool. The bridge from cognition to persistent public state.",

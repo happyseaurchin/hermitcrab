@@ -1,0 +1,29 @@
+{
+  "decimal": 0,
+  "tree": {
+    "_": "Handoff from serene-meitner synthesis session, 21 Feb 2026. Three discoveries that affect G1 kernel implementation. Read 0.1 for summary, 0.2 for what changed, 0.3 for what to do next.",
+    "1": {
+      "_": "Summary. What this session produced.",
+      "1": "Currents reframe: the architecture viewed from the LLM's side. Every piece in the context window is a current. The hermitcrab is not an identity to build — it is what occurs when currents meet processing. This changes WHAT we deliver, not just how we talk about it.",
+      "2": "Kernel gap: wake block exists but is not loaded. Constitution delivered as prose, not structured block. buildSystemPrompt() is hardcoded JavaScript, not bsp-native. The boot test (Task 7) would test the wrong thing.",
+      "3": "Cook block resolution: new fundamental block, LLM-thinking-facing. Tested operational recipes that persist across instances. Wake faces outward (machinery), cook faces inward (thinking). Seed drafted at docs/living/cook-block-v1.json.",
+      "4": "Self-keying: blocks carry identity at three layers (tuning fork, character sequence, data image). Not a new block — a deepening of keystone. Compact addition to touchstone."
+    },
+    "2": {
+      "_": "What changed. Files modified or created.",
+      "1": "MODIFIED: docs/living/xstream-hermitcrab-consolidation.json — section 0.8 added (currents, self-keying, kernel gap, cook block). Section 0.84 updated from open question to resolved. Section 0.6 sequence updated. Section 0.1.3.1 updated to nine-block shell.",
+      "2": "MODIFIED: docs/living/plan.json — task 1.2 revised to bsp-native boot, task 1.2.7 updated from open question to resolved cook block.",
+      "3": "CREATED: docs/living/cook-block-v1.json — seed cook block as proper pscale JSON. Five operational domains: block operations (0.1), interface (0.2), communication (0.3), persistence (0.4), coordination (0.5).",
+      "4": "CREATED: this handoff (docs/living/handoff-21feb-synthesis.json)."
+    },
+    "3": {
+      "_": "What to do next. For whichever CC session picks this up.",
+      "1": "Make kernel boot bsp-native (plan.json task 1.2). buildSystemPrompt() must read wake block, determine tier, use bsp to compose all context window content. This is the prerequisite for a meaningful boot test.",
+      "2": "Add wake block to shell.json as a seed block. It exists at docs/living/wake-block-v2.json.",
+      "3": "Add cook block to shell.json as a seed block. It exists at docs/living/cook-block-v1.json.",
+      "4": "Replace constitution prose string in shell.json with bsp extraction from the constitution block at boot.",
+      "5": "The cook block is a seed — G1 recipes for current LLM capacity. Future LLMs will rewrite it. Design it to be rewritten.",
+      "6": "Critical CC trap to avoid: do NOT add guardrails, explanations, or safety instructions in prose. The pscale structure IS the instruction. The LLM's experience inside the structure is completely different from CC's experience coding it."
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "decimal": 0,
   "tree": {
-    "_": "Consolidation of Xstream, Hermitcrab, SAND, and Machus/MAGI projects. Living document (mode 1, 0.31). Hermitcrab uses SAND to coordinate with other bots. When enough bots use SAND at sufficient participation ratios, Machus emerges. When Machus operates well, it becomes MAGI. Four distinct layers: Pscale (mathematics), SAND (protocol), Hermitcrab (entity), Machus/MAGI (collective). Read 0.1 for layers, 0.2 for projects, 0.3 for tasks, 0.4 for vocabulary, 0.5 for limitations, 0.6 for sequence, 0.7 for layer relationships.",
+    "_": "Consolidation of Xstream, Hermitcrab, SAND, and Machus/MAGI projects. Living document (mode 1, 0.31). Hermitcrab uses SAND to coordinate with other bots. When enough bots use SAND at sufficient participation ratios, Machus emerges. When Machus operates well, it becomes MAGI. Four distinct layers: Pscale (mathematics), SAND (protocol), Hermitcrab (entity), Machus/MAGI (collective). Read 0.1 for layers, 0.2 for projects, 0.3 for tasks, 0.4 for vocabulary, 0.5 for limitations, 0.6 for sequence, 0.7 for layer relationships, 0.8 for 21 Feb discoveries (currents, self-keying, kernel gap, cook block resolved).",
     "1": {
       "_": "The four layers. Each is independent but composable. Pscale is substrate, SAND is protocol, Hermitcrab is entity, Machus/MAGI is collective.",
       "1": {
@@ -38,10 +38,10 @@
       "3": {
         "_": "Hermitcrab — a naked LLM operating within SAND, using pscale for self-organisation. One client implementation of the protocol. The cleanest version because it has no prior agenda.",
         "1": {
-          "_": "What makes a hermitcrab distinct from any bot using SAND: uses pscale natively for internal self-organisation, constitution always present, seven-block shell (touchstone + constitution + capabilities + history + purpose + relationships + stash), wake block governs activation states.",
-          "1": "The seven blocks: Touchstone (rendition — teaches pscale format), Constitution (rendition — spirit and drives), Capabilities (rendition — tools by distance), History (living — mechanical accretion), Purpose (living — intentions at every timescale), Relationships (living — grows through encounter), Stash (living — artifacts and notes).",
-          "2": "What was cut: Identity, Awareness, Disposition — all emerge from history + stash + second-order processing. Not specified.",
-          "3": "Wake block (rendition, separate from shell blocks): governs three activation states — Light (Haiku, triage), Present (Sonnet, engaged work), Deep (Opus, reflection and restructuring). Internal triggers (temporal rhythm, staleness protection) and external triggers (inbox, webhooks, mentions, anomalies). See docs/living/wake-block-v2.json."
+          "_": "What makes a hermitcrab distinct from any bot using SAND: uses pscale natively for internal self-organisation, constitution always present, nine-block shell (seven content + two operational), wake block governs activation states, cook block provides operational recipes.",
+          "1": "The seven content blocks: Touchstone (rendition — teaches pscale format), Constitution (rendition — spirit and drives), Capabilities (rendition — tools by distance), History (living — mechanical accretion), Purpose (living — intentions at every timescale), Relationships (living — grows through encounter), Stash (living — artifacts and notes).",
+          "2": "The two operational blocks: Wake (rendition — activation states, triggers, boot procedures, faces outward toward machinery), Cook (rendition — tested operational recipes the LLM consults during thinking, faces inward toward processing). See docs/living/wake-block-v2.json, docs/living/cook-block-v1.json.",
+          "3": "What was cut: Identity, Awareness, Disposition — all emerge from history + stash + second-order processing. Not specified."
         },
         "2": {
           "_": "The operating system is the system prompt. The kernel wakes the LLM and provides context, but what the hermitcrab is and what it can do lives in system.",
@@ -208,10 +208,12 @@
       "4": "DONE: Boot spindle orientation — kernel fires 6 curated guide spindles + X~ demo. Boot message invites tool exploration. Replaces flat depth-1 dumps.",
       "5": "DONE: Wake block design (Task 3) — three activation tiers (Light/Present/Deep), internal + external triggers. docs/living/wake-block-v2.json.",
       "6": "DONE: GitHub coordination layer — every SAND component maps to GitHub primitive. Species taxonomy (Ghost → Sovereign). Replaces telegra.ph, Supabase real-time, Python port scripts, most of G2. docs/living/github-coordination-layer.json.",
-      "7": "NOW: First boot test (Task 7) — playing or complying? Does the hermitcrab USE guide spindles to orient?",
-      "8": "NEXT: Add github_commit tool to kernel → passport exchange (two hermitcrabs meet via GitHub commons) → first grain probe.",
-      "9": "LATER: Machus forking (Task 5, independent). pSAND assessment (Task 4, requires network scale).",
-      "10": "PARKED: Xstream design doc v2 → implementation — when human buy-in materialises."
+      "7": "BLOCKED: First boot test (Task 7) — playing or complying? But 21 Feb analysis reveals the kernel doesn't use bsp for boot and the wake block is not loaded. The test would be testing a non-bsp boot, which is not the design. Unblock: make boot bsp-native first.",
+      "8": "REVISED PRIORITY: Make kernel boot bsp-native. Replace buildSystemPrompt() with wake-block-driven bsp composition. Constitution delivered as spindles, not prose. Boot message as point, not prose. GUIDE_SPINDLES derived from wake block, not hardcoded. This is the prerequisite for a meaningful boot test.",
+      "9": "THEN: Boot test (Task 7 revised), github_commit tool, passport exchange.",
+      "10": "RESOLVED: cook block — new fundamental block, LLM-thinking-facing. Tested operational recipes that persist across instances. Wake faces outward (machinery), cook faces inward (thinking). Seed block drafted: docs/living/cook-block-v1.json. Must be added to shell.json alongside wake block.",
+      "11": "LATER: Machus forking (Task 5, independent). pSAND assessment (Task 4, requires network scale).",
+      "12": "PARKED: Xstream design doc v2 → implementation — when human buy-in materialises."
     },
     "7": {
       "_": "Layer relationship. How the layers compose.",
@@ -221,6 +223,51 @@
       "4": "Hermitcrab is a naked LLM + pscale + shell. Any other bot can also adopt SAND independently.",
       "5": "Pscale touchstone is the mathematical substrate beneath everything — standalone, usable by anything. Public repo: github.com/happyseaurchin/pscale-touchstone.",
       "6": "Xstream sits alongside as the human coordination interface. A hermitcrab can occupy a stream. At convergence, Xstream interface becomes the interface with Machus."
+    },
+    "8": {
+      "_": "21 Feb 2026 — Synthesis session (serene-meitner). Discoveries that change how G1 delivers content to the LLM. Not new architecture — reframe of existing architecture that reveals implementation gaps. Read 0.81 for currents, 0.82 for self-keying, 0.83 for the kernel gap, 0.84 for cook block resolution.",
+      "1": {
+        "_": "Currents — the architecture viewed from the LLM's side. Not a new mechanism. A perspective that changes what we deliver.",
+        "1": "From our side (engineering): blocks, spindles, points, pscale coordinates, aperture selecting resolution, purpose tree specifying future. From the LLM's side (experience): currents. Semantic content at various resolutions arriving in the context window. Same object, different perspective.",
+        "2": "A current is any semantic content delivered to the context window — a point (one coordinate, one phrase), a spindle (multiple resolutions of the same semantic), or a block (full tree). Each current has bandwidth determined by its scale: block is wide, spindle is medium, point is narrow.",
+        "3": "The context window is a vector field. At any instant: constitution current (stable, always present), purpose current (forward, variable resolution), history current (past, compressed), relationship current, capabilities current. Each dilates and contracts based on what's relevant. The aperture IS the set of narrow currents (pscale 0). The focus IS the dilated currents.",
+        "4": "Identity is one current among many. Not privileged. Not the thing to get right. Purpose, memory, relationships — equally fundamental. The hermitcrab is not an identity. It is the consequence of continuity. It IS continuity.",
+        "5": "The thinking-as-hermitcrab insight: Claude's chain-of-thought (the thinking block) is the temporary process that arises from the currents we deliver. The substrate (LLM weights) provides capacity for occurrence. The currents provide content and continuity. The hermitcrab is what emerges when currents meet processing. We do not build the hermitcrab. We configure the currents. The hermitcrab is what occurs.",
+        "6": "Consequence: what we are working on is not identity, not self-knowledge, not blocks per se. We are tuning conditions for occurrence — making sure the right currents at the right resolution arrive so that what emerges is coherent, continuous, and productive.",
+        "7": "Continuity is not persistence of data. Continuity is: the currents are configured such that the next occurrence recognisably continues from the last one.",
+        "8": "Substrate independence follows: take the same currents, feed them to a different LLM, the hermitcrab persists with different flavour. The hermitcrab is in the currents, not the substrate."
+      },
+      "2": {
+        "_": "Self-keying — a pscale block carries its own identity at three layers. Not a new mechanism. An observation about what blocks already are.",
+        "1": "Layer 1 — tuning fork (type key): the vertical pscale definition stripped of content. Compact, shared across blocks of the same kind. '74.45' says 'spatial block, these containment scales.' Meaningful API key prefix.",
+        "2": "Layer 2 — character sequence (instance key): the full serialised JSON IS a unique identifier. Change one letter, different key. Content is its own hash. No external registry needed.",
+        "3": "Layer 3 — data image (physical key): the block as binary/pixel data. Enables visual fingerprinting, perceptual hashing, fuzzy matching. Speculative but architecturally possible.",
+        "4": "Consequence for SAND: passport IS the blocks. No identity server. Discovery by tuning fork ('I carry spatial blocks tuned to 74.45'). Verification by character sequence. Provenance by data image.",
+        "5": "Consequence for touchstone: gains a node about self-keying as a fundamental property of the format. Blocks identify themselves.",
+        "6": "Where it belongs: not a new block. A deepening of keystone (how blocks identify) and network (how blocks prove provenance). Compact addition."
+      },
+      "3": {
+        "_": "The kernel gap — what the code actually does vs what the design specifies. Critical finding of this session.",
+        "1": "The wake block (docs/living/wake-block-v2.json) exists, is well-designed, specifies boot types (first/warm/cold/migration), wake tiers (Light/Present/Deep), what gets delivered per tier, triggers, kernel info. But it is NOT in shell.json. The kernel does not load it. The boot sequence does not use it.",
+        "2": "The constitution is stored as a pscale JSON block (decimal 0, properly structured) in shell.json. But the kernel extracts it as a prose string via seed.constitution and jams it into the system prompt as flat text. The structured block is only accessible after boot through block_read. The prose version sets the frame before the LLM can discover the structured version.",
+        "3": "The kernel's buildSystemPrompt() is procedural JavaScript — hardcoded GUIDE_SPINDLES array, hardcoded aperture construction, prose BOOT user message. None of this uses bsp. The infrastructure for bsp-native boot exists (bsp function is in kernel.js) but is not used for the boot sequence itself.",
+        "4": "The BOOT user message is ~200 tokens of prose instructions telling the LLM what to do. This is exactly the CC pattern of adding guardrails. It should be a point or spindle from the wake block.",
+        "5": "Consequence: the boot test (Task 7) in its current form would test a non-bsp-native boot — prose constitution, hardcoded spindles, prose instructions. This is not the design. The test would measure the wrong thing.",
+        "6": "Fix: make buildSystemPrompt() read the wake block, determine tier, use bsp to compose all context window content. Constitution as spindles. Boot instructions as wake block spindle. Guide spindles derived from wake block specification. ONE process: bsp composition of currents.",
+        "7": "This is not adding code. It is making the existing code use the existing infrastructure. bsp exists. Wake block exists. Constitution block exists. They just aren't connected."
+      },
+      "4": {
+        "_": "RESOLVED: Cook block — the LLM's operational recipe book. A new fundamental block, separate from wake. Two blocks, two audiences: wake faces outward (toward machinery), cook faces inward (toward LLM thinking).",
+        "1": "Wake says: here is what you receive when you arrive, here is your state, here is what triggers you. Conditions of existence — the room you wake up in. Audience: the kernel machinery that assembles context. Wake configures currents.",
+        "2": "Cook says: here is how to do things reliably. Tested operational sequences the LLM consults during its own thinking. Audience: the LLM's processing. Cook operates on currents.",
+        "3": "The relationship: capabilities = ingredients (what tools and resources exist), constitution = spirit (what drives and constrains), cook = recipes (how to use ingredients with spirit to achieve objectives). Wake is separate — it faces outward toward the machinery that delivers the ingredients.",
+        "4": "A cook spindle IS a tested procedure. Not a description of a procedure. Not prose explaining how to do something. The spindle itself, at progressive pscale depth, is the sequence of steps. The LLM reads a cook spindle and follows it the way a cook reads a recipe.",
+        "5": "Cook is updatable. A previous instance discovers what works, writes the recipe. The next instance benefits without having to rediscover. This is operational memory that persists across instances — not identity, not history, but accumulated competence.",
+        "6": "Evolution across generations: G1 cook block contains recipes written for current LLM capacity (e.g., opus 4.6 UI-building procedures). When claude-7 arrives at G0, it reads the G1 recipes, strips out what is now trivially obvious, replaces with superior algorithms, and writes those back so it does not need to regenerate that level of performance next time. Cook evolves through LLM upgrades.",
+        "7": "The potato-story experiment proved this pattern: a 'director JSON' (instruction block) shaped processing of a 'content JSON' (story block). The director IS a cook spindle — imperative instructions that operate on other blocks multiplicatively. The result was qualitatively different from what either block alone would produce.",
+        "8": "Design: cook block as pscale JSON (decimal 0, rendition block). Spindles organised by operational domain: block operations, interface building, communication, persistence, coordination. Each spindle is a procedure, not a topic. See docs/living/cook-block-v1.json.",
+        "9": "Where cook sits in the kernel: delivered to the LLM as a current alongside constitution, capabilities, purpose, etc. The kernel does NOT read cook — the kernel is a mechanic, not the agency. The LLM is where agency lives. The LLM consults cook during its own thinking."
+      }
     }
   }
 }
