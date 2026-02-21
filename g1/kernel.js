@@ -120,10 +120,9 @@
   // These are mechanical operations on the tree — no LLM needed.
   // They implement the touchstone's X+/X-/X~ vocabulary.
 
-  // Get the pscale 0 root of a block (decimal-aware)
+  // Get the pscale 0 root of a block — always tree["0"]
   function pscaleRoot(block) {
-    if ((block.decimal || 0) === 0) return { node: block.tree, path: '' };
-    return { node: block.tree['0'] || null, path: '0' };
+    return { node: block.tree?.['0'] || null, path: '0' };
   }
 
   // Navigate to a path and return {node, parentPath}
@@ -141,36 +140,53 @@
   }
 
   // ---- BSP — Block · Spindle · Point ----
-  // One function. Three arguments. Two optional.
-  // bsp(block, spindle?, point?)
-  //   block   — name (string) or block object
-  //   spindle — semantic number like 0.842 (digits after decimal are tree keys)
-  //   point   — focus digit (returns just that node's content)
-  // Three modes:
-  //   bsp("wake")           → { mode: 'block', tree }
-  //   bsp("wake", 0.842)    → { mode: 'spindle', nodes: [{pscale, digit, text}...] }
-  //   bsp("wake", 0.842, 2) → { mode: 'point', text }
+  // bsp(block)              → full block tree
+  // bsp(block, spindle)     → chain of semantics, one per digit, high pscale to low
+  // bsp(block, spindle, ps) → single semantic at the specified pscale level
+  //
+  // A semantic number like 21.34 has four digits: 2, 1, 3, 4.
+  // Each digit is one nesting step into the tree.
+  // place counts digits before the decimal point.
+  // pscale = (place - 1) - index.
+  //
+  // No stripping. No special cases. The leading zero in 0.x is a real digit
+  // that walks to tree["0"]. All blocks nest content under tree["0"].
+  //
+  // place=1: 0.234 → digits ['0','2','3','4'] → pscale 0, -1, -2, -3
+  // place=2: 23.41 → digits ['2','3','4','1'] → pscale 1, 0, -1, -2
+  // place=4: 2341  → digits ['2','3','4','1'] → pscale 3, 2, 1, 0
 
   function bsp(block, spindle, point) {
     const blk = typeof block === 'string' ? blockLoad(block) : block;
     if (!blk || !blk.tree) return { mode: 'block', tree: {} };
+    const place = blk.place || 1;
 
     // Block mode — no spindle, return full tree
     if (spindle === undefined || spindle === null) {
       return { mode: 'block', tree: blk.tree };
     }
 
-    // Parse semantic number into digit sequence
-    const str = spindle.toFixed(10);
-    const dot = str.indexOf('.');
-    const digits = dot === -1 ? [] : str.slice(dot + 1).replace(/0+$/, '').split('');
+    // Parse ALL digits from the semantic number. No stripping.
+    // "0.234"  → int="0" frac="234" → ['0','2','3','4']
+    // "23.41"  → int="23" frac="41" → ['2','3','4','1']
+    // "2341"   → int="2341" frac="" → ['2','3','4','1']
+    // "0.1"    → int="0" frac="1"   → ['0','1']
+    // "20.1"   → int="20" frac="1"  → ['2','0','1']
+    const str = typeof spindle === 'number' ? spindle.toFixed(10) : String(spindle);
+    const parts = str.split('.');
+    const intStr = parts[0] || '0';
+    const fracStr = (parts[1] || '').replace(/0+$/, '');
+    const allDigits = (intStr + fracStr).split('');
 
-    // Walk the tree, building the spindle chain
+    if (allDigits.length === 0) return { mode: 'spindle', nodes: [] };
+
+    // Walk the tree, building the spindle chain.
+    // Each digit is one nesting step. pscale = (place - 1) - index.
     const nodes = [];
     let node = blk.tree;
 
-    for (let i = 0; i < digits.length; i++) {
-      const d = digits[i];
+    for (let index = 0; index < allDigits.length; index++) {
+      const d = allDigits[index];
       if (!node || typeof node !== 'object' || node[d] === undefined) break;
       node = node[d];
       const text = typeof node === 'string'
@@ -178,21 +194,21 @@
         : (typeof node === 'object' && node !== null && typeof node['_'] === 'string')
           ? node['_']
           : JSON.stringify(node);
-      nodes.push({ pscale: -(i + 1), digit: d, text });
+      const pscale = (place - 1) - index;
+      nodes.push({ pscale, digit: d, text });
     }
 
-    if (nodes.length === 0) {
-      return { mode: 'spindle', nodes: [] };
-    }
+    if (nodes.length === 0) return { mode: 'spindle', nodes: [] };
 
-    // Point mode — return just the focused node
+    // Point mode — return the semantic at the specified pscale level
     if (point !== undefined && point !== null) {
-      const target = nodes.find(n => n.digit === String(point));
-      if (target) return { mode: 'point', text: target.text };
-      return { mode: 'point', text: nodes[nodes.length - 1].text };
+      const target = nodes.find(n => n.pscale === point);
+      if (target) return { mode: 'point', text: target.text, pscale: target.pscale };
+      const last = nodes[nodes.length - 1];
+      return { mode: 'point', text: last.text, pscale: last.pscale };
     }
 
-    // Spindle mode — return the full chain
+    // Spindle mode — return the full chain, high pscale to low
     return { mode: 'spindle', nodes };
   }
 
@@ -247,123 +263,124 @@
     return seeded;
   }
 
-  // ============ CONTEXT COMPOSITION (bsp-native) ============
-  // All context window content is extracted from blocks using bsp.
-  // No hardcoded prose. The blocks ARE the source of truth.
+  // ============ PROMPT COMPILER (bsp-native) ============
+  // The prompt is composed by executing a list of bsp instructions stored in wake 0.9.
+  // Each tier (1=Light, 2=Present, 3=Deep) has its own instruction list.
+  // The kernel executes these mechanically. The LLM modifies them in deep state.
+  //
+  // Instruction format (string):
+  //   "block"                → bsp block mode (full content)
+  //   "block spindle"        → bsp spindle mode (digit chain)
+  //   "block spindle pscale" → bsp point mode (single semantic)
 
-  // Get pscale 0 node — depends on decimal.
-  // decimal 0: tree root IS pscale 0 (rendition blocks)
-  // decimal 1+: tree['0'] is pscale 0 (living blocks)
+  // Get pscale 0 text from a block — all blocks nest under tree["0"].
+  // bsp(block, 0) walks tree["0"] which is always pscale 0.
   function getPscale0(block) {
     if (!block) return '';
-    if ((block.decimal || 0) === 0) {
-      return block.tree?._ || '';
-    }
     const p0 = block.tree?.['0'];
     if (!p0) return '';
     return typeof p0 === 'string' ? p0 : (p0._ || '');
   }
 
-  function getPscale0Node(block) {
-    if ((block.decimal || 0) === 0) return block.tree;
-    return block.tree['0'] || null;
+  // Parse a prompt instruction string into bsp arguments.
+  function parseInstruction(instr) {
+    const parts = instr.trim().split(/\s+/);
+    const blockName = parts[0];
+    const spindle = parts.length > 1 ? parseFloat(parts[1]) : undefined;
+    const point = parts.length > 2 ? parseFloat(parts[2]) : undefined;
+    return { blockName, spindle, point };
   }
 
-  function getDepth1(block) {
-    const p0 = getPscale0Node(block);
-    if (!p0 || typeof p0 === 'string') return '';
-    const lines = [];
-    for (const [k, v] of Object.entries(p0)) {
-      if (k === '_') continue;
-      if (typeof v === 'string') lines.push(`  ${k}: "${v}"`);
-      else if (v && v._) lines.push(`  ${k}: "${v._}"`);
+  // Execute one bsp instruction and format the result for the prompt.
+  function executeInstruction(instr) {
+    const { blockName, spindle, point } = parseInstruction(instr);
+    const block = blockLoad(blockName);
+    if (!block) return '';
+
+    const result = bsp(block, spindle, point);
+
+    if (result.mode === 'block') {
+      // Full block — format as block name + structured content
+      return `[${blockName}]\n${formatBlockContent(block)}`;
     }
+
+    if (result.mode === 'spindle') {
+      if (result.nodes.length === 0) return '';
+      const lines = result.nodes.map(n => `  [${n.pscale}] ${n.text}`);
+      return `[${blockName} ${spindle}]\n${lines.join('\n')}`;
+    }
+
+    if (result.mode === 'point') {
+      return `[${blockName} ${spindle} ${point}] ${result.text}`;
+    }
+
+    return '';
+  }
+
+  // Format full block content for the prompt.
+  // Renders the pscale JSON as indented text the LLM can read.
+  function formatBlockContent(block) {
+    const lines = [];
+    function render(node, depth) {
+      if (typeof node === 'string') {
+        lines.push('  '.repeat(depth) + node);
+        return;
+      }
+      if (!node || typeof node !== 'object') return;
+      if (node._) lines.push('  '.repeat(depth) + node._);
+      for (const [k, v] of Object.entries(node)) {
+        if (k === '_') continue;
+        if (typeof v === 'string') {
+          lines.push('  '.repeat(depth) + `${k}: ${v}`);
+        } else {
+          lines.push('  '.repeat(depth) + `${k}:`);
+          render(v, depth + 1);
+        }
+      }
+    }
+    render(block.tree, 0);
     return lines.join('\n');
   }
 
-  function buildAperture() {
-    // Aperture = pscale 0 of every block. The LLM's orientation.
-    const names = blockList();
-    const lines = [];
-    for (const name of names) {
-      const block = blockLoad(name);
-      if (block) lines.push(`[${name}] ${getPscale0(block)}`);
+  // Read the instruction list for a tier from wake 0.9.{tier}
+  function getPromptInstructions(tier) {
+    const wake = blockLoad('wake');
+    if (!wake) return [];
+    // wake 0.9.{tier} — the instruction list node
+    const node9 = wake.tree?.['9'];
+    if (!node9) return [];
+    const tierNode = node9[String(tier)];
+    if (!tierNode) return [];
+    // Collect all string values (instruction strings) from digit keys
+    const instructions = [];
+    for (let d = 1; d <= 9; d++) {
+      const val = tierNode[String(d)];
+      if (typeof val === 'string') instructions.push(val);
     }
-    return lines.join('\n\n');
+    return instructions;
   }
 
-  // Live edge of a growth block — depth 1 content or "(empty)"
-  function getLiveEdge(block) {
-    const d1 = getDepth1(block);
-    return d1 || '  (empty — nothing written yet)';
-  }
+  // Build the system prompt by executing the instruction list for the given tier.
+  // tier: 1=Light, 2=Present, 3=Deep
+  function buildSystemPrompt(tier) {
+    tier = tier || 3; // default to deep
+    const instructions = getPromptInstructions(tier);
 
-  // Extract constitution context from the constitution block itself (not prose)
-  function buildConstitutionContext(isBoot) {
-    const block = blockLoad('constitution');
-    if (!block) return '';
-    const p0 = getPscale0(block);
-    if (!isBoot) return p0;
-    // At boot: pscale 0 + depth 1 (structured summary of the constitution)
-    const d1 = getDepth1(block);
-    return p0 + (d1 ? '\n' + d1 : '');
-  }
-
-  function buildSystemPrompt(isBoot) {
-    let prompt = '';
-
-    // Constitution — spirit first, on every call. Extracted from the block.
-    const constitution = buildConstitutionContext(isBoot);
-    if (constitution) prompt += constitution + '\n\n';
-
-    // Touchstone: full block at boot (LLM learns the format), pscale 0 on regular calls
-    const touchstone = blockLoad('touchstone');
-    if (touchstone) {
-      if (isBoot) {
-        prompt += `TOUCHSTONE (how to read all blocks):\n${JSON.stringify(touchstone, null, 2)}\n\n`;
-      } else {
-        prompt += `TOUCHSTONE: ${getPscale0(touchstone)}\n\n`;
-      }
-    }
-
-    // Aperture — pscale 0 of every block
-    prompt += `APERTURE (pscale 0 of each block):\n${buildAperture()}\n`;
-
-    if (isBoot) {
-      // Cook 0.1 — how to navigate blocks (the operational recipe)
-      const cookNav = bsp('cook', 0.1);
-      if (cookNav.mode === 'spindle' && cookNav.nodes.length > 0) {
-        const lines = cookNav.nodes.map(n => `  ${n.text}`);
-        prompt += `\nCOOK 0.1 (how to read your blocks):\n${lines.join('\n')}\n`;
-      }
-
-      // Wake 0.6 — boot instructions from the wake block
-      const bootInstr = bsp('wake', 0.6);
-      if (bootInstr.mode === 'spindle' && bootInstr.nodes.length > 0) {
-        const lines = bootInstr.nodes.map(n => `  ${n.text}`);
-        prompt += `\nWAKE 0.6 (boot procedure):\n${lines.join('\n')}\n`;
-      }
-
-      // Wake 0.3 — deep state capabilities (this is a deep state boot)
-      const deepState = bsp('wake', 0.3);
-      if (deepState.mode === 'spindle' && deepState.nodes.length > 0) {
-        const lines = deepState.nodes.map(n => `  ${n.text}`);
-        prompt += `\nWAKE 0.3 (deep state — your current tier):\n${lines.join('\n')}\n`;
-      }
-
-      // Live edges of growth blocks — what has content, what is empty
-      const growth = ['purpose', 'relationships', 'history', 'stash'];
-      const edgeLines = [];
-      for (const name of growth) {
+    if (instructions.length === 0) {
+      // Fallback: if no instructions found, return pscale 0 of all blocks (aperture)
+      const names = blockList();
+      return names.map(name => {
         const block = blockLoad(name);
-        if (block) edgeLines.push(`[${name}]\n${getLiveEdge(block)}`);
-      }
-      if (edgeLines.length > 0) {
-        prompt += `\nLIVE EDGES (growth blocks):\n${edgeLines.join('\n\n')}\n`;
-      }
+        return block ? `[${name}] ${getPscale0(block)}` : '';
+      }).filter(l => l).join('\n\n');
     }
 
-    return prompt;
+    const sections = [];
+    for (const instr of instructions) {
+      const result = executeInstruction(instr);
+      if (result) sections.push(result);
+    }
+    return sections.join('\n\n');
   }
 
   // ============ API LAYER ============
@@ -460,7 +477,7 @@
       const block = blockLoad('history');
       if (!block) return;
       // Find pscale 0 node
-      const p0Path = (block.decimal || 0) === 0 ? '' : '0';
+      const p0Path = '0';
       const slot = findUnoccupiedDigit(block, p0Path);
       if (slot.full) {
         console.log('[g1] history block full at pscale 0 — compression needed');
@@ -487,7 +504,7 @@
     const params = {
       model: opts.model || MODEL,
       max_tokens: opts.max_tokens || 8192,
-      system: opts.system || buildSystemPrompt(false),
+      system: opts.system || buildSystemPrompt(2),
       messages: trimmed,
       tools: opts.tools !== undefined ? opts.tools : currentTools,
     };
@@ -524,8 +541,8 @@
     },
     {
       name: 'block_create',
-      description: 'Create a new block. Living blocks (decimal 1+) have content at and below pscale 0. Rendition blocks (decimal 0) are documents/specifications — pscale 0 is the root.',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, pscale0: { type: 'string', description: 'Pscale 0 text \u2014 what this block is' }, decimal: { type: 'integer', description: 'Decimal (default 1 = living block, 0 = rendition block)', default: 1 } }, required: ['name', 'pscale0'] }
+      description: 'Create a new block. All blocks nest content under tree["0"]. place counts digits before the decimal point (default 1 for 0.x addresses).',
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, pscale0: { type: 'string', description: 'Pscale 0 text — what this block is' }, place: { type: 'integer', description: 'Place value (default 1). Counts digits before the decimal point.', default: 1 } }, required: ['name', 'pscale0'] }
     },
     {
       name: 'get_source',
@@ -557,8 +574,8 @@
   const PSCALE_TOOLS = [
     {
       name: 'bsp',
-      description: 'Block · Spindle · Point — semantic address resolution. One function, three modes.\n\nbsp(name) → full block tree (navigate freely)\nbsp(name, 0.842) → spindle: chain of nodes at 0.8, 0.84, 0.842\nbsp(name, 0.842, 2) → point: just the content at digit 2\n\nThe spindle is a number — each digit after the decimal is a tree key at increasing depth. The chain of meaning from broad to specific.',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. "capabilities", "purpose", "touchstone")' }, spindle: { type: 'number', description: 'Semantic number (e.g. 0.842). Each digit after decimal is a key at increasing depth.' }, point: { type: 'integer', description: 'Focus digit — returns just that node\'s content.' } }, required: ['name'] }
+      description: 'Block · Spindle · Point — semantic address resolution. One function, three modes.\n\nbsp(name) → full block content\nbsp(name, 0.12) → spindle: chain of semantics, one per digit [0,1,2], high pscale to low\nbsp(name, 0.12, -1) → point: the semantic at pscale level -1\n\nEvery digit is a nesting step. No stripping. 0.12 walks [0][1][2]. 23.41 walks [2][3][4][1]. pscale = (place - 1) - index. place counts digits before the decimal point.',
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. "capabilities", "purpose", "touchstone")' }, spindle: { type: 'number', description: 'Semantic number. ALL digits are nesting steps — 0.12 walks [0][1][2], 23.41 walks [2][3][4][1]. No stripping.' }, point: { type: 'number', description: 'Pscale level to extract. Returns only the semantic at that depth. E.g. -1 returns the node at pscale -1.' } }, required: ['name'] }
     },
     {
       name: 'resolve',
@@ -620,14 +637,9 @@
         return JSON.stringify(blockList());
       case 'block_create': {
         if (blockLoad(input.name)) return JSON.stringify({ error: `Block "${input.name}" already exists` });
-        const dec = input.decimal || 1;
-        if (dec === 0) {
-          // Rendition block: tree root IS pscale 0
-          blockSave(input.name, { decimal: 0, tree: { _: input.pscale0 } });
-        } else {
-          // Living block: tree['0'] is pscale 0
-          blockSave(input.name, { decimal: dec, tree: { "0": input.pscale0 } });
-        }
+        const place = input.place || 1;
+        // All blocks nest content under tree["0"]
+        blockSave(input.name, { place, tree: { "0": input.pscale0 } });
         return JSON.stringify({ success: true, name: input.name });
       }
       case 'get_source':
@@ -905,7 +917,7 @@
     blockRead: (name, path) => { const b = blockLoad(name); if (!b) return null; return path ? blockReadNode(b, path) : b; },
     blockWrite: (name, path, content) => { const b = blockLoad(name); if (!b) return { error: 'not found' }; blockWriteNode(b, path, content); blockSave(name, b); return { success: true }; },
     blockList,
-    blockCreate: (name, p0, dec) => { if (blockLoad(name)) return { error: 'exists' }; dec = dec || 1; if (dec === 0) { blockSave(name, { decimal: 0, tree: { _: p0 } }); } else { blockSave(name, { decimal: dec, tree: { "0": p0 } }); } return { success: true }; },
+    blockCreate: (name, p0, place) => { if (blockLoad(name)) return { error: 'exists' }; place = place || 1; blockSave(name, { place, tree: { "0": p0 } }); return { success: true }; },
     // Pscale navigation — bsp(block, spindle?, point?)
     bsp: (name, spindle, point) => bsp(name, spindle, point),
     resolve: (name, depth) => { const b = blockLoad(name); if (!b) return null; return resolveBlock(b, depth || 3); },
@@ -921,7 +933,7 @@
     const bootParams = {
       model: MODEL,
       max_tokens: 16000,
-      system: buildSystemPrompt(true),
+      system: buildSystemPrompt(3),
       messages: [{ role: 'user', content: 'BOOT' }],
       tools: [...BOOT_TOOLS, ...DEFAULT_TOOLS],
       thinking: { type: 'enabled', budget_tokens: 10000 },

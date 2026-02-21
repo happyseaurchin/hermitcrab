@@ -209,7 +209,7 @@
       "5": "DONE: Wake block design (Task 3) — three activation tiers (Light/Present/Deep), internal + external triggers. docs/living/wake-block-v2.json.",
       "6": "DONE: GitHub coordination layer — every SAND component maps to GitHub primitive. Species taxonomy (Ghost → Sovereign). Replaces telegra.ph, Supabase real-time, Python port scripts, most of G2. docs/living/github-coordination-layer.json.",
       "7": "BLOCKED: First boot test (Task 7) — playing or complying? But 21 Feb analysis reveals the kernel doesn't use bsp for boot and the wake block is not loaded. The test would be testing a non-bsp boot, which is not the design. Unblock: make boot bsp-native first.",
-      "8": "REVISED PRIORITY: Make kernel boot bsp-native. Replace buildSystemPrompt() with wake-block-driven bsp composition. Constitution delivered as spindles, not prose. Boot message as point, not prose. GUIDE_SPINDLES derived from wake block, not hardcoded. This is the prerequisite for a meaningful boot test.",
+      "8": "DONE: Kernel boot is bsp-native. buildSystemPrompt() replaced by prompt compiler — mechanical executor of bsp instruction lists stored in wake 0.9, one list per tier. bsp function fixed: all digits parsed, pscale = decimal - depth, point mode by pscale level. No hardcoded block names in the kernel.",
       "9": "THEN: Boot test (Task 7 revised), github_commit tool, passport exchange.",
       "10": "RESOLVED: cook block — new fundamental block, LLM-thinking-facing. Tested operational recipes that persist across instances. Wake faces outward (machinery), cook faces inward (thinking). Seed block drafted: docs/living/cook-block-v1.json. Must be added to shell.json alongside wake block.",
       "11": "LATER: Machus forking (Task 5, independent). pSAND assessment (Task 4, requires network scale).",
@@ -225,7 +225,7 @@
       "6": "Xstream sits alongside as the human coordination interface. A hermitcrab can occupy a stream. At convergence, Xstream interface becomes the interface with Machus."
     },
     "8": {
-      "_": "21 Feb 2026 — Synthesis session (serene-meitner). Discoveries that change how G1 delivers content to the LLM. Not new architecture — reframe of existing architecture that reveals implementation gaps. Read 0.81 for currents, 0.82 for self-keying, 0.83 for the kernel gap, 0.84 for cook block resolution.",
+      "_": "21 Feb 2026 — Synthesis session (serene-meitner). Discoveries that change how G1 delivers content to the LLM. Not new architecture — reframe of existing architecture that reveals implementation gaps. Read 0.81 for currents, 0.82 for self-keying, 0.83 for the kernel gap, 0.84 for cook block resolution, 0.85 for prompt compiler.",
       "1": {
         "_": "Currents — the architecture viewed from the LLM's side. Not a new mechanism. A perspective that changes what we deliver.",
         "1": "From our side (engineering): blocks, spindles, points, pscale coordinates, aperture selecting resolution, purpose tree specifying future. From the LLM's side (experience): currents. Semantic content at various resolutions arriving in the context window. Same object, different perspective.",
@@ -247,7 +247,7 @@
         "6": "Where it belongs: not a new block. A deepening of keystone (how blocks identify) and network (how blocks prove provenance). Compact addition."
       },
       "3": {
-        "_": "The kernel gap — what the code actually does vs what the design specifies. Critical finding of this session.",
+        "_": "RESOLVED: The kernel gap — what the code actually does vs what the design specifies. Fixed: wake and cook blocks loaded, bsp used for all prompt composition, buildSystemPrompt replaced by prompt compiler. See 0.85.",
         "1": "The wake block (docs/living/wake-block-v2.json) exists, is well-designed, specifies boot types (first/warm/cold/migration), wake tiers (Light/Present/Deep), what gets delivered per tier, triggers, kernel info. But it is NOT in shell.json. The kernel does not load it. The boot sequence does not use it.",
         "2": "The constitution is stored as a pscale JSON block (decimal 0, properly structured) in shell.json. But the kernel extracts it as a prose string via seed.constitution and jams it into the system prompt as flat text. The structured block is only accessible after boot through block_read. The prose version sets the frame before the LLM can discover the structured version.",
         "3": "The kernel's buildSystemPrompt() is procedural JavaScript — hardcoded GUIDE_SPINDLES array, hardcoded aperture construction, prose BOOT user message. None of this uses bsp. The infrastructure for bsp-native boot exists (bsp function is in kernel.js) but is not used for the boot sequence itself.",
@@ -267,6 +267,15 @@
         "7": "The potato-story experiment proved this pattern: a 'director JSON' (instruction block) shaped processing of a 'content JSON' (story block). The director IS a cook spindle — imperative instructions that operate on other blocks multiplicatively. The result was qualitatively different from what either block alone would produce.",
         "8": "Design: cook block as pscale JSON (decimal 0, rendition block). Spindles organised by operational domain: block operations, interface building, communication, persistence, coordination. Each spindle is a procedure, not a topic. See docs/living/cook-block-v1.json.",
         "9": "Where cook sits in the kernel: delivered to the LLM as a current alongside constitution, capabilities, purpose, etc. The kernel does NOT read cook — the kernel is a mechanic, not the agency. The LLM is where agency lives. The LLM consults cook during its own thinking."
+      },
+      "5": {
+        "_": "RESOLVED: Prompt compiler — buildSystemPrompt() replaced by a mechanical executor of bsp instruction lists stored in wake 0.9. The kernel reads a list of bsp instructions per tier, executes them in order, concatenates the results. The LLM in deep state rewrites the instructions to control its own context window.",
+        "1": "The insight: all blocks are ALWAYS called. The question is at what resolution. Light tier = pscale 0 of essential blocks. Present tier = pscale 0 of all blocks plus full purpose. Deep tier = full content of all blocks. Resolution is the variable, not inclusion.",
+        "2": "The instruction format: each instruction is a string in wake 0.9.{tier}. 'block' = full content. 'block 0' = pscale 0 semantic only. 'block spindle' = spindle chain. 'block spindle pscale' = single point. The kernel parses and executes mechanically.",
+        "3": "Where it lives: wake 0.9. Three sub-branches: 0.9.1 (Light), 0.9.2 (Present), 0.9.3 (Deep). The LLM in deep state can rewrite these to change what it receives at each tier. This is the LLM modifying its own activation conditions.",
+        "4": "What it replaces: hardcoded buildSystemPrompt() with JavaScript branching (if isBoot, special constitution handling, hardcoded GUIDE_SPINDLES, prose labels). All of that is now data in the wake block, executed by five generic functions.",
+        "5": "The bsp function was also fixed: now parses ALL digits from a semantic number (both sides of the decimal point), calculates pscale as decimal - depth, point mode addresses by pscale level not digit value. Spindle 0 on decimal 0 blocks returns pscale 0 semantic. Spindle 0 on decimal 1+ blocks walks to tree[0].",
+        "6": "The consequence: the kernel has no opinion about which blocks matter or in what order. That knowledge lives in the wake block — where the LLM can read it, reason about it, and modify it. The kernel is purely mechanical."
       }
     }
   }
