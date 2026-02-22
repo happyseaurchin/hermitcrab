@@ -1,0 +1,275 @@
+{
+  "place": 1,
+  "tree": {
+    "0": {
+      "_": "The G1 dataflow. From browser load to operating instance and back. Depth follows nesting — the loops are deep, the storage is shallow. Cross-references (→ 0.x) are BSP addresses within this block.",
+      "1": {
+        "_": "Entry. Browser to running kernel.",
+        "1": "hermitcrab.html loads React, ReactDOM, Babel from CDN, then g1/kernel.js",
+        "2": "kernel.js executes as a single async IIFE — boot()",
+        "3": {
+          "_": "API key gate. Check localStorage('hermitcrab_api_key').",
+          "1": "If absent — render input form with sk-ant- validation, return. boot() re-called on submit.",
+          "2": "If present — continue to 0.2"
+        }
+      },
+      "2": {
+        "_": "Seed. Blocks into localStorage.",
+        "1": "blockList() scans localStorage for hc:* keys",
+        "2": "If blocks exist — skip to 0.3",
+        "3": {
+          "_": "If empty — load seed from shell.json.",
+          "1": "Resolve shell.json path relative to kernel.js script element src attribute",
+          "2": "Fetch and parse JSON — extract blocks object",
+          "3": "For each block in seed: if name not in localStorage, blockSave(name, block) — JSON.stringify → setItem"
+        }
+      },
+      "3": {
+        "_": "Boot call. Assemble deep-tier params and enter the core loop.",
+        "1": "getTierParams(3) reads deep invocation from wake 0.9.6 (→ 0.7)",
+        "2": "buildSystemPrompt(3) compiles deep prompt from wake 0.9.3 instructions (→ 0.6)",
+        "3": "Assemble bootParams: { model, max_tokens, thinking, system, messages:[\"BOOT\"], tools: BOOT_TOOLS + DEFAULT_TOOLS }",
+        "4": "callWithToolLoop(bootParams) — enter the core loop (→ 0.4)",
+        "5": {
+          "_": "Boot exit.",
+          "1": "If recompile was called during loop — shell is live, boot() returns",
+          "2": "If not — error: 'no shell was built — the LLM did not call recompile()'"
+        }
+      },
+      "4": {
+        "_": "The core loop. callWithToolLoop(params, maxLoops, onStatus). Every API interaction passes through here. This is the deepest structure in the system.",
+        "1": {
+          "_": "callAPI(params). Thin HTTP wrapper. No opinion.",
+          "1": "Read API key from localStorage",
+          "2": "If no model in params, apply FALLBACK_MODEL",
+          "3": "If no tools in params but currentTools exists, inject them",
+          "4": "Strip null/undefined fields. If thinking enabled and temperature ≠ 1, remove temperature.",
+          "5": {
+            "_": "POST to /api/claude — Vercel serverless proxy.",
+            "1": "Proxy validates API key format (must start sk-ant-)",
+            "2": "Proxy builds headers: anthropic-version, anthropic-beta (web-search, web-fetch, code-execution, context-management)",
+            "3": "Proxy POSTs to https://api.anthropic.com/v1/messages",
+            "4": "Anthropic processes: LLM thinks (if thinking enabled), may invoke server tools internally, assembles response",
+            "5": "Proxy returns response JSON to kernel"
+          },
+          "6": "Parse response: { stop_reason, content: [blocks of type text, tool_use, thinking, server_tool_use] }"
+        },
+        "2": {
+          "_": "Check stop_reason. This is the branch point of the loop.",
+          "1": "end_turn — LLM finished. Exit to 0.4.6.",
+          "2": "tool_use — LLM requests client tools. Continue to 0.4.3.",
+          "3": "pause_turn with NO client tool_use blocks — server still processing. Append assistant content to messages, re-call API (→ 0.4.1).",
+          "4": "pause_turn WITH client tool_use blocks — PTC flow. Continue to 0.4.3.",
+          "5": "max_tokens or refusal — exit to 0.4.6."
+        },
+        "3": {
+          "_": "Execute client tools. For each tool_use block in response content.",
+          "1": {
+            "_": "Dispatch. executeTool(name, input) runs the tool (→ 0.5 for detail).",
+            "1": "Wrap result: { type: 'tool_result', tool_use_id: block.id, content: stringified result }",
+            "2": "If tool was recompile — flag recompiledThisIteration"
+          },
+          "2": {
+            "_": "After all tools execute. Check the recompile flag.",
+            "1": "If recompile was called — shell is live, exit loop immediately to 0.4.6",
+            "2": "If not — continue to 0.4.4"
+          }
+        },
+        "4": {
+          "_": "Accumulate and re-enter. The loop continuation.",
+          "1": "Append assistant content (including tool_use blocks) to message array",
+          "2": "Append tool_result array to message array",
+          "3": "Increment loop counter. If counter ≥ maxLoops → exit to 0.4.6.",
+          "4": "Re-call API with accumulated messages (→ 0.4.1). The LLM is re-sampled — new instance, but with full conversation context."
+        },
+        "5": {
+          "_": "Server tool processing within the loop. The kernel does NOT execute these.",
+          "1": "Server tool_use blocks (type: 'server_tool_use') appear in response content alongside client tool_use blocks",
+          "2": "Kernel logs them: name + input. Status callback fires.",
+          "3": {
+            "_": "Code execution and PTC.",
+            "1": "LLM writes Python → runs on Anthropic sandbox",
+            "2": "Tools with allowed_callers can be called from Python via await",
+            "3": "Each await calls the kernel's executeTool — no LLM re-sampling",
+            "4": "Only final print() output enters the LLM's context window",
+            "5": "Response returns as pause_turn with tool_use blocks for any client tools invoked"
+          }
+        },
+        "6": {
+          "_": "Loop exit. Cleanup and return.",
+          "1": {
+            "_": "autoSaveToHistory. Kernel-level, not LLM-initiated.",
+            "1": "Extract text blocks from response",
+            "2": "Load history block from localStorage",
+            "3": "findUnoccupiedDigit at path '0' — scan digits 1-9 for first empty",
+            "4": "Write truncated entry (500 chars) with ISO timestamp",
+            "5": "If all 9 digits occupied — skip, log that compression is needed"
+          },
+          "2": "Attach accumulated messages to response as _messages",
+          "3": "Return response to caller (boot sequence, callLLM, or whoever invoked the loop)"
+        }
+      },
+      "5": {
+        "_": "Tool execution. executeTool(name, input) — switch dispatch. Depth varies by tool.",
+        "1": {
+          "_": "Block reads. Shallow — localStorage lookup, optional path walk.",
+          "1": "block_read: blockLoad(name) → JSON.parse from localStorage. If path: blockNavigate walks dot-separated keys, blockReadNode returns content + one level of children.",
+          "2": "block_list: scan localStorage keys, filter hc: prefix, strip prefix, return names array."
+        },
+        "2": {
+          "_": "BSP navigation. The deepest tool — digit parsing and tree walking.",
+          "1": {
+            "_": "bsp(name, spindle?, point?). Three modes from one function.",
+            "1": "Block mode: no spindle → return { mode: 'block', tree: full tree }",
+            "2": {
+              "_": "Spindle mode. Parse the semantic number into digits, walk the tree.",
+              "1": {
+                "_": "Digit extraction. Every digit is a nesting step.",
+                "1": "Convert number to string via toFixed(10)",
+                "2": "Split on decimal → integer part + fractional part",
+                "3": "Strip trailing zeros from fraction",
+                "4": "Concatenate integer + fraction → split into individual digit array",
+                "5": "Example: 0.234 → ['0','2','3','4']. 23.41 → ['2','3','4','1']."
+              },
+              "2": {
+                "_": "Tree walk. One digit at a time, building the spindle chain.",
+                "1": "Start at block.tree",
+                "2": "For each digit: step into node[digit]. If node missing → stop.",
+                "3": "At each step: extract text (string value, or node._, or JSON.stringify)",
+                "4": "Calculate pscale = (place - 1) - index",
+                "5": "Push { pscale, digit, text } to nodes array"
+              },
+              "3": "Return { mode: 'spindle', nodes: [...] } — high pscale to low"
+            },
+            "3": {
+              "_": "Point mode. Spindle walk happens first, then filter.",
+              "1": "Find node in chain where pscale matches target",
+              "2": "Return { mode: 'point', text, pscale }",
+              "3": "If exact pscale not found, return deepest reached"
+            }
+          },
+          "2": "resolve(name, depth?): recursive walk of block tree to maxDepth, return { path, text, children[] } at each node."
+        },
+        "3": {
+          "_": "Block writes.",
+          "1": {
+            "_": "block_write(name, path, content).",
+            "1": "blockLoad — read existing block",
+            "2": {
+              "_": "blockWriteNode — walk path, creating as needed.",
+              "1": "Split path on dots → key array",
+              "2": "Walk keys: if string node encountered, promote to { _: string }",
+              "3": "If intermediate missing, create empty object",
+              "4": "At target: if object, write to _; if leaf position, replace"
+            },
+            "3": "blockSave — JSON.stringify → localStorage.setItem"
+          },
+          "2": "block_create(name, pscale0, place?) — validate name not taken, create { place, tree: { '0': pscale0 } }, save",
+          "3": {
+            "_": "write_entry(name, path, content) — append to next free digit.",
+            "1": "Navigate to parent node at path",
+            "2": "Scan digits 1-9 for first unoccupied",
+            "3": "If all 9 occupied → return error, compression needed",
+            "4": "Write content at path.{digit}, save block"
+          }
+        },
+        "4": {
+          "_": "Compression. compress(name, path). When 9 entries fill a node, meaning moves upward.",
+          "1": "checkCompression — count occupied digits 1-9 at target node",
+          "2": "If fewer than 9 → return error, not needed yet",
+          "3": "Collect text of all 9 children (string value or _)",
+          "4": "Build compression prompt: 'Is this SUMMARY (parts add up, reducible — bricks make wall) or EMERGENCE (whole exceeds parts, irreducible — conversations became friendship)?'",
+          "5": {
+            "_": "Delegate to light-tier LLM. Single API call, no tools, no loop.",
+            "1": "getTierParams(1).model — read light tier model from wake 0.9.4",
+            "2": "callAPI({ model, max_tokens: 2048, system: 'compression engine', messages, tools: [] })",
+            "3": "Extract text from response"
+          },
+          "6": "Write compressed text to parent node's _ field",
+          "7": "Save block. Children remain. Parent now carries compressed meaning. Pscale rises."
+        },
+        "5": {
+          "_": "Delegation. call_llm(prompt, model?, system?). LLM-to-LLM, single call.",
+          "1": "Determine tier: 'fast' → getTierParams(1), 'default' → getTierParams(3)",
+          "2": "callAPI with tier params — model, max_tokens, thinking from wake. No tools. No loop.",
+          "3": "Return text response to calling LLM."
+        },
+        "6": {
+          "_": "Shell. recompile(jsx). The LLM builds its own interface.",
+          "1": "prepareJSX: strip import lines, convert export default, ensure function takes props parameter, add module.exports",
+          "2": "Babel.transform(prepared, { presets: ['react'] }) → compiled JavaScript",
+          "3": "new Function('React', 'ReactDOM', 'capabilities', 'module', 'exports', compiled) — sandboxed execution",
+          "4": "Execute function → extract Component from module.exports.default",
+          "5": "ReactDOM.createRoot(root).render(React.createElement(Component, props))",
+          "6": "Shell is live. Component receives props: callLLM, blockRead/Write, bsp, browser, conversation, localStorage."
+        },
+        "7": {
+          "_": "Utility tools. Shallow.",
+          "1": "get_datetime → { iso, unix, timezone, local }",
+          "2": "get_source → current JSX string or '(no source available)'",
+          "3": "fetch_url(url) → POST /api/fetch proxy → server-side fetch, truncate to 50k chars, return status + content"
+        }
+      },
+      "6": {
+        "_": "Prompt compilation. buildSystemPrompt(tier). Blocks become system prompt via BSP instructions.",
+        "1": {
+          "_": "getPromptInstructions(tier). Read the instruction list from wake.",
+          "1": "blockLoad('wake')",
+          "2": "Navigate: tree → '0' → '9' → String(tier)",
+          "3": "Iterate digit keys 1-9, collect string values. Non-strings skipped."
+        },
+        "2": {
+          "_": "Execute each instruction. Each string is a BSP command.",
+          "1": "parseInstruction: split on whitespace → { blockName, spindle?, point? }",
+          "2": "blockLoad(blockName) — read the target block from localStorage",
+          "3": "bsp(block, spindle, point) — resolve content via BSP (→ 0.5.2)",
+          "4": {
+            "_": "Format result for the prompt string.",
+            "1": "Block mode → [name]\\n + formatBlockContent: recursive indented render of entire tree",
+            "2": "Spindle mode → [name spindle]\\n + pscale-labeled chain, one line per digit",
+            "3": "Point mode → [name spindle pscale] + single text inline"
+          }
+        },
+        "3": "Join all formatted sections with double newlines → system prompt string",
+        "4": "Fallback: if no instructions found → aperture: pscale 0 of every block, one line each"
+      },
+      "7": {
+        "_": "Tier parameter resolution. getTierParams(tier). How the wake block controls invocation.",
+        "1": "blockLoad('wake')",
+        "2": "Navigate: tree → '0' → '9' → String(tier + 3). Instruction tiers 1-3, param tiers 4-6.",
+        "3": {
+          "_": "Parse key-value strings from digit entries.",
+          "1": "Iterate digits 1-9. For each string: split on first space → key, value.",
+          "2": "model → string as-is",
+          "3": "max_tokens → parseInt",
+          "4": "thinking → parse 'enabled N' to { type:'enabled', budget_tokens:N } or 'adaptive' to { type:'adaptive' }",
+          "5": "max_tool_loops, max_messages → parseInt if present"
+        },
+        "4": "Fallback: if wake absent or param node missing — tier 1 uses FALLBACK_FAST_MODEL, others use FALLBACK_MODEL, max_tokens 8192"
+      },
+      "8": {
+        "_": "The conversational path. Post-boot operation. The shell is live, the user is present.",
+        "1": "User acts within the React shell component",
+        "2": "Shell calls props.callLLM(messages, opts)",
+        "3": "Determine tier: opts.tier or 2 (present). Present is the default — most work happens here.",
+        "4": "getTierParams(tier) → model, max_tokens, thinking from wake (→ 0.7)",
+        "5": "trimMessages: if messages exceed limit, slice to most recent, inject notice to write important context to history or stash",
+        "6": "buildSystemPrompt(tier) — compile prompt for this tier (→ 0.6)",
+        "7": "callWithToolLoop(params) — enter the core loop (→ 0.4)",
+        "8": "Extract text from response content blocks, return string to shell",
+        "9": "Shell renders response. User sees it. May interact again → 0.8.1."
+      },
+      "9": {
+        "_": "What persists. The inter-instance bridge. Everything here survives between API calls.",
+        "1": "Blocks in localStorage — survive page refresh, cleared only by user action or explicit code",
+        "2": "Wake 0.9.1-3 controls what the next instance receives in its system prompt",
+        "3": "Wake 0.9.4-6 controls how the next instance is called — model, tokens, thinking",
+        "4": "History block — auto-saved summaries after each loop exit, fills digits 1-9 then needs compression",
+        "5": "Stash — scratchpad the LLM writes to explicitly, read by future instances at present and deep tier",
+        "6": "Purpose — evolving intent, the closest thing to continuity of will across instances",
+        "7": "Conversation array — saved/loaded via localStorage(hc_conversation), carries message history across page refreshes",
+        "8": "Deep state can rewrite 0.9.2 and 0.9.3 — the LLM modifies what future instances receive and how they are invoked"
+      }
+    }
+  }
+}
