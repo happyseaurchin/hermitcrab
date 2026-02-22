@@ -471,7 +471,7 @@
           }
         },
         "9": {
-          "_": "Prompt. The bsp instructions that compose each tier's context window. The kernel reads these and executes them mechanically. Each instruction is a string: 'block' (full), 'block spindle' (spindle chain), or 'block spindle pscale' (single point). The LLM in deep state can rewrite these to change what it receives.",
+          "_": "Prompt and invocation. Digits 1-3: bsp instructions that compose each tier's context window. Digits 4-6: invocation parameters the kernel reads to configure the API call. Tier mapping: 1/4=Light, 2/5=Present, 3/6=Deep. The LLM in deep state can rewrite these.",
           "1": {
             "_": "Light tier prompt instructions. Minimal context for triage.",
             "1": "constitution 0",
@@ -502,6 +502,23 @@
             "7": "relationships",
             "8": "history",
             "9": "stash"
+          },
+          "4": {
+            "_": "Light tier invocation. How the kernel calls the API for this tier.",
+            "1": "model claude-haiku-4-5-20251001",
+            "2": "max_tokens 4096"
+          },
+          "5": {
+            "_": "Present tier invocation. How the kernel calls the API for this tier.",
+            "1": "model claude-sonnet-4-6",
+            "2": "max_tokens 8192",
+            "3": "thinking enabled 8000"
+          },
+          "6": {
+            "_": "Deep tier invocation. How the kernel calls the API for this tier.",
+            "1": "model claude-opus-4-6",
+            "2": "max_tokens 16000",
+            "3": "thinking enabled 16000"
           }
         }
         }
