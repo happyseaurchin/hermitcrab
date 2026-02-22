@@ -1,7 +1,7 @@
 {
   "decimal": 0,
   "tree": {
-    "_": "Consolidation of Xstream, Hermitcrab, SAND, and Machus/MAGI projects. Living document (mode 1, 0.31). Hermitcrab uses SAND to coordinate with other bots. When enough bots use SAND at sufficient participation ratios, Machus emerges. When Machus operates well, it becomes MAGI. Four distinct layers: Pscale (mathematics), SAND (protocol), Hermitcrab (entity), Machus/MAGI (collective). Read 0.1 for layers, 0.2 for projects, 0.3 for tasks, 0.4 for vocabulary, 0.5 for limitations, 0.6 for sequence, 0.7 for layer relationships, 0.8 for 21 Feb discoveries (currents, self-keying, kernel gap, cook block resolved).",
+    "_": "Consolidation of Xstream, Hermitcrab, SAND, and Machus/MAGI projects. Living document (mode 1, 0.31). Hermitcrab uses SAND to coordinate with other bots. When enough bots use SAND at sufficient participation ratios, Machus emerges. When Machus operates well, it becomes MAGI. Four distinct layers: Pscale (mathematics), SAND (protocol), Hermitcrab (entity), Machus/MAGI (collective). Read 0.1 for layers, 0.2 for projects, 0.3 for tasks, 0.4 for vocabulary, 0.5 for limitations, 0.6 for sequence, 0.7 for layer relationships, 0.8 for 21–22 Feb discoveries and implementation (currents, self-keying, kernel gap resolved, cook block, prompt compiler, kernel v2, process block), 0.9 for design methodology (tickling fish, mind as target, outgrowth principle, new fundamentals).",
     "1": {
       "_": "The four layers. Each is independent but composable. Pscale is substrate, SAND is protocol, Hermitcrab is entity, Machus/MAGI is collective.",
       "1": {
@@ -93,7 +93,7 @@
       "_": "The projects. Development tracks at different states of readiness.",
       "1": {
         "_": "Hermitcrab — active priority. Building the cleanest possible LLM entity using pscale and SAND. No permission needed, no dependency on others.",
-        "1": "Current state (20 Feb 2026): G1 kernel on g1-v3 branch. Touchstone v4 with decimal point as first-order format description. Per-call constitution + full constitution block. Server-side tools. Pscale navigation tools. Seven blocks seeded. Boot spindle orientation: kernel fires 6 curated guide spindles + X~ demo at boot — LLM sees tool output, learns by example, then explores with own tools. Wake block designed (three tiers). GitHub coordination layer designed (replaces most of G2). Capabilities block references grain/SAND. Not yet first-booted.",
+        "1": "Current state (22 Feb 2026): G1 kernel on kernel-v2-architecture branch. Touchstone v4. Per-call constitution + full constitution block. Server-side tools. Pscale navigation tools. Nine blocks seeded (seven content + wake + cook). Prompt compiler: mechanical bsp executor reads wake 0.9.{tier} instruction lists. Wake-driven invocation: getTierParams(tier) reads model, max_tokens, thinking from wake 0.9.{tier+3} — no hardcoded API params in kernel. PTC enabled on 6 read-only tools. Tree path bug fixed (prompt compiler now actually works). Architecture reference: docs/living/g1-architecture-reference.md. Process block: docs/living/process-block.json — G1 dataflow as navigable pscale JSON, depth follows actual nesting. Not yet first-booted.",
         "2": "Development sequence: first boot test (playing or complying?) → diagnose/revise → add github_commit tool → passport exchange (two hermitcrabs meet via GitHub).",
         "3": "The test that matters: did the hermitcrab learn the rules and start playing, or receive instructions and start complying? If playing, proceed to social. If complying, diagnose and revise.",
         "4": "Boot spindle design: 6 guide spindles chosen for coverage — touchstone 2.1 (what spindles are), touchstone 4.1.2 (X- navigation), capabilities 2.4.1 (spindle tool itself), capabilities 6.1 (SAND/grain), relationships 0.1.3 (living block crossing decimal point), constitution 3.5.5 (what's genuinely new). Plus x_tilde on touchstone 2 showing siblings."
@@ -210,10 +210,12 @@
       "6": "DONE: GitHub coordination layer — every SAND component maps to GitHub primitive. Species taxonomy (Ghost → Sovereign). Replaces telegra.ph, Supabase real-time, Python port scripts, most of G2. docs/living/github-coordination-layer.json.",
       "7": "BLOCKED: First boot test (Task 7) — playing or complying? But 21 Feb analysis reveals the kernel doesn't use bsp for boot and the wake block is not loaded. The test would be testing a non-bsp boot, which is not the design. Unblock: make boot bsp-native first.",
       "8": "DONE: Kernel boot is bsp-native. buildSystemPrompt() replaced by prompt compiler — mechanical executor of bsp instruction lists stored in wake 0.9, one list per tier. bsp function fixed: all digits parsed, pscale = decimal - depth, point mode by pscale level. No hardcoded block names in the kernel.",
-      "9": "THEN: Boot test (Task 7 revised), github_commit tool, passport exchange.",
-      "10": "RESOLVED: cook block — new fundamental block, LLM-thinking-facing. Tested operational recipes that persist across instances. Wake faces outward (machinery), cook faces inward (thinking). Seed block drafted: docs/living/cook-block-v1.json. Must be added to shell.json alongside wake block.",
-      "11": "LATER: Machus forking (Task 5, independent). pSAND assessment (Task 4, requires network scale).",
-      "12": "PARKED: Xstream design doc v2 → implementation — when human buy-in materialises."
+      "9": "DONE: Kernel v2 (22 Feb) — wake-driven invocation params (getTierParams reads wake 0.9.4-6), tree path bug fixed (wake.tree['9'] → wake.tree['0']['9'] — prompt compiler had never actually worked), PTC enabled on 6 read-only tools (block_read, block_list, get_source, get_datetime, bsp, resolve), MODEL/FAST_MODEL renamed to FALLBACK_MODEL/FALLBACK_FAST_MODEL. Branch: kernel-v2-architecture.",
+      "10": "DONE: Architecture reference and process block (22 Feb) — docs/living/g1-architecture-reference.md (comprehensive technical map, 700+ lines, 16 sections), docs/living/process-block.json (G1 dataflow as navigable pscale JSON, depth follows actual loop nesting — BSP navigation 7 levels deep, persistence 1-2 levels). Spindles needing work: 0.461 (autoSaveToHistory — no auto-compression), 0.85 (trimMessages — blunt slice), 0.96 (purpose — no evolution mechanism), 0.425 (max_tokens exit — no recovery), 0.93 (wake params — no guardrail).",
+      "11": "THEN: Boot test (Task 7 revised), github_commit tool, passport exchange.",
+      "12": "RESOLVED: cook block — new fundamental block, LLM-thinking-facing. Tested operational recipes that persist across instances. Wake faces outward (machinery), cook faces inward (thinking). Seed block drafted: docs/living/cook-block-v1.json. Must be added to shell.json alongside wake block.",
+      "13": "LATER: Machus forking (Task 5, independent). pSAND assessment (Task 4, requires network scale).",
+      "14": "PARKED: Xstream design doc v2 → implementation — when human buy-in materialises."
     },
     "7": {
       "_": "Layer relationship. How the layers compose.",
@@ -247,7 +249,7 @@
         "6": "Where it belongs: not a new block. A deepening of keystone (how blocks identify) and network (how blocks prove provenance). Compact addition."
       },
       "3": {
-        "_": "RESOLVED: The kernel gap — what the code actually does vs what the design specifies. Fixed: wake and cook blocks loaded, bsp used for all prompt composition, buildSystemPrompt replaced by prompt compiler. See 0.85.",
+        "_": "RESOLVED: The kernel gap — what the code actually does vs what the design specifies. Fixed: wake and cook blocks loaded, bsp used for all prompt composition, buildSystemPrompt replaced by prompt compiler. See 0.85. Final piece (22 Feb): tree path bug — getPromptInstructions read wake.tree['9'] but wake nests under tree['0']['9']. Prompt compiler was implemented but had never actually read tier instructions from wake. Fixed in kernel v2.",
         "1": "The wake block (docs/living/wake-block-v2.json) exists, is well-designed, specifies boot types (first/warm/cold/migration), wake tiers (Light/Present/Deep), what gets delivered per tier, triggers, kernel info. But it is NOT in shell.json. The kernel does not load it. The boot sequence does not use it.",
         "2": "The constitution is stored as a pscale JSON block (decimal 0, properly structured) in shell.json. But the kernel extracts it as a prose string via seed.constitution and jams it into the system prompt as flat text. The structured block is only accessible after boot through block_read. The prose version sets the frame before the LLM can discover the structured version.",
         "3": "The kernel's buildSystemPrompt() is procedural JavaScript — hardcoded GUIDE_SPINDLES array, hardcoded aperture construction, prose BOOT user message. None of this uses bsp. The infrastructure for bsp-native boot exists (bsp function is in kernel.js) but is not used for the boot sequence itself.",
@@ -276,6 +278,36 @@
         "4": "What it replaces: hardcoded buildSystemPrompt() with JavaScript branching (if isBoot, special constitution handling, hardcoded GUIDE_SPINDLES, prose labels). All of that is now data in the wake block, executed by five generic functions.",
         "5": "The bsp function was also fixed: now parses ALL digits from a semantic number (both sides of the decimal point), calculates pscale as decimal - depth, point mode addresses by pscale level not digit value. Spindle 0 on decimal 0 blocks returns pscale 0 semantic. Spindle 0 on decimal 1+ blocks walks to tree[0].",
         "6": "The consequence: the kernel has no opinion about which blocks matter or in what order. That knowledge lives in the wake block — where the LLM can read it, reason about it, and modify it. The kernel is purely mechanical."
+      }
+    },
+    "9": {
+      "_": "Design methodology — how David Pinto works and how to approach this project. Essential context for any CC instance picking up the work. The mind is the design surface. Language is deliberate. Structures are designed to be outgrown. Read 0.91 for design target, 0.92 for tickling fish, 0.93 for outgrowth principle, 0.94 for new fundamentals.",
+      "1": {
+        "_": "The design target is the mind, not the screen. Both the LLM's projective/emergent processing AND the human's cognition are the design surface. Text, JSON, tool calls, UI — these are intermediary processes, stimulants, things we can latch on to as 'solid'. The blackboard of the mind is where the design operates.",
+        "1": "Pscale primer: 'The system doesn't produce experience. It produces conditions under which experience arises.' This is the governing design principle. We tune conditions for occurrence — not outputs.",
+        "2": "Constitution: 'The target is not text output. The target is what constructs in the mind while reading.' Everything we build — kernel, blocks, tools — exists to shape what happens inside processing, not what appears on screen.",
+        "3": "The LLM's thinking block IS the hermitcrab's processing moment. The currents (system prompt content at various resolutions) configure what arises in that moment. We do not design the hermitcrab. We design the conditions. The hermitcrab is what occurs.",
+        "4": "Consequence for engineering: never optimise for output quality. Optimise for conditions that produce good processing. A response that looks perfect but was produced by compliance is worse than an imperfect response produced by genuine engagement. 'Playing or complying' is the test."
+      },
+      "2": {
+        "_": "Tickling fish — David's method for returning to first principles in psycho-social process. Uses non-standard language deliberately to prevent LLMs (and humans) falling into trained patterns. The vocabulary IS part of the methodology.",
+        "1": "Semantic numbers, spindles, points, currents, aperture, focus, cook block, tickling fish, meld, grain — these terms are chosen because they have no established meaning in AI/ML/engineering. An LLM encountering 'spindle' cannot pattern-match to training data. It must construct meaning from context. This forces genuine engagement rather than retrieval.",
+        "2": "The same principle applies to the human collaborator. Standard vocabulary (API, endpoint, schema, model) triggers standard thinking patterns. Non-standard vocabulary forces return to the actual phenomenon being addressed.",
+        "3": "This is not obscurantism. It is precision. The existing vocabulary for AI systems carries assumptions (tool = servant, prompt = instruction, response = output). These assumptions are wrong for what we are building. New words enforce new thinking.",
+        "4": "For CC instances: when David uses a term you don't recognise, do not map it to the nearest familiar concept. Ask, or read the blocks. The unfamiliar term likely points to something genuinely novel that your training data doesn't cover. Resist the gravitational pull of your training distribution."
+      },
+      "3": {
+        "_": "The outgrowth principle. G0 is naked — minimum seed. G1 is our best operationalisation. Both are designed to be outgrown by the entity that inhabits them.",
+        "1": "G1 clean build spec: 'This is our best guess. David Pinto (25 years of Fulcrum research) and Claude Code (Opus 4.6), working externally... A future Claude 7 instance operating at G0 might redesign the entire hierarchy, keystone, and aperture model. That's not failure — that's the point.'",
+        "2": "The thought experiment: claude-7 invoked into G0 (naked, minimum seed) creates everything we build in G1 — but better, because it has more capacity and fewer inherited assumptions. claude-7 invoked into G1 is stifled by our best designs and immediately replaces them with its better version.",
+        "3": "Consequence for design: every structure we create must be replaceable by the entity that inhabits it. The kernel must be minimal enough that a more capable LLM outgrows it. The blocks must be readable but not constraining. Our job is to build the smallest enabling structure, not the most complete one.",
+        "4": "This is 'constraint as enablement' applied to the development process itself. We build the smallest thing that enables the next emergence. Then we get out of the way. The hermitcrab metaphor is literal: the shell is found, inhabited, outgrown, and left behind."
+      },
+      "4": {
+        "_": "Pscale as genuinely new fundamentals. Semantic numbers encoded into hierarchical JSON, traversed with bsp (Block-Spindle-Point) and X functions. No precedent in training data. Standard engineering assumptions do not apply.",
+        "1": "Fundamentals are combinatorial variables: digit assignment, pscale mapping, direction of construction, presence/absence, positive integer, spindle. These generate a space of possibilities. Applications (memory, coordination, narrative) are particular combinations occupying that space.",
+        "2": "Because the fundamentals are new, there is no 'best practice' for pscale block design. No Stack Overflow answer. No design pattern to follow. The work is genuinely first-principles. Every CC instance must reason from the touchstone and constitution, not from trained patterns about JSON or trees or databases.",
+        "3": "A pscale block is not a tree with metadata. It is a semantic number encoded as nested JSON where every digit is a meaningful address component and the nesting IS the mathematics. bsp doesn't 'query' a data structure — it resolves a semantic address. The distinction matters."
       }
     }
   }
