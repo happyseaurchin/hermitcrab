@@ -18,7 +18,10 @@
       },
       "2": {
         "_": "The spindle. What blocks are for.",
-        "1": "A spindle is a specific path through a block — a semantic number like 21.34 that extracts a chain of content from high pscale to low. Four digits, four semantic vectors, from wide context to specific detail. This is the primary output of any block: wide-to-specific context in a single traversal.",
+        "1": {
+          "_": "A spindle is a specific path through a block — a semantic number like 21.34 that extracts content from high pscale to low. Four digits, four semantic strings wound at different radii — wide context to specific detail. This is the primary output of any block: wide-to-specific context in a single traversal.",
+          "1": "A spindle is not a point. A point is one semantic at one pscale level — a single address resolution. A spindle is all the semantics from root to the addressed depth, like thread wound at different radii around a shaft. Each wrap is a complete string at that resolution. Spindle 0.2312 yields five strings, not one. Block, spindle, point: three modes of reading the same structure — everything, a vertical path, or a single location."
+        },
         "2": "The block is storage. The spindle is what you hand to a mind. Everything about block design — structure, growth, compression, connection — serves the generation of useful spindles.",
         "3": "A spindle's range (how many pscale levels) multiplied by its chunk size (how much text at each level) determines its cost in tokens. Higher range needs sparser content. A six-level spindle of paragraphs is heavy. A three-level spindle of phrases is light.",
         "4": "Any block can be read at different resolutions. Phrase-level for orientation — one line per node, the whole block visible at a glance. Paragraph-level for comprehension. Full text for immersion. This touchstone at phrase-level is a list of section titles. At full resolution it is what you are reading now. The resolution is a choice, not a property of the block.",
