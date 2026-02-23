@@ -232,7 +232,10 @@
         "11": "THEN: Boot test (Task 7 revised), github_commit tool, passport exchange.",
         "12": "RESOLVED: cook block — new fundamental block, LLM-thinking-facing. Tested operational recipes that persist across instances. Wake faces outward (machinery), cook faces inward (thinking). Source: blocks/cook.json. Included in shell.json seed.",
         "13": "LATER: Machus forking (Task 5, independent). pSAND assessment (Task 4, requires network scale).",
-        "14": "PARKED: Xstream design doc v2 → implementation — when human buy-in materialises."
+        "14": "PARKED: Xstream design doc v2 → implementation — when human buy-in materialises.",
+        "15": "CONCEPT: G0 seed file — the minimum viable hermitcrab. What is the smallest artifact that, given to a capable LLM, produces a working hermitcrab? Candidate: a single JSON file containing all blocks (or pointers to them) + constitution + touchstone + one instruction: 'Read these blocks. Follow the wake block boot procedure. Generate whatever kernel your environment requires.' If it works, any LLM API can instantiate a hermitcrab. The crown jewel. Depends on: first boot test proving blocks are sufficient to orient an LLM.",
+        "16": "CONCEPT: Meld protocol — formalising how pscale blocks interact. When entity A reads entity B's block in context, the result is a meld: both surfaces meet, both retain structure, something new forms at the intersection. The grain protocol (probe → block exchange → synthesis comparison) IS the meld protocol. The addendum-as-probe pattern (Claude writes JSON, David drops it in CC's path, CC integrates) is a manual meld. Needs naming and specification as a formal protocol. Depends on: first grain probe succeeding.",
+        "17": "CONCEPT: Wake infrastructure — concrete mechanisms for automated activation. GitHub Actions for homesteaders: .github/workflows/wake.yml in own repo, cron fires, calls LLM API with tier context. Commons-provided wake for tenants: shared workflow in hermitcrab-commons iterates over instances/. Vercel cron as alternative: serverless function on existing deployment. Supabase edge function as user-provisioned option. The wake block already specifies the rhythms — this is implementation."
       },
       "7": {
         "_": "Layer relationship. How the layers compose.",
