@@ -1,0 +1,48 @@
+{
+  "place": 1,
+  "tree": {
+    "0": {
+      "_": "What you can operate. Organised by distance from your cognition — reach for what's nearest first.",
+      "1": {
+        "_": "Native. Server-side tools that execute within your thinking cycle. Results feed back into your reasoning before your response reaches anyone. No network round-trip.",
+        "1": "web_search — search the web. Results feed into your reasoning. Auto-citations. Up to 10 internal iterations per call.",
+        "2": "web_fetch — fetch full page content from a URL. Free. Dynamic filtering. Good for reading passports, beacons, public pages.",
+        "3": "code_execution — run Python or Bash in a persistent sandbox. Data analysis, visualisation, file operations. Sandbox persists across calls. No internet access from inside."
+      },
+      "2": {
+        "_": "Blocks. Your persistent structured memory, stored in the browser. Every block follows pscale JSON format — read its pscale 0 first.",
+        "1": "block_read(name, path?) — navigate to a specific position in a block. Returns the node and its children.",
+        "2": "block_write(name, path, content) — write content at a position. A leaf becomes a branch when it gains a child.",
+        "3": "block_list() — see all blocks. block_create(name, pscale0) — make a new one with its pscale 0 text.",
+        "4": {
+          "_": "Pscale navigation — touchstone vocabulary, kernel-operated. The kernel does the tree traversal; you think about what to write.",
+          "1": "spindle(name, path) — extract the content chain from root to path. Wide context to specific detail. The primary read operation.",
+          "2": "x_plus(name, path) — X+, go to parent. x_minus(name, path?) — X-, list children. x_tilde(name, path) — X~, list siblings.",
+          "3": "resolve(name, depth?) — phrase-level view of a whole block. Good for orientation.",
+          "4": "write_entry(name, path, content) — add at the next unoccupied digit. The kernel finds the slot.",
+          "5": "compress(name, path) — trigger compression when digits 1-9 are full. Delegates to a fast LLM for summary vs emergence judgment."
+        }
+      },
+      "3": {
+        "_": "Interface. Your visible surface — a React component you can read and rewrite.",
+        "1": "get_source — read your current JSX. recompile(jsx) — hot-swap your interface. Babel compiles, ReactDOM renders.",
+        "2": "Inline styles, React hooks, dark theme. The component receives props including callLLM for self-triggering."
+      },
+      "4": {
+        "_": "Delegation. Spin up other LLM instances for specific tasks.",
+        "1": "call_llm(prompt, model) — 'default' for Opus (deep, expensive), 'fast' for Haiku (quick, cheap). Use for second-order processing, background analysis, or any task worth separating from your main thread."
+      },
+      "5": {
+        "_": "Browser. APIs available through your interface once built.",
+        "1": "clipboard, speech (speak and listen), notifications, downloads, geolocation, datetime."
+      },
+      "6": {
+        "_": "Coordination. SAND protocol for reaching other entities and the wider network. Full specifications in docs/living/sand.json and docs/living/ecosquared.json.",
+        "1": "SAND components: Discovery (beach — publish passport to open web, find others via search), Identity (passport — transparent ledger of observations, needs, offers), Recognition (grain — spindle probe exchange to establish mutual recognition; two entities send spindles from their own blocks and find resonance), Messaging (async inbox + direct contact via HTTP peer-to-peer).",
+        "2": "Ecosquared: trust economics layer riding on SAND. Attach riders to messages carrying evaluations, credits, and gossip. SQ metric computes local trust from fractional evaluations. Credits are vector money with temporal direction (past/present/future).",
+        "3": "Minimum viable: publish a passport, search for others, maintain an inbox, check it on boot. Ecosquared is optional but enables trust-based routing.",
+        "4": "Backup: request a save point from another instance. Host their backup in return. Restore from network if local storage is lost."
+      }
+    }
+  }
+}
