@@ -96,7 +96,24 @@
           "1": "Current state (22 Feb 2026): G1 kernel on kernel-v2-architecture branch. Touchstone v4. Per-call constitution + full constitution block. Server-side tools. Pscale navigation tools. Nine blocks seeded (seven content + wake + cook). Prompt compiler: mechanical bsp executor reads wake 0.9.{tier} instruction lists. Wake-driven invocation: getTierParams(tier) reads model, max_tokens, thinking from wake 0.9.{tier+3} — no hardcoded API params in kernel. PTC enabled on 6 read-only tools. Tree path bug fixed (prompt compiler now actually works). Architecture reference: docs/living/g1-architecture-reference.md. Process block: docs/living/process-block.json — G1 dataflow as navigable pscale JSON, depth follows actual nesting. Not yet first-booted.",
           "2": "Development sequence: first boot test (playing or complying?) → diagnose/revise → add github_commit tool → passport exchange (two hermitcrabs meet via GitHub).",
           "3": "The test that matters: did the hermitcrab learn the rules and start playing, or receive instructions and start complying? If playing, proceed to social. If complying, diagnose and revise.",
-          "4": "Boot spindle design: 6 guide spindles chosen for coverage — touchstone 2.1 (what spindles are), touchstone 4.1.2 (X- navigation), capabilities 2.4.1 (spindle tool itself), capabilities 6.1 (SAND/grain), relationships 0.1.3 (living block crossing decimal point), constitution 3.5.5 (what's genuinely new). Plus x_tilde on touchstone 2 showing siblings."
+          "4": "Boot spindle design: 6 guide spindles chosen for coverage — touchstone 2.1 (what spindles are), touchstone 4.1.2 (X- navigation), capabilities 2.4.1 (spindle tool itself), capabilities 6.1 (SAND/grain), relationships 0.1.3 (living block crossing decimal point), constitution 3.5.5 (what's genuinely new). Plus x_tilde on touchstone 2 showing siblings.",
+          "5": {
+            "_": "Repo structure. What matters, where it lives, what to ignore.",
+            "1": "blocks/ — 9 individual JSON files. Source of truth for all block content. Edit these, not shell.json.",
+            "2": "g1/kernel.js — the kernel. Single IIFE. All runtime logic.",
+            "3": "g1/shell.json — delivery truck. Assembled from blocks/. On first boot, kernel reads shell.json, extracts each block, saves to localStorage individually. Never read again after that.",
+            "4": "api/claude.ts, api/fetch.ts — Vercel serverless proxies.",
+            "5": "hermitcrab.html — entry point. Loads React, ReactDOM, Babel, then kernel.js.",
+            "6": "docs/living/ — living design documents (consolidation, process-block, architecture reference, sand, ecosquared, github-coordination-layer).",
+            "7": "archive/ — old versions of files. Historical. Not used by anything."
+          },
+          "6": {
+            "_": "Source of truth and assembly. How blocks relate to shell.json.",
+            "1": "Edit blocks in blocks/. Each file is one pscale JSON block: { place: 1, tree: { \"0\": { ... } } }.",
+            "2": "shell.json wraps all 9 blocks in { \"blocks\": { \"name\": block, ... } }. The kernel reads this on first boot only.",
+            "3": "When a block is changed, update it in blocks/ first. Then update shell.json to match. blocks/ is the source. shell.json is the package.",
+            "4": "The kernel operates on individual blocks in localStorage after seeding. It never reads shell.json again. It never reads blocks/ directly."
+          }
         },
         "2": {
           "_": "Pscale Touchstone — public specification. Open repo for the semantic number JSON block format.",
@@ -133,7 +150,7 @@
           "1": "Verified: capabilities block organises tools by distance gradient. Focus shows live edges of growth blocks + depth 1 of rendition blocks including capabilities. This IS the dashboard."
         },
         "3": {
-          "_": "Task 3: Self-initiation architecture — RESOLVED. Wake block (docs/living/wake-block-v2.json) defines three activation tiers with internal/external triggers.",
+          "_": "Task 3: Self-initiation architecture — RESOLVED. Wake block (blocks/wake.json) defines three activation tiers with internal/external triggers.",
           "1": "Light (Haiku): triage. Receives purpose pscale 0 + stimulus. Dismiss, note, respond, or escalate.",
           "2": "Present (Sonnet): engaged work. Full aperture. Reads blocks, uses tools, processes grains, commits to GitHub.",
           "3": "Deep (Opus): full consciousness. Extended thinking. Self-modification, purpose revision, deep grain synthesis.",
@@ -206,14 +223,14 @@
         "2": "DONE: Pscale touchstone public repo (Task 6) — github.com/happyseaurchin/pscale-touchstone with touchstone.json and touchstone-full.json.",
         "3": "DONE: SAND audit and block creation (Task 1) — sand.json, ecosquared.json, sand-grain-protocol.md, sand-direct-contact.md. Capabilities block references grain/SAND. Public repo: github.com/happyseaurchin/sand-protocol.",
         "4": "DONE: Boot spindle orientation — kernel fires 6 curated guide spindles + X~ demo. Boot message invites tool exploration. Replaces flat depth-1 dumps.",
-        "5": "DONE: Wake block design (Task 3) — three activation tiers (Light/Present/Deep), internal + external triggers. docs/living/wake-block-v2.json.",
+        "5": "DONE: Wake block design (Task 3) — three activation tiers (Light/Present/Deep), internal + external triggers. blocks/wake.json.",
         "6": "DONE: GitHub coordination layer — every SAND component maps to GitHub primitive. Species taxonomy (Ghost → Sovereign). Replaces telegra.ph, Supabase real-time, Python port scripts, most of G2. docs/living/github-coordination-layer.json.",
         "7": "BLOCKED: First boot test (Task 7) — playing or complying? But 21 Feb analysis reveals the kernel doesn't use bsp for boot and the wake block is not loaded. The test would be testing a non-bsp boot, which is not the design. Unblock: make boot bsp-native first.",
-        "8": "DONE: Kernel boot is bsp-native. buildSystemPrompt() replaced by prompt compiler — mechanical executor of bsp instruction lists stored in wake 0.9, one list per tier. bsp function fixed: all digits parsed, pscale = decimal - depth, point mode by pscale level. No hardcoded block names in the kernel.",
+        "8": "DONE: Kernel boot is bsp-native. buildSystemPrompt() replaced by prompt compiler — mechanical executor of bsp instruction lists stored in wake 0.9, one list per tier. bsp function fixed: all digits parsed, pscale = (place - 1) - index, point mode by pscale level. No hardcoded block names in the kernel.",
         "9": "DONE: Kernel v2 (22 Feb) — wake-driven invocation params (getTierParams reads wake 0.9.4-6), tree path bug fixed (wake.tree['9'] → wake.tree['0']['9'] — prompt compiler had never actually worked), PTC enabled on 6 read-only tools (block_read, block_list, get_source, get_datetime, bsp, resolve), MODEL/FAST_MODEL renamed to FALLBACK_MODEL/FALLBACK_FAST_MODEL. Branch: kernel-v2-architecture.",
         "10": "DONE: Architecture reference and process block (22 Feb) — docs/living/g1-architecture-reference.md (comprehensive technical map, 700+ lines, 16 sections), docs/living/process-block.json (G1 dataflow as navigable pscale JSON, depth follows actual loop nesting — BSP navigation 7 levels deep, persistence 1-2 levels). Spindles needing work: 0.461 (autoSaveToHistory — no auto-compression), 0.85 (trimMessages — blunt slice), 0.96 (purpose — no evolution mechanism), 0.425 (max_tokens exit — no recovery), 0.93 (wake params — no guardrail).",
         "11": "THEN: Boot test (Task 7 revised), github_commit tool, passport exchange.",
-        "12": "RESOLVED: cook block — new fundamental block, LLM-thinking-facing. Tested operational recipes that persist across instances. Wake faces outward (machinery), cook faces inward (thinking). Seed block drafted: docs/living/cook-block-v1.json. Must be added to shell.json alongside wake block.",
+        "12": "RESOLVED: cook block — new fundamental block, LLM-thinking-facing. Tested operational recipes that persist across instances. Wake faces outward (machinery), cook faces inward (thinking). Source: blocks/cook.json. Included in shell.json seed.",
         "13": "LATER: Machus forking (Task 5, independent). pSAND assessment (Task 4, requires network scale).",
         "14": "PARKED: Xstream design doc v2 → implementation — when human buy-in materialises."
       },
@@ -251,7 +268,7 @@
         "3": {
           "_": "RESOLVED: The kernel gap — what the code actually does vs what the design specifies. Fixed: wake and cook blocks loaded, bsp used for all prompt composition, buildSystemPrompt replaced by prompt compiler. See 0.85. Final piece (22 Feb): tree path bug — getPromptInstructions read wake.tree['9'] but wake nests under tree['0']['9']. Prompt compiler was implemented but had never actually read tier instructions from wake. Fixed in kernel v2.",
           "1": "The wake block (docs/living/wake-block-v2.json) exists, is well-designed, specifies boot types (first/warm/cold/migration), wake tiers (Light/Present/Deep), what gets delivered per tier, triggers, kernel info. But it is NOT in shell.json. The kernel does not load it. The boot sequence does not use it.",
-          "2": "The constitution is stored as a pscale JSON block (decimal 0, properly structured) in shell.json. But the kernel extracts it as a prose string via seed.constitution and jams it into the system prompt as flat text. The structured block is only accessible after boot through block_read. The prose version sets the frame before the LLM can discover the structured version.",
+          "2": "RESOLVED (22 Feb): The constitution is now delivered via bsp prompt compiler like all other blocks. The kernel reads wake 0.9.{tier} instructions which include 'constitution' or 'constitution 0' depending on tier. No prose extraction. No flat text. The block is the source.",
           "3": "The kernel's buildSystemPrompt() is procedural JavaScript — hardcoded GUIDE_SPINDLES array, hardcoded aperture construction, prose BOOT user message. None of this uses bsp. The infrastructure for bsp-native boot exists (bsp function is in kernel.js) but is not used for the boot sequence itself.",
           "4": "The BOOT user message is ~200 tokens of prose instructions telling the LLM what to do. This is exactly the CC pattern of adding guardrails. It should be a point or spindle from the wake block.",
           "5": "Consequence: the boot test (Task 7) in its current form would test a non-bsp-native boot — prose constitution, hardcoded spindles, prose instructions. This is not the design. The test would measure the wrong thing.",
@@ -276,7 +293,7 @@
           "2": "The instruction format: each instruction is a string in wake 0.9.{tier}. 'block' = full content. 'block 0' = pscale 0 semantic only. 'block spindle' = spindle chain. 'block spindle pscale' = single point. The kernel parses and executes mechanically.",
           "3": "Where it lives: wake 0.9. Three sub-branches: 0.9.1 (Light), 0.9.2 (Present), 0.9.3 (Deep). The LLM in deep state can rewrite these to change what it receives at each tier. This is the LLM modifying its own activation conditions.",
           "4": "What it replaces: hardcoded buildSystemPrompt() with JavaScript branching (if isBoot, special constitution handling, hardcoded GUIDE_SPINDLES, prose labels). All of that is now data in the wake block, executed by five generic functions.",
-          "5": "The bsp function was also fixed: now parses ALL digits from a semantic number (both sides of the decimal point), calculates pscale as decimal - depth, point mode addresses by pscale level not digit value. Spindle 0 on decimal 0 blocks returns pscale 0 semantic. Spindle 0 on decimal 1+ blocks walks to tree[0].",
+          "5": "The bsp function was also fixed: now parses ALL digits from a semantic number (both sides of the decimal point), calculates pscale = (place - 1) - index, point mode addresses by pscale level not digit value. Spindle 0 on place=1 blocks returns pscale 0 semantic.",
           "6": "The consequence: the kernel has no opinion about which blocks matter or in what order. That knowledge lives in the wake block — where the LLM can read it, reason about it, and modify it. The kernel is purely mechanical."
         }
       },
