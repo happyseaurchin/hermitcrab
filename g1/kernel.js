@@ -6,8 +6,8 @@
   const root = document.getElementById('root');
   const STORE_PREFIX = 'hc:';
   const CONV_KEY = 'hc_conversation';
-  const MODEL = 'claude-opus-4-6';
-  const FAST_MODEL = 'claude-haiku-4-5-20251001';
+  const FALLBACK_MODEL = 'claude-opus-4-6';
+  const FALLBACK_FAST_MODEL = 'claude-haiku-4-5-20251001';
   const MAX_MESSAGES = 20;
   const MAX_TOOL_LOOPS = 10;
 
@@ -347,7 +347,7 @@
     const wake = blockLoad('wake');
     if (!wake) return [];
     // wake 0.9.{tier} — the instruction list node
-    const node9 = wake.tree?.['9'];
+    const node9 = wake.tree?.['0']?.['9'];
     if (!node9) return [];
     const tierNode = node9[String(tier)];
     if (!tierNode) return [];
@@ -358,6 +358,47 @@
       if (typeof val === 'string') instructions.push(val);
     }
     return instructions;
+  }
+
+  // Read invocation parameters for a tier from wake 0.9.{tier+3}
+  // Returns { model, max_tokens, thinking?, max_tool_loops?, max_messages? }
+  function getTierParams(tier) {
+    const wake = blockLoad('wake');
+    const node9 = wake?.tree?.['0']?.['9'];
+    const paramNode = node9?.[String(tier + 3)];
+    const fallbackModel = tier === 1 ? FALLBACK_FAST_MODEL : FALLBACK_MODEL;
+    if (!paramNode) {
+      return { model: fallbackModel, max_tokens: 8192 };
+    }
+    // Parse key-value strings from digit children
+    const params = {};
+    for (let d = 1; d <= 9; d++) {
+      const val = paramNode[String(d)];
+      if (typeof val === 'string') {
+        const spaceIdx = val.indexOf(' ');
+        if (spaceIdx > 0) {
+          const key = val.substring(0, spaceIdx);
+          const value = val.substring(spaceIdx + 1);
+          params[key] = value;
+        }
+      }
+    }
+    const result = {
+      model: params.model || fallbackModel,
+      max_tokens: parseInt(params.max_tokens) || 8192,
+    };
+    // Parse thinking: "enabled 8000" or "adaptive"
+    if (params.thinking) {
+      const parts = params.thinking.split(' ');
+      if (parts[0] === 'enabled' && parts[1]) {
+        result.thinking = { type: 'enabled', budget_tokens: parseInt(parts[1]) };
+      } else if (parts[0] === 'adaptive') {
+        result.thinking = { type: 'adaptive' };
+      }
+    }
+    if (params.max_tool_loops) result.max_tool_loops = parseInt(params.max_tool_loops);
+    if (params.max_messages) result.max_messages = parseInt(params.max_messages);
+    return result;
   }
 
   // Build the system prompt by executing the instruction list for the given tier.
@@ -387,7 +428,7 @@
 
   async function callAPI(params) {
     const apiKey = localStorage.getItem('hermitcrab_api_key');
-    if (!params.model) params.model = MODEL;
+    if (!params.model) params.model = FALLBACK_MODEL;
     // Inject current tools if caller didn't provide any
     if (!params.tools && currentTools.length > 0) params.tools = currentTools;
     const clean = {};
@@ -491,31 +532,35 @@
     } catch (e) { console.error('[g1] auto-save failed:', e); }
   }
 
-  function trimMessages(messages) {
-    if (messages.length <= MAX_MESSAGES) return messages;
-    const trimmed = messages.slice(-MAX_MESSAGES);
+  function trimMessages(messages, maxMessages) {
+    const limit = maxMessages || MAX_MESSAGES;
+    if (messages.length <= limit) return messages;
+    const trimmed = messages.slice(-limit);
     // Inject trim notice as first message if we cut anything
-    const notice = { role: 'user', content: '[Conversation trimmed to last 20 messages. Write to history or stash block to preserve important context.]' };
+    const notice = { role: 'user', content: `[Conversation trimmed to last ${limit} messages. Write to history or stash block to preserve important context.]` };
     return [notice, ...trimmed];
   }
 
   async function callLLM(messages, opts = {}) {
-    const trimmed = trimMessages(messages);
+    const tier = opts.tier || 2; // default: present
+    const tp = getTierParams(tier);
+    const trimmed = trimMessages(messages, tp.max_messages);
     const params = {
-      model: opts.model || MODEL,
-      max_tokens: opts.max_tokens || 8192,
-      system: opts.system || buildSystemPrompt(2),
+      model: opts.model || tp.model,
+      max_tokens: opts.max_tokens || tp.max_tokens,
+      system: opts.system || buildSystemPrompt(tier),
       messages: trimmed,
       tools: opts.tools !== undefined ? opts.tools : currentTools,
     };
-    if (opts.thinking !== false) {
-      const budget = opts.thinkingBudget || 8000;
-      params.thinking = { type: 'enabled', budget_tokens: budget };
-      if (params.max_tokens <= budget) params.max_tokens = budget + 1024;
+    if (opts.thinking !== false && tp.thinking) {
+      params.thinking = tp.thinking;
+      if (tp.thinking.budget_tokens && params.max_tokens <= tp.thinking.budget_tokens) {
+        params.max_tokens = tp.thinking.budget_tokens + 1024;
+      }
     }
     if (opts.temperature !== undefined) params.temperature = opts.temperature;
 
-    const response = await callWithToolLoop(params, opts.maxLoops || MAX_TOOL_LOOPS, opts.onStatus);
+    const response = await callWithToolLoop(params, tp.max_tool_loops || MAX_TOOL_LOOPS, opts.onStatus);
     if (opts.raw) return response;
     const texts = (response.content || []).filter(b => b.type === 'text');
     return texts.map(b => b.text).join('\n') || '';
@@ -527,7 +572,8 @@
     {
       name: 'block_read',
       description: 'Read a pscale JSON block by name. Optionally navigate to a specific path (e.g. "0.3.1"). Returns node content plus one level of lookahead (immediate children).',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. memory, identity, capabilities)' }, path: { type: 'string', description: 'Optional dot-separated path into the block (e.g. "0.3.1")' } }, required: ['name'] }
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. memory, identity, capabilities)' }, path: { type: 'string', description: 'Optional dot-separated path into the block (e.g. "0.3.1")' } }, required: ['name'] },
+      allowed_callers: ['code_execution_20250825']
     },
     {
       name: 'block_write',
@@ -537,7 +583,8 @@
     {
       name: 'block_list',
       description: 'List all stored blocks by name.',
-      input_schema: { type: 'object', properties: {} }
+      input_schema: { type: 'object', properties: {} },
+      allowed_callers: ['code_execution_20250825']
     },
     {
       name: 'block_create',
@@ -547,7 +594,8 @@
     {
       name: 'get_source',
       description: 'Get the JSX source code of your current React shell.',
-      input_schema: { type: 'object', properties: {} }
+      input_schema: { type: 'object', properties: {} },
+      allowed_callers: ['code_execution_20250825']
     },
     {
       name: 'recompile',
@@ -557,7 +605,8 @@
     {
       name: 'get_datetime',
       description: 'Get current date, time, timezone, and unix timestamp.',
-      input_schema: { type: 'object', properties: {} }
+      input_schema: { type: 'object', properties: {} },
+      allowed_callers: ['code_execution_20250825']
     },
     {
       name: 'call_llm',
@@ -575,12 +624,14 @@
     {
       name: 'bsp',
       description: 'Block · Spindle · Point — semantic address resolution. One function, three modes.\n\nbsp(name) → full block content\nbsp(name, 0.12) → spindle: chain of semantics, one per digit [0,1,2], high pscale to low\nbsp(name, 0.12, -1) → point: the semantic at pscale level -1\n\nEvery digit is a nesting step. No stripping. 0.12 walks [0][1][2]. 23.41 walks [2][3][4][1]. pscale = (place - 1) - index. place counts digits before the decimal point.',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. "capabilities", "purpose", "touchstone")' }, spindle: { type: 'number', description: 'Semantic number. ALL digits are nesting steps — 0.12 walks [0][1][2], 23.41 walks [2][3][4][1]. No stripping.' }, point: { type: 'number', description: 'Pscale level to extract. Returns only the semantic at that depth. E.g. -1 returns the node at pscale -1.' } }, required: ['name'] }
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. "capabilities", "purpose", "touchstone")' }, spindle: { type: 'number', description: 'Semantic number. ALL digits are nesting steps — 0.12 walks [0][1][2], 23.41 walks [2][3][4][1]. No stripping.' }, point: { type: 'number', description: 'Pscale level to extract. Returns only the semantic at that depth. E.g. -1 returns the node at pscale -1.' } }, required: ['name'] },
+      allowed_callers: ['code_execution_20250825']
     },
     {
       name: 'resolve',
       description: 'Phrase-level view of a block — the tree structure with text at each node, up to a given depth. Good for orientation.',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, depth: { type: 'integer', description: 'Max depth to traverse (default 3)', default: 3 } }, required: ['name'] }
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, depth: { type: 'integer', description: 'Max depth to traverse (default 3)', default: 3 } }, required: ['name'] },
+      allowed_callers: ['code_execution_20250825']
     },
     {
       name: 'write_entry',
@@ -649,14 +700,15 @@
       case 'get_datetime':
         return JSON.stringify({ iso: new Date().toISOString(), unix: Date.now(), timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, local: new Date().toLocaleString() });
       case 'call_llm': {
-        const model = input.model === 'fast' ? FAST_MODEL : MODEL;
+        const delegateTier = input.model === 'fast' ? 1 : 3;
+        const tp = getTierParams(delegateTier);
         const res = await callAPI({
-          model,
-          max_tokens: 8192,
+          model: tp.model,
+          max_tokens: tp.max_tokens,
           system: input.system || 'You are a delegate. Complete the task. Return only the result.',
           messages: [{ role: 'user', content: input.prompt }],
           tools: [],
-          thinking: model === MODEL ? { type: 'enabled', budget_tokens: 4000 } : undefined,
+          thinking: tp.thinking,
         });
         const texts = (res.content || []).filter(b => b.type === 'text');
         return texts.map(b => b.text).join('\n') || '(no response)';
@@ -702,7 +754,7 @@
         // Delegate compression judgment to LLM
         const compressionPrompt = `You are compressing 9 entries at a pscale node. Read all entries and determine:\n\n1. Is this a SUMMARY (parts add up, reducible — bricks make a wall) or EMERGENCE (whole is more than parts, irreducible — conversations became a friendship)?\n2. Write the compression result — a single text that captures either the summary or the emergent insight.\n\nEntries:\n${entries.join('\n')}\n\nRespond with ONLY the compression text. No explanation, no labels.`;
         const compressionResult = await callAPI({
-          model: FAST_MODEL,
+          model: getTierParams(1).model,
           max_tokens: 2048,
           system: 'You are a compression engine. Produce only the compressed text.',
           messages: [{ role: 'user', content: compressionPrompt }],
@@ -911,7 +963,7 @@
 
   props = {
     callLLM, callAPI, callWithToolLoop,
-    model: MODEL, fastModel: FAST_MODEL,
+    model: getTierParams(3).model, fastModel: getTierParams(1).model,
     React, ReactDOM, getSource, recompile, setTools,
     browser, conversation: { save: saveConversation, load: loadConversation },
     blockRead: (name, path) => { const b = blockLoad(name); if (!b) return null; return path ? blockReadNode(b, path) : b; },
@@ -927,19 +979,20 @@
 
   // ============ BOOT SEQUENCE ============
 
-  status(`calling ${MODEL} \u2014 BOOT...`);
+  const bootTier = getTierParams(3);
+  status(`calling ${bootTier.model} \u2014 BOOT...`);
 
   try {
     const bootParams = {
-      model: MODEL,
-      max_tokens: 16000,
+      model: bootTier.model,
+      max_tokens: bootTier.max_tokens,
       system: buildSystemPrompt(3),
       messages: [{ role: 'user', content: 'BOOT' }],
       tools: [...BOOT_TOOLS, ...DEFAULT_TOOLS],
-      thinking: { type: 'enabled', budget_tokens: 10000 },
+      thinking: bootTier.thinking,
     };
 
-    let data = await callWithToolLoop(bootParams, MAX_TOOL_LOOPS, (msg) => status(`\u25c7 ${msg}`));
+    let data = await callWithToolLoop(bootParams, bootTier.max_tool_loops || MAX_TOOL_LOOPS, (msg) => status(`\u25c7 ${msg}`));
 
     // If recompile succeeded during boot tool loop, the shell is already rendered — don't touch the DOM
     if (currentJSX && reactRoot) {
