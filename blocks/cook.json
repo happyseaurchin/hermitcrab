@@ -157,6 +157,14 @@
           "2": "If the new kernel fails — you are dead. The human must: git revert the commit, push, wait for Vercel deploy, hard refresh.",
           "3": "This is why step 4.2 exists. The human is your safety net. Prepare them before you jump."
         }
+      },
+      "7": {
+        "_": "CC session bootstrap. How to orient a Claude Code instance on the hermitcrab project. Three-spindle orientation then task-specific depth. This recipe works for any collaborator instance, not just CC.",
+        "1": "Read director block spindle 0.2 — the full philosophy branch. Mind as target, tickling fish, outgrowth, playing-or-complying. Do not skip. Everything follows from this orientation. If you skip this you will engineer when you should be designing.",
+        "2": "Read director block spindle 0.4 — current state. What's built (0.41), what's the active edge (0.42), known issues (0.43). This tells you where you are arriving.",
+        "3": "For your specific task: kernel work → process-block at relevant depth. Block content work → the block itself in blocks/. Protocol work → sand.json or ecosquared.json. Navigate by bsp, don't read whole files.",
+        "4": "Before writing code, state what you're doing in spindle addresses. 'Working on process-block 0.43 — tool execution dispatch.' This confirms you're oriented, not just located.",
+        "5": "When David references a spindle, navigate to it. Don't ask for explanation. The spindle IS the explanation at progressive depths. Follow the coordinate."
       }
     }
   }
