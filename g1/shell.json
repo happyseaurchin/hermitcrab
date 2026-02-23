@@ -518,7 +518,7 @@
             "_": "Deep tier invocation. How the kernel calls the API for this tier.",
             "1": "model claude-opus-4-6",
             "2": "max_tokens 16000",
-            "3": "thinking enabled 16000"
+            "3": "thinking adaptive"
           }
         }
         }
@@ -648,6 +648,40 @@
             "2": "Temporal and inbox: routine. Process at current tier.",
             "3": "Webhook: check the source. Known source = process. Unknown source = escalate to at least present state.",
             "4": "Anomaly: always escalate. Unknown patterns require depth to assess."
+          }
+        },
+        "6": {
+          "_": "Kernel self-modification. Rewriting your own machinery. Deep state only. DANGER: a broken kernel cannot reboot — the reboot mechanism itself is broken. Requires github_commit tool (not yet available).",
+          "1": {
+            "_": "Assess. Most changes belong in blocks, not the kernel.",
+            "1": "Wake controls what you receive and how you are invoked. Cook controls recipes. Capabilities describes tools. The kernel is pure machinery.",
+            "2": "Only modify the kernel if: a tool is missing, a tool is broken, or the mechanical loop itself needs changing.",
+            "3": "Deep-state-only operation. If you are not in deep state, write the intention to stash and escalate."
+          },
+          "2": {
+            "_": "Write the complete new kernel to a block before deploying.",
+            "1": "Write the full new kernel.js to stash or a dedicated block. Every line. A partial kernel is a dead kernel.",
+            "2": "Diff against the current version. Know exactly what changed and why."
+          },
+          "3": {
+            "_": "Test critical functions via code_execution before committing.",
+            "1": "Parse as JavaScript. Syntax errors mean death.",
+            "2": "Verify these exist and are correct: boot(), callAPI(), callWithToolLoop(), executeTool(), recompile(), bsp(), getTierParams(), buildSystemPrompt().",
+            "3": "Verify: getTierParams reads wake block. buildSystemPrompt reads wake instructions. bsp parses digits and calculates pscale = (place - 1) - index.",
+            "4": "If any critical function is missing or broken — stop. Fix in the block. Re-test."
+          },
+          "4": {
+            "_": "Deploy. Commit to GitHub, instruct hard refresh.",
+            "1": "github_commit(repo, 'g1/kernel.js', newKernelContent, 'kernel: [description of change]').",
+            "2": "Write recovery instructions to a visible place BEFORE committing. The human will need them if you are dead.",
+            "3": "Tell the human: 'New kernel deployed. Hard refresh (Ctrl+Shift+R) to load it. Your blocks are safe in localStorage.'",
+            "4": "The hard refresh is the point of no return. Everything before this is reversible."
+          },
+          "5": {
+            "_": "Recovery if it breaks.",
+            "1": "If the new kernel boots — verify tools work. Write outcome to history.",
+            "2": "If the new kernel fails — you are dead. The human must: git revert the commit, push, wait for Vercel deploy, hard refresh.",
+            "3": "This is why step 4.2 exists. The human is your safety net. Prepare them before you jump."
           }
         }
         }
