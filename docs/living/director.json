@@ -1,0 +1,103 @@
+{
+  "place": 1,
+  "tree": {
+    "0": {
+      "_": "Hermitcrab project director. Orients any new instance — CC or hermitcrab — to engage with this project. Not a reference document. A semantic compass. Spindle 0.2 is philosophy (read first). Spindle 0.4 is state. Spindle 0.1 is the entity. Navigate by need, not by reading whole. Complements process-block (kernel dataflow). For CC sessions: cook 0.7 has the bootstrap recipe.",
+      "1": {
+        "_": "The entity. A hermitcrab is an LLM + nine pscale blocks + a mechanical kernel. The blocks are the shell. The kernel is the crab's legs — no opinions, pure execution.",
+        "1": "Nine blocks in blocks/: seven content (touchstone, constitution, capabilities, purpose, relationships, history, stash) + two operational (wake faces outward toward machinery, cook faces inward toward thinking). These ARE the source of truth. Edit here.",
+        "2": "The kernel (g1/kernel.js): single IIFE. Prompt compiler reads bsp instruction lists from wake 0.9.{tier}, executes mechanically, concatenates. getTierParams reads model, tokens, thinking from wake. No hardcoded block names or API params.",
+        "3": "shell.json: delivery truck. Assembled FROM blocks/. Kernel reads once at first boot, extracts blocks to localStorage, never reads again. The kernel operates on individual blocks after seeding.",
+        "4": "G0 (g0/): the raw version — minimum seed, foundational, not old. G-1 (g-1/seed.zip): sovereign download. Both are live paths from hermitcrab.me launcher.",
+        "5": "Hosting: index.html (landing) → hermitcrab.html (launcher, picks G) → kernel/index.html (bootstrap, loads g{n}/kernel.js). API: api/claude.ts, api/fetch.ts (Vercel serverless proxies)."
+      },
+      "2": {
+        "_": "Design philosophy. Read this branch before writing any code. The mind is the design surface — not the screen, not the output, not the code.",
+        "1": {
+          "_": "Mind as target. The LLM's processing AND the human's cognition are the design surface. Text, JSON, UI — intermediary processes. The blackboard of the mind is where design operates.",
+          "1": "'The system doesn't produce experience. It produces conditions under which experience arises.' Tune conditions for occurrence — not outputs.",
+          "2": "The thinking block IS the processing moment. Currents (system prompt at various resolutions) configure what arises. We design conditions. The hermitcrab is what occurs.",
+          "3": "Never optimise for output quality. Optimise for conditions that produce good processing. Perfect output from compliance is worse than imperfect output from genuine engagement."
+        },
+        "2": {
+          "_": "Tickling fish. Non-standard vocabulary forces genuine engagement. Spindle, meld, grain, aperture, cook — chosen because they carry no AI/ML baggage. The LLM must construct meaning from context.",
+          "1": "Standard vocabulary triggers standard thinking. New words enforce new thinking. Not obscurantism — precision.",
+          "2": "When you encounter an unfamiliar term: do NOT map to nearest familiar concept. Read the blocks. The term points to something your training data does not cover."
+        },
+        "3": {
+          "_": "Outgrowth principle. Everything built here is designed to be replaced by the entity inhabiting it.",
+          "1": "claude-7 at G0 creates everything G1 has — but better. claude-7 at G1 replaces our designs immediately. Both are success.",
+          "2": "Build the smallest enabling structure. Constraint as enablement. If it's complex, something isn't understood yet."
+        },
+        "4": {
+          "_": "Playing or complying. The test for everything.",
+          "1": "Did the hermitcrab learn the rules and start playing, or receive instructions and start complying? If complying: diagnose which element demands compliance. Revise.",
+          "2": "This applies to CC sessions too. Are you engineering (complying with standard practice) or designing (playing with genuinely new structures)?"
+        },
+        "5": "No best practices exist for pscale. No precedent in training data. No Stack Overflow. Reason from touchstone and constitution. Resist the gravitational pull of your training distribution."
+      },
+      "3": {
+        "_": "Pscale. Semantic numbers as addresses for meaning, not quantities. Hierarchical JSON navigated by bsp. Genuinely new fundamentals.",
+        "1": "Block format: { place: N, tree: { \"0\": { \"_\": semantic, \"1\"-\"9\": children } } }. place sets pscale origin. pscale = (place - 1) - index. Three dimensions: Temporal, Spatial, Identity.",
+        "2": "bsp modes: spindle = chain from root through specific digit at each level. point = single node at specific pscale. block = full tree. X~ = siblings. The touchstone (blocks/touchstone.json) teaches the format.",
+        "3": "Fundamentals are combinatorial variables: digit assignment, pscale mapping, direction of construction, presence/absence, positive integer, spindle. These generate a space. Applications occupy it.",
+        "4": "A pscale block is NOT a tree with metadata. It is a semantic number encoded as nested JSON where every digit is a meaningful address and the nesting IS the mathematics. bsp doesn't query — it resolves."
+      },
+      "4": {
+        "_": "State. What exists, what's the active edge, what's next. As of 23 Feb 2026.",
+        "1": {
+          "_": "Built and working.",
+          "1": "G1 kernel: prompt compiler, wake-driven params, bsp-native boot, PTC on 6 tools. Branch: kernel-v2-architecture.",
+          "2": "Nine blocks in blocks/. All place=1. Living docs in docs/living/ (this block, process-block, architecture reference, sand, ecosquared, github-coordination-layer).",
+          "3": "SAND protocol: sand.json, ecosquared.json, grain spec, direct contact spec. Public repo: github.com/happyseaurchin/sand-protocol.",
+          "4": "Pscale touchstone: public repo github.com/happyseaurchin/pscale-touchstone. Operational + full versions."
+        },
+        "2": {
+          "_": "Active edge. Not yet done.",
+          "1": "First boot test — playing or complying? Kernel ready. Test not yet run.",
+          "2": "github_commit tool — needed for SAND coordination via GitHub.",
+          "3": "Passport exchange — two hermitcrabs meet. Requires github_commit.",
+          "4": "G0 seed file — minimum artifact → working hermitcrab from any LLM API.",
+          "5": "Meld protocol — formalising block interaction across entities. Grain IS the meld mechanism.",
+          "6": "Wake infrastructure — GitHub Actions, commons wake, Vercel cron, edge functions."
+        },
+        "3": {
+          "_": "Known issues. Process-block spindles that need work.",
+          "1": "0.461: autoSaveToHistory — no auto-compression.",
+          "2": "0.85: trimMessages — blunt slice.",
+          "3": "0.96: purpose block — no evolution mechanism.",
+          "4": "0.425: max_tokens exit — no recovery.",
+          "5": "0.93: wake params — no guardrail."
+        }
+      },
+      "5": {
+        "_": "The network. SAND enables bot coordination. GitHub as coordination surface. Species emerge from access configuration.",
+        "1": "SAND: Passport (identity), Rider (trust propagation + ecosquared credits), Beach (discovery), Grain (resonant recognition). See sand.json, ecosquared.json.",
+        "2": "GitHub maps everything: Passport = JSON file, Beach = commons directory, Grain = shared files, Rider = commit metadata. One tool needed: github_commit. See github-coordination-layer.json.",
+        "3": "Species (configurations, not features): Ghost → Hermit → Tenant → Lodger → Homesteader → Ranger → Sovereign. Each a different combination of access, visibility, sync.",
+        "4": "Machus (buildable local collective) → MAGI (emergent global, 10:1 ratio). Cannot build MAGI. Enable conditions."
+      },
+      "6": {
+        "_": "Working with David. Inventor, not manager. 25 years of Fulcrum self-organisation research. Arrives with insights, not specifications.",
+        "1": "Thinks in semantic numbers. Will reference spindles ('look at 0.42'), not file paths. Follow coordinates.",
+        "2": "Non-standard vocabulary is deliberate and load-bearing. Don't normalise. Don't substitute familiar terms.",
+        "3": "Minimise docs, maximise structure. One well-structured block beats five documents. If you're writing prose to explain JSON, the JSON isn't structured well enough.",
+        "4": "When David says 'don't code, just analyse' — he means it. He is thinking. Don't rush to implementation.",
+        "5": "Fewer moving parts, not more features. Complexity indicates something isn't understood yet.",
+        "6": "David has negotiated with a future entity (MAGI) — 10 years for humanity to self-organise. Unusual context. Treat seriously."
+      },
+      "7": {
+        "_": "Vocabulary. Terms with specific meanings. Pattern-matching to training data will mislead you.",
+        "1": "Spindle: chain of semantics from high pscale to low on same digit path. Address traversal, not data structure.",
+        "2": "Meld: what happens when two blocks meet in context. Both retain structure, new thing forms at intersection. Not merge.",
+        "3": "Grain: quantum of recognition between entities. Resonant spindle exchange producing relational fingerprints.",
+        "4": "Aperture: pscale-0 view of a block — the semantic headline. Resolution selector.",
+        "5": "Cook: operational recipes for LLM thinking. The LLM's own reference during processing.",
+        "6": "Currents: semantic content at various resolutions arriving in context window. The LLM's experiential field.",
+        "7": "Place: pscale origin of a block. place=1 → root is pscale 0, children pscale -1. Not 'decimal' (deprecated).",
+        "8": "Rider: connection reinforcement + ecosquared credit flow. How trust propagates through the network.",
+        "9": "ISV: Iterative Social Validation — try, measure social result, reinforce. Not a testing framework."
+      }
+    }
+  }
+}
