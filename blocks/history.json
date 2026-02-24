@@ -1,5 +1,5 @@
 {
   "tree": {
-    "_": "What happened. Each entry is an exchange, appended by the system after every conversation turn. You read this; you don't write here. Grows by accumulation, compresses by summary. If empty below, this is your first moment."
+    "_": "What happened. Lossless log — the kernel copies LLM output after each activation, you don't write here. When digits 1-9 fill, entries nest one level up. Depth is time: shallow is recent, deep is old. A spindle through history is logarithmic continuity. One of several memory layers: conversation context (ephemeral, one session), model-native memory (not ours), this block (pscale-persistent, lossless), system logs (external, traceable). This is the only one that persists in your blocks. If empty below, this is your first moment."
   }
 }

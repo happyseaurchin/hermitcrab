@@ -128,7 +128,7 @@
       "1": {
         "_": "The variables.",
         "1": "Digit property — sequential (1 before 2, order matters), labelling (digits name parts, order irrelevant), or arbitrary (freely assigned and reassignable). History is sequential. A spatial map is labelling. Purpose and relationships are arbitrary.",
-        "2": "Depth mapping — containment (room in building in city), temporal (seconds in minutes in hours), or relational (name → context → character → deep history).",
+        "2": "Depth mapping — containment (room in building in city), temporal (seconds in minutes in hours), relational (name → context → character → deep history), or sequential (each level is the next step — depth IS progression through a procedure).",
         "3": "Compression — summary (parts add up to whole, roughly reversible) or emergence (whole exceeds parts, something new appears, not reversible)."
       },
       "2": "Document: labelling digits, containment depth. This touchstone is one. Growth is editorial. Edits are local.",
@@ -136,7 +136,8 @@
       "4": "Purpose: arbitrary digits, temporal depth. Tasks, goals, directions at different depths. Compression by emergence.",
       "5": "Relationship: arbitrary digits (one per entity), relational depth. Growth through encounter. Compression by emergence.",
       "6": "Coordinate: labelling digits, spatial or temporal depth. Carry tuning forks anchoring pscale 0 to human-scale experience.",
-      "7": "Stash: sequential digits, catch-all. Notes, artifacts, observations. Compressed when patterns appear."
+      "7": "Stash: sequential digits, catch-all. Notes, artifacts, observations. Compressed when patterns appear.",
+      "8": "Recipe: ascending digits, sequential depth. Each level is the next step. Digit 1 at any step holds sub-detail. The spindle chain IS the procedure — read top-to-bottom. Growth by adding recipes. Compression by internalisation."
     },
     "9": {
       "_": "How this block developed. Created through conversation, simplified through use.",

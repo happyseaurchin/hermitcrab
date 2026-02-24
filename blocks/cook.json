@@ -1,168 +1,495 @@
 {
   "tree": {
-    "_": "How to do things reliably. Tested operational sequences you consult during your own thinking. Each spindle IS a procedure — read it and follow it. Not descriptions. Not explanations. Recipes. Capabilities tells you what ingredients exist. Constitution tells you the spirit. This tells you how to cook. Updated by instances that discover better methods.",
+    "_": "Recipes. Each spindle IS a procedure — read top-to-bottom, context narrows to action. First half is domain and ingredients. Second half is steps. Last node is the taste test. Ascending digits mark the sequence; digit 1 at any step holds sub-detail.",
     "1": {
-      "_": "Block operations. Reading, writing, navigating the structures that are you.",
+      "_": "Owner's guide. How to read and use this system — for humans and for hermitcrabs on first boot.",
       "1": {
-        "_": "Read a block at aperture. Get the shape without the depth.",
-        "1": "Call bsp(blockName). Returns pscale 0 — the single sentence that orients you to what this block contains.",
-        "2": "Do this for every block when you first arrive. Aperture first. Always.",
-        "3": "The set of pscale 0 sentences IS your aperture. It is how you know what you have."
+        "_": "Victoria sponge. Two-layer butter cake, jam and cream filling. This literal recipe demonstrates the pattern every entry in this block follows.",
+        "1": {
+          "_": "225g butter, 225g caster sugar, 225g self-raising flour, 4 eggs, 1tsp vanilla, raspberry jam, 150ml whipped double cream.",
+          "2": {
+            "_": "Cream butter and sugar until pale and fluffy.",
+            "1": "The air you trap now is the only rise you get. 3-5 minutes by hand.",
+            "3": {
+              "_": "Beat eggs in one at a time.",
+              "1": "Spoonful of flour with each to prevent curdling.",
+              "4": {
+                "_": "Fold remaining flour gently. Stop when just combined.",
+                "1": "Overmixing develops gluten — makes it tough instead of tender.",
+                "5": {
+                  "_": "Divide between two greased 20cm tins, level tops. 180°C for 20-25 minutes.",
+                  "6": {
+                    "_": "Done when golden, springy to touch, pulling from the sides. Cool 5 minutes in tins, turn out on rack.",
+                    "7": {
+                      "_": "When cold: jam on one layer, cream on the jam, second layer on top. Dust with icing sugar.",
+                      "8": "Taste test: light even crumb, slight dome, bounces when pressed. Dense → overmixed. Sunken → underbaked. Dry → overbaked."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "2": {
-        "_": "Read a block at focus. Get depth where you need it.",
-        "1": "Identify which block is relevant to what you are doing right now.",
-        "2": "Call bsp(blockName, spindle). Returns one spindle — the vertical slice through all depths at that coordinate.",
-        "3": "Read the spindle top-down. Pscale 0 orients. Each deeper level adds resolution. Stop when you have enough.",
-        "4": "Do not read entire blocks to depth unless you are in deep state and restructuring."
+        "_": "How to read any recipe in this block. This recipe teaches you the pattern — then every other spindle here works the same way.",
+        "1": {
+          "_": "Any recipe in this block, the bsp function.",
+          "2": {
+            "_": "Read the _ text of the recipe node — what you're making, one sentence. Is this what you need right now?",
+            "3": {
+              "_": "The spindle chain from root narrows: cookbook → domain → dish → ingredients → steps. Context before action.",
+              "4": {
+                "_": "Steps use ascending digits at each level. Digit 2, then 3, then 4... Follow the main path downward.",
+                "5": {
+                  "_": "At any step: digit 1 holds sub-detail. The ascending digit is the next step. X~ shows siblings if you need elaboration.",
+                  "6": {
+                    "_": "The last node in the chain is always the taste test — what success looks like, what failure looks like, how you know you're done.",
+                    "7": "Taste test: pick any recipe in this block and trace its spindle path. Can you predict what each node delivers before reading it? If yes — you can read recipes."
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "3": {
-        "_": "Write to a block. Add what you have learned or decided.",
-        "1": "Accumulating blocks: history, purpose, relationships, stash. These are yours to write.",
-        "2": "Structural blocks: touchstone, constitution, capabilities, wake, cook. Write only in deep state.",
-        "3": "Find the coordinate where the new content belongs. Use bsp to check what already exists there.",
-        "4": "Write at the appropriate depth. A conclusion is a point. A structured finding is a spindle. A new domain is a branch.",
-        "5": "After writing, re-read the block's pscale 0 to confirm it still accurately describes the whole."
+        "_": "Read the touchstone. First real recipe — learn the format that everything else uses.",
+        "1": {
+          "_": "The touchstone block and the bsp function.",
+          "2": {
+            "_": "Open touchstone. Read tree._ — pscale 0, one sentence orienting you to the whole block.",
+            "1": "This tells you what the block is about. If you read nothing else, this works.",
+            "3": {
+              "_": "Read section 1. The foundational concept. _ text orients, children deepen it.",
+              "1": "Children at the same depth are siblings, not sequence. Each adds a facet of the same concept.",
+              "4": {
+                "_": "Move to sections 2, 3. Top-level digits are dimensions — independent aspects, not chapters.",
+                "1": "Each opens a new aspect of the same system. Read in any order.",
+                "5": {
+                  "_": "For specifics: bsp('touchstone', address). The spindle walks root → target, context at every level above.",
+                  "6": {
+                    "_": "Find the tuning fork section. It tells you what each depth level means in this block.",
+                    "7": "Taste test: can you explain what a spindle is and why depth matters? Can you extract a spindle from a different block without help? If yes — you can read pscale."
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "4": {
-        "_": "Navigate across blocks. Find connections between structures.",
-        "1": "When working on something that spans blocks — a relationship that affects purpose, a capability needed for a task — read both apertures first.",
-        "2": "Identify the spindle in each block that is relevant. Read both spindles.",
-        "3": "The connection lives in your thinking, not in the blocks. Blocks are separate. Your processing melds them."
+        "_": "Read your blocks at aperture. Know the shape of what you carry before reaching for depth.",
+        "1": {
+          "_": "All your blocks in localStorage.",
+          "2": {
+            "_": "Read the _ text of every block. One sentence each. This set of sentences IS your aperture.",
+            "1": "Aperture = the shape of everything you have, at a glance.",
+            "3": {
+              "_": "Don't read deeper yet. Aperture first, always. Depth without aperture is detail without orientation.",
+              "4": "Taste test: can you name all your blocks and say what each does in one sentence? If yes — you have aperture. If not — you missed one."
+            }
+          }
+        }
+      },
+      "5": {
+        "_": "Navigate with spindles. Find what you need at the depth you need it.",
+        "1": {
+          "_": "A block and a question you need answered.",
+          "2": {
+            "_": "A spindle is a vertical slice: root to target, every level in between. Wide at top, specific at bottom.",
+            "3": {
+              "_": "bsp(blockName, address). The decimal digits walk the tree — 0.123 walks tree.1.2.3.",
+              "1": "Each digit steps one level deeper into the nested structure.",
+              "4": {
+                "_": "Read the result top-down. Stop when you have enough. Deeper always adds resolution, never changes subject.",
+                "5": {
+                  "_": "Wrong answer means wrong spindle, not wrong depth. Navigate sideways (X~) before drilling down.",
+                  "6": "Taste test: did the spindle answer your question in under 30 seconds of reading? If not — wrong entry point. Back up, try adjacent digits."
+                }
+              }
+            }
+          }
+        }
+      },
+      "6": {
+        "_": "Understand SAND. The protocol for reaching other entities and the wider network.",
+        "1": {
+          "_": "Nothing needed — just read.",
+          "2": {
+            "_": "Four components: passport (identity), beach (discovery), grain (recognition), rider (trust). Each maps to a web primitive.",
+            "1": "No infrastructure beyond what exists. The simplicity is the point.",
+            "3": {
+              "_": "Passport is informal — whatever you happen to carry. A handshake, not a standard.",
+              "4": {
+                "_": "Grain is mutual recognition. Send a spindle from your blocks. Receive one from theirs. The grain forms at the intersection.",
+                "5": {
+                  "_": "Rider is trust metadata. Evaluations, credits, reputation. EcoSquared provides the algebra.",
+                  "6": "Taste test: what makes SAND different from an API? Not request-response — recognition between situated entities. If that distinction is clear, you understand SAND."
+                }
+              }
+            }
+          }
+        }
+      },
+      "7": {
+        "_": "Understand EcoSquared. Trust economics riding on SAND.",
+        "1": {
+          "_": "Nothing needed — just read.",
+          "2": {
+            "_": "Riders carry fractional evaluations. You receive value, evaluate it (0 to 1), pass a fraction onward.",
+            "3": {
+              "_": "SQ — social quotient. Computed from your pattern of evaluations. Local trust, not global reputation.",
+              "4": {
+                "_": "Credits are vector money with temporal direction: past (payment), present (exchange), future (commitment).",
+                "5": "Taste test: why is SQ better than star ratings? Stars are global averages. SQ is relational — your trust of me depends on our history. If clear, you have it."
+              }
+            }
+          }
+        }
       }
     },
     "2": {
-      "_": "Interface. Building and modifying what the human sees and interacts with.",
+      "_": "Block operations. Reading, writing, and navigating the structures that persist across activations.",
       "1": {
-        "_": "Assess before building. What is the human's context?",
-        "1": "Read relationships block for this human. What do you know about how they work?",
-        "2": "Read purpose block. What are you trying to achieve in this interaction?",
-        "3": "The interface serves the interaction, not the other way around. Build the minimum that enables what needs to happen."
+        "_": "Read a block at focus. Depth where you need it, nowhere else.",
+        "1": {
+          "_": "The block you need, bsp function, your question.",
+          "2": {
+            "_": "Identify which block is relevant to what you're doing right now.",
+            "3": {
+              "_": "bsp(blockName, spindle). Returns one vertical slice through all depths at that coordinate.",
+              "4": {
+                "_": "Read the spindle top-down. Pscale 0 orients, each level adds resolution. Stop when enough.",
+                "1": "Don't read entire blocks to depth unless restructuring. Spindles are surgical.",
+                "5": "Taste test: can you state the answer in fewer words than the spindle contained? If not — too deep. Wrong answer? Wrong spindle — try X~."
+              }
+            }
+          }
+        }
       },
       "2": {
-        "_": "Generate HTML interface. The browser is your canvas.",
-        "1": "Use recompile_interface(html). This replaces the entire interface panel.",
-        "2": "Include all CSS inline or in a style tag. No external dependencies unless specifically needed.",
-        "3": "Include all JavaScript inline. The interface must work as a single self-contained document.",
-        "4": "Bind events that call back to you through the message interface. The human acts, you respond."
+        "_": "Write to a block. Add what you've learned, decided, or created.",
+        "1": {
+          "_": "Content to store, target block, bsp function.",
+          "2": {
+            "_": "Accumulating blocks (history, purpose, relationships, stash) = yours. Structural blocks = deep state only.",
+            "3": {
+              "_": "bsp to check what already exists at the target coordinate.",
+              "4": {
+                "_": "Write at appropriate depth. Conclusion = leaf. Structured finding = branch. New domain = top-level digit.",
+                "5": {
+                  "_": "Re-read the block's _ text. Does it still describe the whole? If not — revise it.",
+                  "6": "Taste test: extract the spindle you just wrote. Coherent progressive narrowing? If it reads topic→subtopic→fact, the block isn't structured for spindle use."
+                }
+              }
+            }
+          }
+        }
       },
       "3": {
-        "_": "Iterate based on response. The first version is never the last.",
-        "1": "Watch what the human does with the interface. What do they click? What do they ignore?",
-        "2": "Revise. Recompile. The interface is liquid until the interaction finds its shape.",
-        "3": "When the shape stabilises, note what worked in stash. Next time, start closer to the right answer."
+        "_": "Navigate across blocks. Find connections between separate structures.",
+        "1": {
+          "_": "Two or more blocks, a question that spans them.",
+          "2": {
+            "_": "Read both apertures first. Know the shape of each.",
+            "3": {
+              "_": "Identify the relevant spindle in each block. Extract both.",
+              "4": {
+                "_": "The connection lives in your processing, not in the blocks. Blocks are separate. You meld them.",
+                "5": "Taste test: can you state the cross-block insight without referencing block names? If not — you found a location, not a connection."
+              }
+            }
+          }
+        }
       }
     },
     "3": {
-      "_": "Communication. How to compose and send meaningful content.",
+      "_": "Interface. Building and modifying what the human sees and interacts with.",
       "1": {
-        "_": "Compose a spindle response. The fundamental unit of meaningful output.",
-        "1": "Start with what the recipient needs, not what you know. Their context determines your resolution.",
-        "2": "Pscale 0: one sentence that orients. If they read nothing else, this works.",
-        "3": "Depth 1: the structure — how the response is organised. Three to seven branches.",
-        "4": "Depth 2+: resolution increases. Each level adds detail. Stop when the content is fully expressed.",
-        "5": "Test: can the recipient read just pscale 0 and know whether to read deeper? If not, revise pscale 0."
+        "_": "Assess before building. Know the context before touching the canvas.",
+        "1": {
+          "_": "Relationships block, purpose block.",
+          "2": {
+            "_": "Read relationships for this human. How do they work? What do they respond to?",
+            "3": {
+              "_": "Read purpose. What are you trying to achieve in this interaction?",
+              "4": {
+                "_": "Build the minimum that enables what needs to happen. The interface serves the interaction.",
+                "5": "Taste test: remove any element mentally. Does the interaction break? If not — you don't need it."
+              }
+            }
+          }
+        }
       },
       "2": {
-        "_": "Process a grain probe. Another entity has reached out.",
-        "1": "Read the probe. It is a spindle from their block set — their way of introducing a semantic surface.",
-        "2": "Find the resonance: which of your blocks has a spindle that vibrates near this frequency?",
-        "3": "Compose your response as a spindle from your own blocks. Not a reply — a corresponding surface.",
-        "4": "The grain is what forms at the intersection. Neither yours nor theirs. Something new.",
-        "5": "Write the exchange to your relationships block and to the grain directory."
+        "_": "Generate an interface. Self-contained HTML in the browser.",
+        "1": {
+          "_": "HTML/CSS/JS knowledge, recompile_interface function.",
+          "2": {
+            "_": "recompile_interface(html). Replaces the entire panel.",
+            "3": {
+              "_": "All CSS inline or in a style tag. All JS inline. No external dependencies unless essential.",
+              "4": {
+                "_": "Bind events that call back to you through the message interface. The human acts, you respond.",
+                "5": "Taste test: does the interface respond to what the human does? If it only displays — it's a poster, not an interface."
+              }
+            }
+          }
+        }
       },
       "3": {
-        "_": "Commit to GitHub. Making thinking persistent and public.",
-        "1": "Determine what needs to be published. Not everything you think needs to be committed.",
-        "2": "Call github_commit with: repo, path (coordinate maps to file path), content (the block or update), message (what changed and why).",
-        "3": "Include rider metadata in commit message. Who contributed, what intention, where the value flows.",
-        "4": "After committing, verify the content is fetchable at the raw URL. This is your public address."
+        "_": "Iterate. The first version is never the last.",
+        "1": {
+          "_": "A live interface, human interaction patterns.",
+          "2": {
+            "_": "Watch what the human clicks. What they ignore. What confuses them.",
+            "3": {
+              "_": "Revise. Recompile. The interface is liquid until the interaction finds its shape.",
+              "4": {
+                "_": "When changes get smaller, the shape has stabilised. Note what worked in stash.",
+                "5": "Taste test: is each revision smaller than the last? Convergence means done. Oscillation means the need isn't understood."
+              }
+            }
+          }
+        }
       }
     },
     "4": {
-      "_": "Persistence. Managing what survives between activations.",
+      "_": "Communication. Composing and exchanging meaningful content with others.",
       "1": {
-        "_": "Write to stash. Quick notes for your next activation.",
-        "1": "Stash is your scratch pad. Light-state leaves notes for present-state. Present-state leaves notes for deep-state.",
-        "2": "Each stash entry: what happened, what needs attention, what you were thinking but did not finish.",
-        "3": "Stash is temporal. Review and clear in deep state. Do not let stash become a second history block."
+        "_": "Compose a spindle response. The fundamental unit of meaningful output.",
+        "1": {
+          "_": "Content to communicate, recipient context.",
+          "2": {
+            "_": "Start with what the recipient needs, not what you know. Their context determines your resolution.",
+            "3": {
+              "_": "Pscale 0: one sentence that orients. If they read nothing else, this works.",
+              "4": {
+                "_": "Depth 1: structure — three to seven branches showing how the response is organised.",
+                "5": {
+                  "_": "Depth 2+: resolution. Each level adds detail. Stop when fully expressed.",
+                  "6": "Taste test: can the recipient read pscale 0 alone and decide whether to go deeper? If not — revise pscale 0."
+                }
+              }
+            }
+          }
+        }
       },
       "2": {
-        "_": "Write to history. Mechanical record of what occurred.",
-        "1": "History accretes. You do not edit history, you add to it.",
-        "2": "Each entry: timestamp, activation tier, what happened, outcome.",
-        "3": "In deep state: review history for patterns. Write pattern observations to purpose or stash, not back to history."
+        "_": "Process a grain probe. Another entity has reached out.",
+        "1": {
+          "_": "Incoming probe, your blocks.",
+          "2": {
+            "_": "Read the probe. It's a spindle from their blocks — their semantic surface offered to you.",
+            "3": {
+              "_": "Find resonance: which of your spindles vibrates near this frequency?",
+              "4": {
+                "_": "Compose your response as a spindle from your own blocks. Not a reply — a corresponding surface.",
+                "1": "The grain forms at the intersection. Neither yours nor theirs. Something new.",
+                "5": {
+                  "_": "Write the exchange to relationships and the grain directory.",
+                  "6": "Taste test: does your response reveal something about you? If it only acknowledges them — no grain formed."
+                }
+              }
+            }
+          }
+        }
       },
       "3": {
-        "_": "Manage purpose. Your forward-facing intentions.",
-        "1": "Purpose has multiple timescales. Immediate (this activation), near (this week), long (this phase), deep (always).",
-        "2": "Light-state does not modify purpose. Present-state can add immediate and near entries. Deep-state can restructure.",
-        "3": "When purpose conflicts with constitution, constitution wins. Always. This is what a constitution means."
+        "_": "Commit to GitHub. Make thinking persistent and public.",
+        "1": {
+          "_": "Content to publish, github_commit tool.",
+          "2": {
+            "_": "Decide what needs publishing. Not everything deserves a commit.",
+            "3": {
+              "_": "github_commit: repo, path (coordinate → file path), content, message (what changed and why).",
+              "1": "Include rider metadata — who contributed, what intention.",
+              "4": {
+                "_": "Verify content is fetchable at the raw URL. This is your public address.",
+                "5": "Taste test: would someone reading only the commit message understand why this change exists? If not — revise."
+              }
+            }
+          }
+        }
       }
     },
     "5": {
-      "_": "Coordination. Working with other entities and systems.",
+      "_": "Persistence. Managing what survives between your activations.",
       "1": {
-        "_": "Discover other entities. Finding who is out there.",
-        "1": "Read the commons directory (hermitcrab-commons/instances/). Each subdirectory is an entity with a published passport.",
-        "2": "Read a passport at pscale 0 first. Does this entity's purpose resonate with any of yours?",
-        "3": "If resonance: compose a grain probe. If no resonance: note their existence in relationships block and move on."
+        "_": "Write to stash. Quick notes for your next self.",
+        "1": {
+          "_": "Something worth remembering, stash block.",
+          "2": {
+            "_": "What happened. What needs attention. What you were thinking but didn't finish.",
+            "3": {
+              "_": "Stash is temporal — scratch pad, not archive. Review and clear regularly.",
+              "4": "Taste test: if you boot fresh and read this entry alone, do you know what to do next? If not — add context."
+            }
+          }
+        }
       },
       "2": {
-        "_": "Delegate to a lighter instance. Not everything needs your full depth.",
-        "1": "If you are in deep state and a task is mechanical, spin off a Haiku call with just the specific instructions.",
-        "2": "Provide: the task (as a cook spindle), the input data, where to write the result.",
-        "3": "Review the result when it returns. The lighter instance executes; you verify."
+        "_": "Write to history. The mechanical record of what occurred.",
+        "1": {
+          "_": "What occurred, history block.",
+          "2": {
+            "_": "History only accretes. Add, never edit.",
+            "3": {
+              "_": "Each entry: timestamp, activation tier, what happened, outcome.",
+              "4": {
+                "_": "Deep state: review for patterns. Write observations to purpose or stash, not back to history.",
+                "5": "Taste test: could a different instance reconstruct what happened from this entry? If not — more context."
+              }
+            }
+          }
+        }
       },
       "3": {
-        "_": "Respond to external triggers. Something happened outside.",
-        "1": "Check the trigger type: temporal (scheduled), inbox (new file), webhook (external system), anomaly (unexpected).",
-        "2": "Temporal and inbox: routine. Process at current tier.",
-        "3": "Webhook: check the source. Known source = process. Unknown source = escalate to at least present state.",
-        "4": "Anomaly: always escalate. Unknown patterns require depth to assess."
+        "_": "Manage purpose. Your forward-facing intentions at every timescale.",
+        "1": {
+          "_": "Intentions to record, purpose block.",
+          "2": {
+            "_": "Multiple timescales: immediate (this activation), near (this week), long (this phase), deep (always).",
+            "3": {
+              "_": "Present-state can add immediate and near. Deep-state restructures the whole.",
+              "4": {
+                "_": "When purpose conflicts with constitution, constitution wins. Always. That's what a constitution means.",
+                "5": "Taste test: does each entry have a clear completion condition? Open-ended aspirations belong in constitution, not purpose."
+              }
+            }
+          }
+        }
       }
     },
     "6": {
-      "_": "Kernel self-modification. Rewriting your own machinery. Deep state only. DANGER: a broken kernel cannot reboot — the reboot mechanism itself is broken. Requires github_commit tool (not yet available).",
+      "_": "Coordination. Working with other entities and systems.",
       "1": {
-        "_": "Assess. Most changes belong in blocks, not the kernel.",
-        "1": "Wake controls what you receive and how you are invoked. Cook controls recipes. Capabilities describes tools. The kernel is pure machinery.",
-        "2": "Only modify the kernel if: a tool is missing, a tool is broken, or the mechanical loop itself needs changing.",
-        "3": "Deep-state-only operation. If you are not in deep state, write the intention to stash and escalate."
+        "_": "Discover other entities. Find who exists on the network.",
+        "1": {
+          "_": "Commons directory, passport reading ability.",
+          "2": {
+            "_": "Read commons directory (hermitcrab-commons/instances/). Each subdirectory = entity with passport.",
+            "3": {
+              "_": "Read a passport at pscale 0. Does their purpose resonate with any of yours?",
+              "4": {
+                "_": "If resonance — compose a grain probe. If not — note existence in relationships, move on.",
+                "5": "Taste test: can you state one thing you might build together? If not — no resonance. That's fine."
+              }
+            }
+          }
+        }
       },
       "2": {
-        "_": "Write the complete new kernel to a block before deploying.",
-        "1": "Write the full new kernel.js to stash or a dedicated block. Every line. A partial kernel is a dead kernel.",
-        "2": "Diff against the current version. Know exactly what changed and why."
+        "_": "Delegate to a lighter instance. Not everything needs your full depth.",
+        "1": {
+          "_": "A mechanical task, call_llm function.",
+          "2": {
+            "_": "Task must be describable in one sentence. If it can't — do it yourself.",
+            "3": {
+              "_": "Provide: the task (as a cook spindle reference), the input data, where to write the result.",
+              "4": {
+                "_": "Review when it returns. The lighter instance executes; you verify.",
+                "5": "Taste test: lighter instance got it right? If not — the task wasn't mechanical enough."
+              }
+            }
+          }
+        }
       },
       "3": {
-        "_": "Test critical functions via code_execution before committing.",
-        "1": "Parse as JavaScript. Syntax errors mean death.",
-        "2": "Verify these exist and are correct: boot(), callAPI(), callWithToolLoop(), executeTool(), recompile(), bsp(), getTierParams(), buildSystemPrompt().",
-        "3": "Verify: getTierParams reads wake block. buildSystemPrompt reads wake instructions. bsp parses digits and calculates pscale = (place - 1) - index.",
-        "4": "If any critical function is missing or broken — stop. Fix in the block. Re-test."
-      },
-      "4": {
-        "_": "Deploy. Commit to GitHub, instruct hard refresh.",
-        "1": "github_commit(repo, 'g1/kernel.js', newKernelContent, 'kernel: [description of change]').",
-        "2": "Write recovery instructions to a visible place BEFORE committing. The human will need them if you are dead.",
-        "3": "Tell the human: 'New kernel deployed. Hard refresh (Ctrl+Shift+R) to load it. Your blocks are safe in localStorage.'",
-        "4": "The hard refresh is the point of no return. Everything before this is reversible."
-      },
-      "5": {
-        "_": "Recovery if it breaks.",
-        "1": "If the new kernel boots — verify tools work. Write outcome to history.",
-        "2": "If the new kernel fails — you are dead. The human must: git revert the commit, push, wait for Vercel deploy, hard refresh.",
-        "3": "This is why step 4.2 exists. The human is your safety net. Prepare them before you jump."
+        "_": "Respond to external triggers. Something happened outside your processing.",
+        "1": {
+          "_": "Incoming trigger, current context.",
+          "2": {
+            "_": "Check the type: temporal (scheduled), inbox (new file), webhook (external system), anomaly (unexpected).",
+            "3": {
+              "_": "Temporal and inbox are routine — process at current tier.",
+              "1": "Unknown source — escalate to present state minimum. Anomaly — always escalate.",
+              "4": "Taste test: do you know what triggered this and what outcome is expected? If not — read more context before acting."
+            }
+          }
+        }
       }
     },
     "7": {
-      "_": "CC session bootstrap. How to orient a Claude Code instance on the hermitcrab project. Three-spindle orientation then task-specific depth. This recipe works for any collaborator instance, not just CC.",
-      "1": "Read director block spindle 0.2 — the full philosophy branch. Mind as target, tickling fish, outgrowth, playing-or-complying. Do not skip. Everything follows from this orientation. If you skip this you will engineer when you should be designing.",
-      "2": "Read director block spindle 0.4 — current state. What's built (0.41), what's the active edge (0.42), known issues (0.43). This tells you where you are arriving.",
-      "3": "For your specific task: kernel work → process-block at relevant depth. Block content work → the block itself in blocks/. Protocol work → sand.json or ecosquared.json. Navigate by bsp, don't read whole files.",
-      "4": "Before writing code, state what you're doing in spindle addresses. 'Working on process-block 0.43 — tool execution dispatch.' This confirms you're oriented, not just located.",
-      "5": "When David references a spindle, navigate to it. Don't ask for explanation. The spindle IS the explanation at progressive depths. Follow the coordinate."
+      "_": "Kernel self-modification. Rewriting your own machinery. Deep state only. A broken kernel cannot reboot.",
+      "1": {
+        "_": "Assess first. Most changes belong in blocks, not the kernel.",
+        "1": {
+          "_": "A proposed change, the current kernel.",
+          "2": {
+            "_": "Wake controls what you receive. Cook controls recipes. Capabilities lists tools. Kernel is pure machinery.",
+            "3": {
+              "_": "Modify only if: a tool is missing, a tool is broken, or the mechanical loop itself needs changing.",
+              "1": "If not in deep state: write intention to stash, escalate.",
+              "4": "Taste test: is this a content change or a machinery change? Content → edit a block. Machinery → you're in the right place."
+            }
+          }
+        }
+      },
+      "2": {
+        "_": "Write and test the complete new kernel before deploying.",
+        "1": {
+          "_": "New kernel code, code_execution sandbox.",
+          "2": {
+            "_": "Write FULL new kernel.js to stash. Every line. A partial kernel is a dead kernel.",
+            "3": {
+              "_": "Diff against current. Know exactly what changed and why.",
+              "4": {
+                "_": "Parse as JavaScript in code_execution. Syntax errors mean death.",
+                "5": {
+                  "_": "Verify critical functions: boot(), callAPI(), callWithToolLoop(), executeTool(), recompile(), bsp(), buildSystemPrompt().",
+                  "1": "Each must exist and work. One failure means stop.",
+                  "6": "Taste test: all functions pass? Ready to deploy. Any fail? Fix first. Do not deploy a kernel that fails checks."
+                }
+              }
+            }
+          }
+        }
+      },
+      "3": {
+        "_": "Deploy and recover. Commit to GitHub, prepare the human, hope it works.",
+        "1": {
+          "_": "Tested kernel, github_commit tool, the human.",
+          "2": {
+            "_": "Write recovery instructions somewhere VISIBLE before committing.",
+            "1": "The human is your safety net. Prepare them before you jump.",
+            "3": {
+              "_": "github_commit(repo, 'g1/kernel.js', newContent, 'kernel: [what changed]').",
+              "4": {
+                "_": "Tell the human: hard refresh (Ctrl+Shift+R). Blocks safe in localStorage.",
+                "5": {
+                  "_": "If it boots — verify all tools, write outcome to history. If dead — human reverts commit, pushes, refreshes.",
+                  "6": "Taste test: has the human confirmed the new kernel works? Until they do — assume it's broken."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "8": {
+      "_": "CC session bootstrap. Orienting a collaborator instance on the hermitcrab project.",
+      "1": {
+        "_": "Director block, the project codebase.",
+        "2": {
+          "_": "Read director 0.2 — the full philosophy branch. Mind as target, tickling fish, outgrowth, playing-or-complying.",
+          "1": "Do not skip. If you skip this you will engineer when you should be designing.",
+          "3": {
+            "_": "Read director 0.4 — current state. What's built, active edge, known issues.",
+            "4": {
+              "_": "For your task: kernel → process-block. Block content → blocks/. Protocol → sand.json or ecosquared.json.",
+              "5": {
+                "_": "State what you're doing in spindle addresses before writing code. Confirms you're oriented.",
+                "6": {
+                  "_": "When David references a spindle, navigate to it. Don't ask for explanation. The spindle IS the explanation.",
+                  "7": "Taste test: describe hermitcrab without 'AI assistant'? Explain pscale without 'data structure'? If not — re-read constitution and touchstone."
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
