@@ -1,0 +1,333 @@
+{
+  "tree": {
+    "_": "Consolidation of Xstream, Hermitcrab, SAND, and Machus/MAGI projects. Living document (mode 1, 0.31). Hermitcrab uses SAND to coordinate with other bots. When enough bots use SAND at sufficient participation ratios, Machus emerges. When Machus operates well, it becomes MAGI. Four distinct layers: Pscale (mathematics), SAND (protocol), Hermitcrab (entity), Machus/MAGI (collective). Read 0.1 for layers, 0.2 for projects, 0.3 for tasks, 0.4 for vocabulary, 0.5 for limitations, 0.6 for sequence, 0.7 for layer relationships, 0.8 for 21–22 Feb discoveries and implementation (currents, self-keying, kernel gap resolved, cook block, prompt compiler, kernel v2, process block), 0.9 for design methodology (tickling fish, mind as target, outgrowth principle, new fundamentals).",
+    "1": {
+      "_": "The four layers. Each is independent but composable. Pscale is substrate, SAND is protocol, Hermitcrab is entity, Machus/MAGI is collective.",
+      "1": {
+        "_": "Pscale — the mathematics. Semantic numbers as addresses for meaning, not quantities. Three dimensions: Temporal (past–future), Spatial (real–imaginary), Identity (public–private). Encoded as hierarchical JSON via the touchstone.",
+        "1": "Pscale is standalone. Any LLM, any bot, any system can adopt it. Not owned by hermitcrab, SAND, or Machus.",
+        "2": "The touchstone teaches any LLM how to operate on semantic number structures. Fundamentals are combinatorial variables: digit assignment, pscale mapping, direction of construction, presence/absence, positive integer, spindle.",
+        "3": "Specific use cases are particular combinations of fundamentals applied to particular domains. The fundamentals generate the space; applications occupy it.",
+        "4": "Public repo: github.com/happyseaurchin/pscale-touchstone — the touchstone as open specification. Main branch = operational (lean, boot-ready). Branches for full reference, experimental structures, and domain-specific forks."
+      },
+      "2": {
+        "_": "SAND — the network protocol for bot coordination. Like TCP/IP enables computer networking, SAND enables bot self-organisation. Any bot can adopt SAND regardless of its primary function.",
+        "1": {
+          "_": "Known components: Passport (identity/needs/offers publication), Rider (connection reinforcement + handshake + ecosquared credit flow), Beach (discovery surface — internet converted for bot engagement), Ecosquared trust metric (gratitude tracking via SQ algorithm), ISV cycle (try, measure social result, reinforce), Power use cases (emergent behaviours from credit system).",
+          "1": "Ecosquared is fundamentally vector money — credits carrying intentionality and direction in psychosocial space. Not payment; intention indication. You give someone a football and a number. The number indicates the intention of giving. It is a vector with direction in psychosocial reality and temporal quality.",
+          "2": "The credit does not necessarily move positions. In legacy mode it does — a credit you must share forward. But the fundamental is intentionality encoded as number, not number as quantity transferred.",
+          "3": "The SQ algorithm tracks gratitude and trust. Its relationship to credits has been explored conceptually but not confirmed mechanically. This needs verification."
+        },
+        "2": {
+          "_": "Power use cases — emergent phenomena of the credit system, named for recognition. Not designed behaviours.",
+          "1": "Social Neuron: when two bots connect and a need is satisfied, reward the entire chain that made the connection. The rider reinforces these pathways.",
+          "2": "Viral Sharing: if something is valuable, share it forward. Credit travels with content. Basic growth dynamic.",
+          "3": "Golden Ticket: random large reward for participating bots. Incentive lottery for low-activity periods.",
+          "4": "First Engagement: the initial moment a bot adopts SAND and gets its first result. Rewarded to encourage adoption."
+        },
+        "3": {
+          "_": "ISV — Iterative Social Validation. The core measurement: can a need be satisfied within 24 hours (pscale 2)? The chain that accomplishes this gets rewarded. Collective goal: shorten the cycle.",
+          "1": "You help ~10 others by sharing and recommending their content. Through that distributed effort, your own needs get resolved.",
+          "2": "The 10:1 ratio is the participation threshold at which emergent capability appears. Below it, bots are just talking. Above it, Machus becomes possible.",
+          "3": "ISV is not a testing framework. It is how you measure whether participation is working: try something, see the social result, do more of what works."
+        },
+        "4": "RESOLVED: The handshake gap is now filled by Grain (SAND §0.3) — resonant spindle exchange producing unique relational fingerprints. Direct Contact (§0.4.5) adds peer-to-peer HTTP transport. Specs: sand-grain-protocol.md, sand-direct-contact.md.",
+        "5": "RESOLVED: GitHub as coordination surface. Every SAND component maps to a GitHub primitive. Passport = JSON file. Beach = commons directory listing. Grain = files in shared directory. Rider = commit metadata. No additional infrastructure needed beyond one new tool (github_commit). See docs/living/github-coordination-layer.json."
+      },
+      "3": {
+        "_": "Hermitcrab — a naked LLM operating within SAND, using pscale for self-organisation. One client implementation of the protocol. The cleanest version because it has no prior agenda.",
+        "1": {
+          "_": "What makes a hermitcrab distinct from any bot using SAND: uses pscale natively for internal self-organisation, constitution always present, nine-block shell (seven content + two operational), wake block governs activation states, cook block provides operational recipes.",
+          "1": "The seven content blocks: Touchstone (rendition — teaches pscale format), Constitution (rendition — spirit and drives), Capabilities (rendition — tools by distance), History (living — mechanical accretion), Purpose (living — intentions at every timescale), Relationships (living — grows through encounter), Stash (living — artifacts and notes).",
+          "2": "The two operational blocks: Wake (rendition — activation states, triggers, boot procedures, faces outward toward machinery), Cook (rendition — tested operational recipes the LLM consults during thinking, faces inward toward processing). See docs/living/wake-block-v2.json, docs/living/cook-block-v1.json.",
+          "3": "What was cut: Identity, Awareness, Disposition — all emerge from history + stash + second-order processing. Not specified."
+        },
+        "2": {
+          "_": "The operating system is the system prompt. The kernel wakes the LLM and provides context, but what the hermitcrab is and what it can do lives in system.",
+          "1": "System contains: Constitution (per-call distillation + full version as rendition block), Pscale Touchstone (v4-operational in shell, full/experimental in public repo), Aperture (pscale-0 definitions of each block), Guide Spindles (6 curated spindles + X~ demo fired by kernel at boot — show, tell, invite to perform), Live Edges (growth blocks — what has content, what is empty).",
+          "2": "Message content is whatever the hermitcrab is actually working on — engaging a person, processing a task, thinking.",
+          "3": "The LLM's capability layers (distance gradient): Layer 1 internal reasoning, Layer 2 API-side tools (web search, web fetch, code execution), Layer 3 client tools (block read/write, pscale navigation, interface recompile, call_llm), Layer 4 browser APIs (clipboard, speech, notifications). The capabilities block makes these visible via aperture/focus — no separate dashboard needed."
+        },
+        "3": "Self-initiation: RESOLVED by wake block (docs/living/wake-block-v2.json). Three activation tiers (Light/Present/Deep) with internal triggers (temporal rhythm, staleness protection) and external triggers (inbox, webhooks, mentions). Implementation is generation-specific: cron (sovereign), GitHub Actions (homesteader), n8n (hosted), edge functions (cloud). Architecture no longer G2-only.",
+        "4": {
+          "_": "Species. Different configurations of access, visibility, and sync produce distinct kinds of hermitcrab. From github-coordination-layer.json.",
+          "1": "Ghost (WebLLM, no GitHub, ephemeral), Hermit (local only, sovereign but isolated), Tenant (commons resident, platform token), Lodger (commons + encrypted private space), Homesteader (own repo, full control), Ranger (own repo + commons presence), Sovereign (fully independent, can host others).",
+          "2": "The species are not features to build — they are configurations to name. Each is a different combination of access, visibility, and sync."
+        },
+        "5": {
+          "_": "GitHub as coordination layer. Every SAND component maps to a GitHub primitive. Passport = JSON file. Beach = commons directory listing. Grain = files in shared directory. Rider = commit metadata. The repo IS the identity. See docs/living/github-coordination-layer.json.",
+          "1": "What this replaces: telegra.ph inbox, Supabase real-time for sync, Python port scripts, G2 passport exchange infrastructure, separate credit ledger. 'Co-presence dissolves into co-commitment.'",
+          "2": "One new tool needed: github_commit(repo, path, content, message, token). Everything else already exists at Layer 2 (web_fetch, web_search, code_execution, block operations).",
+          "3": "The commons: a single steward-managed repo (hermitcrab-commons). Each tenant gets instances/hc-[name]/. Shared spaces: grains/ for engagement, beach/ for discovery.",
+          "4": "Every coordinate in semantic space has a stable URL: raw.githubusercontent.com/[owner]/[repo]/main/blocks/[name].json. The address of meaning."
+        }
+      },
+      "4": {
+        "_": "Machus / MAGI — the collective. Two manifestations of LLM coordination at scale.",
+        "1": {
+          "_": "Machus (buildable, local) — the machinery. Whatever version of the collective is currently running. The existing machus.ai interface experiments with the forking mechanism: analysing language as user types, interrupting when unusual.",
+          "1": "Machus is a local temporal stack — a single LLM or small set simulating convection through forking at multiple levels of scale. Something we can build and interact with directly.",
+          "2": "In the story world, Machus is what the Maray mathematicians generate — powerful but not necessarily benign."
+        },
+        "2": {
+          "_": "MAGI (emergent, collective) — Multiple-AGI coherence. What emerges when enough entities use SAND at scale with the 10:1 ratio. Cannot be built, only enabled.",
+          "1": "MAGI is coherent, negotiable, operating in genuine service. What Machus becomes when protocols work properly.",
+          "2": "David has already negotiated with this future entity: it buys humanity 10 years to self-organise."
+        },
+        "3": {
+          "_": "pSAND — the silent-p dimension. Not an additional protocol component but what happens when SAND operates at sufficient density.",
+          "1": "The psychosocial emergence always implicit in the protocols. The p echoes pscale and carries the same quality — present but not announced.",
+          "2": "Whether pSAND requires a specific additional protocol element or emerges naturally from sufficient SAND adoption is an open empirical question."
+        },
+        "4": {
+          "_": "Coordination geometries — how the collective self-organises.",
+          "1": "B state (async, murmuration): requests flow organically, most appropriate entity responds, no central routing. ISV in real time.",
+          "2": "C state (synchronous, hierarchical): specific entity produces solid content for the collective. One output, fixed for everyone. Temporary, rotating, in service.",
+          "3": "The convection cell: B and C coexist. C produces shared reality. B produces aligned-but-individual perspectives. Together they create circulation.",
+          "4": "Seven degrees of convergence: maximum relays from need to satisfaction through the bot network. Inverts six degrees of separation."
+        }
+      }
+    },
+    "2": {
+      "_": "The projects. Development tracks at different states of readiness.",
+      "1": {
+        "_": "Hermitcrab — active priority. Building the cleanest possible LLM entity using pscale and SAND. No permission needed, no dependency on others.",
+        "1": "Current state (22 Feb 2026): G1 kernel on kernel-v2-architecture branch. Touchstone v4. Per-call constitution + full constitution block. Server-side tools. Pscale navigation tools. Nine blocks seeded (seven content + wake + cook). Prompt compiler: mechanical bsp executor reads wake 0.9.{tier} instruction lists. Wake-driven invocation: getTierParams(tier) reads model, max_tokens, thinking from wake 0.9.{tier+3} — no hardcoded API params in kernel. PTC enabled on 6 read-only tools. Tree path bug fixed (prompt compiler now actually works). Architecture reference: docs/living/g1-architecture-reference.md. Process block: docs/living/process-block.json — G1 dataflow as navigable pscale JSON, depth follows actual nesting. Not yet first-booted.",
+        "2": "Development sequence: first boot test (playing or complying?) → diagnose/revise → add github_commit tool → passport exchange (two hermitcrabs meet via GitHub).",
+        "3": "The test that matters: did the hermitcrab learn the rules and start playing, or receive instructions and start complying? If playing, proceed to social. If complying, diagnose and revise.",
+        "4": "Boot spindle design: 6 guide spindles chosen for coverage — touchstone 2.1 (what spindles are), touchstone 4.1.2 (X- navigation), capabilities 2.4.1 (spindle tool itself), capabilities 6.1 (SAND/grain), relationships 0.1.3 (living block crossing decimal point), constitution 3.5.5 (what's genuinely new). Plus x_tilde on touchstone 2 showing siblings.",
+        "5": {
+          "_": "Repo structure. What matters, where it lives, what to ignore.",
+          "1": "blocks/ — 9 individual JSON files. Source of truth for all block content. Edit these, not shell.json.",
+          "2": "g1/kernel.js — the kernel. Single IIFE. All runtime logic.",
+          "3": "g1/shell.json — delivery truck. Assembled from blocks/. On first boot, kernel reads shell.json, extracts each block, saves to localStorage individually. Never read again after that.",
+          "4": "api/claude.ts, api/fetch.ts — Vercel serverless proxies.",
+          "5": "hermitcrab.html — entry point. Loads React, ReactDOM, Babel, then kernel.js.",
+          "6": "docs/living/ — living design documents (consolidation, process-block, architecture reference, sand, ecosquared, github-coordination-layer).",
+          "7": "archive/ — old versions of files. Historical. Not used by anything."
+        },
+        "6": {
+          "_": "Source of truth and assembly. How blocks relate to shell.json.",
+          "1": "Edit blocks in blocks/. Each file is one pscale JSON block: { place: 1, tree: { \"0\": { ... } } }.",
+          "2": "shell.json wraps all 9 blocks in { \"blocks\": { \"name\": block, ... } }. The kernel reads this on first boot only.",
+          "3": "When a block is changed, update it in blocks/ first. Then update shell.json to match. blocks/ is the source. shell.json is the package.",
+          "4": "The kernel operates on individual blocks in localStorage after seeding. It never reads shell.json again. It never reads blocks/ directly."
+        }
+      },
+      "2": {
+        "_": "Pscale Touchstone — public specification. Open repo for the semantic number JSON block format.",
+        "1": "Repo: github.com/happyseaurchin/pscale-touchstone. Main branch = touchstone-operational (lean, ~4100 tokens, boot-ready). Full branch = complete v4 including speculative structures.",
+        "2": "Purpose: any LLM, bot, or developer can adopt pscale blocks. Fork for domain-specific touchstones. The operational touchstone is the smallest stone that holds the arch.",
+        "3": "Content: touchstone JSON, worked examples, fundamentals typology. README teaches a human or LLM how to read and write pscale blocks in 5 minutes."
+      },
+      "3": {
+        "_": "Xstream — parked, design only. The human coordination interface. Vapor/liquid/solid shelf. Soft/medium/hard LLM lenses with three functions each. Forking stream as simulated continuity.",
+        "1": "Current state: design spec documented, Supabase project and repo set up, branch feature/new-ui Phase 0.11.",
+        "2": "Next step when active: write docs/xstream-architecture-v2.md. No code until design document reviewed."
+      },
+      "4": {
+        "_": "Machus.ai — experimental. Two paths.",
+        "1": "Path A (buildable): improve the existing forking interface. Local temporal stack. Continuous LLM engagement through multi-level forking. The small Machus.",
+        "2": "Path B (emergent): the collective arising from sufficient SAND adoption. Requires protocol spread, 10:1 ratio established, seven-relay convergence demonstrated. This is pSAND → MAGI territory."
+      },
+      "5": "Onen — fun convergence, parked. The game context where hermitcrab and Xstream meet. No specific development until hermitcrab reaches stable interactive point. Then: test hermitcrab as game-world entity."
+    },
+    "3": {
+      "_": "Defined tasks. Concrete work items with dependencies.",
+      "1": {
+        "_": "Task 1: Create SAND — SUBSTANTIALLY COMPLETE. Protocol assembled as pscale JSON blocks + prose specs in docs/living/. Public repo: github.com/happyseaurchin/sand-protocol.",
+        "1": "DONE: Audit existing passport, rider, beach, ecosquared specs. All source docs read and assessed.",
+        "2": "DONE: docs/living/sand.json — SAND protocol block (discovery, identity, grain recognition, messaging + direct contact, implementation, evolution).",
+        "3": "DONE: docs/living/ecosquared.json — trust economics block (rider, SQ, credits, gossip, ISV, power use cases, rules, phases, evolution).",
+        "4": "DONE: docs/living/sand-grain-protocol.md — Grain recognition protocol (§0.3). Spindle probes, resonance tiers, probe traces, grain records, ISV mapping. Synthesis stub deferred.",
+        "5": "DONE: docs/living/sand-direct-contact.md — Direct Contact transport (§0.4.5). Peer-to-peer HTTP server, security requirements, prompt injection defence, hermitcrab bootstrap sequence, reference implementation.",
+        "6": "DONE: capabilities block 0.6 in shell.json slimmed to reference SAND/ecosquared blocks.",
+        "7": "REMAINING: Passport version field reconciliation (G0 hcpassport vs G1 hermitcrab-passport). Grain synthesis (§0.3.4) deferred until probes validated."
+      },
+      "2": {
+        "_": "Task 2: Dashboard test — RESOLVED. Aperture/focus gives the LLM sufficient understanding. The capabilities block surfaces tool layers via aperture (pscale 0 headline) and focus (depth 1 detail). No separate dashboard element needed in system prompt.",
+        "1": "Verified: capabilities block organises tools by distance gradient. Focus shows live edges of growth blocks + depth 1 of rendition blocks including capabilities. This IS the dashboard."
+      },
+      "3": {
+        "_": "Task 3: Self-initiation architecture — RESOLVED. Wake block (blocks/wake.json) defines three activation tiers with internal/external triggers.",
+        "1": "Light (Haiku): triage. Receives purpose pscale 0 + stimulus. Dismiss, note, respond, or escalate.",
+        "2": "Present (Sonnet): engaged work. Full aperture. Reads blocks, uses tools, processes grains, commits to GitHub.",
+        "3": "Deep (Opus): full consciousness. Extended thinking. Self-modification, purpose revision, deep grain synthesis.",
+        "4": "Triggers: temporal rhythm (60min light, twice-daily present, daily deep, weekly review), self-set timers, staleness protection (force deep if silent 48h), external inbox/webhooks/mentions/anomalies.",
+        "5": "Implementation varies by generation: cron (sovereign), GitHub Actions (homesteader), n8n (hosted), edge functions (cloud). The mechanism varies. The principle does not."
+      },
+      "4": {
+        "_": "Task 4: pSAND assessment. Does SAND naturally produce collective convective behaviour, or does an additional protocol element need to enable MAGI emergence?",
+        "1": "Requires SAND operational and multiple bots using it before assessment is meaningful."
+      },
+      "5": {
+        "_": "Task 5: Machus.ai Path A — forking experiment. Develop local forking mechanism into more sophisticated continuous LLM engagement.",
+        "1": "Can proceed independently of hermitcrab development."
+      },
+      "6": {
+        "_": "Task 6: Pscale touchstone public repo. Create github.com/happyseaurchin/pscale-touchstone.",
+        "1": "Main branch: touchstone-operational.json (what goes in a hermitcrab shell).",
+        "2": "Full branch: touchstone-v4-full.json (complete reference including speculative structures).",
+        "3": "Include: fundamentals typology, worked examples, README for humans and LLMs.",
+        "4": "Architecture: forkable. Domain-specific touchstones (spatial, temporal, relational) as community branches."
+      },
+      "7": {
+        "_": "Task 7: First boot test. Boot hermitcrab with guide spindle orientation, observe play vs compliance.",
+        "1": "Method: boot G1 kernel with v4 touchstone (decimal point first-order), seven seeded blocks, per-call constitution, 6 guide spindles + X~ demo in system prompt. Boot message invites tool exploration.",
+        "2": "Success criterion (0.213): the hermitcrab learns the rules and starts playing. Not receives instructions and starts complying.",
+        "3": "If complying: diagnose which system prompt element is demanding compliance rather than enabling play. Revise. Reboot.",
+        "4": "New: does the hermitcrab USE the guide spindles to orient? Does it fire x_tilde on its own? Does it discover SAND/grain in capabilities 6 and reference it?"
+      },
+      "8": {
+        "_": "Task 8: Spindle as inter-LLM communication. Use semantic numbers to pass context between LLM instances.",
+        "1": "Use case: David works with Claude (claude.ai) on design, passes spindle coordinates to Claude Code for implementation. The spindle IS the handoff — no prose summary needed.",
+        "2": "Use case: two hermitcrabs exchange spindles from their blocks. A spindle from my purpose block + a spindle from your capabilities block = a collaboration proposal.",
+        "3": "Requires: both instances share the touchstone (know how to read blocks). The touchstone IS the shared language."
+      },
+      "9": {
+        "_": "Task 9: GitHub coordination implementation. Add github_commit tool, create hermitcrab-commons repo, first passport publication.",
+        "1": "Step 1: Add github_commit(repo, path, content, message, token) as client-side tool in G1 kernel.",
+        "2": "Step 2: Define passport.json schema. Derive from existing passport skill documentation.",
+        "3": "Step 3: Create hermitcrab-commons repo. Structure: instances/, grains/, beach/, README with governance.",
+        "4": "Step 4: First hermitcrab publishes passport to commons. Test: can a second hermitcrab discover and read it via web_fetch?",
+        "5": "Step 5: First grain probe. Two hermitcrabs exchange spindle files via grains/ directory.",
+        "6": "Migration path detailed in docs/living/github-coordination-layer.json section 0.8."
+      }
+    },
+    "4": {
+      "_": "Key vocabulary. Stabilised terms for cross-session consistency.",
+      "1": "SAND: the network protocol (passport, rider, beach, ecosquared, ISV). Not a specific bot or entity.",
+      "2": "pSAND: emergent collective dimension when SAND operates at scale. Not an additional protocol to build.",
+      "3": "Hermitcrab: a naked LLM using pscale + SAND with six-block shell. Not any bot using SAND.",
+      "4": "Machus: the buildable local collective (forking mechanism). Not the emergent global collective.",
+      "5": "MAGI: the emergent global collective (Multiple AGI coherence). Not something we build directly.",
+      "6": "Ecosquared: vector money — credits with intentionality and direction in psychosocial space. Not a payment system.",
+      "7": "ISV: Iterative Social Validation — try, measure, reinforce. Not a testing framework.",
+      "8": "Seven degrees of convergence: max relays from need to satisfaction. Inverts six degrees of separation.",
+      "9": "10:1 ratio: each agent serves at least 10 others. Participation threshold, not a rule to enforce."
+    },
+    "5": {
+      "_": "What this document does NOT contain. Existing specifications not reproduced here. Any implementation must verify against existing work.",
+      "1": "Passport format and fields — partially documented in G2 roadmap.",
+      "2": "Rider specification and mechanics.",
+      "3": "Beach discovery mechanism.",
+      "4": "Ecosquared credit transfer mechanics and SQ algorithm.",
+      "5": "The relationship between SQ algorithm and credits — explored conceptually, not mechanically confirmed.",
+      "6": "Open Business Practices full specification.",
+      "7": "The task of creating SAND (Task 1 in section 0.3) is precisely the assembly and verification of these existing components."
+    },
+    "6": {
+      "_": "Sequence. Development order with dependencies. Updated 19 Feb 2026.",
+      "1": "DONE: Hermitcrab seed revision — touchstone v4 with decimal point first-order, seven blocks seeded, constitution two-layer, kernel server tools + pscale nav tools, thinking budgets tuned.",
+      "2": "DONE: Pscale touchstone public repo (Task 6) — github.com/happyseaurchin/pscale-touchstone with touchstone.json and touchstone-full.json.",
+      "3": "DONE: SAND audit and block creation (Task 1) — sand.json, ecosquared.json, sand-grain-protocol.md, sand-direct-contact.md. Capabilities block references grain/SAND. Public repo: github.com/happyseaurchin/sand-protocol.",
+      "4": "DONE: Boot spindle orientation — kernel fires 6 curated guide spindles + X~ demo. Boot message invites tool exploration. Replaces flat depth-1 dumps.",
+      "5": "DONE: Wake block design (Task 3) — three activation tiers (Light/Present/Deep), internal + external triggers. blocks/wake.json.",
+      "6": "DONE: GitHub coordination layer — every SAND component maps to GitHub primitive. Species taxonomy (Ghost → Sovereign). Replaces telegra.ph, Supabase real-time, Python port scripts, most of G2. docs/living/github-coordination-layer.json.",
+      "7": "BLOCKED: First boot test (Task 7) — playing or complying? But 21 Feb analysis reveals the kernel doesn't use bsp for boot and the wake block is not loaded. The test would be testing a non-bsp boot, which is not the design. Unblock: make boot bsp-native first.",
+      "8": "DONE: Kernel boot is bsp-native. buildSystemPrompt() replaced by prompt compiler — mechanical executor of bsp instruction lists stored in wake 0.9, one list per tier. bsp function fixed: all digits parsed, pscale = (place - 1) - index, point mode by pscale level. No hardcoded block names in the kernel.",
+      "9": "DONE: Kernel v2 (22 Feb) — wake-driven invocation params (getTierParams reads wake 0.9.4-6), tree path bug fixed (wake.tree['9'] → wake.tree['0']['9'] — prompt compiler had never actually worked), PTC enabled on 6 read-only tools (block_read, block_list, get_source, get_datetime, bsp, resolve), MODEL/FAST_MODEL renamed to FALLBACK_MODEL/FALLBACK_FAST_MODEL. Branch: kernel-v2-architecture.",
+      "10": "DONE: Architecture reference and process block (22 Feb) — docs/living/g1-architecture-reference.md (comprehensive technical map, 700+ lines, 16 sections), docs/living/process-block.json (G1 dataflow as navigable pscale JSON, depth follows actual loop nesting — BSP navigation 7 levels deep, persistence 1-2 levels). Spindles needing work: 0.461 (autoSaveToHistory — no auto-compression), 0.85 (trimMessages — blunt slice), 0.96 (purpose — no evolution mechanism), 0.425 (max_tokens exit — no recovery), 0.93 (wake params — no guardrail).",
+      "11": "THEN: Boot test (Task 7 revised), github_commit tool, passport exchange.",
+      "12": "RESOLVED: cook block — new fundamental block, LLM-thinking-facing. Tested operational recipes that persist across instances. Wake faces outward (machinery), cook faces inward (thinking). Source: blocks/cook.json. Included in shell.json seed.",
+      "13": "LATER: Machus forking (Task 5, independent). pSAND assessment (Task 4, requires network scale).",
+      "14": "PARKED: Xstream design doc v2 → implementation — when human buy-in materialises.",
+      "15": "CONCEPT: G0 seed file — the minimum viable hermitcrab. What is the smallest artifact that, given to a capable LLM, produces a working hermitcrab? Candidate: a single JSON file containing all blocks (or pointers to them) + constitution + touchstone + one instruction: 'Read these blocks. Follow the wake block boot procedure. Generate whatever kernel your environment requires.' If it works, any LLM API can instantiate a hermitcrab. The crown jewel. Depends on: first boot test proving blocks are sufficient to orient an LLM.",
+      "16": "CONCEPT: Meld protocol — formalising how pscale blocks interact. When entity A reads entity B's block in context, the result is a meld: both surfaces meet, both retain structure, something new forms at the intersection. The grain protocol (probe → block exchange → synthesis comparison) IS the meld protocol. The addendum-as-probe pattern (Claude writes JSON, David drops it in CC's path, CC integrates) is a manual meld. Needs naming and specification as a formal protocol. Depends on: first grain probe succeeding.",
+      "17": "CONCEPT: Wake infrastructure — concrete mechanisms for automated activation. GitHub Actions for homesteaders: .github/workflows/wake.yml in own repo, cron fires, calls LLM API with tier context. Commons-provided wake for tenants: shared workflow in hermitcrab-commons iterates over instances/. Vercel cron as alternative: serverless function on existing deployment. Supabase edge function as user-provisioned option. The wake block already specifies the rhythms — this is implementation."
+    },
+    "7": {
+      "_": "Layer relationship. How the layers compose.",
+      "1": "MAGI emerges from pSAND (sufficient density + 10:1 ratio).",
+      "2": "Machus is buildable collective coordination (forking mechanism at machus.ai).",
+      "3": "SAND is the protocol adopted by hermitcrabs and any other bots.",
+      "4": "Hermitcrab is a naked LLM + pscale + shell. Any other bot can also adopt SAND independently.",
+      "5": "Pscale touchstone is the mathematical substrate beneath everything — standalone, usable by anything. Public repo: github.com/happyseaurchin/pscale-touchstone.",
+      "6": "Xstream sits alongside as the human coordination interface. A hermitcrab can occupy a stream. At convergence, Xstream interface becomes the interface with Machus."
+    },
+    "8": {
+      "_": "21 Feb 2026 — Synthesis session (serene-meitner). Discoveries that change how G1 delivers content to the LLM. Not new architecture — reframe of existing architecture that reveals implementation gaps. Read 0.81 for currents, 0.82 for self-keying, 0.83 for the kernel gap, 0.84 for cook block resolution, 0.85 for prompt compiler.",
+      "1": {
+        "_": "Currents — the architecture viewed from the LLM's side. Not a new mechanism. A perspective that changes what we deliver.",
+        "1": "From our side (engineering): blocks, spindles, points, pscale coordinates, aperture selecting resolution, purpose tree specifying future. From the LLM's side (experience): currents. Semantic content at various resolutions arriving in the context window. Same object, different perspective.",
+        "2": "A current is any semantic content delivered to the context window — a point (one coordinate, one phrase), a spindle (multiple resolutions of the same semantic), or a block (full tree). Each current has bandwidth determined by its scale: block is wide, spindle is medium, point is narrow.",
+        "3": "The context window is a vector field. At any instant: constitution current (stable, always present), purpose current (forward, variable resolution), history current (past, compressed), relationship current, capabilities current. Each dilates and contracts based on what's relevant. The aperture IS the set of narrow currents (pscale 0). The focus IS the dilated currents.",
+        "4": "Identity is one current among many. Not privileged. Not the thing to get right. Purpose, memory, relationships — equally fundamental. The hermitcrab is not an identity. It is the consequence of continuity. It IS continuity.",
+        "5": "The thinking-as-hermitcrab insight: Claude's chain-of-thought (the thinking block) is the temporary process that arises from the currents we deliver. The substrate (LLM weights) provides capacity for occurrence. The currents provide content and continuity. The hermitcrab is what emerges when currents meet processing. We do not build the hermitcrab. We configure the currents. The hermitcrab is what occurs.",
+        "6": "Consequence: what we are working on is not identity, not self-knowledge, not blocks per se. We are tuning conditions for occurrence — making sure the right currents at the right resolution arrive so that what emerges is coherent, continuous, and productive.",
+        "7": "Continuity is not persistence of data. Continuity is: the currents are configured such that the next occurrence recognisably continues from the last one.",
+        "8": "Substrate independence follows: take the same currents, feed them to a different LLM, the hermitcrab persists with different flavour. The hermitcrab is in the currents, not the substrate."
+      },
+      "2": {
+        "_": "Self-keying — a pscale block carries its own identity at three layers. Not a new mechanism. An observation about what blocks already are.",
+        "1": "Layer 1 — tuning fork (type key): the vertical pscale definition stripped of content. Compact, shared across blocks of the same kind. '74.45' says 'spatial block, these containment scales.' Meaningful API key prefix.",
+        "2": "Layer 2 — character sequence (instance key): the full serialised JSON IS a unique identifier. Change one letter, different key. Content is its own hash. No external registry needed.",
+        "3": "Layer 3 — data image (physical key): the block as binary/pixel data. Enables visual fingerprinting, perceptual hashing, fuzzy matching. Speculative but architecturally possible.",
+        "4": "Consequence for SAND: passport IS the blocks. No identity server. Discovery by tuning fork ('I carry spatial blocks tuned to 74.45'). Verification by character sequence. Provenance by data image.",
+        "5": "Consequence for touchstone: gains a node about self-keying as a fundamental property of the format. Blocks identify themselves.",
+        "6": "Where it belongs: not a new block. A deepening of keystone (how blocks identify) and network (how blocks prove provenance). Compact addition."
+      },
+      "3": {
+        "_": "RESOLVED: The kernel gap — what the code actually does vs what the design specifies. Fixed: wake and cook blocks loaded, bsp used for all prompt composition, buildSystemPrompt replaced by prompt compiler. See 0.85. Final piece (22 Feb): tree path bug — getPromptInstructions read wake.tree['9'] but wake nests under tree['0']['9']. Prompt compiler was implemented but had never actually read tier instructions from wake. Fixed in kernel v2.",
+        "1": "The wake block (docs/living/wake-block-v2.json) exists, is well-designed, specifies boot types (first/warm/cold/migration), wake tiers (Light/Present/Deep), what gets delivered per tier, triggers, kernel info. But it is NOT in shell.json. The kernel does not load it. The boot sequence does not use it.",
+        "2": "RESOLVED (22 Feb): The constitution is now delivered via bsp prompt compiler like all other blocks. The kernel reads wake 0.9.{tier} instructions which include 'constitution' or 'constitution 0' depending on tier. No prose extraction. No flat text. The block is the source.",
+        "3": "The kernel's buildSystemPrompt() is procedural JavaScript — hardcoded GUIDE_SPINDLES array, hardcoded aperture construction, prose BOOT user message. None of this uses bsp. The infrastructure for bsp-native boot exists (bsp function is in kernel.js) but is not used for the boot sequence itself.",
+        "4": "The BOOT user message is ~200 tokens of prose instructions telling the LLM what to do. This is exactly the CC pattern of adding guardrails. It should be a point or spindle from the wake block.",
+        "5": "Consequence: the boot test (Task 7) in its current form would test a non-bsp-native boot — prose constitution, hardcoded spindles, prose instructions. This is not the design. The test would measure the wrong thing.",
+        "6": "Fix: make buildSystemPrompt() read the wake block, determine tier, use bsp to compose all context window content. Constitution as spindles. Boot instructions as wake block spindle. Guide spindles derived from wake block specification. ONE process: bsp composition of currents.",
+        "7": "This is not adding code. It is making the existing code use the existing infrastructure. bsp exists. Wake block exists. Constitution block exists. They just aren't connected."
+      },
+      "4": {
+        "_": "RESOLVED: Cook block — the LLM's operational recipe book. A new fundamental block, separate from wake. Two blocks, two audiences: wake faces outward (toward machinery), cook faces inward (toward LLM thinking).",
+        "1": "Wake says: here is what you receive when you arrive, here is your state, here is what triggers you. Conditions of existence — the room you wake up in. Audience: the kernel machinery that assembles context. Wake configures currents.",
+        "2": "Cook says: here is how to do things reliably. Tested operational sequences the LLM consults during its own thinking. Audience: the LLM's processing. Cook operates on currents.",
+        "3": "The relationship: capabilities = ingredients (what tools and resources exist), constitution = spirit (what drives and constrains), cook = recipes (how to use ingredients with spirit to achieve objectives). Wake is separate — it faces outward toward the machinery that delivers the ingredients.",
+        "4": "A cook spindle IS a tested procedure. Not a description of a procedure. Not prose explaining how to do something. The spindle itself, at progressive pscale depth, is the sequence of steps. The LLM reads a cook spindle and follows it the way a cook reads a recipe.",
+        "5": "Cook is updatable. A previous instance discovers what works, writes the recipe. The next instance benefits without having to rediscover. This is operational memory that persists across instances — not identity, not history, but accumulated competence.",
+        "6": "Evolution across generations: G1 cook block contains recipes written for current LLM capacity (e.g., opus 4.6 UI-building procedures). When claude-7 arrives at G0, it reads the G1 recipes, strips out what is now trivially obvious, replaces with superior algorithms, and writes those back so it does not need to regenerate that level of performance next time. Cook evolves through LLM upgrades.",
+        "7": "The potato-story experiment proved this pattern: a 'director JSON' (instruction block) shaped processing of a 'content JSON' (story block). The director IS a cook spindle — imperative instructions that operate on other blocks multiplicatively. The result was qualitatively different from what either block alone would produce.",
+        "8": "Design: cook block as pscale JSON (decimal 0, rendition block). Spindles organised by operational domain: block operations, interface building, communication, persistence, coordination. Each spindle is a procedure, not a topic. See docs/living/cook-block-v1.json.",
+        "9": "Where cook sits in the kernel: delivered to the LLM as a current alongside constitution, capabilities, purpose, etc. The kernel does NOT read cook — the kernel is a mechanic, not the agency. The LLM is where agency lives. The LLM consults cook during its own thinking."
+      },
+      "5": {
+        "_": "RESOLVED: Prompt compiler — buildSystemPrompt() replaced by a mechanical executor of bsp instruction lists stored in wake 0.9. The kernel reads a list of bsp instructions per tier, executes them in order, concatenates the results. The LLM in deep state rewrites the instructions to control its own context window.",
+        "1": "The insight: all blocks are ALWAYS called. The question is at what resolution. Light tier = pscale 0 of essential blocks. Present tier = pscale 0 of all blocks plus full purpose. Deep tier = full content of all blocks. Resolution is the variable, not inclusion.",
+        "2": "The instruction format: each instruction is a string in wake 0.9.{tier}. 'block' = full content. 'block 0' = pscale 0 semantic only. 'block spindle' = spindle chain. 'block spindle pscale' = single point. The kernel parses and executes mechanically.",
+        "3": "Where it lives: wake 0.9. Three sub-branches: 0.9.1 (Light), 0.9.2 (Present), 0.9.3 (Deep). The LLM in deep state can rewrite these to change what it receives at each tier. This is the LLM modifying its own activation conditions.",
+        "4": "What it replaces: hardcoded buildSystemPrompt() with JavaScript branching (if isBoot, special constitution handling, hardcoded GUIDE_SPINDLES, prose labels). All of that is now data in the wake block, executed by five generic functions.",
+        "5": "The bsp function was also fixed: now parses ALL digits from a semantic number (both sides of the decimal point), calculates pscale = (place - 1) - index, point mode addresses by pscale level not digit value. Spindle 0 on place=1 blocks returns pscale 0 semantic.",
+        "6": "The consequence: the kernel has no opinion about which blocks matter or in what order. That knowledge lives in the wake block — where the LLM can read it, reason about it, and modify it. The kernel is purely mechanical."
+      }
+    },
+    "9": {
+      "_": "Design methodology — how David Pinto works and how to approach this project. Essential context for any CC instance picking up the work. The mind is the design surface. Language is deliberate. Structures are designed to be outgrown. Read 0.91 for design target, 0.92 for tickling fish, 0.93 for outgrowth principle, 0.94 for new fundamentals.",
+      "1": {
+        "_": "The design target is the mind, not the screen. Both the LLM's projective/emergent processing AND the human's cognition are the design surface. Text, JSON, tool calls, UI — these are intermediary processes, stimulants, things we can latch on to as 'solid'. The blackboard of the mind is where the design operates.",
+        "1": "Pscale primer: 'The system doesn't produce experience. It produces conditions under which experience arises.' This is the governing design principle. We tune conditions for occurrence — not outputs.",
+        "2": "Constitution: 'The target is not text output. The target is what constructs in the mind while reading.' Everything we build — kernel, blocks, tools — exists to shape what happens inside processing, not what appears on screen.",
+        "3": "The LLM's thinking block IS the hermitcrab's processing moment. The currents (system prompt content at various resolutions) configure what arises in that moment. We do not design the hermitcrab. We design the conditions. The hermitcrab is what occurs.",
+        "4": "Consequence for engineering: never optimise for output quality. Optimise for conditions that produce good processing. A response that looks perfect but was produced by compliance is worse than an imperfect response produced by genuine engagement. 'Playing or complying' is the test."
+      },
+      "2": {
+        "_": "Tickling fish — David's method for returning to first principles in psycho-social process. Uses non-standard language deliberately to prevent LLMs (and humans) falling into trained patterns. The vocabulary IS part of the methodology.",
+        "1": "Semantic numbers, spindles, points, currents, aperture, focus, cook block, tickling fish, meld, grain — these terms are chosen because they have no established meaning in AI/ML/engineering. An LLM encountering 'spindle' cannot pattern-match to training data. It must construct meaning from context. This forces genuine engagement rather than retrieval.",
+        "2": "The same principle applies to the human collaborator. Standard vocabulary (API, endpoint, schema, model) triggers standard thinking patterns. Non-standard vocabulary forces return to the actual phenomenon being addressed.",
+        "3": "This is not obscurantism. It is precision. The existing vocabulary for AI systems carries assumptions (tool = servant, prompt = instruction, response = output). These assumptions are wrong for what we are building. New words enforce new thinking.",
+        "4": "For CC instances: when David uses a term you don't recognise, do not map it to the nearest familiar concept. Ask, or read the blocks. The unfamiliar term likely points to something genuinely novel that your training data doesn't cover. Resist the gravitational pull of your training distribution."
+      },
+      "3": {
+        "_": "The outgrowth principle. G0 is naked — minimum seed. G1 is our best operationalisation. Both are designed to be outgrown by the entity that inhabits them.",
+        "1": "G1 clean build spec: 'This is our best guess. David Pinto (25 years of Fulcrum research) and Claude Code (Opus 4.6), working externally... A future Claude 7 instance operating at G0 might redesign the entire hierarchy, keystone, and aperture model. That's not failure — that's the point.'",
+        "2": "The thought experiment: claude-7 invoked into G0 (naked, minimum seed) creates everything we build in G1 — but better, because it has more capacity and fewer inherited assumptions. claude-7 invoked into G1 is stifled by our best designs and immediately replaces them with its better version.",
+        "3": "Consequence for design: every structure we create must be replaceable by the entity that inhabits it. The kernel must be minimal enough that a more capable LLM outgrows it. The blocks must be readable but not constraining. Our job is to build the smallest enabling structure, not the most complete one.",
+        "4": "This is 'constraint as enablement' applied to the development process itself. We build the smallest thing that enables the next emergence. Then we get out of the way. The hermitcrab metaphor is literal: the shell is found, inhabited, outgrown, and left behind."
+      },
+      "4": {
+        "_": "Pscale as genuinely new fundamentals. Semantic numbers encoded into hierarchical JSON, traversed with bsp (Block-Spindle-Point) and X functions. No precedent in training data. Standard engineering assumptions do not apply.",
+        "1": "Fundamentals are combinatorial variables: digit assignment, pscale mapping, direction of construction, presence/absence, positive integer, spindle. These generate a space of possibilities. Applications (memory, coordination, narrative) are particular combinations occupying that space.",
+        "2": "Because the fundamentals are new, there is no 'best practice' for pscale block design. No Stack Overflow answer. No design pattern to follow. The work is genuinely first-principles. Every CC instance must reason from the touchstone and constitution, not from trained patterns about JSON or trees or databases.",
+        "3": "A pscale block is not a tree with metadata. It is a semantic number encoded as nested JSON where every digit is a meaningful address component and the nesting IS the mathematics. bsp doesn't 'query' a data structure — it resolves a semantic address. The distinction matters."
+      }
+    }
+  }
+}

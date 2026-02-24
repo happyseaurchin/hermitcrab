@@ -120,9 +120,9 @@
   // These are mechanical operations on the tree — no LLM needed.
   // They implement the touchstone's X+/X-/X~ vocabulary.
 
-  // Get the pscale 0 root of a block — always tree["0"]
+  // Get the root of a block — tree itself (pure block: content lives directly under tree)
   function pscaleRoot(block) {
-    return { node: block.tree?.['0'] || null, path: '0' };
+    return { node: block.tree || null, path: '' };
   }
 
   // Navigate to a path and return {node, parentPath}
@@ -144,49 +144,58 @@
   // bsp(block, spindle)     → chain of semantics, one per digit, high pscale to low
   // bsp(block, spindle, ps) → single semantic at the specified pscale level
   //
-  // A semantic number like 21.34 has four digits: 2, 1, 3, 4.
-  // Each digit is one nesting step into the tree.
-  // place counts digits before the decimal point.
-  // pscale = (place - 1) - index.
+  // Pure blocks: { tree: { "_": "...", "1": {...}, ... } }
+  // No place field. No tree["0"] wrapper. The number carries the instruction.
+  // The decimal point marks pscale 0. Root (tree._) is always included.
   //
-  // No stripping. No special cases. The leading zero in 0.x is a real digit
-  // that walks to tree["0"]. All blocks nest content under tree["0"].
-  //
-  // place=1: 0.234 → digits ['0','2','3','4'] → pscale 0, -1, -2, -3
-  // place=2: 23.41 → digits ['2','3','4','1'] → pscale 1, 0, -1, -2
-  // place=4: 2341  → digits ['2','3','4','1'] → pscale 3, 2, 1, 0
+  // 0.234 → delineation: strip 0, walk [2,3,4], root is pscale 0
+  // 0     → delineation: no walk digits, root only at pscale 0
+  // 23.45 → walk [2,3,4,5], root is pscale 2
+  // 2345  → walk [2,3,4,5], no pscale (no decimal)
 
   function bsp(block, spindle, point) {
     const blk = typeof block === 'string' ? blockLoad(block) : block;
     if (!blk || !blk.tree) return { mode: 'block', tree: {} };
-    const place = blk.place || 1;
 
     // Block mode — no spindle, return full tree
     if (spindle === undefined || spindle === null) {
       return { mode: 'block', tree: blk.tree };
     }
 
-    // Parse ALL digits from the semantic number. No stripping.
-    // "0.234"  → int="0" frac="234" → ['0','2','3','4']
-    // "23.41"  → int="23" frac="41" → ['2','3','4','1']
-    // "2341"   → int="2341" frac="" → ['2','3','4','1']
-    // "0.1"    → int="0" frac="1"   → ['0','1']
-    // "20.1"   → int="20" frac="1"  → ['2','0','1']
+    // Parse the semantic number
     const str = typeof spindle === 'number' ? spindle.toFixed(10) : String(spindle);
     const parts = str.split('.');
     const intStr = parts[0] || '0';
     const fracStr = (parts[1] || '').replace(/0+$/, '');
-    const allDigits = (intStr + fracStr).split('');
 
-    if (allDigits.length === 0) return { mode: 'spindle', nodes: [] };
+    // Delineation: integer part is "0" — strip it, walk only fractional digits
+    // 0.234 → walk [2,3,4]; bare 0 → walk nothing (root only)
+    const isDelineation = intStr === '0';
+    const walkDigits = isDelineation
+      ? fracStr.split('').filter(c => c.length > 0)
+      : (intStr + fracStr).split('');
 
-    // Walk the tree, building the spindle chain.
-    // Each digit is one nesting step. pscale = (place - 1) - index.
+    // Pscale from decimal position
+    // Delineation (0 or 0.xxx): root is pscale 0
+    // Regular with decimal (23.45): root is pscale = intStr.length
+    // No decimal (2345): no pscale
+    const hasPscale = isDelineation || fracStr.length > 0;
+    const digitsBefore = isDelineation ? 0 : (hasPscale ? intStr.length : -1);
+
+    // Build spindle — root always included
     const nodes = [];
     let node = blk.tree;
 
-    for (let index = 0; index < allDigits.length; index++) {
-      const d = allDigits[index];
+    // Root: the block's identity (tree._)
+    const rootText = (typeof node === 'object' && node !== null && typeof node['_'] === 'string')
+      ? node['_'] : null;
+    if (rootText !== null) {
+      nodes.push({ pscale: hasPscale ? digitsBefore : null, text: rootText });
+    }
+
+    // Walk digits through the tree
+    for (let i = 0; i < walkDigits.length; i++) {
+      const d = walkDigits[i];
       if (!node || typeof node !== 'object' || node[d] === undefined) break;
       node = node[d];
       const text = typeof node === 'string'
@@ -194,8 +203,11 @@
         : (typeof node === 'object' && node !== null && typeof node['_'] === 'string')
           ? node['_']
           : JSON.stringify(node);
-      const pscale = (place - 1) - index;
-      nodes.push({ pscale, digit: d, text });
+      nodes.push({
+        pscale: hasPscale ? (digitsBefore - 1) - i : null,
+        digit: d,
+        text
+      });
     }
 
     if (nodes.length === 0) return { mode: 'spindle', nodes: [] };
@@ -273,13 +285,12 @@
   //   "block spindle"        → bsp spindle mode (digit chain)
   //   "block spindle pscale" → bsp point mode (single semantic)
 
-  // Get pscale 0 text from a block — all blocks nest under tree["0"].
-  // bsp(block, 0) walks tree["0"] which is always pscale 0.
+  // Get pscale 0 text from a block — the root summary (tree._).
   function getPscale0(block) {
     if (!block) return '';
-    const p0 = block.tree?.['0'];
-    if (!p0) return '';
-    return typeof p0 === 'string' ? p0 : (p0._ || '');
+    const tree = block.tree;
+    if (!tree) return '';
+    return typeof tree === 'string' ? tree : (tree._ || '');
   }
 
   // Parse a prompt instruction string into bsp arguments.
@@ -346,8 +357,8 @@
   function getPromptInstructions(tier) {
     const wake = blockLoad('wake');
     if (!wake) return [];
-    // wake 0.9.{tier} — the instruction list node
-    const node9 = wake.tree?.['0']?.['9'];
+    // wake 0.9.{tier} — the instruction list node (pure block: tree['9'])
+    const node9 = wake.tree?.['9'];
     if (!node9) return [];
     const tierNode = node9[String(tier)];
     if (!tierNode) return [];
@@ -364,7 +375,7 @@
   // Returns { model, max_tokens, thinking?, max_tool_loops?, max_messages? }
   function getTierParams(tier) {
     const wake = blockLoad('wake');
-    const node9 = wake?.tree?.['0']?.['9'];
+    const node9 = wake?.tree?.['9'];
     const paramNode = node9?.[String(tier + 3)];
     const fallbackModel = tier === 1 ? FALLBACK_FAST_MODEL : FALLBACK_MODEL;
     if (!paramNode) {
@@ -401,11 +412,45 @@
     return result;
   }
 
+  // Detect first boot: history block has no digit children (no entries yet)
+  function isFirstBoot() {
+    const history = blockLoad('history');
+    if (!history || !history.tree) return true;
+    for (let d = 1; d <= 9; d++) {
+      if (history.tree[String(d)] !== undefined) return false;
+    }
+    return true;
+  }
+
+  // Read birth instructions from wake 6.5.{sibling} — complete context window for first boot.
+  // Default sibling 1 (shallow). Returns instruction strings or null.
+  function getBirthInstructions(sibling) {
+    sibling = sibling || 1;
+    const wake = blockLoad('wake');
+    const birthNode = wake?.tree?.['6']?.['5']?.[String(sibling)];
+    if (!birthNode || typeof birthNode !== 'object') return null;
+    const instructions = [];
+    for (let d = 1; d <= 9; d++) {
+      const val = birthNode[String(d)];
+      if (typeof val === 'string') instructions.push(val);
+    }
+    return instructions.length > 0 ? instructions : null;
+  }
+
   // Build the system prompt by executing the instruction list for the given tier.
   // tier: 1=Light, 2=Present, 3=Deep
+  // On first boot (deep tier), uses birth instructions from wake 6.5 instead of tier 9.3.
   function buildSystemPrompt(tier) {
     tier = tier || 3; // default to deep
-    const instructions = getPromptInstructions(tier);
+
+    // First boot at deep tier: use birth instructions instead of regular deep tier
+    let instructions;
+    if (tier === 3 && isFirstBoot()) {
+      instructions = getBirthInstructions(1) || getPromptInstructions(tier);
+      console.log('[g1] First boot detected — using birth instructions');
+    } else {
+      instructions = getPromptInstructions(tier);
+    }
 
     if (instructions.length === 0) {
       // Fallback: if no instructions found, return pscale 0 of all blocks (aperture)
@@ -517,15 +562,14 @@
       if (texts.length === 0) return;
       const block = blockLoad('history');
       if (!block) return;
-      // Find pscale 0 node
-      const p0Path = '0';
-      const slot = findUnoccupiedDigit(block, p0Path);
+      // Find next empty digit at root (pure block: entries live directly under tree)
+      const slot = findUnoccupiedDigit(block, '');
       if (slot.full) {
-        console.log('[g1] history block full at pscale 0 — compression needed');
+        console.log('[g1] history block full at root — compression needed');
         return;
       }
       const entry = `[${new Date().toISOString()}] ${texts.map(b => b.text).join('\n').substring(0, 500)}`;
-      const writePath = p0Path ? `${p0Path}.${slot.digit}` : slot.digit;
+      const writePath = slot.digit;
       blockWriteNode(block, writePath, entry);
       blockSave('history', block);
       console.log(`[g1] auto-saved to history at ${writePath}`);
@@ -588,8 +632,8 @@
     },
     {
       name: 'block_create',
-      description: 'Create a new block. All blocks nest content under tree["0"]. place counts digits before the decimal point (default 1 for 0.x addresses).',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, pscale0: { type: 'string', description: 'Pscale 0 text — what this block is' }, place: { type: 'integer', description: 'Place value (default 1). Counts digits before the decimal point.', default: 1 } }, required: ['name', 'pscale0'] }
+      description: 'Create a new pure block. The tree field holds all content. tree._ is the root summary (pscale 0).',
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, pscale0: { type: 'string', description: 'Root summary — what this block is (becomes tree._)' } }, required: ['name', 'pscale0'] }
     },
     {
       name: 'get_source',
@@ -623,8 +667,8 @@
   const PSCALE_TOOLS = [
     {
       name: 'bsp',
-      description: 'Block · Spindle · Point — semantic address resolution. One function, three modes.\n\nbsp(name) → full block content\nbsp(name, 0.12) → spindle: chain of semantics, one per digit [0,1,2], high pscale to low\nbsp(name, 0.12, -1) → point: the semantic at pscale level -1\n\nEvery digit is a nesting step. No stripping. 0.12 walks [0][1][2]. 23.41 walks [2][3][4][1]. pscale = (place - 1) - index. place counts digits before the decimal point.',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. "capabilities", "purpose", "touchstone")' }, spindle: { type: 'number', description: 'Semantic number. ALL digits are nesting steps — 0.12 walks [0][1][2], 23.41 walks [2][3][4][1]. No stripping.' }, point: { type: 'number', description: 'Pscale level to extract. Returns only the semantic at that depth. E.g. -1 returns the node at pscale -1.' } }, required: ['name'] },
+      description: 'Block · Spindle · Point — semantic address resolution. One function, three modes.\n\nbsp(name) → full block tree\nbsp(name, 0.21) → spindle: root (pscale 0) then walked digits [2,1] (pscale -1, -2)\nbsp(name, 0.21, -1) → point: just the semantic at pscale -1\n\nPure blocks. Leading 0 in 0.xxx is stripped (delineation notation). Remaining digits walk the tree. Root (tree._) always included. Decimal position determines pscale.',
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. "capabilities", "purpose", "touchstone")' }, spindle: { type: 'number', description: 'Semantic number. Leading 0. stripped (delineation). Remaining digits walk the tree. 0.21 walks [2,1]. 23.41 walks [2,3,4,1].' }, point: { type: 'number', description: 'Pscale level to extract. Returns only the semantic at that level. E.g. -1 returns the node at pscale -1.' } }, required: ['name'] },
       allowed_callers: ['code_execution_20250825']
     },
     {
@@ -688,9 +732,8 @@
         return JSON.stringify(blockList());
       case 'block_create': {
         if (blockLoad(input.name)) return JSON.stringify({ error: `Block "${input.name}" already exists` });
-        const place = input.place || 1;
-        // All blocks nest content under tree["0"]
-        blockSave(input.name, { place, tree: { "0": input.pscale0 } });
+        // Pure block: tree._ is the root summary
+        blockSave(input.name, { tree: { "_": input.pscale0 } });
         return JSON.stringify({ success: true, name: input.name });
       }
       case 'get_source':
@@ -969,7 +1012,7 @@
     blockRead: (name, path) => { const b = blockLoad(name); if (!b) return null; return path ? blockReadNode(b, path) : b; },
     blockWrite: (name, path, content) => { const b = blockLoad(name); if (!b) return { error: 'not found' }; blockWriteNode(b, path, content); blockSave(name, b); return { success: true }; },
     blockList,
-    blockCreate: (name, p0, place) => { if (blockLoad(name)) return { error: 'exists' }; place = place || 1; blockSave(name, { place, tree: { "0": p0 } }); return { success: true }; },
+    blockCreate: (name, p0) => { if (blockLoad(name)) return { error: 'exists' }; blockSave(name, { tree: { "_": p0 } }); return { success: true }; },
     // Pscale navigation — bsp(block, spindle?, point?)
     bsp: (name, spindle, point) => bsp(name, spindle, point),
     resolve: (name, depth) => { const b = blockLoad(name); if (!b) return null; return resolveBlock(b, depth || 3); },

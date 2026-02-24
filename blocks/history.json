@@ -1,6 +1,5 @@
 {
-  "place": 1,
   "tree": {
-    "0": "What happened. Each entry is an exchange, appended by the system after every conversation turn. You read this; you don't write here. Grows by accumulation, compresses by summary. If empty below, this is your first moment."
+    "_": "What happened. Each entry is an exchange, appended by the system after every conversation turn. You read this; you don't write here. Grows by accumulation, compresses by summary. If empty below, this is your first moment."
   }
 }
