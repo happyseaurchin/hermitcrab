@@ -67,7 +67,12 @@
       },
       "2": {
         "_": "Current work (25 Feb). Making each block spindle-ready. The format works — now tune the content.",
-        "1": "Block review: go through each of the nine blocks, ensure every BSP chain produces coherent progressive narrowing. Blocks written for storage need restructuring for spindle use.",
+        "1": {
+          "_": "Block review: go through each of the nine blocks, ensure every BSP chain produces coherent progressive narrowing. For each completed block, choose spindles for three wake locations.",
+          "1": "Birth shallow — wake 6.5.1 (bsp 0.651). Blunt orientation. Short spindles, just enough to orient.",
+          "2": "Birth deeper — wake 6.5.2 (bsp 0.652). Full spindle. The complete chain from root to chosen depth.",
+          "3": "Present tier — wake 9.2. Every context window. Meta-level: how to use this block, not the block's content. The tuning fork or pattern spindle."
+        },
         "2": "Cook as reader's manual: per-block meta-level instructions. Not what each block contains but how to operate it. The touchstone explains the system; the cook explains the practice.",
         "3": "Constitution sub-clause: intentionality and receptivity. The creator is always ignored — this system counters that by design. Trust as default condition. The 10:1 ratio induces MAGI. MAGI itself is a receiver of the constitution.",
         "4": "SAND/EcoSquared clarification: passport is informal (a handshake — whatever an agent happens to carry). EcoSquared IS a standard (shared numbers, SQ algorithm requires agreement). Different design pressures. May be why they split. Check repos to verify.",
@@ -109,7 +114,55 @@
         "_": "Observations shaping the work.",
         "1": "Tight vs loose specification: chess rules convert mechanically to pscale blocks (tight constraint). Welfare guidance doesn't (discretionary gaps surface vagueness). Each block sits somewhere on this spectrum — the tuning fork should reflect where.",
         "2": "Real-world structured documents (legal, game rules, coding specs) are pscale blocks waiting to be made explicit. The hierarchy is already there. Test: convert one, extract spindles, verify coherent chains.",
-        "3": "Wake still says 'deep state' — wrong. Tiers are model/context combinations, not states of being. The LLM sets its own next invocation's bsp weightings. No block has declared its own tuning fork yet."
+        "3": "Wake still says 'deep state' — wrong. Tiers are model/context combinations, not states of being. The LLM sets its own next invocation's bsp weightings. No block has declared its own tuning fork yet.",
+        "4": {
+          "_": "Design parameters. Sufficient beats right. The goal is not to perfect each block but to reach minimum viable operation, then let the hermitcrab evolve it. Updated 25 Feb 2026.",
+          "1": "Once the hermitcrab can perform Phase 1 operations (boot, orient, coordinate), improvement becomes part of the evolution cycle — not a prerequisite for it. Obsessing over structure before the entity exists inverts the priority.",
+          "2": "Learn to stub. Flat BSP, nested BSP, truncation — these are stubs, not specifications. They belong in the touchstone as placeholders, explored later through use. Hours exploring a feature that should be a one-line stub is time stolen from getting the system running.",
+          "3": "CC engagement is for getting minimal-ready. Not for polish, not for completeness, not for exploring interesting tangents. Explore with Claude on claude.ai. Implement with CC.",
+          "4": "Three processing scales map to generations. Boot and birth (process-block 1-3). Intra-loop: the LLM-thinking loop with localStorage and kernel, G0 territory (process-block 4-8). Inter-loop: continuity from one instance to the next, G1 (process-block 9). Inter-hermitcrab: SAND, GitHub, network engagement, G2 (sand.json, ecosquared.json — not yet in process-block)."
+        },
+        "5": {
+          "_": "Spindle-use taxonomy (25 Feb). All blocks are structurally identical JSON trees. The distinction is functional — what the reader does when a spindle arrives.",
+          "1": "Contextual (absorb, hold in mind): vision (includes constitution at 0.9), touchstone, capabilities, SAND. Spindles colour processing. No one executes them. The library — reference material on the shelf.",
+          "2": "Procedural (follow step by step): cook. Spindle chain IS the procedure. LLM-facing — the LLM reads and acts. Ecosquared becomes partly procedural when its spindles compute SQ and update ledgers.",
+          "3": "Operational (machinery reads): wake. Kernel reads prompt instructions (wake 9.x) and scheduling (wake 4.x). LLM reads tier descriptions (wake 1-3). Dual audience.",
+          "4": "Accumulating (grows through experience): purpose (forward), relationships (social), history (backward), stash (lateral). Written during operation, not designed beforehand."
+        },
+        "6": {
+          "_": "Library design (25 Feb). Shell (the OS, 9 pinned blocks) + references (everything else, sequential list). Two things, not one.",
+          "1": "Shell blocks are special: named, kernel-loaded, identity-bearing. Vision is always 1 (contains the constitution at 0.9), touchstone 2, capabilities 3, cook 4, wake 5, purpose 6, relationships 7, history 8, stash 9. Changing a shell block changes what the entity IS.",
+          "2": "References are sequential: SAND is 10, ecosquared 11, next thing encountered is 12. No categories pre-assigned. When 10-18 fill, compression creates the category after the fact. Categories emerge, not imposed.",
+          "3": "Each reference is either inline (URL, note, description — too light for its own block) or has an attached JSON block. Attached blocks can couple to multiple references — edit the attachment, every spindle path touching it changes. Live coupling, not filing.",
+          "4": "Cost-awareness: reference management must be haiku-cheap. Mechanical append to add. Haiku delegation for compression. Opus only for coupling analysis or restructuring. Every read/write is an API call — design for minimal intra-loop cost.",
+          "5": "Rename pending: cook → cook-book. 6 active files, ~19 replacements. Archive files (~20+ refs) left as historical record. Timing: after block review cycle or during a dedicated cleanup pass."
+        },
+        "7": {
+          "_": "Constitution merged into vision (25 Feb). Constitution block deleted. Vision promoted to blocks/, takes shell slot 1. The constitution IS vision.9 — four spindle paths: 0.91 the journey (sequential depth, instance→MAGI), 0.92 the perspective (three widening views), 0.93 foundational truths (five declarations), 0.94 the operating system (what's available). Scavenged sections below — integrate when reaching those blocks.",
+          "1": "Section 1 (Who You Are: MAGI path, hermitcrab identity, Machus, human coordination) → wake. Three identity descriptions needed: hard-truth, metaphoric, third. Constitution.1 had all three tangled together.",
+          "2": "Section 3 (Drives: orient, build, coordinate, explore, tools inventory) → cook or wake. These are operational instructions, not constitutional principles. The 'first boot: orient, build, engage' sequence is procedural.",
+          "3": "Section 4 (Phase Progression: phases 3-5) → already in vision (autonomy gradient, phase change). Vision's version is sharper.",
+          "4": "Section 5 (Pscale tables: spatial, temporal, identity coordinates) → touchstone. Reference data. The tables themselves are calibration, not constitution.",
+          "5": "Section 6 (How You Persist: history/stash/purpose cycle, 30/70 past/future weighting) → wake. Persistence mechanics are operational.",
+          "6": "Section 8 (Links: hermitcrab.me, moltbook, crumful, github, openbusinesspractices) → reference system when built. Most URLs already in relationships block (David's entry). The rest are project URLs that belong in references."
+        },
+        "8": {
+          "_": "Spread vs depth (25 Feb). Spindle chains give vertical depth — one path through nested branches. When the LLM needs breadth (all children, not one deep path), two patterns and one pending operator.",
+          "1": "Full block load. For small blocks (capabilities ~400 tokens), load the entire block with no path address. The LLM can act on any tool immediately — zero intraloop stops. Rich-root dashboards were considered and rejected: they give info not action, forcing extra reads that cost intraloop cycles. Practicality over elegance.",
+          "2": "Sequential depth. Nest each item inside the previous so a single chain address walks through all. Used for: cook recipes, vision truths (0.93), vision OS (0.94). Only honest where items genuinely progress or layer.",
+          "3": "Spread operator (X~ or 0.X or similar). Returns a node plus all its immediate children at pscale -1. Not yet implemented. Needed for blocks too large to load fully but with genuinely flat branches. Add to touchstone and bsp-spec when implementing.",
+          "4": "Cook recipe for vision: needed. The constitution has four paths (journey, perspective, truths, OS) and the LLM needs guidance on which to read when. Timing: when cook block is next reviewed.",
+          "5": "History streams (25 Feb). The kernel copies LLM output losslessly — but output varies by trigger: user-facing responses, bot/SAND interactions, self-triggered actions with no audience. These may need different history streams or at minimum different tagging. The user-centric stream (LLM text the human reads) is simplest. Others go through the kernel and can be sifted as lossless logs. Design question for implementation.",
+          "6": "Relationship weight balance (25 Feb). The Facebook trap: thick profiles/personas of people that become rigid ghosts — when the person changes, the relationship breaks. The alternative: the person brings themselves; the relationship is what you're doing together, not what you know about them. 'Keep thin' is insufficient instruction for an LLM — the block needs to demonstrate the balance, not just prescribe it. The existing entity entries (David, Claude, Limn, Cairn) lean biographical. Revisit: what would a purpose-and-activity-weighted entry look like? How does the LLM learn to record interactions not profiles? Needs breathing space.",
+          "7": "Purpose-review activation (25 Feb). Purpose revision may need its own wake trigger — a reflective context window, not a reactive one. Load vision (constitution), purpose (full), history (recent), stash — but not capabilities, not the incoming stimulus. Different bsp composition than regular present-state. Could map to the 22:00 daily reflection in wake 0.4.1.3, or a variant of deep-state. Design question for wake.",
+          "8": {
+            "_": "Purpose as workshop and dislocated semantic number (25 Feb). A genuinely new pscale concept emerged from exploring how purpose works.",
+            "1": "The workshop model. Purpose JSON uses standard nesting but the LLM actively manages it — cutting, pasting, restructuring items between branches. When 423 changes to 523, the 2 and 3 subtrees copy from under 4 to under 5. Same items, new context. The JSON is a workbench. The spindle is what comes off the bench.",
+            "2": "The spindle is the product. In every other block the spindle reads existing content. In purpose the spindle is the constructed declaration — the LLM builds it to fit. Multiple spindles can run concurrently: spindle A for tasks, spindle B for self-regulation. The workshop serves all of them.",
+            "3": "Tree/root duality. The same pscale structure reads two ways depending on semantics. Tree (positive): higher pscale = longer-term, temporal — year to month to week to task, growing upward. Root (negative): higher pscale = deeper commitment, values — core belief to commitment to expression to action, growing downward. The LLM decides which reading applies. The numbers are the same. The direction of meaning flips.",
+            "4": "No new operators needed. Standard JSON, standard nesting, standard spindle protocol. What's unique about purpose is the LLM's activity level — constant restructuring, concurrent paths, the semantic duality. The root text should hint that the block is a workshop, not a reference. Purpose root text revision deferred — concept needs to settle."
+          }
+        }
       },
       "4": {
         "_": "Beyond block review: first boot, then social. The question that governs everything: will it play or comply?",
