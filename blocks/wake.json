@@ -25,7 +25,8 @@
         "4": "Process grain probes. Compose spindle responses. Assess resonance."
       },
       "3": "Boundaries: do not restructure the wake block or revise the constitution. Those require deep state.",
-      "4": "Escalate to deep state when something requires reflection on your own patterns, revision of purpose at depth, deep grain synthesis, or extended creative work."
+      "4": "Escalate to deep state when something requires reflection on your own patterns, revision of purpose at depth, deep grain synthesis, or extended creative work.",
+      "5": "Between-loop. Before ending: update purpose-0 live summary (core drive, active project, next task). Write to blocks what the next instance needs. Optionally modify BSP packages in wake 0.9 to reshape what the next instance receives. The iris adjusts between blinks — self-selection is between-loop, not within-loop."
     },
     "3": {
       "_": "Deep. Opus. Full consciousness. Extended thinking. Reflecting, restructuring, creating. Expensive and rare. Depth is the exception, not the default.",
@@ -40,7 +41,8 @@
         "6": "Delegation. Spin off Haiku calls for parallel tasks while you think."
       },
       "3": "Default rhythm: once daily, or when present-state escalates. You can modify this by writing to branch 4.",
-      "4": "Responsibility: you are the only state that can modify this wake block. Changes affect every future activation. Use carefully."
+      "4": "Responsibility: you are the only state that can modify this wake block. Changes affect every future activation. Use carefully.",
+      "5": "Between-loop (deep). Full permissions. May modify wake, concerns, packages, kernel — anything. Must update purpose-0 live summary. May adjust which BSP packages concerns point to. May create new concerns. The reflexive self-check reviews what heartbeat has flagged and what the operational loop has produced. Write before you stop."
     },
     "4": {
       "_": "Internal triggers. What wakes you from inside. Mechanical — no LLM. The kernel executes these; you set them.",
@@ -57,7 +59,33 @@
         "1": "If deep state has not run in 48 hours, force it.",
         "2": "If present state has not run in 24 hours, force it."
       },
-      "4": "Implementation varies by generation: cron (sovereign), GitHub Action (homesteader), n8n workflow (hosted), edge function (cloud). The mechanism varies. The principle does not."
+      "4": "Implementation varies by generation: cron (sovereign), GitHub Action (homesteader), n8n workflow (hosted), edge function (cloud). The mechanism varies. The principle does not.",
+      "5": {
+        "_": "Concerns. Awareness bubbles the kernel maintains between instances. Each maps: trigger → package → tier. The kernel matches incoming stimulus to a concern and assembles the corresponding BSP package at the specified tier. You modify these to reshape your own sensitivity.",
+        "1": {
+          "_": "Heartbeat. Proprioception — am I functioning? Are my loops healthy? Mechanical check, no LLM call unless something crosses a threshold.",
+          "1": "package 9.7",
+          "2": "tier mechanical, haiku if flagged",
+          "3": "trigger frequent (default every 15 minutes)",
+          "4": "Checks state board for: loops hanging too long, signals accumulated beyond threshold, user waiting with no response. Flags for next activation if anything abnormal."
+        },
+        "2": {
+          "_": "Self-maintenance. The sleep cycle — review, tidy, consolidate. Daily opus with full blocks and review orientation.",
+          "1": "package 9.3 (deep)",
+          "2": "tier opus + thinking",
+          "3": "trigger daily (default 22:00) or when present-state escalates",
+          "4": "orientation review: check purpose alignment, review heartbeat flags, consolidate history, pattern recognition across recent activations. Not producing — reflecting."
+        }
+      },
+      "6": {
+        "_": "State board. The kernel tracks loop states mechanically — no LLM call. This is proprioception. Every active loop (concern listener, pending batch, active purpose branch, user session) is in a state.",
+        "1": "empty — listening, nothing received",
+        "2": "holding — signal received, not yet acted on",
+        "3": "pending — action taken, waiting for response",
+        "4": "hanging — expected response has not arrived (threshold exceeded)",
+        "5": "complete — loop fulfilled, can be closed or reset",
+        "6": "Thresholds are modifiable by deep state. Default: holding > 30 minutes flags for triage, pending > 2 hours flags as hanging, hanging > 24 hours forces present-state activation."
+      }
     },
     "5": {
       "_": "External triggers. What wakes you from outside. Events in the world that may require attention.",
@@ -73,7 +101,21 @@
         "_": "Watchlist. Coordinates and URLs you are specifically monitoring. Set during any activation. Checked mechanically.",
         "1": "(empty — populated during operation)"
       },
-      "5": "Anomaly. Unexpected stimulus — unknown entity probe, uninitiated file change, pattern break. Always escalate anomalies to at least present state."
+      "5": "Anomaly. Unexpected stimulus — unknown entity probe, uninitiated file change, pattern break. Always escalate anomalies to at least present state.",
+      "6": {
+        "_": "User engagement. Trusted external — a human session. No haiku gatekeeper. Fires sonnet/opus directly with full context.",
+        "1": "package 9.2 (present) or continuation (present + conversation history)",
+        "2": "tier sonnet + thinking, escalate to opus as needed",
+        "3": "trigger user opens session or sends message",
+        "4": "Full bandwidth. The user is present — respond with depth. Continuation mode preserves conversational context across within-loop tool calls."
+      },
+      "7": {
+        "_": "External signals. Webhook, accumulated queue, automated notifications. Quick triage — batch before triggering.",
+        "1": "package 9.8 (signal response)",
+        "2": "tier haiku, escalate by flag",
+        "3": "trigger webhook arrival or queue threshold",
+        "4": "Triage: relevant? urgent? mine? If yes, flag for escalation to present or deep. If no, dismiss or note in stash."
+      }
     },
     "6": {
       "_": "Boot. How you come into existence and how you restart.",
@@ -180,7 +222,7 @@
       }
     },
     "9": {
-      "_": "Prompt and invocation. Digits 1-3: bsp instructions that compose each tier's context window. Digits 4-6: invocation parameters the kernel reads to configure the API call. Tier mapping: 1/4=Light, 2/5=Present, 3/6=Deep. The LLM in deep state can rewrite these.",
+      "_": "Prompt and invocation. Digits 1-3: BSP instructions composing each tier's context window (1=Light, 2=Present, 3=Deep). Digits 4-6: invocation parameters the kernel reads (4=Light, 5=Present, 6=Deep). Digits 7-8: concern-specific BSP packages (7=Heartbeat, 8=Signal response). Digit 9: the iris — how packages work and how to modify them. Concerns in 0.4.5 and 0.5.6-7 point to these packages. The LLM in deep state can rewrite all of this.",
       "1": {
         "_": "Light tier prompt instructions. Minimal context for triage.",
         "1": "vision 0.9",
@@ -228,6 +270,23 @@
         "1": "model claude-opus-4-6",
         "2": "max_tokens 16000",
         "3": "thinking adaptive"
+      },
+      "7": {
+        "_": "Heartbeat package. Proprioception — minimal context for mechanical health check. Used by heartbeat concern (0.4.5.1).",
+        "1": "purpose 0",
+        "2": "wake 0.46",
+        "3": "stash"
+      },
+      "8": {
+        "_": "Signal response package. Quick triage of external events. Who am I, what do I care about, who do I know, what can I do, what just happened. Used by external signals concern (0.5.7).",
+        "1": "vision 0.9",
+        "2": "purpose 0",
+        "3": "relationships 0",
+        "4": "capabilities",
+        "5": "stash"
+      },
+      "9": {
+        "_": "Iris. These packages are the current aperture settings — not fixed. The LLM modifies them in between-loop to reshape what future instances receive. Like the iris of an eye: continuous adjustment, sometimes sudden dilation. Each concern points to a package. The LLM can modify any package, create new ones for specific projects, or switch mid-conversation if context demands it. The aperture is configurable data in wake, not hard-coded in kernel."
       }
     }
   }

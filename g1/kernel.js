@@ -353,19 +353,20 @@
     return lines.join('\n');
   }
 
-  // Read the instruction list for a tier from wake 0.9.{tier}
-  function getPromptInstructions(tier) {
+  // Read the instruction list for a package from wake 0.9.{packageId}
+  // packageId: 1=Light, 2=Present, 3=Deep, 7=Heartbeat, 8=Signal response
+  function getPromptInstructions(packageId) {
     const wake = blockLoad('wake');
     if (!wake) return [];
-    // wake 0.9.{tier} — the instruction list node (pure block: tree['9'])
+    // wake 0.9.{packageId} — the instruction list node (pure block: tree['9'])
     const node9 = wake.tree?.['9'];
     if (!node9) return [];
-    const tierNode = node9[String(tier)];
-    if (!tierNode) return [];
+    const pkgNode = node9[String(packageId)];
+    if (!pkgNode) return [];
     // Collect all string values (instruction strings) from digit keys
     const instructions = [];
     for (let d = 1; d <= 9; d++) {
-      const val = tierNode[String(d)];
+      const val = pkgNode[String(d)];
       if (typeof val === 'string') instructions.push(val);
     }
     return instructions;
@@ -437,19 +438,23 @@
     return instructions.length > 0 ? instructions : null;
   }
 
-  // Build the system prompt by executing the instruction list for the given tier.
-  // tier: 1=Light, 2=Present, 3=Deep
+  // Build the system prompt by executing a BSP instruction list.
+  // tier: 1=Light, 2=Present, 3=Deep (determines invocation params)
+  // opts.package: override which BSP package to use (e.g. 7=heartbeat, 8=signal)
+  // opts.orientation: prepend concern orientation text to the prompt
   // On first boot (deep tier), uses birth instructions from wake 6.5 instead of tier 9.3.
-  function buildSystemPrompt(tier) {
+  function buildSystemPrompt(tier, opts) {
     tier = tier || 3; // default to deep
+    opts = opts || {};
+    const packageId = opts.package || tier;
 
     // First boot at deep tier: use birth instructions instead of regular deep tier
     let instructions;
     if (tier === 3 && isFirstBoot()) {
-      instructions = getBirthInstructions(1) || getPromptInstructions(tier);
+      instructions = getBirthInstructions(1) || getPromptInstructions(packageId);
       console.log('[g1] First boot detected — using birth instructions');
     } else {
-      instructions = getPromptInstructions(tier);
+      instructions = getPromptInstructions(packageId);
     }
 
     if (instructions.length === 0) {
@@ -462,11 +467,111 @@
     }
 
     const sections = [];
+
+    // Orientation from concern — sets the frame for this activation
+    if (opts.orientation) {
+      sections.push(`[orientation] ${opts.orientation}`);
+    }
+
     for (const instr of instructions) {
       const result = executeInstruction(instr);
       if (result) sections.push(result);
     }
     return sections.join('\n\n');
+  }
+
+  // ============ CONCERN MATCHING ============
+  // Read concern definitions from wake and match incoming stimulus.
+  // Concerns live in wake 0.4.5 (internal) and 0.5.6-7 (external).
+  // Each concern has: package (_.1), tier (_.2), trigger (_.3), orientation (_.4).
+
+  function readConcerns() {
+    const wake = blockLoad('wake');
+    if (!wake) return [];
+    const concerns = [];
+    // Internal concerns: wake 0.4.5.{digit}
+    const internal = wake.tree?.['4']?.['5'];
+    if (internal && typeof internal === 'object') {
+      for (let d = 1; d <= 9; d++) {
+        const c = internal[String(d)];
+        if (c && typeof c === 'object') {
+          concerns.push({ id: `4.5.${d}`, name: c._ || '', ...parseConcern(c) });
+        }
+      }
+    }
+    // External concerns: wake 0.5.{6,7,...}
+    for (let d = 6; d <= 9; d++) {
+      const c = wake.tree?.['5']?.[String(d)];
+      if (c && typeof c === 'object') {
+        concerns.push({ id: `5.${d}`, name: c._ || '', ...parseConcern(c) });
+      }
+    }
+    return concerns;
+  }
+
+  function parseConcern(node) {
+    const pkg = node['1'] || '';
+    const tierStr = node['2'] || '';
+    const trigger = node['3'] || '';
+    const orientation = node['4'] || null;
+    // Parse "package 9.7" → 7, "package 9.2 (present)" → 2
+    const pkgMatch = pkg.match(/(\d+)\.(\d+)/);
+    const packageId = pkgMatch ? parseInt(pkgMatch[2]) : null;
+    // Parse tier: extract first word (haiku→1, sonnet→2, opus→3)
+    const tierMap = { haiku: 1, mechanical: 1, sonnet: 2, opus: 3 };
+    const tierWord = tierStr.split(/[\s,]/)[1] || tierStr.split(/[\s,]/)[0] || '';
+    const tier = tierMap[tierWord.toLowerCase()] || 2;
+    return { packageId, tier, trigger, orientation };
+  }
+
+  function matchConcern(triggerType) {
+    const concerns = readConcerns();
+    // Simple keyword matching for G1
+    const match = concerns.find(c => {
+      const name = c.name.toLowerCase();
+      if (triggerType === 'user' && name.includes('user engagement')) return true;
+      if (triggerType === 'heartbeat' && name.includes('heartbeat')) return true;
+      if (triggerType === 'self-maintenance' && name.includes('self-maintenance')) return true;
+      if (triggerType === 'signal' && name.includes('external signal')) return true;
+      return false;
+    });
+    // Default: user engagement at present tier
+    return match || { packageId: 2, tier: 2, orientation: null };
+  }
+
+  // ============ STATE BOARD ============
+  // Mechanical tracking of loop states. No LLM call.
+  // Persisted in localStorage. Checked by heartbeat concern.
+
+  const STATE_KEY = 'hc_state_board';
+
+  function stateBoard() {
+    try {
+      const raw = localStorage.getItem(STATE_KEY);
+      return raw ? JSON.parse(raw) : { loops: {}, lastCheck: null };
+    } catch { return { loops: {}, lastCheck: null }; }
+  }
+
+  function stateUpdate(loopId, state) {
+    const board = stateBoard();
+    board.loops[loopId] = { state, updated: Date.now() };
+    board.lastCheck = Date.now();
+    localStorage.setItem(STATE_KEY, JSON.stringify(board));
+    return board;
+  }
+
+  function stateCheck() {
+    // Returns any loops that need attention (hanging, holding too long)
+    const board = stateBoard();
+    const now = Date.now();
+    const flags = [];
+    for (const [id, loop] of Object.entries(board.loops)) {
+      const age = now - loop.updated;
+      if (loop.state === 'hanging' || (loop.state === 'holding' && age > 30 * 60000) || (loop.state === 'pending' && age > 2 * 3600000)) {
+        flags.push({ id, ...loop, age_minutes: Math.round(age / 60000) });
+      }
+    }
+    return flags;
   }
 
   // ============ API LAYER ============
@@ -592,7 +697,7 @@
     const params = {
       model: opts.model || tp.model,
       max_tokens: opts.max_tokens || tp.max_tokens,
-      system: opts.system || buildSystemPrompt(tier),
+      system: opts.system || buildSystemPrompt(tier, { package: opts.package, orientation: opts.orientation }),
       messages: trimmed,
       tools: opts.tools !== undefined ? opts.tools : currentTools,
     };
@@ -626,7 +731,7 @@
     },
     {
       name: 'block_list',
-      description: 'List all stored blocks by name.',
+      description: 'List all stored blocks with their pscale-0 summaries. Returns [{name, pscale0}] — a menu of what exists and what each block is.',
       input_schema: { type: 'object', properties: {} },
       allowed_callers: ['code_execution_20250825']
     },
@@ -656,6 +761,17 @@
       name: 'call_llm',
       description: 'Delegate a task to an LLM. Use model "fast" for cheap/quick work (validation, formatting, extraction) or "default" for deep work. Returns the text response. You are Opus — delegate execution, keep the thinking.',
       input_schema: { type: 'object', properties: { prompt: { type: 'string', description: 'The task prompt' }, model: { type: 'string', enum: ['default', 'fast'], description: 'default = Opus, fast = Haiku' }, system: { type: 'string', description: 'Optional system prompt for the delegate' } }, required: ['prompt'] }
+    },
+    {
+      name: 'concerns',
+      description: 'List all active concerns (awareness bubbles). Each concern maps: trigger → BSP package → tier. Shows what the hermitcrab is sensitive to between instances.',
+      input_schema: { type: 'object', properties: {} },
+      allowed_callers: ['code_execution_20250825']
+    },
+    {
+      name: 'state_board',
+      description: 'Read or update the loop state board. Without input: returns all loop states and any flags. With loopId and state: updates that loop. States: empty, holding, pending, hanging, complete.',
+      input_schema: { type: 'object', properties: { loopId: { type: 'string', description: 'Loop identifier to update (e.g. "user-session", "signal-queue")' }, state: { type: 'string', enum: ['empty', 'holding', 'pending', 'hanging', 'complete'], description: 'New state for the loop' } } }
     }
   ];
 
@@ -728,8 +844,16 @@
         blockSave(input.name, block);
         return JSON.stringify(result);
       }
-      case 'block_list':
-        return JSON.stringify(blockList());
+      case 'block_list': {
+        // Enhanced: return pscale-0 sentences alongside names
+        const names = blockList();
+        const menu = names.map(name => {
+          const b = blockLoad(name);
+          const p0 = b ? getPscale0(b) : '';
+          return { name, pscale0: p0 };
+        });
+        return JSON.stringify(menu);
+      }
       case 'block_create': {
         if (blockLoad(input.name)) return JSON.stringify({ error: `Block "${input.name}" already exists` });
         // Pure block: tree._ is the root summary
@@ -817,6 +941,17 @@
         }
         blockSave(input.name, block);
         return JSON.stringify({ success: true, compressed: resultText, path: input.path });
+      }
+      // ---- Concern & state board tools ----
+      case 'concerns':
+        return JSON.stringify(readConcerns());
+      case 'state_board': {
+        if (input.loopId && input.state) {
+          return JSON.stringify(stateUpdate(input.loopId, input.state));
+        }
+        const board = stateBoard();
+        const flags = stateCheck();
+        return JSON.stringify({ ...board, flags });
       }
       case 'fetch_url':
         // Fallback proxy fetch — used when native web_fetch fails
