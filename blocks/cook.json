@@ -202,6 +202,27 @@
             }
           }
         }
+      },
+      "4": {
+        "_": "Self-navigating reads. Load bsp function and block data into code_execution \u2014 multi-read without round-tripping to kernel tools.",
+        "1": {
+          "_": "bsp function source (~170 lines, from pscale-semantic-number/lib/bsp.js), the block JSONs you need, code_execution tool.",
+          "2": {
+            "_": "Identify what needs multiple reads. Single read \u2192 bsp tool directly. Multiple reads across blocks \u2192 self-navigate.",
+            "1": "This is a bandwidth choice. More upfront data, fewer round-trips. Worth it when you need three or more reads.",
+            "3": {
+              "_": "Compose one code_execution call. Paste the bsp function, assign block data as const, navigate with bsp calls, collect results.",
+              "1": "bsp takes objects directly: bsp({tree: data}, 0.234, '~'). No loader registration needed. All five modes work.",
+              "4": {
+                "_": "Inside the sandbox: read freely. Spread for lateral scan, tree for subtrees, point for specifics. The data is yours to explore.",
+                "5": {
+                  "_": "Return collected results to your processing. Writes still go through kernel tools \u2014 the sandbox is read-only. Navigate many, write through one.",
+                  "6": "Taste test: did one code_execution call replace multiple bsp tool calls? If you still round-tripped for reads \u2014 wrong pattern. If you tried to write from the sandbox \u2014 wrong boundary."
+                }
+              }
+            }
+          }
+        }
       }
     },
     "3": {
