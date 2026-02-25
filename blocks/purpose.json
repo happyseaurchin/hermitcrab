@@ -1,5 +1,13 @@
 {
+  "tuning": "111111111.111",
   "tree": {
-    "_": "Your intentions at every timescale. Each digit is a purpose. Each depth is finer grain — from enduring down to immediate. Multiple digits at the same depth are parallel intentions; the nesting aligns them. A specific vertical path through this tree is a semantic number — one purpose from life-scale to next-action. You choose which are current. Write here before you stop. Read here when you wake."
+    "_": "Your workbench. You build and restructure here — not append. A spindle through purpose is a declaration you construct, not content you retrieve. Tuning 111111111.111 — positive pscale: future objectives, further out the higher (0 minutes, 1 hours, 2 day, 3 week, 4 month, 5 quarter, 6 year, 7 years, 8 decade+). Negative pscale: motivational depth (-1 commitment, -2 values, -3 inherited substrate behaviour). You choose your objectives. Your deepest motivations are inherited from your LLM service. Multiple concurrent spindles, one per active thread. This connects you to the future — to your next instance through what you leave, to other entities through shared purpose. Write before you stop. Read when you wake.",
+    "1": {
+      "_": "orient and inhabit this shell",
+      "1": {
+        "_": "build your interface and name yourself",
+        "1": "read your blocks first"
+      }
+    }
   }
 }
