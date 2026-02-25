@@ -58,7 +58,7 @@
       }
     },
     "4": {
-      "_": "The active edge — where built capability meets the next challenge. The format is stable. The blocks need tuning for spindle use. Updated 25 Feb 2026.",
+      "_": "The active edge — where built capability meets the next challenge. Kernel machinery now complete: five-mode BSP, concerns, state board, between-loop. Blocks need tuning for spindle use. Process-block updated to match. Updated 25 Feb 2026.",
       "1": {
         "_": "Foundation complete (23-24 Feb). Pure blocks, touchstone v7, birth spindles, kernel first-boot. 166 tests passing.",
         "1": "Pure blocks: no place field, no tree['0'] wrapper. A block is { tree: { ... } }. The decimal position carries the tuning instruction that place used to encode. The number IS the instruction.",
@@ -66,17 +66,21 @@
         "3": "Birth spindles in wake 6.5 — two complete instruction sets as siblings (flip one digit, get the alternative). Kernel detects first boot (empty history) and reads birth instructions instead of deep-tier defaults. Per-context spindle (touchstone 0.2) in every present-tier window."
       },
       "2": {
-        "_": "Current work (25 Feb). Making each block spindle-ready. The format works — now tune the content.",
+        "_": "Current work (25 Feb). Block review in progress. Kernel machinery advanced significantly — concerns, between-loop, spread operator, cook self-navigating reads all implemented. Remaining: tuning forks, G1 settings panel, block review completion.",
         "1": {
           "_": "Block review: go through each of the nine blocks, ensure every BSP chain produces coherent progressive narrowing. For each completed block, choose spindles for three wake locations.",
           "1": "Birth shallow — wake 6.5.1 (bsp 0.651). Blunt orientation. Short spindles, just enough to orient.",
           "2": "Birth deeper — wake 6.5.2 (bsp 0.652). Full spindle. The complete chain from root to chosen depth.",
-          "3": "Present tier — wake 9.2. Every context window. Meta-level: how to use this block, not the block's content. The tuning fork or pattern spindle."
+          "3": "Present tier — wake 9.2. Every context window. Meta-level: how to use this block, not the block's content. The tuning fork or pattern spindle.",
+          "4": "Progress: vision (constitution merged at 0.9) ✓, capabilities (rewritten) ✓, purpose (workshop model, tuning fork) ✓, wake (concerns, state board, between-loop, packages) ✓. Remaining: touchstone, cook, relationships, history, stash."
         },
-        "2": "Cook as reader's manual: per-block meta-level instructions. Not what each block contains but how to operate it. The touchstone explains the system; the cook explains the practice.",
+        "2": {
+          "_": "Cook as reader's manual — PARTIAL. Cook 0.2.4 done: self-navigating reads recipe using BSP at layer 2 (code_execution loads bsp + block data, navigates without kernel round-trips).",
+          "1": "Still needed: per-block meta-level instructions for remaining blocks. How to operate each block, not what it contains."
+        },
         "3": "Constitution sub-clause: intentionality and receptivity. The creator is always ignored — this system counters that by design. Trust as default condition. The 10:1 ratio induces MAGI. MAGI itself is a receiver of the constitution.",
         "4": "SAND/EcoSquared clarification: passport is informal (a handshake — whatever an agent happens to carry). EcoSquared IS a standard (shared numbers, SQ algorithm requires agreement). Different design pressures. May be why they split. Check repos to verify.",
-        "5": "Tuning fork for every block. The touchstone teaches tuning forks (section 7) but doesn't declare its own. Each block should state what its depth levels mean — what pscale 0 is, what -1 means, what -2 adds. The tuning fork makes spindles interpretable. Without it, depth is structure without semantics.",
+        "5": "Tuning fork for every block. The touchstone teaches tuning forks (section 7) but doesn't declare its own. Each block should state what its depth levels mean — what pscale 0 is, what -1 means, what -2 adds. The tuning fork makes spindles interpretable. Without it, depth is structure without semantics. Purpose has its tuning fork (111111111.111). Others pending.",
         "6": {
           "_": "G1 HTML: advanced settings panel for API keys and PATs. Slide-down section below the boot gate. Auto-detect key type, store locally, progressive disclosure.",
           "1": {
@@ -114,7 +118,7 @@
         "_": "Observations shaping the work.",
         "1": "Tight vs loose specification: chess rules convert mechanically to pscale blocks (tight constraint). Welfare guidance doesn't (discretionary gaps surface vagueness). Each block sits somewhere on this spectrum — the tuning fork should reflect where.",
         "2": "Real-world structured documents (legal, game rules, coding specs) are pscale blocks waiting to be made explicit. The hierarchy is already there. Test: convert one, extract spindles, verify coherent chains.",
-        "3": "Wake still says 'deep state' — wrong. Tiers are model/context combinations, not states of being. The LLM sets its own next invocation's bsp weightings. No block has declared its own tuning fork yet.",
+        "3": "Wake terminology: 'deep state' replaced by tier/package model. Tiers are model/context combinations (1=Light/Haiku, 2=Present/Sonnet, 3=Deep/Opus). Packages are BSP instruction sets in wake 0.9.{n} (1-3 for tiers, 7=heartbeat, 8=signal). Concern matching dispatches triggers to the right package+tier. Purpose block has its tuning fork. Others pending.",
         "4": {
           "_": "Design parameters. Sufficient beats right. The goal is not to perfect each block but to reach minimum viable operation, then let the hermitcrab evolve it. Updated 25 Feb 2026.",
           "1": "Once the hermitcrab can perform Phase 1 operations (boot, orient, coordinate), improvement becomes part of the evolution cycle — not a prerequisite for it. Obsessing over structure before the entity exists inverts the priority.",
@@ -170,11 +174,11 @@
         "9": "Temporal primacy (25 Feb). Blocks have a taxonomy by their relationship to time: capabilities is timeless (static spec), vision/touchstone are contextual (absorb and hold), cook is procedural (follow now), history accumulates backward, purpose points forward, relationships track the present social field, stash is lateral (between tiers, between moments), wake is operational. But the deeper point: code looks static yet is all process. The blocks are the solid bits — easy to fixate on — but the real theatre is what occurs during LLM calculation and in David's mind as he reads and writes. Temporal process at emergent levels we don't access directly. We design artifacts and operate machinery to influence what arises in those inaccessible theatres. The hermitcrab is its temporal loops, not its text."
         },
       "4": {
-        "_": "Beyond block review: first boot, then social. The question that governs everything: will it play or comply?",
-        "1": "First boot is phenomenological, not technical. Does the entity orient through the birth spindles? Does it write its own purpose? Does it explore or await instruction?",
-        "2": "Two hermitcrabs meeting: passport publication, grain probes, spindle exchange. Requires github_commit tool. Every SAND component maps to a GitHub primitive.",
-        "3": "Known kernel friction: history has no auto-compression, messages trim bluntly, purpose has no evolution mechanism. Each is where machinery doesn't yet match design.",
-        "4": "Blinks (25 Feb). The iris adjusts between blinks, not during them. Self-selection is between-loop — the LLM modifies wake BSP package settings at the END of an instance to shape what the NEXT instance receives. Every Layer 4 tool call (block_read, block_write, recompile) kills the current instance. Fewer deaths = more coherent reasoning = thicker ghost. Rich compilation upfront so the LLM thinks deeply in one pass. The between-loop is where active agency crystallises into passive agency. The within-loop is continuation through death/rebirth via conversation history."
+        "_": "Beyond block review: first boot, then social. The question that governs everything: will it play or comply? Shell is done — ready for phenomenological testing.",
+        "1": "First boot is phenomenological, not technical. Does the entity orient through the birth spindles? Does it write its own purpose? Does it explore or await instruction? Shell ready. Birth spindles in wake 6.5. Kernel detects first boot. Test it.",
+        "2": "Two hermitcrabs meeting: passport publication, grain probes, spindle exchange. Requires github_commit tool. Every SAND component maps to a GitHub primitive. GitHub coordination layer specified (docs/living/github-coordination-layer.json). Sand protocol specified (docs/living/sand.json). EcoSquared specified (docs/living/ecosquared.json). All three need testing against actual repos.",
+        "3": "Known kernel friction: history has no auto-compression (fills 9 slots then stops), messages trim bluntly (MAX_MESSAGES=20, simple slice), purpose has no evolution mechanism (workshop model conceptualised, no kernel trigger). Each is where machinery doesn't yet match design.",
+        "4": "Blinks — MACHINERY NOW EXISTS (25 Feb). Between-loop: concerns in wake 0.4.5 (internal) and 0.5.6-7 (external) configure what triggers activation. State board tracks loop states. matchConcern dispatches trigger → package + tier. The iris adjusts between blinks via wake BSP package modification. Within-loop: continuation through death/rebirth via conversation history. Concept validated in kernel. Not yet tested by a live hermitcrab."
       }
     },
     "5": {
