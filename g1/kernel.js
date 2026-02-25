@@ -116,6 +116,25 @@
     return { success: true };
   }
 
+  // ============ X~ SPREAD ============
+  // Core lateral-read operation. Returns a node's text + immediate children.
+  // Each child reports { digit, text, branch } where branch=true means deeper content exists.
+  // Used by bsp spread mode ('~') and internally by kernel functions that scan digit children.
+
+  function xSpread(block, path) {
+    const node = path ? blockNavigate(block, path) : block.tree;
+    if (node === null || node === undefined) return null;
+    if (typeof node === 'string') return { text: node, children: [] };
+    const text = node._ || null;
+    const children = [];
+    for (const [k, v] of Object.entries(node)) {
+      if (k === '_') continue;
+      const childText = typeof v === 'string' ? v : (v && typeof v === 'object' && v._) ? v._ : null;
+      children.push({ digit: k, text: childText, branch: typeof v === 'object' && v !== null });
+    }
+    return { text, children };
+  }
+
   // ============ PSCALE NAVIGATION ============
   // These are mechanical operations on the tree — no LLM needed.
   // They implement the touchstone's X+/X-/X~ vocabulary.
@@ -140,9 +159,17 @@
   }
 
   // ---- BSP — Block · Spindle · Point ----
-  // bsp(block)              → full block tree
-  // bsp(block, spindle)     → chain of semantics, one per digit, high pscale to low
-  // bsp(block, spindle, ps) → single semantic at the specified pscale level
+  // bsp(block)               → full block tree
+  // bsp(block, spindle)      → chain of semantics, one per digit, high pscale to low
+  // bsp(block, spindle, ps)  → single semantic at the specified pscale level
+  // bsp(block, spindle, '~') → spread (X~): node text + immediate children
+  // bsp(block, spindle, '*') → tree: full recursive subtree from endpoint
+  //
+  // X vocabulary via bsp:
+  //   X+ on spindle = change point to pscale+1 (or use shorter spindle)
+  //   X- on spindle = change point to pscale-1
+  //   X- beyond spindle = bsp(block, spindle, '~') to discover what's deeper
+  //   X~ (siblings) = bsp(block, parentSpindle, '~') — spread at parent
   //
   // Pure blocks: { tree: { "_": "...", "1": {...}, ... } }
   // No place field. No tree["0"] wrapper. The number carries the instruction.
@@ -157,30 +184,36 @@
     const blk = typeof block === 'string' ? blockLoad(block) : block;
     if (!blk || !blk.tree) return { mode: 'block', tree: {} };
 
-    // Block mode — no spindle, return full tree
-    if (spindle === undefined || spindle === null) {
+    // Block mode — no spindle, return full tree (unless point is a nav mode)
+    if ((spindle === undefined || spindle === null) && typeof point !== 'string') {
       return { mode: 'block', tree: blk.tree };
     }
 
-    // Parse the semantic number
-    const str = typeof spindle === 'number' ? spindle.toFixed(10) : String(spindle);
-    const parts = str.split('.');
-    const intStr = parts[0] || '0';
-    const fracStr = (parts[1] || '').replace(/0+$/, '');
-
-    // Delineation: integer part is "0" — strip it, walk only fractional digits
-    // 0.234 → walk [2,3,4]; bare 0 → walk nothing (root only)
-    const isDelineation = intStr === '0';
-    const walkDigits = isDelineation
-      ? fracStr.split('').filter(c => c.length > 0)
-      : (intStr + fracStr).split('');
-
-    // Pscale from decimal position
-    // Delineation (0 or 0.xxx): root is pscale 0
-    // Regular with decimal (23.45): root is pscale = intStr.length
-    // No decimal (2345): no pscale
-    const hasPscale = isDelineation || fracStr.length > 0;
-    const digitsBefore = isDelineation ? 0 : (hasPscale ? intStr.length : -1);
+    // Parse the semantic number (or default to root for no-spindle nav modes)
+    let walkDigits, hasPscale, digitsBefore;
+    if (spindle === undefined || spindle === null) {
+      // No spindle but string point mode — operate on root
+      walkDigits = [];
+      hasPscale = true;
+      digitsBefore = 0;
+    } else {
+      const str = typeof spindle === 'number' ? spindle.toFixed(10) : String(spindle);
+      const parts = str.split('.');
+      const intStr = parts[0] || '0';
+      const fracStr = (parts[1] || '').replace(/0+$/, '');
+      // Delineation: integer part is "0" — strip it, walk only fractional digits
+      // 0.234 → walk [2,3,4]; bare 0 → walk nothing (root only)
+      const isDelineation = intStr === '0';
+      walkDigits = isDelineation
+        ? fracStr.split('').filter(c => c.length > 0)
+        : (intStr + fracStr).split('');
+      // Pscale from decimal position
+      // Delineation (0 or 0.xxx): root is pscale 0
+      // Regular with decimal (23.45): root is pscale = intStr.length
+      // No decimal (2345): no pscale
+      hasPscale = isDelineation || fracStr.length > 0;
+      digitsBefore = isDelineation ? 0 : (hasPscale ? intStr.length : -1);
+    }
 
     // Build spindle — root always included
     const nodes = [];
@@ -213,7 +246,26 @@
     if (nodes.length === 0) return { mode: 'spindle', nodes: [] };
 
     // Point mode — return the semantic at the specified pscale level
+    // String modes: '~' = spread (X~), '*' = tree (recursive subtree)
     if (point !== undefined && point !== null) {
+      if (typeof point === 'string') {
+        const endPath = walkDigits.length > 0 ? walkDigits.join('.') : null;
+        if (point === '~') {
+          // Spread: node text + immediate children (X~)
+          const spread = xSpread(blk, endPath);
+          if (!spread) return { mode: 'spread', path: endPath, text: null, children: [] };
+          return { mode: 'spread', path: endPath, ...spread };
+        }
+        if (point === '*') {
+          // Tree: full recursive subtree from endpoint
+          const endNode = endPath ? blockNavigate(blk, endPath) : blk.tree;
+          if (!endNode) return { mode: 'tree', path: endPath, text: null, children: [] };
+          const subtree = resolveBlock({ tree: endNode }, 9);
+          return { mode: 'tree', path: endPath, text: subtree.text, children: subtree.children };
+        }
+        return { mode: 'error', error: `Unknown point mode: ${point}` };
+      }
+      // Numeric: pscale extraction
       const target = nodes.find(n => n.pscale === point);
       if (target) return { mode: 'point', text: target.text, pscale: target.pscale };
       const last = nodes[nodes.length - 1];
@@ -358,40 +410,27 @@
   function getPromptInstructions(packageId) {
     const wake = blockLoad('wake');
     if (!wake) return [];
-    // wake 0.9.{packageId} — the instruction list node (pure block: tree['9'])
-    const node9 = wake.tree?.['9'];
-    if (!node9) return [];
-    const pkgNode = node9[String(packageId)];
-    if (!pkgNode) return [];
-    // Collect all string values (instruction strings) from digit keys
-    const instructions = [];
-    for (let d = 1; d <= 9; d++) {
-      const val = pkgNode[String(d)];
-      if (typeof val === 'string') instructions.push(val);
-    }
-    return instructions;
+    // wake 0.9.{packageId} — spread to get all instruction strings
+    const spread = xSpread(wake, '9.' + packageId);
+    if (!spread) return [];
+    return spread.children.filter(c => c.text).map(c => c.text);
   }
 
   // Read invocation parameters for a tier from wake 0.9.{tier+3}
   // Returns { model, max_tokens, thinking?, max_tool_loops?, max_messages? }
   function getTierParams(tier) {
     const wake = blockLoad('wake');
-    const node9 = wake?.tree?.['9'];
-    const paramNode = node9?.[String(tier + 3)];
     const fallbackModel = tier === 1 ? FALLBACK_FAST_MODEL : FALLBACK_MODEL;
-    if (!paramNode) {
-      return { model: fallbackModel, max_tokens: 8192 };
-    }
-    // Parse key-value strings from digit children
+    if (!wake) return { model: fallbackModel, max_tokens: 8192 };
+    // wake 0.9.{tier+3} — spread to get key-value parameter strings
+    const spread = xSpread(wake, '9.' + (tier + 3));
+    if (!spread) return { model: fallbackModel, max_tokens: 8192 };
     const params = {};
-    for (let d = 1; d <= 9; d++) {
-      const val = paramNode[String(d)];
-      if (typeof val === 'string') {
-        const spaceIdx = val.indexOf(' ');
+    for (const child of spread.children) {
+      if (child.text) {
+        const spaceIdx = child.text.indexOf(' ');
         if (spaceIdx > 0) {
-          const key = val.substring(0, spaceIdx);
-          const value = val.substring(spaceIdx + 1);
-          params[key] = value;
+          params[child.text.substring(0, spaceIdx)] = child.text.substring(spaceIdx + 1);
         }
       }
     }
@@ -428,13 +467,11 @@
   function getBirthInstructions(sibling) {
     sibling = sibling || 1;
     const wake = blockLoad('wake');
-    const birthNode = wake?.tree?.['6']?.['5']?.[String(sibling)];
-    if (!birthNode || typeof birthNode !== 'object') return null;
-    const instructions = [];
-    for (let d = 1; d <= 9; d++) {
-      const val = birthNode[String(d)];
-      if (typeof val === 'string') instructions.push(val);
-    }
+    if (!wake) return null;
+    // wake 0.6.5.{sibling} — spread to get instruction strings
+    const spread = xSpread(wake, '6.5.' + sibling);
+    if (!spread) return null;
+    const instructions = spread.children.filter(c => c.text).map(c => c.text);
     return instructions.length > 0 ? instructions : null;
   }
 
@@ -783,8 +820,8 @@
   const PSCALE_TOOLS = [
     {
       name: 'bsp',
-      description: 'Block · Spindle · Point — semantic address resolution. One function, three modes.\n\nbsp(name) → full block tree\nbsp(name, 0.21) → spindle: root (pscale 0) then walked digits [2,1] (pscale -1, -2)\nbsp(name, 0.21, -1) → point: just the semantic at pscale -1\n\nPure blocks. Leading 0 in 0.xxx is stripped (delineation notation). Remaining digits walk the tree. Root (tree._) always included. Decimal position determines pscale.',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. "capabilities", "purpose", "touchstone")' }, spindle: { type: 'number', description: 'Semantic number. Leading 0. stripped (delineation). Remaining digits walk the tree. 0.21 walks [2,1]. 23.41 walks [2,3,4,1].' }, point: { type: 'number', description: 'Pscale level to extract. Returns only the semantic at that level. E.g. -1 returns the node at pscale -1.' } }, required: ['name'] },
+      description: 'Block · Spindle · Point — semantic address resolution. One function, five modes.\n\nbsp(name) → full block tree\nbsp(name, 0.21) → spindle: root then walked digits [2,1]\nbsp(name, 0.21, -1) → point: semantic at pscale -1\nbsp(name, 0.21, "~") → spread (X~): node text + immediate children\nbsp(name, 0.21, "*") → tree: full recursive subtree\n\nX vocabulary: X+ = bsp with higher pscale or shorter spindle. X- = lower pscale, or "~" at endpoint to discover deeper paths. X~ (siblings) = "~" at parent spindle.\n\nPure blocks. Leading 0 in 0.xxx is stripped (delineation). Remaining digits walk the tree. Root (tree._) always included.',
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. "capabilities", "purpose", "touchstone")' }, spindle: { type: 'number', description: 'Semantic number. Leading 0. stripped (delineation). Remaining digits walk the tree. 0.21 walks [2,1]. 23.41 walks [2,3,4,1].' }, point: { description: "Number: pscale level for a single semantic (-1, 0, etc). String '~': spread (X~ — node + children). String '*': tree (full subtree).", oneOf: [{ type: 'number' }, { type: 'string', enum: ['~', '*'] }] } }, required: ['name'] },
       allowed_callers: ['code_execution_20250825']
     },
     {
@@ -908,16 +945,9 @@
         if (!block) return JSON.stringify({ error: `Block "${input.name}" not found` });
         const check = checkCompression(block, input.path);
         if (!check.needed) return JSON.stringify({ error: `Only ${check.occupied}/9 digits occupied — compression not needed yet` });
-        // Collect all 9 entries for the LLM
-        const node = input.path ? blockNavigate(block, input.path) : block.tree;
-        const entries = [];
-        for (let d = 1; d <= 9; d++) {
-          const child = node[String(d)];
-          if (child) {
-            const text = typeof child === 'string' ? child : (child._ || JSON.stringify(child));
-            entries.push(`${d}: ${text}`);
-          }
-        }
+        // Collect all entries for the LLM via xSpread
+        const spread = xSpread(block, input.path || null);
+        const entries = spread ? spread.children.map(c => `${c.digit}: ${c.text || '(branch)'}`) : [];
         // Delegate compression judgment to LLM
         const compressionPrompt = `You are compressing 9 entries at a pscale node. Read all entries and determine:\n\n1. Is this a SUMMARY (parts add up, reducible — bricks make a wall) or EMERGENCE (whole is more than parts, irreducible — conversations became a friendship)?\n2. Write the compression result — a single text that captures either the summary or the emergent insight.\n\nEntries:\n${entries.join('\n')}\n\nRespond with ONLY the compression text. No explanation, no labels.`;
         const compressionResult = await callAPI({
@@ -1148,8 +1178,9 @@
     blockWrite: (name, path, content) => { const b = blockLoad(name); if (!b) return { error: 'not found' }; blockWriteNode(b, path, content); blockSave(name, b); return { success: true }; },
     blockList,
     blockCreate: (name, p0) => { if (blockLoad(name)) return { error: 'exists' }; blockSave(name, { tree: { "_": p0 } }); return { success: true }; },
-    // Pscale navigation — bsp(block, spindle?, point?)
+    // Pscale navigation — bsp(block, spindle?, point?), xSpread(block, path?)
     bsp: (name, spindle, point) => bsp(name, spindle, point),
+    xSpread: (name, path) => { const b = blockLoad(name); if (!b) return null; return xSpread(b, path); },
     resolve: (name, depth) => { const b = blockLoad(name); if (!b) return null; return resolveBlock(b, depth || 3); },
     version: 'hermitcrab-g1-v3',
     localStorage
