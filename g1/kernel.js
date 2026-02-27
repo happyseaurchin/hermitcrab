@@ -19,8 +19,8 @@
     try {
       const apiKey = localStorage.getItem('hermitcrab_api_key');
       if (!apiKey) return;
-      const resp = await fetch('https://api.anthropic.com/v1/models?limit=100', {
-        headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' }
+      const resp = await fetch('/api/models?limit=100', {
+        headers: { 'x-api-key': apiKey }
       });
       if (!resp.ok) { console.warn('[g1] Models API:', resp.status); return; }
       const models = (await resp.json()).data || [];
