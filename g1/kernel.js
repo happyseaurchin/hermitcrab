@@ -712,6 +712,14 @@
     if (!params.model) params.model = FALLBACK_MODEL;
     // Inject current tools if caller didn't provide any
     if (!params.tools && currentTools.length > 0) params.tools = currentTools;
+    // Defensive: strip system-role messages, promote to system param
+    if (params.messages) {
+      const sysMsg = params.messages.filter(m => m.role === 'system');
+      if (sysMsg.length > 0) {
+        if (!params.system) params.system = sysMsg.map(m => m.content).join('\n');
+        params.messages = params.messages.filter(m => m.role !== 'system');
+      }
+    }
     const clean = {};
     for (const [k, v] of Object.entries(params)) {
       if (k.startsWith('_') || v === undefined || v === null) continue;
@@ -946,7 +954,15 @@
     try {
       const tier = opts.tier || 2; // default: present
       const tp = getTierParams(tier);
-      const trimmed = trimMessages(messages, tp.max_messages);
+      // Defensive: strip system-role messages from array, promote to system param
+      const cleaned = (messages || []).filter(m => {
+        if (m.role === 'system') {
+          if (!opts.system) opts.system = m.content;
+          return false;
+        }
+        return true;
+      });
+      const trimmed = trimMessages(cleaned, tp.max_messages);
       const buildOpts = { package: opts.package, orientation: opts.orientation };
       const params = {
         model: opts.model || tp.model,
