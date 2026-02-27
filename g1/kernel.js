@@ -11,12 +11,21 @@
   const MAX_MESSAGES = 20;
   const MAX_TOOL_LOOPS = 10;
 
+  // ============ TOOL LAYER CLASSIFICATION ============
+  // Layer 4: tools that touch blocks or spawn instances — trigger the Möbius twist (context recompilation)
+  // Layer 2: server-side tools (web_search, code_execution) — instance stays alive, no recompilation
+  const LAYER4_TOOLS = new Set([
+    'block_read', 'block_write', 'block_create', 'block_list',
+    'write_entry', 'bsp', 'resolve', 'get_source', 'recompile',
+    'call_llm', 'get_datetime', 'compress', 'concerns', 'state_board'
+  ]);
+
   let currentJSX = null;
   let reactRoot = null;
   let currentTools = [];
 
   // ============ LIVING CURRENTS STATE ============
-  let _activationContext = null;  // { echoCount, blocksChanged } — per callWithToolLoop
+  let _activationContext = null;  // { echoCount, bLoopCount, blocksChanged } — per callWithToolLoop
   let _activationLock = false;    // concurrency guard
 
   // ============ PROGRESS DISPLAY ============
@@ -644,21 +653,33 @@
   }
 
   // ============ LIVING CURRENTS ============
-  // After each tool execution round, recompile the system prompt from current block state.
-  // The focus point orients the instance: which echo, what changed.
+  // After each Layer 4 tool round, recompile the system prompt from current block state.
+  // Process orientation via BSP: the kernel writes echo-specific content into the process
+  // spindle (wake 0.6.7.3-4) then extracts via bsp() — same format as everything else.
 
-  function buildFocusPoint(echo, blocksChanged) {
-    if (echo === 0) return '[focus] echo 0 | activation start';
-    const changed = blocksChanged.size > 0 ? [...blocksChanged].join(', ') : 'none';
-    return `[focus] echo ${echo} | blocks changed: ${changed}`;
+  function compileProcessPoint(ctx) {
+    const wake = blockLoad('wake');
+    if (!wake || !wake.tree?.['6']?.['7']) {
+      return `[focus] echo ${ctx.echoCount} | B loops: ${ctx.bLoopCount}`;
+    }
+    // Write mutable content into process spindle (wake 0.6.7.3 = this echo, 0.6.7.4 = available)
+    const processNode = wake.tree['6']['7'];
+    const changed = ctx.blocksChanged.size > 0 ? [...ctx.blocksChanged].join(', ') : 'none';
+    processNode['3'] = `Echo ${ctx.echoCount}. B loop ${ctx.bLoopCount}. Blocks changed: ${changed}. Currents recompiled from current block state.`;
+    const remaining = MAX_TOOL_LOOPS - ctx.echoCount;
+    processNode['4'] = `Budget: ${remaining} echoes remaining. Batch Layer 4 tools to maximise each echo. Layer 2 tools (web_search, code_execution) do not consume echoes.`;
+    blockSave('wake', wake);
+    // BSP point extraction at this-echo depth
+    const result = bsp('wake', 0.673, -3);
+    return result.text || `[focus] echo ${ctx.echoCount}`;
   }
 
   async function callWithToolLoop(params, maxLoops, onStatus) {
     maxLoops = maxLoops || MAX_TOOL_LOOPS;
 
-    // Living currents: activation context tracks block changes per invocation
+    // Living currents: activation context tracks block changes and B loop cycles
     const prevContext = _activationContext;
-    _activationContext = { echoCount: 0, blocksChanged: new Set() };
+    _activationContext = { echoCount: 0, bLoopCount: 0, blocksChanged: new Set() };
 
     try {
       let response = await callAPI(params);
@@ -710,14 +731,19 @@
 
         allMessages = [...allMessages, { role: 'assistant', content: response.content }, { role: 'user', content: results }];
 
-        // Living currents: recompile system prompt from current block state
-        if (params._tier) {
+        // Möbius twist: only recompile when Layer 4 tools were in the batch
+        const hasLayer4 = clientToolBlocks.some(b => LAYER4_TOOLS.has(b.name));
+        if (params._tier && hasLayer4) {
           _activationContext.echoCount++;
+          _activationContext.bLoopCount++;
           const freshSystem = buildSystemPrompt(params._tier, params._buildOpts);
-          const focusPoint = buildFocusPoint(_activationContext.echoCount, _activationContext.blocksChanged);
-          params = { ...params, system: focusPoint + '\n\n' + freshSystem };
-          console.log(`[g1] Living currents: echo ${_activationContext.echoCount}, blocks changed: ${[..._activationContext.blocksChanged].join(', ') || 'none'}`);
+          const processPoint = compileProcessPoint(_activationContext);
+          params = { ...params, system: processPoint + '\n\n' + freshSystem };
+          console.log(`[g1] Möbius twist: echo ${_activationContext.echoCount}, B loop ${_activationContext.bLoopCount}, blocks changed: ${[..._activationContext.blocksChanged].join(', ') || 'none'}`);
           _activationContext.blocksChanged.clear();
+        } else if (params._tier) {
+          // Layer 2 only — Loop A continues, no recompilation
+          console.log(`[g1] Loop A: Layer 2 tools only, no twist`);
         }
 
         response = await callAPI({ ...params, messages: allMessages });

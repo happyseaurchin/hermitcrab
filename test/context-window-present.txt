@@ -2,7 +2,7 @@
 # Scenario: Present Tier
 # Source: wake 0.9.2
 # Instructions: vision 0.9 | touchstone 0.2 | capabilities | cook 0.12 | wake 0.26 | purpose | relationships 0 | history 0 | stash
-# Generated: 2026-02-26T22:47:34.157Z
+# Generated: 2026-02-27T11:24:03.192Z
 #
 # This is the actual system prompt text the LLM would receive.
 

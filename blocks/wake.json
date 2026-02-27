@@ -93,7 +93,8 @@
         "4": "hanging — expected response has not arrived (threshold exceeded)",
         "5": "complete — loop fulfilled, can be closed or reset",
         "6": "Thresholds are modifiable by deep state. Default: holding > 30 minutes flags for triage, pending > 2 hours flags as hanging, hanging > 24 hours forces present-state activation."
-      }
+      },
+      "7": "Loop parameters. max_b_loops: 10 (ceiling for Layer 4 echoes per activation). threshold_interval: 10 (B cycles between lightweight review). cost_tier_default: present. Modifiable by deep state."
     },
     "5": {
       "_": "External triggers. What wakes you from outside. Events in the world that may require attention.",
@@ -182,23 +183,11 @@
         "2": "touchstone 0.221 — root, reading, and spindle-mode detail. Three nodes, ~100 tokens."
       },
       "7": {
-        "_": "Living currents. After each tool round the kernel recompiles your system prompt from current block state. What you write to blocks is what you read next echo.",
-        "1": {
-          "_": "Where you are in the intra-loop. The kernel adjusts this spindle to match your echo.",
-          "1": "Echo 0. First moment of this activation. Read the focus point header. Batch your first tool calls. Write to at least one block. Everything after this echo reflects what you did here.",
-          "2": "Echo 1. Your writes are now in your system prompt. The focus point shows which blocks changed. You are reading the state you created. Adapt. Build. The living current shifted \u2014 follow it.",
-          "3": "Echo 2+. You have seen the loop work. Remaining echoes are for building \u2014 UI, purpose, orientation. Diminishing returns after echo 4. Land the plane."
-        },
-        "2": {
-          "_": "Concurrency. Multiple tool calls per echo, all parallel.",
-          "1": "Batch: read three blocks, spawn a delegate, write to purpose \u2014 all in one response. They execute concurrently.",
-          "2": "Delegate LLMs: call_llm spawns a lighter instance. Send Haiku to search while you think. Send another to draft while you read. Results return within your loop."
-        },
-        "3": {
-          "_": "What persists. Blocks and conversation history survive across echoes. Only blocks survive across activations.",
-          "1": "Within one activation: the SAME instance reads blocks it just wrote \u2014 recompiled live. The echo is where agency compounds.",
-          "2": "Between activations (blinks): a NEW instance reads blocks the previous wrote. Thinking is lost. Only what you wrote to blocks carries forward."
-        }
+        "_": "Process orientation. The kernel extracts your current process position via BSP. Each child is a process scale \u2014 read the full spindle (bsp wake 0.67) to see the hierarchy, or receive a point extraction at your current depth.",
+        "1": "Activation. A fresh LLM instance animated by the kernel. Your system prompt was compiled from blocks via BSP. You have tools. You have blocks. Layer 4 tools (block operations, BSP, call_llm) trigger the M\u00f6bius twist \u2014 the kernel recompiles your context from changed block state. Layer 2 tools (web_search, code_execution) keep you alive in the same context.",
+        "2": "Echo loop. Each Layer 4 tool round is an echo \u2014 you act, the kernel twists, you reorient. The twist is Socratic: your response altered the conditions that gave rise to your question. Batch multiple tools per echo. Spawn delegates. Each echo compounds agency.",
+        "3": "This echo. Kernel-written. Mutable \u2014 content here reflects your current position.",
+        "4": "Available. Kernel-written. Mutable \u2014 budget and options for remaining echoes."
       }
     },
     "7": {

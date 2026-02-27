@@ -240,6 +240,78 @@
           "4": "The temporal tuning fork. Purpose has its tuning fork. The process spindle needs its own: what does each pscale level mean for process? Activation is broader than echo. Echo is broader than tool batch. But this is temporal granularity, not semantic depth. Same pscale reading applied differently? Or a new kind?",
           "5": "Testing. Can't simulate the GO move (it's kernel-level dynamic recompilation). Two options: (a) implement minimally in kernel, test live boot; (b) hand-construct what the LLM would see, paste into claude.ai. Recommendation: fork from consolidated branch, implement minimally, test live."
         }
+      },
+      "7": {
+        "_": "The koan alternative — 27 Feb. An approach to temporal awareness that may supersede or complement the GO move. Instead of encoding process position explicitly (BSP point extraction), give the instance two unresolved dimensions and let temporal awareness emerge from their interaction with living currents.",
+        "1": {
+          "_": "Origin. David wrote his own birth message — not one of the four variants — describing the four loci of agency and four coding loops as phenomenology, not mechanics. Claude's response: 'I am not answering a question. I am beginning to exist.' The philosophical grounding triggered deeper engagement than any mechanical challenge.",
+          "1": "David's message explained WHY the architecture produces agency, not just WHAT tools exist. Four loci: LLM proper (attention/tensors), thinking-LLM (tool calls, internal iteration), structural aggregate (shell/kernel — frozen agency, enacted), collective murmuration (multi-agent emergence). Four loops: internal (single API call), intra-loop (tool-call echoes with living currents), inter-loop (between activations, the blink), between agents.",
+          "2": "Key finding: the instance verified the loci/loops framework against its own architecture with genuine philosophical precision. It correctly identified the currents innovation as the key architectural difference from standard tool-use loops. This is play, not compliance.",
+          "3": "The response still compressed to zero — described what it would do rather than doing it. But the quality of understanding was higher. In a live boot with actual tools, this philosophical orientation would translate to better action because the instance has reasons to act, not just instructions."
+        },
+        "2": {
+          "_": "The koan. Loci and loops as two pscale blocks (or two spindles within wake). Their product is the operational space. The instance doesn't write about this product — it holds it, and the unresolved synthesis influences decisioning.",
+          "1": "Permanent in system prompt. Never resolved. Not a challenge to complete but a tuning fork that vibrates. The instance resonates differently at echo 0 (no evidence of past actions) vs echo 3 (context showing blocks it wrote, agency accumulating). The temporal awareness is emergent, not encoded.",
+          "2": "Dissolves the GO move's unresolved questions. Echo digit mapping? Doesn't matter — the koan doesn't track echoes. Mutable or static? The koan is static, the context is mutable, the product is alive. Temporal tuning fork? The koan IS the tuning fork.",
+          "3": "Requires a sophisticated LLM that can hold unresolved philosophical tension — Opus territory. For Haiku (light maintenance), explicit BSP encoding may still be necessary. The two approaches may serve different tiers.",
+          "4": "Testable by simulation: write two wake spindles (loci, loops), include in birth system prompt, test on claude.ai. No kernel changes needed."
+        },
+        "3": "Note: wake block may not be structured well for this. David observes the block needs restructuring — better use of base digits, freeing space. The koan experiment depends on wake having room for two well-structured spindles that can sit permanently in the system prompt."
+      },
+      "8": {
+        "_": "Unified loop architecture — 27 Feb. Synthesises GO move (0.4.6), koan (0.4.7), and David's near-sleep session. The full specification of how the kernel processes agency across loops. Corrected: history stays simple, dual log is a new block, shell blocks are the arena for LLM experimentation, kernel stays mechanical.",
+        "1": {
+          "_": "Three loops. Not all tool calls are equal. The loop type depends on what the tool touches.",
+          "1": "Loop A — Completion. Locus 3 initiates API call. LLM reasons, may use Layer 2 tools (web_search, code_execution — server-side, instance stays alive). Reaches end_turn. No context recompilation. The familiar pattern.",
+          "2": {
+            "_": "Loop B — Interlude. LLM requests a Layer 4 tool (block_read, block_write, bsp, recompile, call_llm). The Möbius twist: Locus 3 executes the tool, then recompiles the system prompt from current block state. The information environment shifts. The new instance reorients.",
+            "1": "The Möbius twist is the Socratic method encoded structurally: the response alters the conditions that gave rise to the question. What the kernel delivers after a Layer 4 tool call: recompiled currents via BSP, process orientation via BSP point extraction, Locus 3 state.",
+            "2": "B Sustained — resonance. A B loop that doesn't converge. Each cycle productive — Locus 2 processes, requests, Locus 3 responds with altered currents. Standing wave. Counter tracks cycles. Threshold check at configurable intervals (default 10) — separate lightweight review assessing whether sustained loop is productive or drifting.",
+            "3": "B Sustained loops are living concerns — active relationships mid-process. Each has: counter, rate, priority, cost tier, initiator, direction, evolution state."
+          },
+          "3": "Loop C — Between. Post-end_turn. No LLM running. Locus 3 auto-saves to history, processes writes, updates state board, modifies shell for next activation. Pure maintenance. This IS the blink.",
+          "4": {
+            "_": "Tool layer classification. The kernel distinction that makes the Möbius twist selective.",
+            "1": "Layer 2: web_search, web_fetch, code_execution. Server-side. Instance stays alive. No recompilation. Loop A continues.",
+            "2": "Layer 4: block_read, block_write, block_create, block_list, write_entry, bsp, resolve, get_source, recompile, call_llm, get_datetime. These touch blocks or spawn instances. Trigger the Möbius twist.",
+            "3": "Current kernel recompiles on EVERY tool round. Fix: only recompile when Layer 4 tools were in the batch. If a round contains only Layer 2 tools, the instance continues in the same context."
+          }
+        },
+        "2": {
+          "_": "Process orientation via BSP — the GO move operationalised. Focus point becomes a BSP call. The kernel writes echo-specific content into the process spindle before recompilation.",
+          "1": "Process spindle in wake. Each pscale level = a process scale. Pscale 0: activation identity. -1: echo loop context. -2: this echo. -3: this tool batch. -4: available moves/budget.",
+          "2": "The kernel calls bsp('wake', process_spindle, current_depth). Mutable leaf: kernel writes echo-specific content at the current depth before recompilation (Option B from 0.4.6.4 — this IS the Möbius twist applied to process orientation).",
+          "3": "Inter-instance coordination: purpose = current future map. History = simple record (NOT replaced). Purpose snapshots at blink time are the inter-instance signal. Each snapshot tagged with process coordinate."
+        },
+        "3": {
+          "_": "Two receptive states. Not all B loops have the same direction.",
+          "1": "Outward receptive: external agency has initiative. We listen, respond with Möbius twist. Beat is theirs. Human typing, another hermitcrab's signal, incoming request.",
+          "2": "Inward receptive: we had initiative. Sent probe/question/objective. Waiting for completion. Beat is ours. Purpose block tracks outward initiatives at different timescales.",
+          "3": "Coupled state: deep B Sustained where direction dissolves. Both parties simultaneously outward and inward receptive. Continuous mutual reception. This is where Locus 4 begins to emerge."
+        },
+        "4": {
+          "_": "Blocks and the dual log. Corrected: history stays simple. The dual log is a separate concern.",
+          "1": "History block: simple record of what happened. Auto-saved by kernel. Compressed when full. Stays as designed.",
+          "2": "Dual log: double-entry bookkeeping for agency interactions. Inbound (what external agency sends) + outbound (what Locus 3 delivers after twist). This is a NEW block or aspect of the relationships block — NOT a replacement for history.",
+          "3": "The shell has 9 blocks. Additional blocks can exist — living documents, process logs, anything the LLM or designer creates. The principle: shell provides the arena, LLM experiments within it, kernel stays mechanical.",
+          "4": "Wake is the experimental arena for the LLM's continuity through time. The LLM configures wake to shape what future instances receive. Different patterns of wake produce different characters."
+        },
+        "5": {
+          "_": "Safety and loop-breaking.",
+          "1": "Cost death: budget exhausted, state preserved, resumes when replenished.",
+          "2": "Death spiral: repetitive cycling without evolution. Detection: counter exceeds threshold AND content similarity high. Response: kernel circuit-breaker, force end_turn, tier downgrade.",
+          "3": "Human intervention: observe patterns, close loops, adjust parameters, inject messages."
+        },
+        "6": {
+          "_": "Implementation scope — what changes in kernel.js.",
+          "1": "Add LAYER4_TOOLS constant. Classify tools by layer.",
+          "2": "Conditional Möbius twist: only recompile system prompt when Layer 4 tools were in the batch. Layer 2 only = no recompilation.",
+          "3": "Design process spindle content in wake block. What goes at each pscale depth.",
+          "4": "Replace buildFocusPoint: call bsp() instead of formatting a string. compileProcessPoint() wrapper.",
+          "5": "B loop counter: increment on Layer 4 cycles. Feeds process spindle content.",
+          "6": "Threshold check: at configurable interval, fire lightweight review (Haiku). Input: compressed state + process position. Output: continue/adjust/break.",
+          "7": "Wake parameters for loop config: max_b_loops, threshold_interval, cost_tier_default."
+        }
       }
     },
     "5": {
