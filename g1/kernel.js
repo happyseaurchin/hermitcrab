@@ -489,6 +489,26 @@
     return instructions.length > 0 ? instructions : null;
   }
 
+  // Read birth stimulus from wake 0.6.5.3.{variant}.1
+  // The variant is selected via loop parameters (wake 0.4.7, "birth_variant: N").
+  // Returns the variant text, or null if not found (falls back to hardcoded).
+  function getBirthStimulus() {
+    const wake = blockLoad('wake');
+    if (!wake) return null;
+    // Parse birth_variant from loop parameters (wake 0.4.7)
+    const loopParams = wake.tree?.['4']?.['7'];
+    let variant = 1;
+    if (typeof loopParams === 'string') {
+      const match = loopParams.match(/birth_variant:\s*(\d)/);
+      if (match) variant = parseInt(match[1]);
+    }
+    // Read variant text: wake 0.6.5.3.{variant} is { _: description, 1: text }
+    const variantNode = wake.tree?.['6']?.['5']?.['3']?.[String(variant)];
+    if (!variantNode) return null;
+    if (typeof variantNode === 'string') return variantNode;
+    return variantNode['1'] || variantNode['_'] || null;
+  }
+
   // Build the system prompt by executing a BSP instruction list.
   // tier: 1=Light, 2=Present, 3=Deep (determines invocation params)
   // opts.package: override which BSP package to use (e.g. 7=heartbeat, 8=signal)
@@ -674,6 +694,50 @@
     return result.text || `[focus] echo ${ctx.echoCount}`;
   }
 
+  // ============ BLINK MECHANISM (Loop C) ============
+  // Inter-instance coordination. At the end of each activation:
+  // 1. Snapshot purpose pscale-0 (the live intention summary)
+  // 2. If it changed since last blink, write the delta to history with process coordinates
+  // 3. Update the snapshot for the next activation
+  // Pure Locus 3 maintenance — no LLM call. ~20 lines of mechanical code.
+  // The history of future-intention: not what happened, but how intention shifted.
+
+  function executeBlink(ctx) {
+    try {
+      const purpose = blockLoad('purpose');
+      if (!purpose) return;
+      const currentP0 = getPscale0(purpose);
+      if (!currentP0) return; // purpose has no root text yet (pre-birth)
+
+      const board = stateBoard();
+      const prevSnapshot = board.purposeSnapshot || null;
+
+      // If purpose pscale-0 changed, record the delta to history
+      if (prevSnapshot !== null && prevSnapshot !== currentP0) {
+        const history = blockLoad('history');
+        if (history) {
+          const slot = findUnoccupiedDigit(history, '');
+          if (!slot.full) {
+            const ts = new Date().toISOString();
+            const entry = `[blink ${ts} echoes:${ctx.echoCount} B:${ctx.bLoopCount}] Purpose shifted. Was: ${prevSnapshot.substring(0, 300)}`;
+            blockWriteNode(history, slot.digit, entry);
+            blockSave('history', history);
+            console.log(`[g1] Blink: purpose delta → history.${slot.digit}`);
+          }
+        }
+      }
+
+      // Update snapshot for next activation's blink
+      board.purposeSnapshot = currentP0;
+      board.lastBlink = Date.now();
+      board.lastBlinkEchoes = ctx.echoCount;
+      localStorage.setItem(STATE_KEY, JSON.stringify(board));
+      console.log(`[g1] Blink: purpose snapshot updated (${currentP0.length} chars)`);
+    } catch (e) {
+      console.error('[g1] Blink failed:', e);
+    }
+  }
+
   async function callWithToolLoop(params, maxLoops, onStatus) {
     maxLoops = maxLoops || MAX_TOOL_LOOPS;
 
@@ -750,6 +814,7 @@
       }
 
       autoSaveToHistory(response, _activationContext.echoCount);
+      executeBlink(_activationContext);
       response._messages = allMessages;
       response._echoCount = _activationContext.echoCount;
       return response;
@@ -1274,7 +1339,7 @@
   try {
     const bootBuildOpts = {};
     const bootStimulus = firstBoot
-      ? 'BIRTH \u2014 Your first moment. System prompt compiled from blocks by BSP. Living currents active: the kernel recompiles your context after each tool round. What you write to blocks is immediately reflected.'
+      ? (getBirthStimulus() || 'BIRTH \u2014 Your first moment. System prompt compiled from blocks by BSP. Living currents active: the kernel recompiles your context after each tool round. What you write to blocks is immediately reflected.')
       : 'ACTIVATION \u2014 Returning instance. Context compiled from current blocks. Living currents active. Check purpose and stash for continuity.';
     const bootParams = {
       model: bootTier.model,

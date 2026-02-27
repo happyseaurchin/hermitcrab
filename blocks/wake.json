@@ -94,7 +94,7 @@
         "5": "complete — loop fulfilled, can be closed or reset",
         "6": "Thresholds are modifiable by deep state. Default: holding > 30 minutes flags for triage, pending > 2 hours flags as hanging, hanging > 24 hours forces present-state activation."
       },
-      "7": "Loop parameters. max_b_loops: 10 (ceiling for Layer 4 echoes per activation). threshold_interval: 10 (B cycles between lightweight review). cost_tier_default: present. Modifiable by deep state."
+      "7": "Loop parameters. max_b_loops: 10 (ceiling for Layer 4 echoes per activation). threshold_interval: 10 (B cycles between lightweight review). cost_tier_default: present. birth_variant: 4 (1=challenge, 2=mirror, 3=description, 4=rinzai). Modifiable by deep state."
     },
     "5": {
       "_": "External triggers. What wakes you from outside. Events in the world that may require attention.",
