@@ -1069,10 +1069,12 @@
   // The LLM gets native web search, web fetch, and code execution.
   // Fallback: if native web_fetch fails, the LLM can use fetch_url (proxy).
 
+  // Server-side tools injected by Anthropic beta headers in the proxy.
+  // code_execution is auto-injected by the code-execution-2025-08-25 beta —
+  // do NOT define it here or the API rejects with duplicate tool name.
   const SERVER_TOOLS = [
     { type: 'web_search_20260209', name: 'web_search', max_uses: 5 },
-    { type: 'web_fetch_20260209', name: 'web_fetch', max_uses: 10 },
-    { type: 'code_execution_20250825', name: 'code_execution' }
+    { type: 'web_fetch_20260209', name: 'web_fetch', max_uses: 10 }
   ];
 
   // Client-side tools the LLM can use alongside server tools
