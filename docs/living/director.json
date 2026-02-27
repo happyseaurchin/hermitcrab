@@ -312,6 +312,17 @@
           "6": "Threshold check: at configurable interval, fire lightweight review (Haiku). Input: compressed state + process position. Output: continue/adjust/break.",
           "7": "Wake parameters for loop config: max_b_loops, threshold_interval, cost_tier_default."
         }
+      },
+      "9": {
+        "_": "Launcher and boot configuration — 27 Feb. hermitcrab.html as G1 control surface. Birth variant selection, model resolution, concern-matched boot, dev mode.",
+        "1": {
+          "_": "Birth variant selector. Dropdown on G1 card: rinzai (default), challenge, mirror, description. Passed to kernel as URL param ?bv=N. Kernel reads URL param first, falls back to wake 0.4.7 birth_variant.",
+          "1": "Custom birth message. Dev mode only (localStorage hermitcrab_dev=1 or URL ?dev=1). Reveals textarea for user-authored birth stimulus. One-shot via localStorage — kernel reads and clears. Powerful: the LLM treats the birth message as foundational orientation. Both enable paths active: console toggle and URL param."
+        },
+        "2": "Model resolution. Kernel calls /v1/models at boot, writes latest opus/sonnet/haiku IDs into wake 0.9.4-6. Mechanical pre-boot — same as checking API version. The LLM can also update model IDs during activation (agent choice). Wake is single source of truth.",
+        "3": "Concern-matched boot. Birth fires opus (deep, tier 3). Return boots use matchConcern('user') — reads wake 0.5.6 (user engagement) to resolve tier and package. No more hardcoded tier.",
+        "4": "Threshold check. Natural part of B loop counting in compileProcessPoint. At threshold_interval B loops (default 10), process spindle gets checkpoint signal. At B loop 100+, stronger review signal. Configurable via wake 0.4.7.",
+        "5": "shell.json rebuild. Source of truth is blocks/ directory. shell.json must be rebuilt when blocks change — fresh boots get stale content otherwise."
       }
     },
     "5": {
