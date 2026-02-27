@@ -538,9 +538,16 @@
   }
 
   // Read birth stimulus from wake 0.6.5.3.{variant}.1
-  // Variant selected by: URL param ?bv=N (user chose at launcher), else wake 0.4.7 birth_variant.
+  // Priority: custom message (localStorage, one-shot) > URL ?bv=N > wake 0.4.7 birth_variant.
   // Returns the variant text, or null if not found (falls back to hardcoded).
   function getBirthStimulus() {
+    // Custom birth message from launcher dev mode — one-shot, cleared after read
+    const custom = localStorage.getItem('hermitcrab_birth_custom');
+    if (custom) {
+      localStorage.removeItem('hermitcrab_birth_custom');
+      console.log('[g1] Birth stimulus: custom message from launcher');
+      return custom;
+    }
     const wake = blockLoad('wake');
     if (!wake) return null;
     // URL param takes precedence (user selected at launcher)

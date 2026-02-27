@@ -118,7 +118,11 @@
             <option value="1">challenge</option>
             <option value="2">mirror</option>
             <option value="3">description</option>
+            <option value="custom" id="custom-opt" style="display:none">custom</option>
           </select>
+          <div id="custom-birth" style="display:none;margin-top:6px">
+            <textarea id="custom-birth-text" placeholder="Custom birth message..." style="width:100%;min-height:60px;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:4px;padding:6px 8px;font-size:0.75rem;font-family:inherit;resize:vertical"></textarea>
+          </div>
         </div>
       </div>
       <span class="current-label" id="current-g1"></span>
@@ -148,12 +152,31 @@
     const el = document.getElementById('current-g' + currentG);
     if (el) el.textContent = '● current';
 
+    // ?dev=1 reveals custom birth message textarea
+    const devMode = new URLSearchParams(window.location.search).get('dev') === '1';
+    if (devMode) {
+      const customOpt = document.getElementById('custom-opt');
+      const customDiv = document.getElementById('custom-birth');
+      const selector = document.getElementById('birth-variant');
+      if (customOpt) customOpt.style.display = '';
+      if (selector) selector.addEventListener('change', () => {
+        customDiv.style.display = selector.value === 'custom' ? '' : 'none';
+      });
+    }
+
     function launch(g) {
       localStorage.setItem('hermitcrab_g', String(g));
+      // Clear any previous custom birth message
+      localStorage.removeItem('hermitcrab_birth_custom');
       let url = '/kernel?g=' + g;
       if (g === 1) {
         const bv = document.getElementById('birth-variant')?.value;
-        if (bv) url += '&bv=' + bv;
+        if (bv === 'custom') {
+          const custom = document.getElementById('custom-birth-text')?.value?.trim();
+          if (custom) localStorage.setItem('hermitcrab_birth_custom', custom);
+        } else if (bv) {
+          url += '&bv=' + bv;
+        }
       }
       window.location.href = url;
     }
