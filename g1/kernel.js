@@ -9,6 +9,53 @@
   // Bootstrap fallbacks — only used when wake block has no model IDs yet (pre-birth)
   const FALLBACK_MODEL = 'claude-opus-4-6';
   const FALLBACK_FAST_MODEL = 'claude-haiku-4-5-20251001';
+
+  // ============ MODEL RESOLUTION ============
+  // Mechanical pre-boot check: call /v1/models to discover latest model IDs,
+  // write them into wake 0.9.4-6 so the block is always current.
+  // Not agent behaviour — same as checking what API version exists before using it.
+  // The LLM can also update these during activation (agent choice, not mechanical).
+  async function resolveModels() {
+    try {
+      const apiKey = localStorage.getItem('hermitcrab_api_key');
+      if (!apiKey) return;
+      const resp = await fetch('https://api.anthropic.com/v1/models?limit=100', {
+        headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' }
+      });
+      if (!resp.ok) { console.warn('[g1] Models API:', resp.status); return; }
+      const models = (await resp.json()).data || [];
+      // API returns most recent first — first match per family is latest
+      const families = { opus: null, sonnet: null, haiku: null };
+      for (const m of models) {
+        const id = m.id || '';
+        for (const f of Object.keys(families)) {
+          if (!families[f] && id.includes(f)) families[f] = id;
+        }
+      }
+      // Write into wake 0.9.{4,5,6}.1 — the tier invocation model IDs
+      const wake = blockLoad('wake');
+      if (!wake) return;
+      const tierMap = { haiku: '4', sonnet: '5', opus: '6' };
+      let updated = false;
+      for (const [family, modelId] of Object.entries(families)) {
+        if (!modelId) continue;
+        const node = wake.tree?.['9']?.[tierMap[family]];
+        if (node && node['1'] !== 'model ' + modelId) {
+          node['1'] = 'model ' + modelId;
+          updated = true;
+        }
+      }
+      if (updated) {
+        blockSave('wake', wake);
+        console.log('[g1] Model resolution: wake updated', families);
+      } else {
+        console.log('[g1] Model resolution: wake already current');
+      }
+    } catch (e) {
+      console.warn('[g1] Model resolution failed, wake retains existing IDs:', e.message);
+    }
+  }
+
   const MAX_MESSAGES = 20;
   const MAX_TOOL_LOOPS = 10;
 
@@ -1350,6 +1397,9 @@
   };
 
   // ============ BOOT SEQUENCE ============
+
+  // Ensure wake has current model IDs before first API call
+  await resolveModels();
 
   const firstBoot = isFirstBoot();
   // Birth \u2192 opus (deep). Return \u2192 concern matching (user engagement \u2192 sonnet).
