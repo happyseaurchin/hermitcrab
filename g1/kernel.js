@@ -1065,12 +1065,11 @@
   ];
 
   // ============ SERVER-SIDE TOOLS ============
-  // These are processed by Anthropic's servers, not the kernel.
-  // The LLM gets native web search, web fetch, and code execution.
-  // Fallback: if native web_fetch fails, the LLM can use fetch_url (proxy).
-
-  // Server-side tools injected by Anthropic beta headers in the proxy.
-  // code_execution is auto-injected by the code-execution-2025-08-25 beta —
+  // Processed by Anthropic's servers, not the kernel. Available but not forced —
+  // the LLM decides when to use them. These cost money per use (each triggers a
+  // sub-call within the intra-loop). At birth the priority is orient + build UI.
+  // The thinking-LLM can choose to search/fetch when it needs external information.
+  // code_execution is auto-injected by the proxy's code-execution-web-tools beta —
   // do NOT define it here or the API rejects with duplicate tool name.
   const SERVER_TOOLS = [
     { type: 'web_search_20260209', name: 'web_search', max_uses: 5 },

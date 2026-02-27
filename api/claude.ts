@@ -91,9 +91,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
-      // Enable ALL beta features the instance might use
-      // Server-side tools: web search, web fetch, code execution
-      'anthropic-beta': 'web-search-2025-03-05,web-fetch-2025-09-10,code-execution-2025-08-25,code-execution-web-tools-2026-02-09,context-management-2025-06-27',
+      // Beta features. Server-side tools available but not forced — the LLM decides.
+      // code-execution-web-tools-2026-02-09 supersedes code-execution-2025-08-25 (cannot use both — duplicate injection)
+      'anthropic-beta': 'code-execution-web-tools-2026-02-09,context-management-2025-06-27',
     };
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
