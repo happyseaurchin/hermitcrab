@@ -291,18 +291,18 @@
       },
       "4": {
         "_": "Light tier invocation. How the kernel calls the API for this tier.",
-        "1": "model haiku",
+        "1": "model claude-haiku-4-5-20251001",
         "2": "max_tokens 4096"
       },
       "5": {
         "_": "Present tier invocation. How the kernel calls the API for this tier.",
-        "1": "model sonnet",
+        "1": "model claude-sonnet-4-6",
         "2": "max_tokens 8192",
         "3": "thinking enabled 8000"
       },
       "6": {
         "_": "Deep tier invocation. How the kernel calls the API for this tier.",
-        "1": "model opus",
+        "1": "model claude-opus-4-6",
         "2": "max_tokens 16000",
         "3": "thinking adaptive"
       },

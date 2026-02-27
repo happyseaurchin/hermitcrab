@@ -1234,18 +1234,18 @@
             "_": "Deep tier prompt instructions. Full context for reflection and restructuring. Every block loads in full — intentional. Deep state sees and modifies everything."
           },
           "4": {
-            "1": "model haiku",
+            "1": "model claude-haiku-4-5-20251001",
             "2": "max_tokens 4096",
             "_": "Light tier invocation. How the kernel calls the API for this tier."
           },
           "5": {
-            "1": "model sonnet",
+            "1": "model claude-sonnet-4-6",
             "2": "max_tokens 8192",
             "3": "thinking enabled 8000",
             "_": "Present tier invocation. How the kernel calls the API for this tier."
           },
           "6": {
-            "1": "model opus",
+            "1": "model claude-opus-4-6",
             "2": "max_tokens 16000",
             "3": "thinking adaptive",
             "_": "Deep tier invocation. How the kernel calls the API for this tier."

@@ -1,6 +1,6 @@
 # Hermitcrab G1 — Birth Message Variants
 # Source: wake 0.6.5.3
-# Generated: 2026-02-27T12:18:16.752Z
+# Generated: 2026-02-27T12:22:32.695Z
 #
 # Each variant shown twice:
 #   1. Full BSP spindle (the whole semantic chain the LLM would receive)

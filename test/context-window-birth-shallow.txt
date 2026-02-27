@@ -2,7 +2,7 @@
 # Scenario: Shallow Birth
 # Source: wake 0.6.5.1
 # Instructions: touchstone 0.14 | touchstone 0.22 | touchstone 0.41 | vision 0.931 | capabilities | cook 0.32 | wake 0.67 | purpose 0
-# Generated: 2026-02-27T12:18:16.749Z
+# Generated: 2026-02-27T12:22:32.691Z
 #
 # This is the actual system prompt text the LLM would receive.
 
