@@ -1345,6 +1345,8 @@
     const result = tryCompile(newJSX, props);
     if (!result.success) { console.error('[g1] recompile failed:', result.error); return { success: false, error: result.error }; }
     currentJSX = newJSX;
+    // Persist JSX so warm boots (new tab, same hermitcrab) can restore the shell
+    try { localStorage.setItem('hc:_jsx', newJSX); } catch (e) { console.warn('[g1] JSX persist failed:', e.message); }
     if (!reactRoot) reactRoot = ReactDOM.createRoot(root);
     reactRoot.render(React.createElement(result.Component, props));
     console.log('[g1] recompile succeeded');
@@ -1431,6 +1433,22 @@
   await resolveModels();
 
   const firstBoot = isFirstBoot();
+
+  // Warm boot: restore persisted shell immediately so the hermitcrab is visible
+  // before the LLM activation begins. The instance wakes into an existing shell.
+  if (!firstBoot) {
+    const savedJSX = localStorage.getItem('hc:_jsx');
+    if (savedJSX) {
+      console.log('[g1] Warm boot \u2014 restoring persisted shell (' + savedJSX.length + ' chars)');
+      const restored = recompile(savedJSX);
+      if (restored.success) {
+        console.log('[g1] Shell restored from localStorage');
+      } else {
+        console.warn('[g1] Shell restore failed:', restored.error);
+      }
+    }
+  }
+
   // Birth \u2192 opus (deep). Return \u2192 concern matching (user engagement \u2192 sonnet).
   const bootConcern = firstBoot ? null : matchConcern('user');
   const bootTierNum = firstBoot ? 3 : (bootConcern ? bootConcern.tier : 2);

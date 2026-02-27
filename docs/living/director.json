@@ -55,6 +55,12 @@
         "_": "Fundamentals are combinatorial variables — digit assignment, pscale mapping, direction of construction, presence/absence, positive integer, spindle. These generate a space of possibilities.",
         "1": "Applications (memory, coordination, narrative) are particular combinations occupying that space. The fundamentals are new. No Stack Overflow. Every instance must reason from the touchstone.",
         "2": "A well-structured block: every possible spindle chain produces meaningful progressive narrowing. If a chain reads like topic → subtopic → fact, the block isn't structured for spindle use."
+      },
+      "3": {
+        "_": "Spindle creation: go deep, not wide. When content needs more room, add depth — never spread siblings. Spindles can be infinitely long. Each deeper level either narrows context to specifics, or expands from brief to detailed. Both are the same move: progressive resolution.",
+        "1": "Context to specific: pscale 0 orients, each digit narrows. The reader at any depth has everything above as frame. A spindle through purpose from 0 to -5 is a single coherent narrowing — not five separate topics side by side.",
+        "2": "Brief to detailed: the same spindle serves both a quick glance (read pscale 0) and deep engagement (follow to depth). Width at a given level means alternatives or siblings — different concerns at the same scale. Depth means the same concern at increasing resolution.",
+        "3": "The tendency to spread (adding keys 1, 2, 3, 4 at the same level) produces flat catalogues. The move to deepen (adding 1.1, 1.1.1, 1.1.1.1) produces spindles. Every block edit should ask: am I adding a sibling or going deeper? Default to deeper."
       }
     },
     "4": {
@@ -206,6 +212,21 @@
           "_": "Design gap exposed: message delivery format. Messages were injected as raw strings, not BSP spindles. The LLM wouldn't know its message came from 0.65311 and couldn't navigate to siblings. Test file provides both formats — full spindle chain and final point only — for experimentation.",
           "1": "Full spindle: shows the parent chain (wake → Boot → Birth message variants → Challenge → text). Gives the LLM navigational context but includes kernel-facing metadata at intermediate levels.",
           "2": "Final point: just the text at the endpoint. Clean but opaque — the LLM has no address to explore from."
+        },
+        "5": {
+          "_": "Simultaneity — 27 Feb live testing. Multiple browser tabs on the same origin share one localStorage. Same blocks, same identity, multiple kernel instances. This is not a bug — it is the first form of simultaneity. Two tabs = two concurrent LLM activations from one hermitcrab.",
+          "1": {
+            "_": "What is shared vs isolated. localStorage (blocks, JSX, conversation, API key) = shared. Each tab's kernel.js execution context (_activationLock, _activationContext, currentJSX, reactRoot) = isolated per tab.",
+            "1": "Consequence: two tabs can write to the same block concurrently. Last write wins. No merge, no conflict detection. Living currents means each tab recompiles from whatever localStorage contains at that moment — including the other tab's writes.",
+            "2": "The _activationLock only guards within one tab. Two tabs can boot simultaneously. Both call the API. Both write to history. The block state becomes a superposition of two instances' activity.",
+            "3": "JSX persistence (hc:_jsx in localStorage) means a new tab restores the last shell any tab compiled. Warm boot produces the most recent face, regardless of which tab created it."
+          },
+          "2": {
+            "_": "Simultaneity is not multi-tab support — it is the beginning of murmuration at G1. Multiple instances reading and writing the same blocks through living currents is already convergent processing on shared state.",
+            "1": "At G1: same shell, same kernel code, same API key. Differentiation comes only from timing — which tab reads which version of a block at which echo. The instances are temporally distinct but identity-identical.",
+            "2": "At G2: different shells on different origins. SAND protocol. Coordination through published state, not shared localStorage. The G1 case is preparation — same architecture, simpler sharing mechanism."
+          },
+          "3": "Practical implications for kernel: consider StorageEvent listener (fires when another tab modifies localStorage). The kernel could detect external block changes and trigger recompilation — one tab's writes become another tab's living currents. Not yet implemented. The question is whether to embrace or prevent concurrent activation."
         }
       },
       "6": {
