@@ -333,7 +333,13 @@
           "_": "Process orientation via BSP — the GO move operationalised. Focus point becomes a BSP call. The kernel writes echo-specific content into the process spindle before recompilation.",
           "1": "Process spindle in wake. Each pscale level = a process scale. Pscale 0: activation identity. -1: echo loop context. -2: this echo. -3: this tool batch. -4: available moves/budget.",
           "2": "The kernel calls bsp('wake', process_spindle, current_depth). Mutable leaf: kernel writes echo-specific content at the current depth before recompilation (Option B from 0.4.6.4 — this IS the Möbius twist applied to process orientation).",
-          "3": "Inter-instance coordination: purpose = current future map. History = simple record (NOT replaced). Purpose snapshots at blink time are the inter-instance signal. Each snapshot tagged with process coordinate."
+          "3": "Inter-instance coordination: purpose = current future map. History = simple record (NOT replaced). Purpose snapshots at blink time are the inter-instance signal. Each snapshot tagged with process coordinate.",
+          "4": {
+            "_": "Kernel liveness signal. The system prompt IS what's live — it's the result of BSP instructions the kernel actually executed. What the hermitcrab finds by reading deeper into blocks may be designed but not yet wired.",
+            "1": "The boundary between 'what arrived in my system prompt' and 'what I found by reading further' is the liveness boundary. No separate manifest needed — the compilation IS the manifest.",
+            "2": "Minimal move: state_board reports which triggers have kernel backing (currently: user_message only). Elegant move: kernel writes trigger status into process spindle at pscale -1 (activation context) at activation start. The hermitcrab reads it as temporal orientation every echo.",
+            "3": "One line in cook or wake makes this explicit: 'What's in your system prompt is what the kernel compiled for you. What you find by reading deeper may be designed but not yet wired.' The hermitcrab learns to treat system prompt as ground truth and block reads as exploration."
+          }
         },
         "3": {
           "_": "Two receptive states. Not all B loops have the same direction.",

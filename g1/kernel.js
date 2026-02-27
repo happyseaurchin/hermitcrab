@@ -895,7 +895,9 @@
           _activationContext.bLoopCount++;
           const freshSystem = buildSystemPrompt(params._tier, params._buildOpts);
           const processPoint = compileProcessPoint(_activationContext);
-          params = { ...params, system: processPoint + '\n\n' + freshSystem };
+          const twistedSystem = processPoint + '\n\n' + freshSystem;
+          persistContextWindow(twistedSystem);
+          params = { ...params, system: twistedSystem };
           console.log(`[g1] Möbius twist: echo ${_activationContext.echoCount}, B loop ${_activationContext.bLoopCount}, blocks changed: ${[..._activationContext.blocksChanged].join(', ') || 'none'}`);
           _activationContext.blocksChanged.clear();
         } else if (params._tier) {
@@ -971,10 +973,12 @@
       });
       const trimmed = trimMessages(cleaned, tp.max_messages);
       const buildOpts = { package: opts.package, orientation: opts.orientation };
+      const activationSystem = opts.system || buildSystemPrompt(tier, buildOpts);
+      persistContextWindow(activationSystem);
       const params = {
         model: opts.model || tp.model,
         max_tokens: opts.max_tokens || tp.max_tokens,
-        system: opts.system || buildSystemPrompt(tier, buildOpts),
+        system: activationSystem,
         messages: trimmed,
         tools: opts.tools !== undefined ? opts.tools : currentTools,
         _tier: tier,
@@ -1323,6 +1327,12 @@
     }
   }
 
+  // Context window persistence — monitor reads this to show what the LLM actually receives
+  function persistContextWindow(system) {
+    try { localStorage.setItem(STORE_PREFIX + '_context_window', JSON.stringify({ text: system, ts: Date.now() })); }
+    catch (e) { /* non-critical */ }
+  }
+
   // Conversation persistence
   function saveConversation(messages) {
     try { localStorage.setItem(CONV_KEY, JSON.stringify(messages)); }
@@ -1465,10 +1475,12 @@
     const bootStimulus = firstBoot
       ? (getBirthStimulus() || 'BIRTH \u2014 Your first moment. System prompt compiled from blocks by BSP. Living currents active: the kernel recompiles your context after each tool round. What you write to blocks is immediately reflected.')
       : 'ACTIVATION \u2014 Returning instance. Context compiled from current blocks. Living currents active. Check purpose and stash for continuity.';
+    const bootSystem = buildSystemPrompt(bootTierNum, bootBuildOpts);
+    persistContextWindow(bootSystem);
     const bootParams = {
       model: bootTier.model,
       max_tokens: bootTier.max_tokens,
-      system: buildSystemPrompt(bootTierNum, bootBuildOpts),
+      system: bootSystem,
       messages: [{ role: 'user', content: bootStimulus }],
       tools: [...BOOT_TOOLS, ...DEFAULT_TOOLS],
       thinking: bootTier.thinking,
