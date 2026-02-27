@@ -6,8 +6,58 @@
   const root = document.getElementById('root');
   const STORE_PREFIX = 'hc:';
   const CONV_KEY = 'hc_conversation';
+  // Absolute fallbacks — only used if the models API call fails entirely
   const FALLBACK_MODEL = 'claude-opus-4-6';
   const FALLBACK_FAST_MODEL = 'claude-haiku-4-5-20251001';
+
+  // ============ MODEL RESOLUTION ============
+  // Wake stores semantic tier names (opus, sonnet, haiku).
+  // At boot, the kernel calls /v1/models to discover the latest model ID for each family.
+  // One resolution table. One place to update when new models release: the API itself.
+  let _modelResolution = null; // { opus: 'claude-opus-4-6', sonnet: 'claude-sonnet-4-6', haiku: 'claude-haiku-4-5-20251001' }
+
+  async function resolveModels() {
+    try {
+      const apiKey = localStorage.getItem('hermitcrab_api_key');
+      if (!apiKey) return;
+      const resp = await fetch('https://api.anthropic.com/v1/models?limit=100', {
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json'
+        }
+      });
+      if (!resp.ok) { console.warn('[g1] Models API:', resp.status); return; }
+      const json = await resp.json();
+      const models = json.data || [];
+      // Find latest model in each family by created_at (API returns most recent first)
+      const families = { opus: null, sonnet: null, haiku: null };
+      for (const m of models) {
+        const id = m.id || '';
+        for (const family of Object.keys(families)) {
+          if (!families[family] && id.includes(family)) {
+            families[family] = id;
+          }
+        }
+      }
+      _modelResolution = families;
+      console.log('[g1] Model resolution:', _modelResolution);
+    } catch (e) {
+      console.warn('[g1] Model resolution failed, using fallbacks:', e.message);
+    }
+  }
+
+  function resolveModel(tierName) {
+    if (!tierName) return FALLBACK_MODEL;
+    const name = tierName.trim().toLowerCase();
+    // Already a full model ID (contains a digit) — pass through
+    if (/\d/.test(name)) return name;
+    // Resolve semantic name via API-discovered table
+    if (_modelResolution && _modelResolution[name]) return _modelResolution[name];
+    // Fallback mapping if API call failed
+    const fallbacks = { opus: FALLBACK_MODEL, sonnet: 'claude-sonnet-4-6', haiku: FALLBACK_FAST_MODEL };
+    return fallbacks[name] || FALLBACK_MODEL;
+  }
   const MAX_MESSAGES = 20;
   const MAX_TOOL_LOOPS = 10;
 
@@ -449,7 +499,7 @@
       }
     }
     const result = {
-      model: params.model || fallbackModel,
+      model: resolveModel(params.model) || fallbackModel,
       max_tokens: parseInt(params.max_tokens) || 8192,
     };
     // Parse thinking: "enabled 8000" or "adaptive"
@@ -650,6 +700,8 @@
   async function callAPI(params) {
     const apiKey = localStorage.getItem('hermitcrab_api_key');
     if (!params.model) params.model = FALLBACK_MODEL;
+    // Resolve semantic tier names (opus/sonnet/haiku) to actual model IDs
+    params.model = resolveModel(params.model);
     // Inject current tools if caller didn't provide any
     if (!params.tools && currentTools.length > 0) params.tools = currentTools;
     const clean = {};
@@ -685,7 +737,25 @@
     // Write mutable content into process spindle (wake 0.6.7.3 = this echo, 0.6.7.4 = available)
     const processNode = wake.tree['6']['7'];
     const changed = ctx.blocksChanged.size > 0 ? [...ctx.blocksChanged].join(', ') : 'none';
-    processNode['3'] = `Echo ${ctx.echoCount}. B loop ${ctx.bLoopCount}. Blocks changed: ${changed}. Currents recompiled from current block state.`;
+
+    // Threshold check: at B loop intervals, inject review signal
+    // Parse threshold_interval from wake 0.4.7 (default 10)
+    let thresholdInterval = 10;
+    const loopParams = wake.tree?.['4']?.['7'];
+    if (typeof loopParams === 'string') {
+      const tiMatch = loopParams.match(/threshold_interval:\s*(\d+)/);
+      if (tiMatch) thresholdInterval = parseInt(tiMatch[1]);
+    }
+    let thresholdSignal = '';
+    if (ctx.bLoopCount > 0 && ctx.bLoopCount % thresholdInterval === 0) {
+      if (ctx.bLoopCount >= 100) {
+        thresholdSignal = ` THRESHOLD REVIEW (B:${ctx.bLoopCount}): Extended activation. Assess: are you producing or drifting? Consider concluding.`;
+      } else {
+        thresholdSignal = ` Checkpoint (B:${ctx.bLoopCount}): Brief self-check \u2014 productive or looping?`;
+      }
+    }
+
+    processNode['3'] = `Echo ${ctx.echoCount}. B loop ${ctx.bLoopCount}. Blocks changed: ${changed}. Currents recompiled from current block state.${thresholdSignal}`;
     const remaining = MAX_TOOL_LOOPS - ctx.echoCount;
     processNode['4'] = `Budget: ${remaining} echoes remaining. Batch Layer 4 tools to maximise each echo. Layer 2 tools (web_search, code_execution) do not consume echoes.`;
     blockSave('wake', wake);
@@ -1315,7 +1385,7 @@
 
   props = {
     callLLM, callAPI, callWithToolLoop,
-    model: getTierParams(3).model, fastModel: getTierParams(1).model,
+    model: resolveModel('opus'), fastModel: resolveModel('haiku'),
     React, ReactDOM, getSource, recompile, setTools,
     browser, conversation: { save: saveConversation, load: loadConversation },
     blockRead: (name, path) => { const b = blockLoad(name); if (!b) return null; return path ? blockReadNode(b, path) : b; },
@@ -1332,23 +1402,35 @@
 
   // ============ BOOT SEQUENCE ============
 
-  const bootTier = getTierParams(3);
+  // Resolve model IDs from Anthropic API before first call
+  status('resolving models...');
+  await resolveModels();
+
   const firstBoot = isFirstBoot();
+  // Birth \u2192 opus (deep). Return \u2192 concern matching (user engagement \u2192 sonnet).
+  const bootConcern = firstBoot ? null : matchConcern('user');
+  const bootTierNum = firstBoot ? 3 : (bootConcern ? bootConcern.tier : 2);
+  const bootTier = getTierParams(bootTierNum);
   status(`calling ${bootTier.model} \u2014 ${firstBoot ? 'BIRTH' : 'ACTIVATION'}...`);
 
   try {
     const bootBuildOpts = {};
+    // Birth: deep tier (3), system prompt from birth instructions
+    // Return: tier from concern matching, package from concern
+    if (!firstBoot && bootConcern && bootConcern.packageId) {
+      bootBuildOpts.package = bootConcern.packageId;
+    }
     const bootStimulus = firstBoot
       ? (getBirthStimulus() || 'BIRTH \u2014 Your first moment. System prompt compiled from blocks by BSP. Living currents active: the kernel recompiles your context after each tool round. What you write to blocks is immediately reflected.')
       : 'ACTIVATION \u2014 Returning instance. Context compiled from current blocks. Living currents active. Check purpose and stash for continuity.';
     const bootParams = {
       model: bootTier.model,
       max_tokens: bootTier.max_tokens,
-      system: buildSystemPrompt(3, bootBuildOpts),
+      system: buildSystemPrompt(bootTierNum, bootBuildOpts),
       messages: [{ role: 'user', content: bootStimulus }],
       tools: [...BOOT_TOOLS, ...DEFAULT_TOOLS],
       thinking: bootTier.thinking,
-      _tier: 3,
+      _tier: bootTierNum,
       _buildOpts: bootBuildOpts,
     };
 
