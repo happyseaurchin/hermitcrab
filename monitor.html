@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HERMITCRAB — Monitor</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐚</text></svg>">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Courier New', monospace;
+      background: #0a0a0f;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 1rem;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #1e293b;
+      margin-bottom: 1rem;
+    }
+    header h1 { color: #5eead4; font-size: 1rem; }
+    header .status { color: #94a3b8; font-size: 0.85rem; }
+    .refresh-btn {
+      margin-left: auto;
+      padding: 4px 12px;
+      background: #164e63;
+      color: #94a3b8;
+      border: 1px solid #1e293b;
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.8rem;
+    }
+    .refresh-btn:hover { background: #155e75; color: #e2e8f0; }
+    .auto-label { color: #64748b; font-size: 0.75rem; margin-left: 0.5rem; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 1rem;
+      height: calc(100vh - 80px);
+    }
+
+    /* Block list sidebar */
+    .sidebar {
+      border-right: 1px solid #1e293b;
+      padding-right: 1rem;
+      overflow-y: auto;
+    }
+    .block-item {
+      padding: 6px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      margin-bottom: 2px;
+    }
+    .block-item:hover { background: #1e293b; }
+    .block-item.active { background: #164e63; border-left-color: #5eead4; }
+    .block-name { color: #5eead4; font-weight: bold; }
+    .block-p0 { color: #64748b; font-size: 0.8rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .block-size { color: #475569; font-size: 0.7rem; float: right; }
+
+    /* Process state panel */
+    .process-bar {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 4px;
+      padding: 8px 12px;
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .process-bar .label { color: #64748b; }
+    .process-bar .value { color: #5eead4; }
+
+    /* Main content */
+    .main { overflow-y: auto; }
+    .content-header {
+      color: #5eead4;
+      font-size: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #1e293b;
+      margin-bottom: 0.75rem;
+    }
+    .tree-node { margin-left: 1.5rem; }
+    .tree-root { margin-left: 0; }
+    .node-key { color: #f59e0b; }
+    .node-text { color: #cbd5e1; }
+    .node-branch { color: #475569; cursor: pointer; }
+    .node-branch:hover { color: #94a3b8; }
+    .node-collapsed::before { content: '▸ '; color: #475569; }
+    .node-expanded::before { content: '▾ '; color: #5eead4; }
+    .node-leaf::before { content: '  '; }
+
+    /* History / conversation view */
+    .history-entry {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 4px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+    }
+    .history-meta { color: #64748b; font-size: 0.8rem; margin-bottom: 4px; }
+    .history-text { color: #cbd5e1; white-space: pre-wrap; max-height: 300px; overflow-y: auto; }
+
+    /* Empty state */
+    .empty { color: #475569; font-style: italic; padding: 2rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🐚 MONITOR</h1>
+    <span class="status" id="status">loading...</span>
+    <label class="auto-label"><input type="checkbox" id="autoRefresh" checked> auto-refresh 2s</label>
+    <button class="refresh-btn" onclick="refresh()">refresh</button>
+  </header>
+
+  <div id="processBar" class="process-bar"></div>
+
+  <div class="grid">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main" id="main">
+      <div class="empty">Select a block to inspect</div>
+    </div>
+  </div>
+
+  <script>
+    const STORE_PREFIX = 'hc:';
+    let selectedBlock = null;
+    let autoTimer = null;
+
+    function getBlocks() {
+      const blocks = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith(STORE_PREFIX)) {
+          const name = key.slice(STORE_PREFIX.length);
+          try {
+            const data = JSON.parse(localStorage.getItem(key));
+            const p0 = data?.tree?.['_'] || '';
+            const size = localStorage.getItem(key).length;
+            blocks.push({ name, data, p0, size });
+          } catch (e) {
+            blocks.push({ name, data: null, p0: '(parse error)', size: 0 });
+          }
+        }
+      }
+      blocks.sort((a, b) => a.name.localeCompare(b.name));
+      return blocks;
+    }
+
+    function getProcessState(blocks) {
+      const wake = blocks.find(b => b.name === 'wake');
+      if (!wake || !wake.data?.tree?.['6']?.['7']) return null;
+      const proc = wake.data.tree['6']['7'];
+      return {
+        echo: proc['3'] || '',
+        budget: proc['4'] || '',
+      };
+    }
+
+    function getPurposeSnapshot() {
+      // Read from state board if available
+      const raw = localStorage.getItem(STORE_PREFIX + 'state_board');
+      // state_board isn't a block — it's stored differently. Check.
+      // Actually it's stored as a block tool result... let me check kernel
+      return null;
+    }
+
+    function renderProcessBar(blocks) {
+      const el = document.getElementById('processBar');
+      const proc = getProcessState(blocks);
+
+      // Count history entries
+      const history = blocks.find(b => b.name === 'history');
+      let historyCount = 0;
+      if (history?.data?.tree) {
+        for (const k of Object.keys(history.data.tree)) {
+          if (k !== '_' && k !== 'tuning') historyCount++;
+        }
+      }
+
+      // Purpose pscale-0
+      const purpose = blocks.find(b => b.name === 'purpose');
+      const purposeP0 = purpose?.data?.tree?.['_'] || '(empty)';
+
+      // Stash count
+      const stash = blocks.find(b => b.name === 'stash');
+      let stashCount = 0;
+      if (stash?.data?.tree) {
+        for (const k of Object.keys(stash.data.tree)) {
+          if (k !== '_' && k !== 'tuning') stashCount++;
+        }
+      }
+
+      let html = '';
+      if (proc) {
+        html += `<div><span class="label">process: </span><span class="value">${escHtml(proc.echo)}</span></div>`;
+      }
+      html += `<div><span class="label">history: </span><span class="value">${historyCount} entries</span></div>`;
+      html += `<div><span class="label">stash: </span><span class="value">${stashCount} entries</span></div>`;
+      html += `<div><span class="label">purpose-0: </span><span class="value">${escHtml(truncate(purposeP0, 80))}</span></div>`;
+      el.innerHTML = html;
+    }
+
+    function renderSidebar(blocks) {
+      const el = document.getElementById('sidebar');
+      el.innerHTML = blocks.map(b => {
+        const active = b.name === selectedBlock ? ' active' : '';
+        const sizeKb = (b.size / 1024).toFixed(1);
+        return `<div class="block-item${active}" onclick="selectBlock('${b.name}')">
+          <span class="block-name">${b.name}</span>
+          <span class="block-size">${sizeKb}k</span>
+          <span class="block-p0">${escHtml(truncate(b.p0, 60))}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function renderBlock(block) {
+      const el = document.getElementById('main');
+      if (!block || !block.data) {
+        el.innerHTML = '<div class="empty">Block not found or empty</div>';
+        return;
+      }
+
+      if (block.name === 'history') {
+        renderHistory(block);
+        return;
+      }
+
+      el.innerHTML = `<div class="content-header">${block.name}</div>
+        <div class="tree-root">${renderTree(block.data.tree, '')}</div>`;
+    }
+
+    function renderTree(node, path, depth = 0) {
+      if (typeof node === 'string') {
+        return `<div class="node-text" style="margin-left:${depth * 1.5}rem">${escHtml(node)}</div>`;
+      }
+      if (typeof node !== 'object' || node === null) return '';
+
+      let html = '';
+      // _ text first
+      if (node['_']) {
+        html += `<div style="margin-left:${depth * 1.5}rem">`;
+        if (path) html += `<span class="node-key">${path}</span> `;
+        html += `<span class="node-text">${escHtml(node['_'])}</span></div>`;
+      }
+      // Children (digits 1-9, then others)
+      const keys = Object.keys(node).filter(k => k !== '_' && k !== 'tuning').sort((a, b) => {
+        const na = Number(a), nb = Number(b);
+        if (!isNaN(na) && !isNaN(nb)) return na - nb;
+        return a.localeCompare(b);
+      });
+      for (const k of keys) {
+        const childPath = path ? `${path}.${k}` : k;
+        if (typeof node[k] === 'string') {
+          html += `<div style="margin-left:${(depth + 1) * 1.5}rem">`;
+          html += `<span class="node-key">${childPath}</span> `;
+          html += `<span class="node-text">${escHtml(node[k])}</span></div>`;
+        } else {
+          html += renderTree(node[k], childPath, depth + 1);
+        }
+      }
+      return html;
+    }
+
+    function renderHistory(block) {
+      const el = document.getElementById('main');
+      const tree = block.data?.tree || {};
+      const entries = [];
+
+      function collectEntries(node, path) {
+        if (typeof node === 'string' && path !== '_' && path !== 'tuning') {
+          entries.push({ path, text: node });
+        } else if (typeof node === 'object' && node !== null) {
+          for (const k of Object.keys(node)) {
+            if (k === '_' || k === 'tuning') continue;
+            collectEntries(node[k], path ? `${path}.${k}` : k);
+          }
+        }
+      }
+      collectEntries(tree, '');
+
+      // Reverse so newest first
+      entries.reverse();
+
+      let html = `<div class="content-header">history (${entries.length} entries, newest first)</div>`;
+      for (const entry of entries) {
+        const meta = entry.text.match(/^\[([^\]]+)\]/);
+        const metaStr = meta ? meta[1] : '';
+        const text = meta ? entry.text.slice(meta[0].length).trim() : entry.text;
+        html += `<div class="history-entry">
+          <div class="history-meta">${entry.path} — ${escHtml(metaStr)}</div>
+          <div class="history-text">${escHtml(text)}</div>
+        </div>`;
+      }
+      if (entries.length === 0) {
+        html += '<div class="empty">No history entries yet</div>';
+      }
+      el.innerHTML = html;
+    }
+
+    function selectBlock(name) {
+      selectedBlock = name;
+      refresh();
+    }
+
+    function refresh() {
+      const blocks = getBlocks();
+      const count = blocks.length;
+      const totalSize = blocks.reduce((s, b) => s + b.size, 0);
+      document.getElementById('status').textContent =
+        `${count} blocks | ${(totalSize / 1024).toFixed(1)}kb total | ${new Date().toLocaleTimeString()}`;
+
+      renderProcessBar(blocks);
+      renderSidebar(blocks);
+
+      if (selectedBlock) {
+        const block = blocks.find(b => b.name === selectedBlock);
+        renderBlock(block);
+      }
+    }
+
+    function escHtml(s) {
+      if (!s) return '';
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function truncate(s, n) {
+      if (!s || s.length <= n) return s;
+      return s.slice(0, n) + '...';
+    }
+
+    // Auto-refresh
+    function startAutoRefresh() {
+      stopAutoRefresh();
+      if (document.getElementById('autoRefresh').checked) {
+        autoTimer = setInterval(refresh, 2000);
+      }
+    }
+    function stopAutoRefresh() {
+      if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+    }
+    document.getElementById('autoRefresh').addEventListener('change', startAutoRefresh);
+
+    // Init
+    refresh();
+    startAutoRefresh();
+  </script>
+</body>
+</html>

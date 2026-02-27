@@ -310,6 +310,10 @@
     // Point mode — return the semantic at the specified pscale level
     // String modes: '~' = spread (X~), '*' = tree (recursive subtree)
     if (point !== undefined && point !== null) {
+      // Defensive: API may send numeric point as string (e.g. "-3" instead of -3)
+      if (typeof point === 'string' && !isNaN(Number(point)) && point !== '~' && point !== '*') {
+        point = Number(point);
+      }
       if (typeof point === 'string') {
         const endPath = walkDigits.length > 0 ? walkDigits.join('.') : null;
         if (point === '~') {
