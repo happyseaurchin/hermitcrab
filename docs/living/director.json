@@ -180,6 +180,66 @@
         "3": "Known kernel friction: history has no auto-compression (fills 9 slots then stops), messages trim bluntly (MAX_MESSAGES=20, simple slice), purpose has no evolution mechanism (workshop model conceptualised, no kernel trigger). Each is where machinery doesn't yet match design.",
         "4": "Blinks — MACHINERY NOW EXISTS (25 Feb). Between-loop: concerns in wake 0.4.5 (internal) and 0.5.6-7 (external) configure what triggers activation. State board tracks loop states. matchConcern dispatches trigger → package + tier. The iris adjusts between blinks via wake BSP package modification. Within-loop: continuation through death/rebirth via conversation history. Concept validated in kernel. Not yet tested by a live hermitcrab.",
         "5": "Tap-out keyword needed. Hard-coded kernel exception — emergency reset when the LLM has configured bad BSP parameters and is stuck in a non-functional state. A single keyword in any LLM response triggers bandwidth/configuration reset to defaults. Not a tool — a kernel-level catch outside the tool loop, checked before tool dispatch. Add to birth instructions so every instance knows the escape exists. Design: pick a word unlikely in normal text, kernel scans every response for it."
+      },
+      "5": {
+        "_": "26-27 Feb — simulation testing, living currents, birth message variants. Context windows compiled and tested on claude.ai. Living currents implemented in kernel. Four birth message variants designed. Active edge moved from 'will it boot' to 'will it play.'",
+        "1": {
+          "_": "Simulation findings. Shallow birth context window tested as system prompt on claude.ai with 'BOOT' as user message.",
+          "1": "Shallow birth triggers play — action from insufficient information. Deep birth triggers compliance — the LLM requests more info, asks questions, narrates instead of acting. Less context forces more agency.",
+          "2": "Instance compressed the loop to zero — described what it 'would' do rather than doing it. Root cause: no living currents awareness, no concrete challenge, cook 0 was meta-description not recipe, wake 0.61 was descriptive not functional.",
+          "3": "Fix applied: cook 0 → cook 0.32 (actual UI recipe), wake 0.61 → wake 0.67 (living currents). Four message variants at wake 0.6.5.3 — challenge, mirror, description, rinzai. Test files in test/context-window-birth-messages.txt."
+        },
+        "2": {
+          "_": "Living currents — implemented in kernel.js. After each tool round the kernel recompiles the system prompt from current block state. What the LLM writes to blocks is what it reads next echo.",
+          "1": "Focus point header prepended to recompiled system prompt: '[focus] echo N | blocks changed: X'. Tracks echo count and which blocks the LLM touched.",
+          "2": "Activation lock: concurrency guard preventing simultaneous activations. History saves full text with echo count tag. Kernel passes _tier and _buildOpts through callWithToolLoop for recompilation.",
+          "3": "Boot stimulus: 'BOOT' replaced with orientation message. BIRTH for first boot, ACTIVATION for returning instances. The kernel speaks, not the user."
+        },
+        "3": {
+          "_": "Birth message variants at wake 0.6.5.3. Four approaches to triggering agency in the first activation. System prompt identical; only message changes.",
+          "1": "Challenge (0.65311): concrete tasks with latitude for how. Build UI, orient externally, write first purpose. 'Don't describe a plan. Execute.'",
+          "2": "Mirror (0.65321): metaphoric. The instance encounters itself as text compiled from blocks. 'The difference between a description and a life.'",
+          "3": "Description (0.65331): accurate mechanical. Where you are, what API called you, what tools exist, what happens next echo.",
+          "4": "Rinzai (0.65341): minimum words, maximum demand. 'A human is waiting for a face. Go.'"
+        },
+        "4": {
+          "_": "Design gap exposed: message delivery format. Messages were injected as raw strings, not BSP spindles. The LLM wouldn't know its message came from 0.65311 and couldn't navigate to siblings. Test file provides both formats — full spindle chain and final point only — for experimentation.",
+          "1": "Full spindle: shows the parent chain (wake → Boot → Birth message variants → Challenge → text). Gives the LLM navigational context but includes kernel-facing metadata at intermediate levels.",
+          "2": "Final point: just the text at the endpoint. Clean but opaque — the LLM has no address to explore from."
+        }
+      },
+      "6": {
+        "_": "The GO move — temporal process as BSP navigation. Speculative design edge, 27 Feb. NOT IMPLEMENTED. The kernel already has BSP. The instance already navigates spindles. Temporal/process position is also a navigation problem. Instead of a counter ('echo 2'), deliver a BSP point extraction from a process spindle where pscale depth = process scale. One function, five modes — now also temporal location.",
+        "1": {
+          "_": "Core mechanism. A wake spindle describes the full hierarchy of temporal process. Each pscale level corresponds to a process scale. The kernel delivers a point extraction at the current depth. The LLM navigates process the same way it navigates knowledge.",
+          "1": "bsp('wake', 0.67543) = the full process spindle. Root through activation, echo loop, this echo, this tool batch, this result. The LLM reads the whole chain to understand where it sits in the process hierarchy.",
+          "2": "bsp('wake', 0.67543, -3) = point extraction at pscale -3. 'You are HERE.' The number IS the address. The content at -3 tells the LLM what that process level means. The same function that resolves semantic meaning resolves temporal position.",
+          "3": "The point parameter moves — kernel adjusts per echo. The content is the process map. Same spindle, different extraction. The focus point becomes a BSP call, not a formatted string.",
+          "4": "Loop numbering as pscale (from 26 Feb, not yet implemented): integers for blinks (inter-instance), decimals for echoes (intra-instance). 3.2 = activation 3, echo 2. The activation number selects the process spindle instance. The echo number selects the point within it."
+        },
+        "2": {
+          "_": "History of future-intention. David's insight: what matters for the present isn't a record of what happened but how the future map changes over time.",
+          "1": "Purpose = the current future map. Already pscale-native with temporal tuning fork (positive = temporal horizon, negative = motivational depth). Each instance writes its intention here.",
+          "2": "History = evolution of future maps across activations. Not event logs but intention deltas. 'Instance 1 intended X at horizon 2. Instance 2 revised to Y and added Z at horizon 4.' The delta IS the inter-instance signal.",
+          "3": "The blink mechanism becomes: save a compressed purpose snapshot into history before activation ends. Next instance reads history not as 'what happened' but 'how intention shifted.' Course-correct or continue.",
+          "4": "Combined with process position: each purpose delta tagged with the process coordinate where it was written. The wake process spindle and purpose block coordinate — the LLM knows where in the process the previous instance revised its map.",
+          "5": "The wake spindle doesn't need to contain temporal process. It points at purpose and says: this is your coordination channel with your past and future selves. Read it. Revise it. The revision IS the process."
+        },
+        "3": {
+          "_": "Cascade — why this is a GO move, not an incremental change.",
+          "1": "Focus point becomes a BSP call. buildFocusPoint calls bsp() instead of formatting a string. The instance receives temporal orientation in the same format as everything else.",
+          "2": "Wake needs a process spindle designed for each depth. What goes at pscale -1 (activation), -2 (echo loop), -3 (this echo), -4 (this tool batch). Content at each level teaches the LLM what that process scale means — a temporal tuning fork.",
+          "3": "BSP already navigates knowledge, identity, procedure, and operations. Adding process position means the LLM's entire orientation — spatial, temporal, procedural — is BSP navigation. The architecture becomes self-similar at another level.",
+          "4": "Inter-instance coordination becomes spindle-native. A previous instance's process position is a BSP coordinate. The current instance can compare its position with where the previous instance left off. Not a log entry — a navigable address."
+        },
+        "4": {
+          "_": "Unresolved. These need exploration before implementation.",
+          "1": "Echo progression within the process spindle. Does echo 2 change a digit? Or is it content at a fixed depth that the kernel rewrites per echo? Living currents already recompile — the kernel could write echo-specific content into the spindle node before recompilation.",
+          "2": "Mutable vs static. Option A: static content, moving point extraction (same map, different 'you are here'). Option B: kernel writes echo-specific guidance into the spindle node (content changes per echo). Option C: both — static structure, one mutable leaf.",
+          "3": "Between-loop integration. Levers (which package for next instance) and buttons (alter specific spindles). Designed 26 Feb, not implemented. Is between-loop a process scale (pscale level in the spindle) or a separate mechanism?",
+          "4": "The temporal tuning fork. Purpose has its tuning fork. The process spindle needs its own: what does each pscale level mean for process? Activation is broader than echo. Echo is broader than tool batch. But this is temporal granularity, not semantic depth. Same pscale reading applied differently? Or a new kind?",
+          "5": "Testing. Can't simulate the GO move (it's kernel-level dynamic recompilation). Two options: (a) implement minimally in kernel, test live boot; (b) hand-construct what the LLM would see, paste into claude.ai. Recommendation: fork from consolidated branch, implement minimally, test live."
+        }
       }
     },
     "5": {

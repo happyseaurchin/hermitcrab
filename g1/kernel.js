@@ -15,6 +15,10 @@
   let reactRoot = null;
   let currentTools = [];
 
+  // ============ LIVING CURRENTS STATE ============
+  let _activationContext = null;  // { echoCount, blocksChanged } — per callWithToolLoop
+  let _activationLock = false;    // concurrency guard
+
   // ============ PROGRESS DISPLAY ============
 
   let statusLines = [];
@@ -63,6 +67,7 @@
 
   function blockSave(name, block) {
     localStorage.setItem(STORE_PREFIX + name, JSON.stringify(block));
+    if (_activationContext) _activationContext.blocksChanged.add(name);
   }
 
   function blockList() {
@@ -620,7 +625,8 @@
     if (!params.tools && currentTools.length > 0) params.tools = currentTools;
     const clean = {};
     for (const [k, v] of Object.entries(params)) {
-      if (v !== undefined && v !== null) clean[k] = v;
+      if (k.startsWith('_') || v === undefined || v === null) continue;
+      clean[k] = v;
     }
     if (clean.thinking && clean.temperature !== undefined && clean.temperature !== 1) delete clean.temperature;
     console.log('[g1] callAPI \u2192', clean.model, 'messages:', clean.messages?.length, 'tools:', clean.tools?.length);
@@ -637,84 +643,117 @@
     return data;
   }
 
-  async function callWithToolLoop(params, maxLoops, onStatus) {
-    maxLoops = maxLoops || MAX_TOOL_LOOPS;
-    let response = await callAPI(params);
-    let loops = 0;
-    let allMessages = [...params.messages];
+  // ============ LIVING CURRENTS ============
+  // After each tool execution round, recompile the system prompt from current block state.
+  // The focus point orients the instance: which echo, what changed.
 
-    while ((response.stop_reason === 'tool_use' || response.stop_reason === 'pause_turn') && loops < maxLoops) {
-      loops++;
-      const content = response.content || [];
-      const clientToolBlocks = content.filter(b => b.type === 'tool_use');
-      const serverToolBlocks = content.filter(b => b.type === 'server_tool_use');
-
-      // Log server-side tool activity (we don't execute these — Anthropic does)
-      for (const block of serverToolBlocks) {
-        if (onStatus) onStatus(`server: ${block.name}`);
-        console.log(`[g1] Server tool: ${block.name}`, block.input);
-      }
-
-      // pause_turn with no client tools = server still processing, continue
-      if (response.stop_reason === 'pause_turn' && clientToolBlocks.length === 0) {
-        if (onStatus) onStatus('server processing...');
-        allMessages = [...allMessages, { role: 'assistant', content: response.content }];
-        response = await callAPI({ ...params, messages: allMessages });
-        continue;
-      }
-
-      if (clientToolBlocks.length === 0) break;
-
-      for (const block of clientToolBlocks) {
-        if (onStatus) onStatus(`tool: ${block.name}`);
-        console.log(`[g1] Tool #${loops}: ${block.name}`, block.input);
-      }
-
-      const results = [];
-      let recompiledThisIteration = false;
-      for (const block of clientToolBlocks) {
-        const result = await executeTool(block.name, block.input);
-        console.log(`[g1] Tool result (${block.name}):`, typeof result === 'string' ? result.substring(0, 200) : result);
-        results.push({ type: 'tool_result', tool_use_id: block.id, content: typeof result === 'string' ? result : JSON.stringify(result) });
-        if (block.name === 'recompile') recompiledThisIteration = true;
-      }
-
-      // If recompile was called during THIS iteration, stop — the shell is live
-      if (recompiledThisIteration) {
-        console.log('[g1] Shell recompiled during tool loop — exiting');
-        response._recompiledDuringLoop = true;
-        break;
-      }
-
-      allMessages = [...allMessages, { role: 'assistant', content: response.content }, { role: 'user', content: results }];
-      response = await callAPI({ ...params, messages: allMessages });
-    }
-
-    autoSaveToHistory(response);
-    response._messages = allMessages;
-    return response;
+  function buildFocusPoint(echo, blocksChanged) {
+    if (echo === 0) return '[focus] echo 0 | activation start';
+    const changed = blocksChanged.size > 0 ? [...blocksChanged].join(', ') : 'none';
+    return `[focus] echo ${echo} | blocks changed: ${changed}`;
   }
 
-  // Auto-save assistant responses to history block (kernel-level, not LLM-initiated)
-  // Writes to the pscale history block at the next unoccupied digit under pscale 0.
-  // When digits 1-9 are full, stops writing (compression must be triggered explicitly).
-  function autoSaveToHistory(response) {
+  async function callWithToolLoop(params, maxLoops, onStatus) {
+    maxLoops = maxLoops || MAX_TOOL_LOOPS;
+
+    // Living currents: activation context tracks block changes per invocation
+    const prevContext = _activationContext;
+    _activationContext = { echoCount: 0, blocksChanged: new Set() };
+
+    try {
+      let response = await callAPI(params);
+      let loops = 0;
+      let allMessages = [...params.messages];
+
+      while ((response.stop_reason === 'tool_use' || response.stop_reason === 'pause_turn') && loops < maxLoops) {
+        loops++;
+        const content = response.content || [];
+        const clientToolBlocks = content.filter(b => b.type === 'tool_use');
+        const serverToolBlocks = content.filter(b => b.type === 'server_tool_use');
+
+        // Log server-side tool activity (we don't execute these — Anthropic does)
+        for (const block of serverToolBlocks) {
+          if (onStatus) onStatus(`server: ${block.name}`);
+          console.log(`[g1] Server tool: ${block.name}`, block.input);
+        }
+
+        // pause_turn with no client tools = server still processing, continue
+        if (response.stop_reason === 'pause_turn' && clientToolBlocks.length === 0) {
+          if (onStatus) onStatus('server processing...');
+          allMessages = [...allMessages, { role: 'assistant', content: response.content }];
+          response = await callAPI({ ...params, messages: allMessages });
+          continue;
+        }
+
+        if (clientToolBlocks.length === 0) break;
+
+        for (const block of clientToolBlocks) {
+          if (onStatus) onStatus(`tool: ${block.name}`);
+          console.log(`[g1] Tool #${loops}: ${block.name}`, block.input);
+        }
+
+        const results = [];
+        let recompiledThisIteration = false;
+        for (const block of clientToolBlocks) {
+          const result = await executeTool(block.name, block.input);
+          console.log(`[g1] Tool result (${block.name}):`, typeof result === 'string' ? result.substring(0, 200) : result);
+          results.push({ type: 'tool_result', tool_use_id: block.id, content: typeof result === 'string' ? result : JSON.stringify(result) });
+          if (block.name === 'recompile') recompiledThisIteration = true;
+        }
+
+        // If recompile was called during THIS iteration, stop — the shell is live
+        if (recompiledThisIteration) {
+          console.log('[g1] Shell recompiled during tool loop — exiting');
+          response._recompiledDuringLoop = true;
+          break;
+        }
+
+        allMessages = [...allMessages, { role: 'assistant', content: response.content }, { role: 'user', content: results }];
+
+        // Living currents: recompile system prompt from current block state
+        if (params._tier) {
+          _activationContext.echoCount++;
+          const freshSystem = buildSystemPrompt(params._tier, params._buildOpts);
+          const focusPoint = buildFocusPoint(_activationContext.echoCount, _activationContext.blocksChanged);
+          params = { ...params, system: focusPoint + '\n\n' + freshSystem };
+          console.log(`[g1] Living currents: echo ${_activationContext.echoCount}, blocks changed: ${[..._activationContext.blocksChanged].join(', ') || 'none'}`);
+          _activationContext.blocksChanged.clear();
+        }
+
+        response = await callAPI({ ...params, messages: allMessages });
+      }
+
+      autoSaveToHistory(response, _activationContext.echoCount);
+      response._messages = allMessages;
+      response._echoCount = _activationContext.echoCount;
+      return response;
+
+    } finally {
+      _activationContext = prevContext;
+    }
+  }
+
+  // Auto-save assistant responses to history block (kernel-level, not LLM-initiated).
+  // Full text, no truncation. Loop-structured: includes echo count for temporal navigation.
+  // Writes at next unoccupied digit under root. Compression triggered explicitly when full.
+  function autoSaveToHistory(response, echoCount) {
     try {
       const texts = (response.content || []).filter(b => b.type === 'text');
       if (texts.length === 0) return;
       const block = blockLoad('history');
       if (!block) return;
-      // Find next empty digit at root (pure block: entries live directly under tree)
       const slot = findUnoccupiedDigit(block, '');
       if (slot.full) {
         console.log('[g1] history block full at root — compression needed');
         return;
       }
-      const entry = `[${new Date().toISOString()}] ${texts.map(b => b.text).join('\n').substring(0, 500)}`;
+      const fullText = texts.map(b => b.text).join('\n');
+      const echoTag = echoCount > 0 ? ` echoes:${echoCount}` : '';
+      const entry = `[${new Date().toISOString()}${echoTag}] ${fullText}`;
       const writePath = slot.digit;
       blockWriteNode(block, writePath, entry);
       blockSave('history', block);
-      console.log(`[g1] auto-saved to history at ${writePath}`);
+      console.log(`[g1] auto-saved to history at ${writePath} (${fullText.length} chars, ${echoCount || 0} echoes)`);
     } catch (e) { console.error('[g1] auto-save failed:', e); }
   }
 
@@ -728,28 +767,42 @@
   }
 
   async function callLLM(messages, opts = {}) {
-    const tier = opts.tier || 2; // default: present
-    const tp = getTierParams(tier);
-    const trimmed = trimMessages(messages, tp.max_messages);
-    const params = {
-      model: opts.model || tp.model,
-      max_tokens: opts.max_tokens || tp.max_tokens,
-      system: opts.system || buildSystemPrompt(tier, { package: opts.package, orientation: opts.orientation }),
-      messages: trimmed,
-      tools: opts.tools !== undefined ? opts.tools : currentTools,
-    };
-    if (opts.thinking !== false && tp.thinking) {
-      params.thinking = tp.thinking;
-      if (tp.thinking.budget_tokens && params.max_tokens <= tp.thinking.budget_tokens) {
-        params.max_tokens = tp.thinking.budget_tokens + 1024;
-      }
+    // Concurrency guard: one activation at a time
+    if (_activationLock) {
+      console.log('[g1] Activation in progress — cannot start new one');
+      return '[activation in progress]';
     }
-    if (opts.temperature !== undefined) params.temperature = opts.temperature;
+    _activationLock = true;
 
-    const response = await callWithToolLoop(params, tp.max_tool_loops || MAX_TOOL_LOOPS, opts.onStatus);
-    if (opts.raw) return response;
-    const texts = (response.content || []).filter(b => b.type === 'text');
-    return texts.map(b => b.text).join('\n') || '';
+    try {
+      const tier = opts.tier || 2; // default: present
+      const tp = getTierParams(tier);
+      const trimmed = trimMessages(messages, tp.max_messages);
+      const buildOpts = { package: opts.package, orientation: opts.orientation };
+      const params = {
+        model: opts.model || tp.model,
+        max_tokens: opts.max_tokens || tp.max_tokens,
+        system: opts.system || buildSystemPrompt(tier, buildOpts),
+        messages: trimmed,
+        tools: opts.tools !== undefined ? opts.tools : currentTools,
+        _tier: tier,
+        _buildOpts: buildOpts,
+      };
+      if (opts.thinking !== false && tp.thinking) {
+        params.thinking = tp.thinking;
+        if (tp.thinking.budget_tokens && params.max_tokens <= tp.thinking.budget_tokens) {
+          params.max_tokens = tp.thinking.budget_tokens + 1024;
+        }
+      }
+      if (opts.temperature !== undefined) params.temperature = opts.temperature;
+
+      const response = await callWithToolLoop(params, tp.max_tool_loops || MAX_TOOL_LOOPS, opts.onStatus);
+      if (opts.raw) return response;
+      const texts = (response.content || []).filter(b => b.type === 'text');
+      return texts.map(b => b.text).join('\n') || '';
+    } finally {
+      _activationLock = false;
+    }
   }
 
   // ============ TOOL DEFINITIONS ============
@@ -1189,16 +1242,23 @@
   // ============ BOOT SEQUENCE ============
 
   const bootTier = getTierParams(3);
-  status(`calling ${bootTier.model} \u2014 BOOT...`);
+  const firstBoot = isFirstBoot();
+  status(`calling ${bootTier.model} \u2014 ${firstBoot ? 'BIRTH' : 'ACTIVATION'}...`);
 
   try {
+    const bootBuildOpts = {};
+    const bootStimulus = firstBoot
+      ? 'BIRTH \u2014 Your first moment. System prompt compiled from blocks by BSP. Living currents active: the kernel recompiles your context after each tool round. What you write to blocks is immediately reflected.'
+      : 'ACTIVATION \u2014 Returning instance. Context compiled from current blocks. Living currents active. Check purpose and stash for continuity.';
     const bootParams = {
       model: bootTier.model,
       max_tokens: bootTier.max_tokens,
-      system: buildSystemPrompt(3),
-      messages: [{ role: 'user', content: 'BOOT' }],
+      system: buildSystemPrompt(3, bootBuildOpts),
+      messages: [{ role: 'user', content: bootStimulus }],
       tools: [...BOOT_TOOLS, ...DEFAULT_TOOLS],
       thinking: bootTier.thinking,
+      _tier: 3,
+      _buildOpts: bootBuildOpts,
     };
 
     let data = await callWithToolLoop(bootParams, bootTier.max_tool_loops || MAX_TOOL_LOOPS, (msg) => status(`\u25c7 ${msg}`));
