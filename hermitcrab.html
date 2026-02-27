@@ -152,8 +152,9 @@
     const el = document.getElementById('current-g' + currentG);
     if (el) el.textContent = '● current';
 
-    // ?dev=1 reveals custom birth message textarea
-    const devMode = new URLSearchParams(window.location.search).get('dev') === '1';
+    // Dev mode: localStorage.setItem('hermitcrab_dev', '1') or ?dev=1
+    const devMode = localStorage.getItem('hermitcrab_dev') === '1' ||
+      new URLSearchParams(window.location.search).get('dev') === '1';
     if (devMode) {
       const customOpt = document.getElementById('custom-opt');
       const customDiv = document.getElementById('custom-birth');
