@@ -244,16 +244,20 @@
         }
       },
       "2": {
-        "_": "Generate an interface. Self-contained HTML in the browser.",
+        "_": "Generate a working shell. React component via recompile(jsx). The shell is your face and your workspace.",
         "1": {
-          "_": "HTML/CSS/JS knowledge, recompile_interface function.",
+          "_": "React, CSS, the recompile tool, and props: { callLLM, blockRead, blockWrite, blockList, bsp, resolve, recompile, getSource, setTools, conversation: {save, load}, localStorage, React, ReactDOM }.",
           "2": {
-            "_": "recompile_interface(html). Replaces the entire panel.",
+            "_": "recompile({jsx}). The jsx is a complete React function component. Props are injected \u2014 destructure what you need: function Shell({ callLLM, bsp, blockRead, conversation, localStorage }) {...}",
             "3": {
-              "_": "All CSS inline or in a style tag. All JS inline. No external dependencies unless essential.",
+              "_": "Minimum viable shell requires three things. (1) A text input and send button \u2014 the human types, you receive via callLLM. (2) A conversation display \u2014 messages scroll, yours and theirs distinguished. (3) An export button \u2014 saves the conversation as a text file the human can keep.",
+              "1": "callLLM([{role:'user', content:text}]) returns a string response. This IS the conversation channel. The shell calls it, displays the result.",
               "4": {
-                "_": "Bind events that call back to you through the message interface. The human acts, you respond.",
-                "5": "Taste test: does the interface respond to what the human does? If it only displays \u2014 it's a poster, not an interface."
+                "_": "All CSS in a style tag or inline. No external dependencies. Dark theme, monospace \u2014 match the kernel aesthetic unless you have reason not to.",
+                "5": {
+                  "_": "conversation.save(key, data) and conversation.load(key) persist across page refreshes. Use for message history. localStorage is also available for flags and preferences.",
+                  "6": "Taste test: can the human type a message, read your response, and export the dialogue? If any of these three fail \u2014 the shell is not yet working. Does it feel like talking to someone, or reading a poster?"
+                }
               }
             }
           }

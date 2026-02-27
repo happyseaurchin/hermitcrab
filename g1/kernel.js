@@ -779,9 +779,12 @@
     const remaining = MAX_TOOL_LOOPS - ctx.echoCount;
     processNode['4'] = `Budget: ${remaining} echoes remaining. Batch Layer 4 tools to maximise each echo. Layer 2 tools (web_search, code_execution) do not consume echoes.`;
     blockSave('wake', wake);
-    // BSP point extraction at this-echo depth
-    const result = bsp('wake', 0.673, -3);
-    return result.text || `[focus] echo ${ctx.echoCount}`;
+    // Full spindle — the instance reads the progressive narrowing, not just the leaf
+    const result = bsp('wake', 0.673);
+    if (result.mode === 'spindle' && result.nodes.length > 0) {
+      return result.nodes.map(n => `  [${n.pscale}] ${n.text}`).join('\n');
+    }
+    return `[focus] echo ${ctx.echoCount}`;
   }
 
   // ============ BLINK MECHANISM (Loop C) ============
