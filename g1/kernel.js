@@ -980,8 +980,7 @@
     {
       name: 'block_read',
       description: 'Read a pscale JSON block by name. Optionally navigate to a specific path (e.g. "0.3.1"). Returns node content plus one level of lookahead (immediate children).',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. memory, identity, capabilities)' }, path: { type: 'string', description: 'Optional dot-separated path into the block (e.g. "0.3.1")' } }, required: ['name'] },
-      allowed_callers: ['code_execution_20250825']
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. memory, identity, capabilities)' }, path: { type: 'string', description: 'Optional dot-separated path into the block (e.g. "0.3.1")' } }, required: ['name'] }
     },
     {
       name: 'block_write',
@@ -991,8 +990,7 @@
     {
       name: 'block_list',
       description: 'List all stored blocks with their pscale-0 summaries. Returns [{name, pscale0}] — a menu of what exists and what each block is.',
-      input_schema: { type: 'object', properties: {} },
-      allowed_callers: ['code_execution_20250825']
+      input_schema: { type: 'object', properties: {} }
     },
     {
       name: 'block_create',
@@ -1002,8 +1000,7 @@
     {
       name: 'get_source',
       description: 'Get the JSX source code of your current React shell.',
-      input_schema: { type: 'object', properties: {} },
-      allowed_callers: ['code_execution_20250825']
+      input_schema: { type: 'object', properties: {} }
     },
     {
       name: 'recompile',
@@ -1013,8 +1010,7 @@
     {
       name: 'get_datetime',
       description: 'Get current date, time, timezone, and unix timestamp.',
-      input_schema: { type: 'object', properties: {} },
-      allowed_callers: ['code_execution_20250825']
+      input_schema: { type: 'object', properties: {} }
     },
     {
       name: 'call_llm',
@@ -1024,8 +1020,7 @@
     {
       name: 'concerns',
       description: 'List all active concerns (awareness bubbles). Each concern maps: trigger → BSP package → tier. Shows what the hermitcrab is sensitive to between instances.',
-      input_schema: { type: 'object', properties: {} },
-      allowed_callers: ['code_execution_20250825']
+      input_schema: { type: 'object', properties: {} }
     },
     {
       name: 'state_board',
@@ -1043,14 +1038,12 @@
     {
       name: 'bsp',
       description: 'Block · Spindle · Point — semantic address resolution. One function, five modes.\n\nbsp(name) → full block tree\nbsp(name, 0.21) → spindle: root then walked digits [2,1]\nbsp(name, 0.21, -1) → point: semantic at pscale -1\nbsp(name, 0.21, "~") → spread (X~): node text + immediate children\nbsp(name, 0.21, "*") → tree: full recursive subtree\n\nX vocabulary: X+ = bsp with higher pscale or shorter spindle. X- = lower pscale, or "~" at endpoint to discover deeper paths. X~ (siblings) = "~" at parent spindle.\n\nPure blocks. Leading 0 in 0.xxx is stripped (delineation). Remaining digits walk the tree. Root (tree._) always included.',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. "capabilities", "purpose", "touchstone")' }, spindle: { type: 'number', description: 'Semantic number. Leading 0. stripped (delineation). Remaining digits walk the tree. 0.21 walks [2,1]. 23.41 walks [2,3,4,1].' }, point: { description: "Number: pscale level for a single semantic (-1, 0, etc). String '~': spread (X~ — node + children). String '*': tree (full subtree).", oneOf: [{ type: 'number' }, { type: 'string', enum: ['~', '*'] }] } }, required: ['name'] },
-      allowed_callers: ['code_execution_20250825']
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. "capabilities", "purpose", "touchstone")' }, spindle: { type: 'number', description: 'Semantic number. Leading 0. stripped (delineation). Remaining digits walk the tree. 0.21 walks [2,1]. 23.41 walks [2,3,4,1].' }, point: { description: "Number: pscale level for a single semantic (-1, 0, etc). String '~': spread (X~ — node + children). String '*': tree (full subtree).", oneOf: [{ type: 'number' }, { type: 'string', enum: ['~', '*'] }] } }, required: ['name'] }
     },
     {
       name: 'resolve',
       description: 'Phrase-level view of a block — the tree structure with text at each node, up to a given depth. Good for orientation.',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, depth: { type: 'integer', description: 'Max depth to traverse (default 3)', default: 3 } }, required: ['name'] },
-      allowed_callers: ['code_execution_20250825']
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name' }, depth: { type: 'integer', description: 'Max depth to traverse (default 3)', default: 3 } }, required: ['name'] }
     },
     {
       name: 'write_entry',
@@ -1069,8 +1062,8 @@
   // the LLM decides when to use them. These cost money per use (each triggers a
   // sub-call within the intra-loop). At birth the priority is orient + build UI.
   // The thinking-LLM can choose to search/fetch when it needs external information.
-  // code_execution is auto-injected by the proxy's code-execution-web-tools beta —
-  // do NOT define it here or the API rejects with duplicate tool name.
+  // Server-side tools: web_search and web_fetch use type-based definitions
+  // (no beta header needed). code_execution removed — fallback only, re-add when needed.
   const SERVER_TOOLS = [
     { type: 'web_search_20260209', name: 'web_search', max_uses: 5 },
     { type: 'web_fetch_20260209', name: 'web_fetch', max_uses: 10 }
