@@ -111,6 +111,15 @@
           Pure engine + portable JSON blocks. The kernel has no identity — the blocks are the shell. Any LLM can animate any shell. 7 boot tools, pull-not-push memory.
         </div>
         <div class="g-status">experimental</div>
+        <div style="margin-top:8px" onclick="event.stopPropagation()">
+          <label style="font-size:0.75rem;color:#64748b">birth variant</label>
+          <select id="birth-variant" style="background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:4px;padding:2px 6px;font-size:0.75rem;font-family:inherit;margin-left:6px">
+            <option value="4">rinzai</option>
+            <option value="1">challenge</option>
+            <option value="2">mirror</option>
+            <option value="3">description</option>
+          </select>
+        </div>
       </div>
       <span class="current-label" id="current-g1"></span>
     </div>
@@ -141,7 +150,12 @@
 
     function launch(g) {
       localStorage.setItem('hermitcrab_g', String(g));
-      window.location.href = '/kernel?g=' + g;
+      let url = '/kernel?g=' + g;
+      if (g === 1) {
+        const bv = document.getElementById('birth-variant')?.value;
+        if (bv) url += '&bv=' + bv;
+      }
+      window.location.href = url;
     }
   </script>
 </body>

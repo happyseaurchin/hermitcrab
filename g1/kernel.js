@@ -538,17 +538,22 @@
   }
 
   // Read birth stimulus from wake 0.6.5.3.{variant}.1
-  // The variant is selected via loop parameters (wake 0.4.7, "birth_variant: N").
+  // Variant selected by: URL param ?bv=N (user chose at launcher), else wake 0.4.7 birth_variant.
   // Returns the variant text, or null if not found (falls back to hardcoded).
   function getBirthStimulus() {
     const wake = blockLoad('wake');
     if (!wake) return null;
-    // Parse birth_variant from loop parameters (wake 0.4.7)
-    const loopParams = wake.tree?.['4']?.['7'];
-    let variant = 1;
-    if (typeof loopParams === 'string') {
-      const match = loopParams.match(/birth_variant:\s*(\d)/);
-      if (match) variant = parseInt(match[1]);
+    // URL param takes precedence (user selected at launcher)
+    const urlBv = new URLSearchParams(window.location.search).get('bv');
+    let variant = urlBv ? parseInt(urlBv) : 0;
+    // Fall back to wake 0.4.7 loop parameters
+    if (!variant) {
+      const loopParams = wake.tree?.['4']?.['7'];
+      variant = 1;
+      if (typeof loopParams === 'string') {
+        const match = loopParams.match(/birth_variant:\s*(\d)/);
+        if (match) variant = parseInt(match[1]);
+      }
     }
     // Read variant text: wake 0.6.5.3.{variant} is { _: description, 1: text }
     const variantNode = wake.tree?.['6']?.['5']?.['3']?.[String(variant)];
