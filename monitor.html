@@ -112,29 +112,106 @@
 
     /* Empty state */
     .empty { color: #475569; font-style: italic; padding: 2rem; text-align: center; }
+
+    /* View toggle */
+    .view-toggle {
+      display: flex;
+      gap: 0;
+      margin-left: 1rem;
+    }
+    .view-btn {
+      padding: 3px 10px;
+      background: #0f172a;
+      color: #64748b;
+      border: 1px solid #1e293b;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.75rem;
+    }
+    .view-btn:first-child { border-radius: 3px 0 0 3px; }
+    .view-btn:last-child { border-radius: 0 3px 3px 0; }
+    .view-btn.active { background: #164e63; color: #5eead4; }
+
+    /* Conversation view */
+    .conv-view { height: calc(100vh - 80px); overflow-y: auto; }
+    .conv-msg {
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      border-radius: 4px;
+      border-left: 3px solid transparent;
+    }
+    .conv-msg.assistant {
+      background: #0f172a;
+      border-left-color: #5eead4;
+    }
+    .conv-msg.user {
+      background: #1a1125;
+      border-left-color: #a78bfa;
+    }
+    .conv-msg.system {
+      background: #1a1a0f;
+      border-left-color: #f59e0b;
+    }
+    .conv-role {
+      font-size: 0.7rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+    .conv-role.assistant { color: #5eead4; }
+    .conv-role.user { color: #a78bfa; }
+    .conv-role.system { color: #f59e0b; }
+    .conv-content {
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 400px;
+      overflow-y: auto;
+      font-size: 0.85rem;
+    }
+    .conv-tool {
+      background: #0c1520;
+      border: 1px solid #1e293b;
+      border-radius: 3px;
+      padding: 4px 8px;
+      margin: 4px 0;
+      font-size: 0.8rem;
+    }
+    .conv-tool-name { color: #f59e0b; }
+    .conv-tool-input { color: #64748b; max-height: 100px; overflow-y: auto; white-space: pre-wrap; }
+    .conv-tool-result { color: #94a3b8; max-height: 150px; overflow-y: auto; white-space: pre-wrap; }
+    .conv-empty { color: #475569; font-style: italic; padding: 2rem; text-align: center; }
   </style>
 </head>
 <body>
   <header>
     <h1>🐚 MONITOR</h1>
     <span class="status" id="status">loading...</span>
+    <div class="view-toggle">
+      <button class="view-btn active" id="btnBlocks" onclick="setView('blocks')">blocks</button>
+      <button class="view-btn" id="btnConv" onclick="setView('conversation')">conversation</button>
+    </div>
     <label class="auto-label"><input type="checkbox" id="autoRefresh" checked> auto-refresh 2s</label>
     <button class="refresh-btn" onclick="refresh()">refresh</button>
   </header>
 
   <div id="processBar" class="process-bar"></div>
 
-  <div class="grid">
+  <div class="grid" id="blocksView">
     <div class="sidebar" id="sidebar"></div>
     <div class="main" id="main">
       <div class="empty">Select a block to inspect</div>
     </div>
   </div>
 
+  <div class="conv-view" id="convView" style="display:none"></div>
+
   <script>
     const STORE_PREFIX = 'hc:';
+    const CONV_KEY = 'hc_conversation';
     let selectedBlock = null;
     let autoTimer = null;
+    let currentView = 'blocks';
 
     function getBlocks() {
       const blocks = [];
@@ -316,15 +393,22 @@
       const blocks = getBlocks();
       const count = blocks.length;
       const totalSize = blocks.reduce((s, b) => s + b.size, 0);
+
+      const convMessages = getConversation();
+      const convInfo = convMessages.length > 0 ? ` | ${convMessages.length} messages` : '';
       document.getElementById('status').textContent =
-        `${count} blocks | ${(totalSize / 1024).toFixed(1)}kb total | ${new Date().toLocaleTimeString()}`;
+        `${count} blocks | ${(totalSize / 1024).toFixed(1)}kb total${convInfo} | ${new Date().toLocaleTimeString()}`;
 
       renderProcessBar(blocks);
-      renderSidebar(blocks);
 
-      if (selectedBlock) {
-        const block = blocks.find(b => b.name === selectedBlock);
-        renderBlock(block);
+      if (currentView === 'blocks') {
+        renderSidebar(blocks);
+        if (selectedBlock) {
+          const block = blocks.find(b => b.name === selectedBlock);
+          renderBlock(block);
+        }
+      } else {
+        renderConversation();
       }
     }
 
@@ -336,6 +420,66 @@
     function truncate(s, n) {
       if (!s || s.length <= n) return s;
       return s.slice(0, n) + '...';
+    }
+
+    function setView(view) {
+      currentView = view;
+      document.getElementById('btnBlocks').classList.toggle('active', view === 'blocks');
+      document.getElementById('btnConv').classList.toggle('active', view === 'conversation');
+      document.getElementById('blocksView').style.display = view === 'blocks' ? '' : 'none';
+      document.getElementById('convView').style.display = view === 'conversation' ? '' : 'none';
+      refresh();
+    }
+
+    function getConversation() {
+      try {
+        const raw = localStorage.getItem(CONV_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) { return []; }
+    }
+
+    function renderConversation() {
+      const el = document.getElementById('convView');
+      const messages = getConversation();
+      if (messages.length === 0) {
+        el.innerHTML = '<div class="conv-empty">No conversation yet. Boot a hermitcrab in another tab.</div>';
+        return;
+      }
+
+      let html = '';
+      for (const msg of messages) {
+        const role = msg.role || 'unknown';
+        const content = msg.content;
+
+        if (typeof content === 'string') {
+          html += `<div class="conv-msg ${role}">
+            <div class="conv-role ${role}">${role}</div>
+            <div class="conv-content">${escHtml(content)}</div>
+          </div>`;
+        } else if (Array.isArray(content)) {
+          html += `<div class="conv-msg ${role}">
+            <div class="conv-role ${role}">${role}</div>`;
+          for (const block of content) {
+            if (block.type === 'text') {
+              html += `<div class="conv-content">${escHtml(block.text || '')}</div>`;
+            } else if (block.type === 'tool_use') {
+              const inputStr = JSON.stringify(block.input, null, 2);
+              html += `<div class="conv-tool">
+                <span class="conv-tool-name">${escHtml(block.name)}</span>
+                <div class="conv-tool-input">${escHtml(truncate(inputStr, 500))}</div>
+              </div>`;
+            } else if (block.type === 'tool_result') {
+              const resultStr = typeof block.content === 'string' ? block.content : JSON.stringify(block.content);
+              html += `<div class="conv-tool">
+                <span class="conv-tool-name">result</span>
+                <div class="conv-tool-result">${escHtml(truncate(resultStr, 800))}</div>
+              </div>`;
+            }
+          }
+          html += `</div>`;
+        }
+      }
+      el.innerHTML = html;
     }
 
     // Auto-refresh
