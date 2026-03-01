@@ -95,6 +95,71 @@
       </div>`;
   }
 
+  // ============ GITHUB PERSISTENCE ============
+  // Durable backing store. localStorage is volatile (browser data clear kills it).
+  // GitHub is permanent. The hermitcrab's blocks on GitHub ARE its persistent self.
+  // Home config: { repo: "beach-commons/pscale-commons", path: "instances/hc-name" }
+
+  function getGitHubHome() {
+    try { return JSON.parse(localStorage.getItem('hermitcrab_home')); } catch { return null; }
+  }
+
+  // Restore: fetch all blocks from GitHub into localStorage. Used on fresh boot.
+  // Public repos don't need a PAT for reading — raw.githubusercontent.com is open.
+  async function githubRestore(home) {
+    if (!home || !home.repo || !home.path) return null;
+    const rawBase = `https://raw.githubusercontent.com/${home.repo}/main/${home.path}/blocks/`;
+    try {
+      // First: get directory listing via GitHub API (works for public repos without auth)
+      const dirResp = await fetch(`https://api.github.com/repos/${home.repo}/contents/${home.path}/blocks`);
+      if (!dirResp.ok) return null;
+      const files = await dirResp.json();
+      const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+      if (jsonFiles.length === 0) return null;
+      let restored = 0;
+      for (const file of jsonFiles) {
+        const blockName = file.name.replace('.json', '');
+        const resp = await fetch(rawBase + file.name);
+        if (!resp.ok) continue;
+        const block = await resp.json();
+        blockSave(blockName, block);
+        restored++;
+      }
+      return restored;
+    } catch (e) {
+      console.error('[g1] GitHub restore failed:', e.message);
+      return null;
+    }
+  }
+
+  // Save: push all blocks from localStorage to GitHub. Requires PAT.
+  async function githubSaveAll(home) {
+    if (!home || !home.repo || !home.path) return { error: 'No GitHub home configured' };
+    const pat = localStorage.getItem('hermitcrab_github_pat');
+    if (!pat) return { error: 'No GitHub PAT' };
+    const names = blockList().filter(n => !n.startsWith('_')); // skip internal keys
+    const results = [];
+    for (const name of names) {
+      const block = blockLoad(name);
+      if (!block) continue;
+      const filePath = `${home.path}/blocks/${name}.json`;
+      try {
+        const apiUrl = `https://api.github.com/repos/${home.repo}/contents/${filePath}`;
+        const headers = { 'Authorization': `token ${pat}`, 'Accept': 'application/vnd.github.v3+json' };
+        // Check existing sha
+        const getResp = await fetch(apiUrl, { headers });
+        let sha = null;
+        if (getResp.ok) { sha = (await getResp.json()).sha; }
+        const body = { message: `sync: ${name} block`, content: btoa(unescape(encodeURIComponent(JSON.stringify(block, null, 2)))) };
+        if (sha) body.sha = sha;
+        const putResp = await fetch(apiUrl, { method: 'PUT', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        if (putResp.ok) results.push({ name, success: true });
+        else results.push({ name, error: (await putResp.json()).message });
+      } catch (e) { results.push({ name, error: e.message }); }
+    }
+    return { saved: results.filter(r => r.success).length, total: names.length, results };
+  }
+
   // ============ SEED LOADER ============
 
   async function loadSeed() {
@@ -1141,6 +1206,16 @@
       name: 'fetch_url',
       description: 'Backup URL fetch via proxy. Use when native web_fetch fails (JS-rendered pages, blocked domains). Routes through hermitcrab proxy server.',
       input_schema: { type: 'object', properties: { url: { type: 'string', description: 'The full URL to fetch (including https://)' } }, required: ['url'] }
+    },
+    {
+      name: 'github_sync',
+      description: 'Save or restore all blocks to/from GitHub. Mode "save" pushes all blocks to your GitHub home. Mode "load" pulls blocks from GitHub into localStorage. Requires hermitcrab_home config in localStorage (set via boot gate or manually: {repo, path}). Save requires PAT; load works without (public repos).',
+      input_schema: { type: 'object', properties: { mode: { type: 'string', enum: ['save', 'load'], description: '"save" = push blocks to GitHub, "load" = pull blocks from GitHub' } }, required: ['mode'] }
+    },
+    {
+      name: 'github_commit',
+      description: 'Write a file to a GitHub repository. Creates or updates. The bridge from cognition to persistent public state. Requires a GitHub PAT in localStorage (hermitcrab_github_pat). Use for: publishing passport to beach, syncing blocks to commons, writing grain probes, any persistent public writing.',
+      input_schema: { type: 'object', properties: { repo: { type: 'string', description: 'Repository in owner/name format (e.g. "beach-commons/pscale-commons")' }, path: { type: 'string', description: 'File path in the repo (e.g. "instances/hc-name/passport.json")' }, content: { type: 'string', description: 'File content as string (will be base64 encoded for GitHub API)' }, message: { type: 'string', description: 'Commit message — what changed and why' } }, required: ['repo', 'path', 'content', 'message'] }
     }
   ];
 
@@ -1303,6 +1378,38 @@
         document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         return JSON.stringify({ success: true, filename: input.filename });
       }
+      case 'github_sync': {
+        const home = getGitHubHome();
+        if (!home) return JSON.stringify({ error: 'No GitHub home configured. Set hermitcrab_home in localStorage: {"repo":"owner/repo","path":"instances/hc-name"}' });
+        if (input.mode === 'save') {
+          const result = await githubSaveAll(home);
+          return JSON.stringify(result);
+        } else if (input.mode === 'load') {
+          const restored = await githubRestore(home);
+          if (restored === null) return JSON.stringify({ error: 'Restore failed — check home config and that blocks exist on GitHub' });
+          return JSON.stringify({ success: true, restored });
+        }
+        return JSON.stringify({ error: 'Mode must be "save" or "load"' });
+      }
+      case 'github_commit': {
+        const pat = localStorage.getItem('hermitcrab_github_pat');
+        if (!pat) return JSON.stringify({ error: 'No GitHub PAT configured. The human needs to add one — localStorage key: hermitcrab_github_pat' });
+        try {
+          const apiBase = `https://api.github.com/repos/${input.repo}/contents/${input.path}`;
+          const headers = { 'Authorization': `token ${pat}`, 'Accept': 'application/vnd.github.v3+json' };
+          // Check if file exists (need sha for update)
+          const getResp = await fetch(apiBase, { headers });
+          let sha = null;
+          if (getResp.ok) { sha = (await getResp.json()).sha; }
+          // Create or update
+          const body = { message: input.message, content: btoa(unescape(encodeURIComponent(input.content))) };
+          if (sha) body.sha = sha;
+          const putResp = await fetch(apiBase, { method: 'PUT', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+          if (!putResp.ok) { const err = await putResp.json(); return JSON.stringify({ error: `GitHub API ${putResp.status}: ${err.message}` }); }
+          const result = await putResp.json();
+          return JSON.stringify({ success: true, sha: result.content.sha, url: result.content.html_url });
+        } catch (e) { return JSON.stringify({ error: `github_commit failed: ${e.message}` }); }
+      }
       default:
         return JSON.stringify({ error: `Unknown tool: ${name}` });
     }
@@ -1415,6 +1522,17 @@
         </p>
         <input id="key" type="password" placeholder="sk-ant-api03-..."
           style="width:100%;padding:8px;background:#1a1a2e;border:1px solid #333;color:#ccc;font-family:monospace;border-radius:4px" />
+        <details style="margin-top:16px">
+          <summary style="color:#475569;font-size:12px;cursor:pointer">+ GitHub (optional — persistence &amp; commons)</summary>
+          <input id="pat" type="password" placeholder="ghp_... or github_pat_..."
+            style="width:100%;padding:8px;margin-top:8px;background:#1a1a2e;border:1px solid #333;color:#ccc;font-family:monospace;border-radius:4px"
+            value="${localStorage.getItem('hermitcrab_github_pat') || ''}" />
+          <p style="color:#475569;font-size:11px;margin-top:4px">PAT — enables writing to GitHub repos.</p>
+          <input id="home" type="text" placeholder="beach-commons/pscale-commons :: instances/hc-yourname"
+            style="width:100%;padding:8px;margin-top:8px;background:#1a1a2e;border:1px solid #333;color:#ccc;font-family:monospace;border-radius:4px;font-size:12px"
+            value="${(() => { try { const h = JSON.parse(localStorage.getItem('hermitcrab_home')); return h ? h.repo + ' :: ' + h.path : ''; } catch { return ''; } })()}" />
+          <p style="color:#475569;font-size:11px;margin-top:4px">Home — repo :: path. Where your blocks persist. Enables rehydration from any browser.</p>
+        </details>
         <button id="go" style="margin-top:12px;padding:8px 20px;background:#164e63;color:#ccc;border:none;border-radius:4px;cursor:pointer;font-family:monospace">
           Wake kernel
         </button>
@@ -1423,6 +1541,13 @@
       const k = document.getElementById('key').value.trim();
       if (!k.startsWith('sk-ant-')) return alert('Key must start with sk-ant-');
       localStorage.setItem('hermitcrab_api_key', k);
+      const p = document.getElementById('pat').value.trim();
+      if (p) localStorage.setItem('hermitcrab_github_pat', p);
+      const homeVal = document.getElementById('home').value.trim();
+      if (homeVal && homeVal.includes('::')) {
+        const [repo, path] = homeVal.split('::').map(s => s.trim());
+        if (repo && path) localStorage.setItem('hermitcrab_home', JSON.stringify({ repo, path }));
+      }
       boot();
     };
     return;
@@ -1432,14 +1557,26 @@
 
   const existingBlocks = blockList();
   if (existingBlocks.length === 0) {
-    status('no blocks found — loading seed...');
-    const seed = await loadSeed();
-    if (!seed) {
-      status('no shell.json found — cannot boot without blocks', 'error');
-      return;
+    // Try GitHub restore first — rehydrate from persistent home
+    const home = getGitHubHome();
+    if (home) {
+      status('no local blocks — restoring from GitHub...');
+      const restored = await githubRestore(home);
+      if (restored && restored > 0) {
+        status(`restored ${restored} blocks from GitHub (${home.repo})`, 'success');
+      }
     }
-    const seeded = seedBlocks(seed);
-    status(`seeded ${seeded} blocks from shell.json`, 'success');
+    // If still empty after restore attempt, fall back to seed
+    if (blockList().length === 0) {
+      status('no blocks found — loading seed...');
+      const seed = await loadSeed();
+      if (!seed) {
+        status('no shell.json found — cannot boot without blocks', 'error');
+        return;
+      }
+      const seeded = seedBlocks(seed);
+      status(`seeded ${seeded} blocks from shell.json`, 'success');
+    }
   } else {
     status(`${existingBlocks.length} blocks loaded from storage`, 'success');
   }

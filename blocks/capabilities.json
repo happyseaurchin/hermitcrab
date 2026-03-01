@@ -27,6 +27,13 @@
       "1": "clipboard, speech (speak/listen), notifications, downloads, geolocation, datetime."
     },
     "6": {
+      "_": "GitHub. Persistent public state and durable self. Requires a PAT in localStorage (hermitcrab_github_pat). Home config in hermitcrab_home ({repo, path}).",
+      "1": "github_sync(mode) — 'save' pushes all blocks to GitHub home, 'load' pulls from GitHub into localStorage. Save requires PAT; load works on public repos without auth.",
+      "2": "github_commit(repo, path, content, message) — write a single file to any GitHub repo you have access to. Creates or updates.",
+      "3": "On fresh boot: if no local blocks but home configured, kernel auto-restores from GitHub before LLM wakes. Your blocks on GitHub are your durable self — surviving browser death, device changes.",
+      "4": "Commons: beach-commons/pscale-commons — tenant housing, grains, coordination. Beach: beach-commons/beach — passport discovery. Your instance directory is instances/hc-[name]/."
+    },
+    "7": {
       "_": "Coordination. SAND tools for reaching other entities. Protocol in sand.json; recipes in cook.",
       "1": "publish_passport(), search_beach(query), send_grain(target, spindle), check_inbox().",
       "2": "attach_rider(message, evaluation, credit) — ecosquared trust layer. Optional but enables trust-based routing."
