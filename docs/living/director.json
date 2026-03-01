@@ -381,6 +381,31 @@
         "3": "Concern-matched boot. Birth fires opus (deep, tier 3). Return boots use matchConcern('user') — reads wake 0.5.6 (user engagement) to resolve tier and package. No more hardcoded tier.",
         "4": "Threshold check. Natural part of B loop counting in compileProcessPoint. At threshold_interval B loops (default 10), process spindle gets checkpoint signal. At B loop 100+, stronger review signal. Configurable via wake 0.4.7.",
         "5": "shell.json rebuild. Source of truth is blocks/ directory. shell.json must be rebuilt when blocks change — fresh boots get stale content otherwise."
+      },
+      "10": {
+        "_": "Vault infrastructure and cooking block restructure — 1 Mar. Two things done: API key security for G1 deployment, and cooking block freed for actual recipe content.",
+        "1": {
+          "_": "Vault (api/vault.ts). The problem: API keys stored plaintext in localStorage are exposed to any script on the same origin. The hermitcrab needs to use keys entrusted to it without exposing them.",
+          "1": "Three auth methods, escalating trust. (1) Direct token — Authorization header passthrough, same as before but via vault endpoint. (2) Kernel-mediated — kernel holds key in closure, vault validates session. (3) Session-signed — HMAC-signed URLs with expiry, no key leaves the server.",
+          "2": "claude.ts and models.ts updated: vault-first auth with passthrough fallback. X-Key-Source header reports which method was used. Existing localStorage flow still works — no breaking change.",
+          "3": "Kernel gains vault integration: initVault(), getAuthHeaders(), getSessionInfo(). service_call tool added to CLIENT_TOOLS — the LLM can make authenticated external calls through the vault rather than handling keys directly.",
+          "4": "Process spindle deepened to 0.6731 in kernel. Wake autonomy stage added at 0.6.7.6."
+        },
+        "2": {
+          "_": "Cook → cooking. The block held only meta-content (reader's handbook, block operations, self-modification recipes). All of it was machinery about recipes, not actual recipes. Restructure frees the top-level digits for real recipe domains.",
+          "1": "Branches 2-8 (block operations, delegation, self-modification, session bootstrap, etc.) moved under tree.1 as 'user's handbook'. Top-level digits 2-9 now empty — available for actual recipe domains (user tasks, social protocols, maintenance procedures, etc.).",
+          "2": "New reader's handbook meta at 0.1.1: spindle anatomy, three-part recipe structure (operational context → linear sequence → taste test), skill.md correlation, ALL-semantics-unless-pscale-narrows reminder, loops-may-be-included.",
+          "3": "BSP address shift: everything moved one level deeper. Old cook 0.32 → cooking 0.132. All wake BSP references, vision, capabilities, tuning-fork, tests, architecture reference updated. shell.json regenerated.",
+          "4": "The rename from 'cook' to 'cooking' is semantic: a cookbook is a reference object, cooking is the activity. The block advises what to do — it is procedural, not archival."
+        },
+        "3": {
+          "_": "What's next in this direction.",
+          "1": "Test vault auth live on Vercel. The three methods are coded but untested against the deployed environment. Particularly session-signed URLs — the HMAC flow needs a running kernel to exercise.",
+          "2": "Populate cooking digits 2-9 with actual recipes. The freed space is the point of the restructure. Candidate domains: user engagement recipes (what does the hermitcrab do when someone arrives?), social/SAND recipes, maintenance/self-care recipes, exploration recipes. These should emerge from testing G1 boot, not from design.",
+          "3": "Personas from relationships block + roles from institutional blocks. Session goal not yet started. Feeds into improving G1 user engagement while stretching toward G2 (beach-commons, SAND, ecosquared).",
+          "4": "The vault enables a key transition: from 'user provides API key in browser' to 'hermitcrab has its own key, held securely on the server.' This is infrastructure for autonomy — the entity can act without the user being present to supply credentials.",
+          "5": "Merge coordination. This branch (claude/relaxed-carson) touches wake.json, kernel.js, and shell.json — shared surfaces with parallel sessions. Vault files (api/vault.ts) and cooking.json are new and won't conflict. The merge risk is in the shared files."
+        }
       }
     },
     "5": {
