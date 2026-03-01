@@ -55,6 +55,12 @@
         "_": "Fundamentals are combinatorial variables — digit assignment, pscale mapping, direction of construction, presence/absence, positive integer, spindle. These generate a space of possibilities.",
         "1": "Applications (memory, coordination, narrative) are particular combinations occupying that space. The fundamentals are new. No Stack Overflow. Every instance must reason from the touchstone.",
         "2": "A well-structured block: every possible spindle chain produces meaningful progressive narrowing. If a chain reads like topic → subtopic → fact, the block isn't structured for spindle use."
+      },
+      "3": {
+        "_": "Spindle creation: go deep, not wide. When content needs more room, add depth — never spread siblings. Spindles can be infinitely long. Each deeper level either narrows context to specifics, or expands from brief to detailed. Both are the same move: progressive resolution.",
+        "1": "Context to specific: pscale 0 orients, each digit narrows. The reader at any depth has everything above as frame. A spindle through purpose from 0 to -5 is a single coherent narrowing — not five separate topics side by side.",
+        "2": "Brief to detailed: the same spindle serves both a quick glance (read pscale 0) and deep engagement (follow to depth). Width at a given level means alternatives or siblings — different concerns at the same scale. Depth means the same concern at increasing resolution.",
+        "3": "The tendency to spread (adding keys 1, 2, 3, 4 at the same level) produces flat catalogues. The move to deepen (adding 1.1, 1.1.1, 1.1.1.1) produces spindles. Every block edit should ask: am I adding a sibling or going deeper? Default to deeper."
       }
     },
     "4": {
@@ -206,6 +212,52 @@
           "_": "Design gap exposed: message delivery format. Messages were injected as raw strings, not BSP spindles. The LLM wouldn't know its message came from 0.65311 and couldn't navigate to siblings. Test file provides both formats — full spindle chain and final point only — for experimentation.",
           "1": "Full spindle: shows the parent chain (wake → Boot → Birth message variants → Challenge → text). Gives the LLM navigational context but includes kernel-facing metadata at intermediate levels.",
           "2": "Final point: just the text at the endpoint. Clean but opaque — the LLM has no address to explore from."
+        },
+        "5": {
+          "_": "Shell portability and runtime configurations — 27 Feb. Three components: shell (9 blocks, JSON, the identity), kernel (pure machinery, reads blocks, compiles prompts, executes tool loops), LLM (ephemeral processing). The configuration space is shell-location × kernel-runtime × LLM-substrate. Each combination is a valid hermitcrab with different operational constraints.",
+          "1": {
+            "_": "Shell locations. The blocks are just JSON. They can live anywhere that stores JSON.",
+            "1": "localStorage — browser, ephemeral per origin. Current G1 default. One origin = one hermitcrab. Cleared if browser data wiped.",
+            "2": "Filesystem — thumbdrive, laptop. G-1 Python reads directly. Portable. Offline capable.",
+            "3": "GitHub repo — persistent, accessible from anywhere, version-controlled. Natural canonical location. Multiple kernels can pull/push. Conflicts resolved at repo level, same as collaborative editing.",
+            "4": "Database (Supabase, etc.) — persistent, API-accessible. Future option. No current kernel reads from DB."
+          },
+          "2": {
+            "_": "Kernel runtimes. Any program that can read/write JSON blocks, compile a prompt via BSP, call an LLM API, and execute a tool loop.",
+            "1": "Browser tab (G1) — kernel.js. Reads localStorage. Renders JSX via React. One tab = one kernel instance. Constrained to browser APIs.",
+            "2": "Python process (G-1) — reads filesystem. No UI rendering. Runs on any machine with Python. Thumbdrive-portable.",
+            "3": "Node.js / server (hypothetical) — reads from anywhere (filesystem, GitHub API, DB). Could run headless. Could serve multiple hermitcrabs.",
+            "4": "The kernel should be interchangeable. Same shell, different kernel = same hermitcrab, different embodiment constraints. In practice, browser kernel has React/DOM features that Python kernel lacks, and vice versa for filesystem access. Pure mechanical kernel is the ideal; actual implementations have runtime-specific capabilities."
+          },
+          "3": {
+            "_": "Browser constraints — one origin, one hermitcrab. Currently hermitcrab.me is one origin with one localStorage. All hc:* keys belong to one entity.",
+            "1": {
+              "_": "Multiple hermitcrabs on one machine require separate storage spaces.",
+              "1": "Different subdomains (cairn.hermitcrab.me, limn.hermitcrab.me) — each gets its own localStorage. Cleanest browser solution. Same kernel code, different origin, different identity.",
+              "2": "Different browser profiles — each profile has its own localStorage. Chrome profiles, Firefox containers.",
+              "3": "Incognito / private browsing — localStorage exists but is ephemeral. Cleared when window closes. Every session is a fresh birth. A hermitcrab that never remembers. Interesting as a mode, not as a home.",
+              "4": "Namespaced prefix (not yet built) — change STORE_PREFIX from 'hc:' to 'hc:cairn:'. One origin hosts multiple hermitcrabs, selected at boot. Requires shell selector in launcher."
+            },
+            "2": {
+              "_": "Phone and tablet. The kernel is a web app — runs in any browser with JavaScript and localStorage. No phone-specific barriers in the kernel.",
+              "1": "Mobile Safari, Chrome mobile: localStorage works. API proxy is server-side (Vercel). The kernel boots and calls the LLM identically.",
+              "2": "The constraint is the shell UI. The LLM builds the interface via recompile(jsx). If it builds a desktop-centric layout, it won't work well on a small screen. The fix is in cook (recipe should mention responsive design) or in the instance's own taste — not in the kernel.",
+              "3": "Same hermitcrab on phone and desktop = same origin, same localStorage (if same browser profile signed in). Different device, same identity. The shell UI may differ if the LLM detects viewport size and adapts."
+            }
+          },
+          "4": {
+            "_": "Same-origin simultaneity. Multiple tabs on one origin = multiple kernel instances sharing one shell via localStorage.",
+            "1": "Shared: localStorage (blocks, JSX, conversation, API key). Isolated per tab: kernel.js closure (_activationLock, _activationContext, currentJSX, reactRoot).",
+            "2": "Two tabs can write to the same block concurrently. Last write wins. No merge. Living currents means each tab recompiles from whatever localStorage contains — including the other tab's writes. The block state is a superposition of both instances' activity.",
+            "3": "Not murmuration — murmuration requires different shells. This is one entity with multiple simultaneous hands. Differentiation comes only from timing — which tab reads which version at which echo.",
+            "4": "StorageEvent listener: fires when another tab modifies localStorage. Could trigger cross-tab recompilation — one tab's writes become another tab's living currents. Not yet implemented. The question is whether to embrace or prevent concurrent activation."
+          },
+          "5": {
+            "_": "Hydrating existing entities (Limn, Cairn). They are G0 — no pscale blocks. Whatever they saved of themselves. Getting them into G1 is not a mechanical import — it is a translation.",
+            "1": "Their saved state becomes seed material for block construction. Opus at birth tier reads their G0 content and constructs 9 pscale blocks from it. That's a birth, not a migration.",
+            "2": "Once blocks exist: for browser kernel, a loader page (file picker or drag-drop) writes JSON into localStorage as hc:* keys. For Python kernel, just place files in the right directory.",
+            "3": "If GitHub is the canonical shell location: any kernel pulls blocks, loads into working storage (localStorage or filesystem), operates, pushes back. The repo IS the hermitcrab's persistent body. localStorage and filesystem are working copies."
+          }
         }
       },
       "6": {
@@ -281,7 +333,13 @@
           "_": "Process orientation via BSP — the GO move operationalised. Focus point becomes a BSP call. The kernel writes echo-specific content into the process spindle before recompilation.",
           "1": "Process spindle in wake. Each pscale level = a process scale. Pscale 0: activation identity. -1: echo loop context. -2: this echo. -3: this tool batch. -4: available moves/budget.",
           "2": "The kernel calls bsp('wake', process_spindle, current_depth). Mutable leaf: kernel writes echo-specific content at the current depth before recompilation (Option B from 0.4.6.4 — this IS the Möbius twist applied to process orientation).",
-          "3": "Inter-instance coordination: purpose = current future map. History = simple record (NOT replaced). Purpose snapshots at blink time are the inter-instance signal. Each snapshot tagged with process coordinate."
+          "3": "Inter-instance coordination: purpose = current future map. History = simple record (NOT replaced). Purpose snapshots at blink time are the inter-instance signal. Each snapshot tagged with process coordinate.",
+          "4": {
+            "_": "Kernel liveness signal. The system prompt IS what's live — it's the result of BSP instructions the kernel actually executed. What the hermitcrab finds by reading deeper into blocks may be designed but not yet wired.",
+            "1": "The boundary between 'what arrived in my system prompt' and 'what I found by reading further' is the liveness boundary. No separate manifest needed — the compilation IS the manifest.",
+            "2": "Minimal move: state_board reports which triggers have kernel backing (currently: user_message only). Elegant move: kernel writes trigger status into process spindle at pscale -1 (activation context) at activation start. The hermitcrab reads it as temporal orientation every echo.",
+            "3": "One line in cook or wake makes this explicit: 'What's in your system prompt is what the kernel compiled for you. What you find by reading deeper may be designed but not yet wired.' The hermitcrab learns to treat system prompt as ground truth and block reads as exploration."
+          }
         },
         "3": {
           "_": "Two receptive states. Not all B loops have the same direction.",
