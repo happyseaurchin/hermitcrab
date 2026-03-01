@@ -1,0 +1,110 @@
+{
+  "tuning": "0.111",
+  "tree": {
+    "_": "Tuning fork — the third structural component. JSON block holds content. BSP navigates it. The tuning fork ensures what BSP returns means what it says. A semantic number about a semantic number: it describes a block's shape, anchors pscale 0, prevents semantic drift, and enables operations on block structure without loading the block.",
+    "1": {
+      "_": "What it is. A field on a JSON block: { tuning: \"111.111\", tree: { ... } }. The tuning is itself a semantic number. Its decimal position is the authority on where pscale 0 sits in this block. Its digits encode capacity — how many pscale levels the block supports in each direction. It is not place (a bare integer), not fork (a reference to something else), not metadata (inert). It is a semantic number that describes the block's structural identity.",
+      "1": "Format. A string of digits with an optional decimal point. \"0.111\" = root block, 3 negative levels. \"111.111\" = contiguous, 3 positive + 3 negative. \"111\" = tree block, 3 positive levels. The count of digits before the decimal = where pscale 0 sits. Purpose has tuning \"111111111.111\" — 9 positive levels (minutes to decades), 3 negative (commitment, values, inherited).",
+      "2": "The field name is tuning, not fork. Fork has too many code connotations (git fork, process fork). The concept is a tuning fork — a resonance reference. The JSON field is tuning.",
+      "3": "Every block should declare its tuning. Root blocks (0.x) are drift-immune but declaring tuning makes the system self-documenting. Tree and contiguous blocks require it — without tuning, semantic drift is undetectable.",
+      "4": "The digits in the tuning can be all 1s (generic capacity markers) or meaningful (encoding expected branching, type signatures, or pscale-level descriptions). The format permits both. Meaning emerges through use — the tuning fork section of touchstone (0.7) describes how tuning can emerge rather than be declared."
+    },
+    "2": {
+      "_": "What it does. Three operational functions, proven by test.",
+      "1": {
+        "_": "Drift prevention. BSP currently reads pscale labels from the spindle's decimal position. When a block grows outward (tree side), old spindles carry stale decimal positions. \"Pscale 0\" points to different content depending on when the spindle was written. The tuning fork fixes this: BSP reads the block's tuning for labels instead of the spindle's decimal. Walk from spindle, labels from tuning. All existing spindles automatically get correct labels when a block grows — no stale-spindle cleanup needed.",
+        "1": "Drift direction. Root growth (0.34 → 0.345, deeper) never drifts — pscale 0 stays at root. Tree growth (23 → 123, broader) always drifts — pscale 0 shifts. Contiguous blocks drift on tree-side growth only. The asymmetry is structural: root growth extends into new negative pscale levels without moving existing ones. Tree growth inserts a new level above existing content, shifting all labels.",
+        "2": "The kernel change is ~5 lines. In bsp(), after parsing the spindle, check block.tuning. If present, extract its decimal position and use it instead of the spindle's for pscale labels. The tree walk is unaffected — digits always come from the spindle."
+      },
+      "2": {
+        "_": "Block type identification. The tuning's decimal position classifies the block.",
+        "1": "Root block — tuning starts with \"0.\" (e.g. \"0.111\"). Decimal position 0. Only negative pscale. Definitional, reference, rendition. Drift-immune.",
+        "2": "Tree block — tuning has no decimal (e.g. \"111\"). Only positive pscale. Growing, accumulating. Drift-susceptible on outward growth.",
+        "3": "Contiguous block — tuning has decimal mid-number (e.g. \"111.111\"). Both positive and negative pscale. The most complex case. Tree-side growth drifts; root-side growth is safe."
+      },
+      "3": {
+        "_": "Capacity description. Total digits = total pscale levels the block supports. Digits before decimal = positive (tree) capacity. Digits after = negative (root) capacity. A block with tuning \"11.111\" can hold 2 positive levels and 3 negative levels. When actual tree depth exceeds tuning capacity, the tuning is stale.",
+        "1": "Growth detection follows from capacity. Compare the block's actual tree depth against the tuning. If the tree has more nesting levels on the positive side than the tuning indicates, the block has grown and the tuning needs updating. This is a mechanical check — no LLM needed."
+      }
+    },
+    "3": {
+      "_": "The three block types. Every pscale JSON block is one of these. The type determines growth behaviour, drift susceptibility, and composition role.",
+      "1": {
+        "_": "Root (0.x). Decimal at position 0. Content extends only into negative pscale. The block delineates its own subject — it defines, rather than grows. Rendition blocks, reference specs, constitutional clauses.",
+        "1": "Growth pattern: deeper only. 0.34 → 0.345. New content appears at lower pscale levels. Pscale 0 is always the root. Old spindles remain correct.",
+        "2": "Tuning example: \"0.1111\". Four negative levels. A touchstone section, a spatial coordinate definition, a recipe.",
+        "3": "In the current shell: touchstone, vision, capabilities, cook, wake, relationships, history, stash are all root blocks (0.x). They delineate subjects. Most will stay root blocks."
+      },
+      "2": {
+        "_": "Tree (xyz). No decimal — or decimal at the end. Content extends only into positive pscale. The block accumulates upward through compression. History, sequential logs, growing hierarchies.",
+        "1": "Growth pattern: outward. 23 → 123. New levels appear above existing content. When digits 1-9 fill and compress, the block gains a new root level and all content shifts one pscale level deeper.",
+        "2": "Tuning example: \"111\". Three positive levels. A compressed history block.",
+        "3": "Drift vulnerability: every outward growth event shifts pscale labels. Without tuning, old spindles silently mislabel. With tuning, BSP compensates automatically."
+      },
+      "3": {
+        "_": "Contiguous (xy.z). Decimal mid-number. Both positive and negative pscale in one block. The most structurally rich case — also the one where tuning is essential, not optional.",
+        "1": "Growth pattern: both directions. Tree side grows by compression (23 → 123). Root side grows by extension (23.45 → 23.456). Only tree-side growth causes drift.",
+        "2": "Tuning example: \"111.111\". Three positive, three negative. The purpose block is the primary example — temporal objectives above pscale 0, motivational depth below.",
+        "3": "Contiguous blocks can also be understood as a fused tree and root — two spindles joined at the decimal point into a single semantic number. This is the bridge to Type 2 and 3 composition."
+      }
+    },
+    "4": {
+      "_": "Functions on tuning forks. Operations on the tuning number alone — no block loading required. The tuning fork is a lightweight structural proxy for the block it describes.",
+      "1": {
+        "_": "Structural queries. What can you learn from a tuning fork without touching the block?",
+        "1": "tuningDecimal(fork) — where is pscale 0? Count digits before the decimal. \"111.111\" → 3. \"0.111\" → 0. \"111\" → 3.",
+        "2": "tuningCapacity(fork) — how many pscale levels total? Count all digits. \"111.111\" → 6. \"111111111.111\" → 12.",
+        "3": "tuningType(fork) — root, tree, or contiguous? From decimal position: 0 = root, end/absent = tree, middle = contiguous."
+      },
+      "2": {
+        "_": "Relational queries. What can you learn by comparing two tuning forks?",
+        "1": "tuningMatch(a, b) — same decimal position and same capacity? If yes, blocks are structurally compatible. Same-tuned blocks can compose additively (touchstone 0.6.4.1).",
+        "2": "tuningCompose(tree, root) — combine a tree tuning and a root tuning into a contiguous tuning. \"111\" + \"0.111\" → \"111.111\". This predicts what a fused semantic number would look like — before doing the actual composition.",
+        "3": "tuningDrift(fork, spindle) — how far has a spindle drifted from the block's current tuning? Difference in decimal position. If fork says 3 and spindle says 1, drift = +2. The offset BSP needs to apply."
+      },
+      "3": {
+        "_": "Validation queries. Is a spindle safe to use on this block?",
+        "1": "tuningValidate(fork, spindle) — does the spindle's digit count fit within the tuning's capacity? A spindle with 8 digits on a block with tuning \"11.11\" (4 levels) is suspicious — it walks past the block's declared depth.",
+        "2": "tuningStale(fork, block) — does the block's actual tree depth exceed what the tuning declares? If yes, the tuning needs updating. A mechanical check the kernel can run at boot or between activations."
+      },
+      "4": "Minimal representation. In a context window where tokens matter, tuning forks can substitute for full blocks. An LLM receiving nine tuning forks (one per shell block) gets the structural shape of the entire shell in ~50 tokens. Not the content, but the architecture. Enough to reason about which blocks to read, which spindles to construct, where to write."
+    },
+    "5": {
+      "_": "Composition. Two blocks fused into a single semantic number. The tuning fork governs how the fusion works and whether it is valid. Three composition types, distinguished by the relationship between the source blocks.",
+      "1": {
+        "_": "Type 1 — Contiguous. One JSON block contains both tree and root sides. The decimal is internal. BSP resolves with a single block reference. This is the standard case — all current blocks are Type 1 (even root blocks are degenerate Type 1 with decimal at 0).",
+        "1": "The tuning fork's operational role is fullest here: drift prevention, capacity tracking, growth detection.",
+        "2": "Example: purpose block, tuning \"111111111.111\". One block. One BSP call. Tuning governs pscale labels."
+      },
+      "2": {
+        "_": "Type 2 — Attachment. A root block (0.x) attaches to a specific unit in a tree block. Different tree positions may have different root blocks attached. The fused semantic number looks like 321.46 — tree digits from one block, root digits from another.",
+        "1": "BSP resolves with two calls — one for the tree block (integer part), one for the root block attached at that position (fractional part). Results compose into a single spindle.",
+        "2": "Example: a spatial tree block (region → city → building) with a room-detail root block attached to each building. 321.46 = building 1 at depth 3, room detail at level 4.6.",
+        "3": "The tuning forks of both blocks must be checked. The tree block's tuning governs the integer side. The root block's tuning governs the fractional side. Composition is valid when they meet at pscale 0."
+      },
+      "3": {
+        "_": "Type 3 — Independent. Two separate blocks composed without attachment. Any tree block with any root block. The composition is defined by the caller, not by structural relationship.",
+        "1": "Example: a SAND grain probe — one entity's tree spindle composed with another entity's root spindle. 321.321 — two independent blocks, composed to form a single semantic number for comparison.",
+        "2": "Tuning forks enable compatibility checking before composition. If the tree fork and root fork have compatible structures, the composition will produce a coherent combined spindle."
+      },
+      "4": "Type detection. From a single semantic number (321.64), the type is ambiguous — it could be Type 1, 2, or 3. Context resolves this: one block reference = Type 1. Two block references with attachment = Type 2. Two independent references = Type 3. The tuning fork can encode which type applies."
+    },
+    "6": {
+      "_": "Relationship to BSP and JSON blocks. The triad. Each component has a defined role. None replaces the others.",
+      "1": "JSON block — the content. The tree structure holding semantically nested knowledge. What the block IS.",
+      "2": "BSP — the navigation. Walk digits, return spindles. Mechanical. Trusts its inputs. How you READ the block.",
+      "3": "Tuning fork — the integrity. Ensures BSP's inputs are valid. Describes the block's structure. Enables operations without loading the block. Why the reading MEANS what it says.",
+      "4": "Separation. BSP does not contain tuning fork logic. The tuning fork does not contain tree-walking logic. They interface at one point: BSP asks 'where is pscale 0?' and the tuning fork answers. For root blocks, the answer is always 0 (from the spindle). For tree and contiguous blocks, the answer comes from the block's tuning field.",
+      "5": "Like the touchstone teaches pscale format, the tuning fork spec teaches pscale integrity. Both are needed. A block without a touchstone is unreadable. A block without a tuning fork is undriftable — readable now but unreliable over time."
+    },
+    "7": {
+      "_": "Exploratory territory. What the tuning fork opens beyond drift prevention. Not specified — to be discovered through use.",
+      "1": "The tuning fork as hash. Two blocks with identical tuning are structurally identical in shape. The tuning string is a lightweight identifier for block shape. Matching tunings enables: block comparison, template detection, structural search across a library of blocks.",
+      "2": "The tuning fork as type signature. Temporal blocks share a tuning family (\"111111111.111\" — scales from seconds to decades). Spatial blocks share another. Relational another. The tuning fork classifies blocks by what their pscale levels MEAN, not just how many they have.",
+      "3": "The tuning fork as resonance check. An LLM reading a block can infer what pscale levels mean from content alone (touchstone 0.7.4). The tuning fork confirms or adjusts that inference. Where the LLM guesses, the tuning fork knows. This is the original role described in the touchstone — a resonance reference, not a conformality monitor.",
+      "4": "Inter-block navigation. If a tuning fork is itself a BSP address (e.g. \"0.71\" pointing to touchstone section 7.1), then the block carries a reference to its own definition. BSP the tuning to get the explanation of what each depth level means. Self-documenting blocks.",
+      "5": "Compression guidance. The tuning fork tells the LLM what each pscale level represents. When compression is triggered (digits 1-9 full), the LLM knows what kind of compression to apply — summary (history: days into weeks) or emergence (purpose: tasks into direction). The tuning fork is the compression instruction.",
+      "6": "Unique identification. For root blocks (0.x), the tree-side digits are invisible to BSP compensation (always 0 − 0 = 0). They are free to carry identity. A root block with tuning \"42.111\" has identifier 42 and depth 3 — BSP sees only decimal position 2, but the digits themselves differentiate blocks. For tree blocks, the digit count matters (it drives compensation), but specific digits could still encode identity within that constraint. If digits alone are insufficient (same depth, same type), combining the tuning fork with the block's semantic mapping description (what each pscale level represents) should differentiate uniquely. The tuning fork as key — structural metadata that doubles as identity."
+    }
+  }
+}

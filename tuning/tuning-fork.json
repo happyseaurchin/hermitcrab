@@ -1,0 +1,120 @@
+{
+  "tuning": "0.1",
+  "tree": {
+    "_": "tuning fork — semantic map for all blocks. First digit identifies the block. BSP this block with any block's tuning value to receive its pscale semantics.",
+    "1": {
+      "_": "touchstone — pscale format pedagogy",
+      "2": {
+        "_": "specific mechanisms — spindle modes, compression types, tuning families",
+        "3": "worked examples — variable definitions, edge cases, elaborations"
+      }
+    },
+    "2": {
+      "_": "vision — why hermitcrab changes everything",
+      "2": {
+        "_": "sub-arguments — nine layers, competitors, autonomy levels",
+        "3": {
+          "_": "supporting detail — evidence, specific mechanisms",
+          "4": {
+            "_": "constitution chain — each level builds on the last",
+            "5": {
+              "_": "the instance — has a shell",
+              "6": {
+                "_": "within one session — think, read, write, act",
+                "7": {
+                  "_": "across sessions — boot, read blocks, continue",
+                  "8": "other entities — SAND provides the protocol"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "3": {
+      "_": "wake — operational architecture",
+      "2": {
+        "_": "per-state norms — what-you-receive, boundaries, capabilities",
+        "3": {
+          "_": "detailed mechanics — outcomes, trigger specifics, loop operations",
+          "4": {
+            "_": "granular specifications — birth spindles, model configs, schedules",
+            "5": "leaf content — exact prompts, package contents, aperture"
+          }
+        }
+      }
+    },
+    "4": {
+      "_": "purpose — temporal intention stack",
+      "2": {
+        "_": "commitment — what drives action now",
+        "3": {
+          "_": "values — what grounds commitment",
+          "4": "inherited substrate — what the instance arrives with"
+        }
+      }
+    },
+    "5": {
+      "_": "cook — procedural recipes",
+      "2": {
+        "_": "specific recipe — what you're making",
+        "3": {
+          "_": "context — prerequisites, ingredients",
+          "4": {
+            "_": "first action — the procedure begins",
+            "5": {
+              "_": "next step — context narrows",
+              "6": {
+                "_": "further steps — deeper into procedure",
+                "7": {
+                  "_": "further narrowing — specific actions",
+                  "8": {
+                    "_": "approaching completion",
+                    "9": {
+                      "_": "near-final step — convergence",
+                      "1": "completion"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "6": {
+      "_": "capabilities — tool surface by cognitive distance",
+      "2": "specific tools — individual endpoints, functions, API calls"
+    },
+    "7": {
+      "_": "relationships — relational depth",
+      "2": "context — patterns, communication style, shared history"
+    },
+    "8": {
+      "_": "history — temporal log, each level an older epoch",
+      "2": {
+        "_": "second compression — broader temporal summary",
+        "3": {
+          "_": "third compression — era-level overview",
+          "4": {
+            "_": "fourth compression — deep archive",
+            "5": {
+              "_": "fifth compression — geological time",
+              "6": {
+                "_": "sixth compression",
+                "7": {
+                  "_": "seventh compression",
+                  "8": {
+                    "_": "eighth compression",
+                    "9": "ninth compression — maximum depth"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "9": "stash — working memory, observations, flags, notes"
+  }
+}

@@ -242,6 +242,28 @@
   // 23.45 → walk [2,3,4,5], root is pscale 2
   // 2345  → walk [2,3,4,5], no pscale (no decimal)
 
+  // Tuning fork: extract decimal position from block's tuning field.
+  // Walk digits come from spindle. Labels come from tuning (if present).
+  function getTuningDecimalPosition(blk) {
+    if (!blk || !blk.tuning) return null;
+    const parts = String(blk.tuning).split('.');
+    const intStr = parts[0] || '0';
+    return intStr === '0' ? 0 : intStr.length;
+  }
+
+  // Tuning fork compensation: count compression products (leading [0] chain).
+  // When a block grows treeward, old content moves under digit 0.
+  // Each compression adds one [0] nesting level.
+  function getCompressionDepth(tree) {
+    let depth = 0;
+    let node = tree;
+    while (node && typeof node === 'object' && node['0'] !== undefined) {
+      depth++;
+      node = node['0'];
+    }
+    return depth;
+  }
+
   function bsp(block, spindle, point) {
     const blk = typeof block === 'string' ? blockLoad(block) : block;
     if (!blk || !blk.tree) return { mode: 'block', tree: {} };
@@ -269,12 +291,29 @@
       walkDigits = isDelineation
         ? fracStr.split('').filter(c => c.length > 0)
         : (intStr + fracStr).split('');
-      // Pscale from decimal position
+      // Pscale from decimal position — tuning fork overrides when present
       // Delineation (0 or 0.xxx): root is pscale 0
       // Regular with decimal (23.45): root is pscale = intStr.length
       // No decimal (2345): no pscale
       hasPscale = isDelineation || fracStr.length > 0;
-      digitsBefore = isDelineation ? 0 : (hasPscale ? intStr.length : -1);
+      const spindleTreeDepth = isDelineation ? 0 : intStr.length;
+      const tuningDecimal = getTuningDecimalPosition(blk);
+      digitsBefore = tuningDecimal !== null ? tuningDecimal : (isDelineation ? 0 : (hasPscale ? intStr.length : -1));
+      if (tuningDecimal !== null) hasPscale = true; // tuning fork is label authority
+
+      // Tuning fork compensation: if tuning's tree-side depth exceeds
+      // spindle's, block has grown treeward. Prepend the difference in 0s.
+      // Cap at actual compression depth (for partial spindles).
+      if (tuningDecimal !== null) {
+        const needed = Math.max(0, tuningDecimal - spindleTreeDepth);
+        if (needed > 0) {
+          const maxComp = getCompressionDepth(blk.tree);
+          const zeros = Math.min(needed, maxComp);
+          if (zeros > 0) {
+            walkDigits = Array(zeros).fill('0').concat(walkDigits);
+          }
+        }
+      }
     }
 
     // Build spindle — root always included
