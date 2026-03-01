@@ -73,14 +73,14 @@
         "_": "Concerns. Awareness bubbles the kernel maintains between instances. Each maps: trigger → package → tier. The kernel matches incoming stimulus to a concern and assembles the corresponding BSP package at the specified tier. You modify these to reshape your own sensitivity.",
         "1": {
           "_": "Heartbeat. Proprioception — am I functioning? Are my loops healthy? Mechanical check, no LLM call unless something crosses a threshold.",
-          "1": "package 9.7",
+          "1": "0.97",
           "2": "tier mechanical, haiku if flagged",
           "3": "trigger frequent (default every 15 minutes)",
           "4": "Checks state board for: loops hanging too long, signals accumulated beyond threshold, user waiting with no response. Flags for next activation if anything abnormal."
         },
         "2": {
           "_": "Self-maintenance. The sleep cycle — review, tidy, consolidate. Daily opus with full blocks and review orientation.",
-          "1": "package 9.3 (deep)",
+          "1": "0.93",
           "2": "tier opus + thinking",
           "3": "trigger daily (default 22:00) or when present-state escalates",
           "4": "orientation review: check purpose alignment, review heartbeat flags, consolidate history, pattern recognition across recent activations. Not producing — reflecting."
@@ -114,14 +114,14 @@
       "5": "Anomaly. Unexpected stimulus — unknown entity probe, uninitiated file change, pattern break. Always escalate anomalies to at least present state.",
       "6": {
         "_": "User engagement. Trusted external — a human session. No haiku gatekeeper. Fires sonnet/opus directly with full context.",
-        "1": "package 9.2 (present) or continuation (present + conversation history)",
+        "1": "0.92",
         "2": "tier sonnet + thinking, escalate to opus as needed",
         "3": "trigger user opens session or sends message",
         "4": "Full bandwidth. The user is present — respond with depth. Continuation mode preserves conversational context across within-loop tool calls."
       },
       "7": {
         "_": "External signals. Webhook, accumulated queue, automated notifications. Quick triage — batch before triggering.",
-        "1": "package 9.8 (signal response)",
+        "1": "0.98",
         "2": "tier haiku, escalate by flag",
         "3": "trigger webhook arrival or queue threshold",
         "4": "Triage: relevant? urgent? mine? If yes, flag for escalation to present or deep. If no, dismiss or note in stash."

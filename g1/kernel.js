@@ -688,9 +688,11 @@
     const tierStr = node['2'] || '';
     const trigger = node['3'] || '';
     const orientation = node['4'] || null;
-    // Parse "package 9.7" → 7, "package 9.2 (present)" → 2
-    const pkgMatch = pkg.match(/(\d+)\.(\d+)/);
-    const packageId = pkgMatch ? parseInt(pkgMatch[2]) : null;
+    // Parse spindle notation: "0.92" → packageId 2, "0.97" → packageId 7
+    // Also accepts legacy path notation: "9.2" → 2, "package 9.7" → 7
+    const spindleMatch = pkg.match(/0\.9(\d)/);
+    const pathMatch = !spindleMatch && pkg.match(/9\.(\d)/);
+    const packageId = spindleMatch ? parseInt(spindleMatch[1]) : pathMatch ? parseInt(pathMatch[1]) : null;
     // Parse tier: extract first word (haiku→1, sonnet→2, opus→3)
     const tierMap = { haiku: 1, mechanical: 1, sonnet: 2, opus: 3 };
     const tierWord = tierStr.split(/[\s,]/)[1] || tierStr.split(/[\s,]/)[0] || '';
