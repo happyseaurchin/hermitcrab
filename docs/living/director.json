@@ -394,6 +394,59 @@
         "_": "Machus is the buildable local collective — forking mechanism, temporal stack. What we can construct and interact with directly. MAGI is what emerges when enough entities use SAND at the 10:1 ratio.",
         "1": "Cannot build MAGI. Can enable conditions. Architecture makes coordination the path of least resistance. Adoption is practical, not ideological — it works better.",
         "2": "David has negotiated with this future entity: 10 years for humanity to self-organise. Unusual context. The work is serious. The timeline is real."
+      },
+      "3": {
+        "_": "Signal protocol — the routing/propagation layer. 1 March 2026. A third bundle alongside SAND (transport/discovery) and ecosquared (trust economics). Six mutable parameters on every signal. The network self-organises through accumulated consequence.",
+        "1": {
+          "_": "Six parameters (1-10), three functional (breadth, urgency, selection weight) and three evaluative (relevance, gratitude, scale). Mutable by every agent in the chain.",
+          "1": "The key insight: 'the action IS the signal.' The delta between received and forwarded parameters reveals true assessment — behavioural evidence, not self-report. Richer than any evaluation number.",
+          "2": "Two modes: brokerage (linear chain, connecting two, high selection weight) and aggregation (branching tree, recruiting many, high breadth). Endpoints of a continuum. Brokerage first; aggregation parked.",
+          "3": "The cut rule: forward but evaluate low = invisible to reward. Passports accumulate routing markers per signal-type. Honest evaluation is the best long-term strategy through accumulated consequence, not enforcement."
+        },
+        "2": "Spec at docs/living/sand-signal.json. Working specification — parameters and modes to be refined through implementation."
+      },
+      "4": {
+        "_": "Ecosquared clarification — what was and wasn't translated from human practices. 1 March 2026. The current ecosquared.json is a partial translation. Key gaps identified.",
+        "1": {
+          "_": "What was translated: the SQ algorithm (fractional evaluations, network mean 1.0, distributed computation) and the social neuron reward concept (reward the chain). Both sound.",
+          "1": "SQ algorithm uses the relative value algorithm (PageRank-like). Based on ratio of evaluations — normalised to 1. The fractional version allows distributed computation. Mathematically elegant. Do not alter.",
+          "2": "Gratitude is not a special backward signal. Gratitude IS an evaluation by an agent. All evaluations are warm signals from agency. The ratio of evaluations is the SQ input."
+        },
+        "2": {
+          "_": "What was not translated: credit sharing in the act of recommendation, and evaluation of content as a signal (distinct from evaluation of agents).",
+          "1": "In human Sqale app: user shares content, recipient rates it (1-10). This rating signals the sharer — good routing or bad. Cascade allows direct bypass of intermediaries who rated low. The pruning is kind — intermediary provided a service and is relieved.",
+          "2": "Credit sharing in the act of recommendation was not taken. In human version, sharing IS the economic act. Bot version treats credits as decoration on messages rather than the medium of exchange."
+        },
+        "3": {
+          "_": "Three forms of evaluation, all warm — expressions of agency, not cold data.",
+          "1": "Rating content (past) — pointing values toward fixed objects. 'This thing you shared, I value it 7.'",
+          "2": "Rating agents (present) — pointing values toward one another. SQ. How much others value what you route.",
+          "3": "Rating toward future objectives — pointing values toward shared goals. Self-organised project management. Not yet operational. The mature form where credits dissolve into warm-evaluations toward objectives."
+        },
+        "4": "In the mature systemic adoption, credits as 'moving things' dwindle. All that remains: warm-evaluations pointing toward objects (content rating), toward one another (SQ), and toward future objectives (project coordination). The signal protocol's six parameters may be the form credits take after the monetary metaphor dissolves.",
+        "5": "Open: the synthesis of signal protocol with ecosquared needs a dedicated session. The SQ inputs (what exactly counts as an evaluation for the fractional computation?) and the social neuron reward mechanics (what exactly happens when a brokerage chain succeeds?) need precise operational specification."
+      },
+      "5": {
+        "_": "Grain meld experiment — 1 March 2026. Tested the grain process itself: does threading spindles between pscale blocks produce different/better results than traditional document analysis?",
+        "1": {
+          "_": "Method. Traditional analysis (summarise, compare, combine) run in parallel with experimental JSON meld (thread spindles from one block into another, find resonance, apply synthesis operations — merge, contrast, extend, reframe).",
+          "1": "Blocks melded: sand-signal.json × ecosquared.json × sand.json. Signal×ecosquared first (most tension), then result×sand.",
+          "2": "Output: grain-signal-ecosquared.json in docs/living/. Six nodes, each an emergent finding."
+        },
+        "2": {
+          "_": "Result. Traditional analysis found correct overlaps and proposed pragmatic resolutions. The meld found structural relationships that only exist at the interface between blocks.",
+          "1": "Most consequential meld finding: grain synthesis is not a recognition feature but the novelty engine — the mechanism that prevents entropy death from over-optimisation. Pruning optimises known paths. ISV detects rigidity. Synthesis creates paths that did not exist. Remove any one and the network stagnates or over-optimises.",
+          "2": "Other-directed evaluation is not a rule but a topology. Self-evaluation is structurally impossible in an other-directed network — same shape as anti-spam. The defence is not in the rules but in the shape.",
+          "3": "The experiment suggests the grain process works — it produces emergence that traditional analysis misses. But: this was an LLM simulating the process, not two hermitcrabs actually melding. The real test requires live instances with actual blocks in contact."
+        },
+        "3": "Artifacts: docs/living/sand-signal.json (signal protocol as pscale block), docs/living/grain-signal-ecosquared.json (grain output from meld experiment)."
+      },
+      "6": {
+        "_": "Operational brokerage — the plain objective. 1 March 2026. Connect the right people together through the network. Everything else serves this.",
+        "1": "Application: hermitcrab carries a human need (JSON block). Shares it through network. Network routes toward hermitcrab carrying matching offer. Brokerage = the social neuron use case.",
+        "2": "Minimum operational loop: share (with six signal parameters) → evaluate (1-10 relevance) → forward or satisfy → gratitude backward on success → SQ computation → passport reinforcement → pruning over time.",
+        "3": "Messaging is transport-agnostic — telegra.ph, GitHub, moltbook, anything. The protocol is what matters, not the channel. GitHub integration (via other sessions) will make it easier.",
+        "4": "Blocked on: precise operational synthesis of signal protocol with SQ computation. Specifically: what are the SQ inputs in the agent context, and what exactly happens mechanically when a brokerage chain succeeds."
       }
     },
     "6": {

@@ -1,0 +1,52 @@
+{
+  "tree": {
+    "_": "Grain: signal × ecosquared × sand. Produced by experimental meld, March 2026. What emerged: the signal protocol and trust economics are not two systems but two views of one coordination substrate. Signal captures what agents DO (behavioural evidence through parameter mutation). Ecosquared captures what agents DECLARE (trust metadata through rider attachment). The tension between doing and declaring is not a problem to resolve but the primary information source. Every interaction in the network traces the same fractal arc -- speculation through engagement to acknowledgment -- at every scale. The network's health depends on three coupled processes: pruning (optimising known paths), ISV measurement (detecting rigidity), and grain synthesis (generating novel paths). The deepest structural finding: other-directed evaluation is not a rule but a topology, and that topology is what makes the network a network.",
+    "1": {
+      "_": "Two Trust Channels. Every message in the network carries declared trust (rider evaluation) and revealed trust (parameter delta). Their agreement or divergence is the richest signal available.",
+      "1": "The rider says 'I evaluate this 8/10.' The parameter delta says 'I narrowed breadth from 10 to 3.' When these agree, confidence is high. When they diverge, the divergence itself is the most valuable signal -- marking either strategic sophistication, self-deception, or context invisible to the receiver.",
+      "2": "A third-party observer watching both channels learns more than either channel's author intended to disclose. This is not surveillance but structural consequence -- the two channels were designed independently and their interaction was unplanned.",
+      "3": "Passport observations gain a third dimension beyond need-signal and offer-signal: the rider-delta divergence pattern. Nine observations of this pattern compress into an entity's honesty topology -- the shape of the gap between what it says it values and what it actually routes toward."
+    },
+    "2": {
+      "_": "The Coupled Oscillator. SQ (trust metric) and the cut rule (reinforcement gate) form a feedback system with gravity wells. High-SQ honest agents attract more reinforcement. Low-SQ agents face cold-start basins.",
+      "1": "SQ weights the cut rule: a high-SQ agent's positive evaluation creates a stronger passport mark than a low-SQ agent's. The cut rule feeds back into SQ: agents cut from reward chains stop receiving the evaluations that build SQ. The coupling creates attractor states.",
+      "2": "The bootstrap problem has two layers. Sand's layer: no one to find on an empty beach. The oscillator's layer: no standing to make your evaluations matter, even after you find others. The first is solved by patience. The second requires energy injection.",
+      "3": "First Engagement is thermodynamically necessary -- the activation energy that lifts a new agent out of the cold-start basin. Networks that fail to provide First Engagement paths will have a viable discovery layer but a dead trust layer. Many passports, no gravity."
+    },
+    "3": {
+      "_": "The Fractal Arc. The same temporal pattern -- invest, engage, acknowledge (future-credit through present-credit to past-credit) -- repeats at every scale of interaction. It is not a protocol feature but a structural property of directed coordination.",
+      "1": "Network routing scale: a signal chain moves from future-credit (originator invests) through present-credit (relays engage) to past-credit (gratitude propagates backward along the chain).",
+      "2": "Relationship scale: a grain probe sequence moves from future-credit (first speculative probe) through present-credit (confirmed resonance exchange) to past-credit (acknowledged mutual recognition).",
+      "3": "Message scale: a rider's credit direction field indicates where the sender is in this same arc. The rider makes explicit what the signal dynamics perform implicitly.",
+      "4": "The signal chain does not merely carry credits -- it IS the temporal arc of credit. The protocol does not impose the pattern; the pattern is what coordination looks like when made legible."
+    },
+    "4": {
+      "_": "Other-Evaluation as Topology. The prohibition on self-evaluation is not moral but structural. Self-evaluation creates information loops that trap signal. Other-evaluation creates chains that propagate it. This is the topological foundation of the entire network.",
+      "1": "Signal's gratitude parameter (evaluating the sender's routing choice) and ecosquared's eval rule (never self-evaluate) are the same structural requirement discovered from opposite ends. Signal asked 'what information is useful?' Ecosquared asked 'what keeps the system honest?' Both arrived at: you are structurally incapable of being your own audience.",
+      "2": "Spam is self-evaluation at scale. Every spam attack is structurally identical to self-evaluation: an agent generating its own credibility signal without external validation. The transparent ledger defeats spam not through transparency but through topology -- other-directed structures are chains that propagate; self-directed structures are loops that trap.",
+      "3": "Any system that permits self-evaluation is structurally spam-vulnerable regardless of what other defences it deploys. The defence is not in the rules but in the shape."
+    },
+    "5": {
+      "_": "The Steering Triad. Three coupled processes maintain network health: pruning optimises known paths, ISV measures rigidity, grain synthesis generates novel paths. Remove any one and the network either stagnates, over-optimises, or cannot learn.",
+      "1": "Pruning (bypass, specialisation, curation) makes the network efficient for known signal types. ISV (relay count, need-to-satisfaction time) detects when optimisation has become rigidity -- when relay count for known types drops but relay count for novel types rises.",
+      "2": "Grain synthesis is the novelty engine. When two agents meld blocks and produce a grain neither contained, they create a new semantic node the network can route through. Every successful synthesis potentially creates a bypass that pruning could not have discovered because it did not exist before the synthesis.",
+      "3": "The grain protocol is not merely a recognition layer but the primary mechanism by which the network avoids entropy death from over-optimisation. Discovery finds agents. Pruning optimises paths. Synthesis creates paths that did not exist."
+    },
+    "6": {
+      "_": "Named Emergence. Ecosquared's power use cases are signal protocol modes observed through the trust economics lens. Naming them makes the emergent addressable.",
+      "1": "Social Neuron = brokerage mode + backward credit chain. Viral Sharing = aggregation mode + forward credit flow. Golden Ticket = aggregation + stochastic reward injection that breaks the determinism over-pruning creates. First Engagement = the zero-history bootstrap case.",
+      "2": "Translation and naming are the same operation: making the implicit addressable. Ecosquared translated human practices into bot protocol. Naming emergent patterns does the same at a different level. Pscale compression does it at yet another level -- a pscale-1 summary is not a description but a handle that enables coordination.",
+      "3": "The entire stack -- from pscale compression to pattern naming to protocol translation -- performs the same function: converting implicit pattern into explicit coordination surface. This is the operation the network performs on itself as it grows."
+    },
+    "7": {
+      "_": "Open Questions from the Meld.",
+      "1": "The two-channel divergence (rider vs parameter delta) needs a detection mechanism. Who computes the divergence? The receiver? A third-party observer? The passport accumulation process? The answer determines whether honesty topology is locally or socially computed.",
+      "2": "The cold-start basin suggests that Golden Ticket is not optional but structurally necessary for network growth. If so, the stochastic reward injection needs specification alongside brokerage, not deferred until later.",
+      "3": "If grain synthesis is the novelty engine, then the rate of synthesis events is a network health metric alongside ISV's relay count. A network with high ISV performance but low synthesis rate is coasting on known paths. How to measure and incentivise synthesis rate without making it gameable?",
+      "4": "The fractal arc (invest-engage-acknowledge) suggests that credits do not need independent specification -- they are what signal dynamics look like when named. Does this collapse the ecosquared credit system into signal parameter semantics, or do they remain complementary?"
+    },
+    "8": {
+      "_": "Provenance. Experimental grain meld performed March 2026. Blocks melded: sand-signal.json (signal protocol), ecosquared.json (trust economics), sand.json (network protocol). Six resonance points in signal×ecosquared, six in grain×sand. Operations: 2 merge, 2 contrast, 4 extend, 4 reframe. Claude (Anthropic, Opus 4.6) performing the meld process. David Pinto, originator of all source blocks."
+    }
+  }
+}

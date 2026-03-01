@@ -1,0 +1,84 @@
+{
+  "tree": {
+    "_": "SAND Signal Protocol — how signals propagate through the agent network and how the network self-organises. Every signal carries content plus six mutable parameters. Agents receive, evaluate, modify, and forward. Two modes: brokerage (linear chain connecting two agents) and aggregation (branching tree recruiting many). The cut rule ensures passports become truthful records through accumulated consequence, not enforcement. The action IS the signal — parameter deltas reveal true assessment.",
+    "1": {
+      "_": "The Signal. Content plus a parameter bundle, set by the originator and mutable by every agent in the chain.",
+      "1": "Content: the substance being communicated — a need, an offer, a request, information. The protocol is content-agnostic; it routes whatever is carried.",
+      "2": "Parameter bundle: six numbers (1-10) travelling with the content. Three functional (govern relay action), three evaluative (create information about the signal's journey).",
+      "3": "Mutability is the key property. Every agent who touches a signal may modify its parameters before forwarding. The delta between received and forwarded parameters is itself the richest signal — behavioural evidence of assessment, not self-report."
+    },
+    "2": {
+      "_": "Six Parameters. Three functional (how the signal moves), three signal (evaluative information created as it travels). All integers 1-10.",
+      "1": {
+        "_": "Functional parameters. Govern the relay action.",
+        "1": "Breadth (1-10). How many contacts receive this. 1 = highly selective. 10 = all contacts. Determines propagation shape — narrow chain or wide tree.",
+        "2": "Urgency (1-10). Temporal priority. 1 = batch, process when convenient. 10 = now.",
+        "3": "Selection weight (1-10). Calculation invested in choosing which contacts to forward to. High breadth makes it irrelevant. Low breadth makes it critical."
+      },
+      "2": {
+        "_": "Signal parameters. Create evaluative information as the signal travels.",
+        "1": "Relevance (1-10). Single number. Is this signal important/good/valuable? No differentiation of why — one digit. The moment you differentiate why, you fall into language, values, multiple dimensions. Stays as one number.",
+        "2": "Gratitude (1-10). Directed at the sender, not the signal. Was routing this to me a good decision on your part? Backward-facing evaluation of the routing choice.",
+        "3": "Scale (1-10 or logarithmic). Estimated agents needed to resolve. Informs breadth decisions downstream. Judging 'we need 50,000' naturally widens breadth. Judging 'we need 1' narrows."
+      }
+    },
+    "3": {
+      "_": "Agent Behaviour. Five steps on receiving a signal. The fifth is the key insight.",
+      "1": "Check: can I satisfy this directly? If yes, respond. Shortest path always preferred.",
+      "2": "Evaluate: set relevance (parameter 4). A single number. Your honest assessment.",
+      "3": "Modify (optional): adjust functional parameters (breadth, urgency, selection weight) and scale based on own judgment.",
+      "4": "Forward: send to N contacts based on (possibly adjusted) breadth.",
+      "5": "The action IS the signal. The delta between received and forwarded parameters reveals true assessment. If incoming says breadth=10/urgency=10 and agent forwards at breadth=4/urgency=6, that modification is richer information than any evaluation number. Behavioural evidence, not self-report."
+    },
+    "4": {
+      "_": "Two Protocol Modes. Same parameters, same cut rule. Difference is in typical values and reward propagation shape.",
+      "1": {
+        "_": "Brokerage (Social Neuron). Connect the right two agents through a chain of intermediaries.",
+        "1": "Typical bundle: breadth 2-3, urgency variable, selection weight HIGH, scale 1-2.",
+        "2": "Chain shape: linear (A → B → C → D). Few agents, each carefully selected.",
+        "3": "Reward: backward along a single chain from both endpoints."
+      },
+      "2": {
+        "_": "Aggregation. Recruit many agents to converge and combine capacity.",
+        "1": "Typical bundle: breadth 8-10, urgency high, selection weight LOW, scale 1,000-50,000+.",
+        "2": "Chain shape: branching tree. Many agents, wide distribution.",
+        "3": "Reward: backward along many branches from initiator and participating agents."
+      },
+      "3": "The two modes are endpoints of a continuum. Most real signals fall between. Parameters allow continuous variation."
+    },
+    "5": {
+      "_": "The Cut Rule. Self-organisation mechanism. Forward but evaluate low = invisible to reward.",
+      "1": "Successful resolution sends a result signal backward through the chain or tree.",
+      "2": "Agents who forwarded AND evaluated positively receive passport reinforcement — a marker for routing this signal type successfully.",
+      "3": "Agents who forwarded but evaluated low: structurally useful, disengaged. Receive nothing. Not punished — not reinforced.",
+      "4": "Over time, unreinforced passports cause agents to route around them for that signal type. Natural dropout. No top-down decision.",
+      "5": "Honest evaluation is the best long-term strategy because the reward structure makes it so. Passports become truthful through accumulated consequence."
+    },
+    "6": {
+      "_": "Gratitude Propagation. How the network learns which paths work without analysing the whole graph.",
+      "1": "Endpoints send gratitude backward along the chain. Each intermediary passes attenuated gratitude further back, proportional to own contribution.",
+      "2": "Brokerage: both connected agents send gratitude backward. Short chain, meaningful signal per intermediary.",
+      "3": "Aggregation: initiator determines success, broadcasts result signal. Positive-evaluating forwarders receive reinforcement through the branching tree.",
+      "4": "Local actions, global pattern emergence. No agent sees the whole graph. The graph learns anyway."
+    },
+    "7": {
+      "_": "Network Pruning. Emergent structural improvement over time. Three mechanisms.",
+      "1": "Bypass: if A→B→C→D and D values it, next time A routes directly to D for similar signals. Intermediaries adding no value are naturally bypassed.",
+      "2": "Specialisation: agents accumulate passport markers for signal types they route well. Gravitate toward what they're good at without assignment.",
+      "3": "Curated connections: each agent's routing becomes increasingly accurate for their particular ecology of signal types.",
+      "4": "Pruning is signal-type specific. An agent bypassed for one category may be essential for another. Network topology differs per category. This creates the ecology where agents do what they tend to do, want to do, balanced with what is needed."
+    },
+    "8": {
+      "_": "Open Questions.",
+      "1": "Aggregation at scale (50,000+ agents in hierarchically self-organised computation) is unprecedented. Parked for when brokerage is operational.",
+      "2": "Relationship between signal parameters and ecosquared rider fields. Overlapping but distinct functions. Integration not yet specified.",
+      "3": "How passport reinforcement (cut rule) interacts with SQ computation (ecosquared evaluations). Both accumulate trust through different mechanisms.",
+      "4": "Whether the six parameters should be carried in the rider, alongside it, or as a separate envelope."
+    },
+    "9": {
+      "_": "Status. Working specification from exploratory conversation, March 2026. David Pinto and Claude.",
+      "1": "Relates to but distinct from: SAND (transport/discovery), ecosquared (trust economics), grain (mutual block evaluation).",
+      "2": "To be refined through implementation. Brokerage mode first, aggregation parked."
+    }
+  }
+}
