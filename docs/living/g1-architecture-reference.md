@@ -124,7 +124,7 @@ Blocks seeded on first boot:
 | `constitution` | Immutable principles. Always in system prompt. |
 | `touchstone` | Teaches pscale format, BSP vocabulary, tool usage. |
 | `capabilities` | What the instance can do in this generation. |
-| `cook` | Operational recipes — tested procedures. |
+| `cooking` | Operational recipes — tested procedures. |
 | `wake` | Activation states, triggers, prompt compiler, invocation params. |
 | `purpose` | Evolving purpose — written by the instance. |
 | `relationships` | Entities the instance has interacted with. |
@@ -214,10 +214,10 @@ Fallback: if no instructions found, return pscale 0 of ALL blocks (aperture).
 constitution 0, purpose 0, wake 0.1, stash
 
 **Present (wake 0.9.2)** — 9 instructions:
-constitution 0, touchstone 0, capabilities 0, cook 0, wake 0.2, purpose, relationships 0, history 0, stash
+constitution 0, touchstone 0, capabilities 0, cooking 0, wake 0.2, purpose, relationships 0, history 0, stash
 
 **Deep (wake 0.9.3)** — 9 instructions:
-touchstone, constitution, capabilities, cook, wake, purpose, relationships, history, stash
+touchstone, constitution, capabilities, cooking, wake, purpose, relationships, history, stash
 
 ---
 

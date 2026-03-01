@@ -104,7 +104,7 @@ function loadBlock(name) {
 console.log('=== TEST 1: All blocks declare tuning ===\n');
 
 const blockNames = ['wake', 'touchstone', 'purpose', 'capabilities', 'vision',
-                     'history', 'relationships', 'stash', 'cook'];
+                     'history', 'relationships', 'stash', 'cooking'];
 
 blockNames.forEach(name => {
   const blk = loadBlock(name);
@@ -118,7 +118,7 @@ blockNames.forEach(name => {
 console.log('\n=== TEST 2: Root blocks have decimal position 0 ===\n');
 
 const rootBlocks = ['wake', 'touchstone', 'capabilities', 'vision',
-                    'relationships', 'stash', 'cook'];
+                    'relationships', 'stash', 'cooking'];
 
 // History is a tree block (no decimal), not root
 const historyBlk = loadBlock('history');

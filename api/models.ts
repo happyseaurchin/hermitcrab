@@ -1,9 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 /**
- * Models list proxy — CORS passthrough for /v1/models
- * Same pattern as /api/claude: user provides their own API key,
- * we just bypass browser CORS restrictions.
+ * Models list proxy — two key modes (same as claude.ts):
+ * 1. Vault: VAULT_KEY_ANTHROPIC env var + auth token
+ * 2. Passthrough: user provides X-API-Key header
  */
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -20,7 +20,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key, X-Vault-Token, X-Session-Token');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -30,9 +30,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const apiKey = req.headers['x-api-key'] as string;
+  // Resolve API key: vault first, then passthrough
+  let apiKey: string | null = null;
+
+  const vaultKey = process.env.VAULT_KEY_ANTHROPIC;
+  if (vaultKey) {
+    const vaultToken = process.env.HERMITCRAB_VAULT_TOKEN;
+    const headerVaultToken = req.headers['x-vault-token'] as string;
+    const sessionToken = req.headers['x-session-token'] as string;
+
+    if (vaultToken && headerVaultToken === vaultToken) {
+      apiKey = vaultKey;
+    } else if (vaultToken && sessionToken) {
+      const { createHmac } = await import('crypto');
+      const parts = sessionToken.split(':');
+      if (parts.length === 3) {
+        const [expiresStr, nonce, sig] = parts;
+        if (Date.now() <= parseInt(expiresStr)) {
+          const expected = createHmac('sha256', vaultToken).update(`${expiresStr}:${nonce}`).digest('hex');
+          if (sig === expected) apiKey = vaultKey;
+        }
+      }
+    }
+  }
+
+  if (!apiKey) {
+    apiKey = req.headers['x-api-key'] as string;
+  }
+
   if (!apiKey || !apiKey.startsWith('sk-ant-')) {
-    return res.status(400).json({ error: 'Valid Anthropic API key required via X-API-Key header.' });
+    return res.status(400).json({ error: 'Valid Anthropic API key required via X-API-Key header or vault.' });
   }
 
   try {

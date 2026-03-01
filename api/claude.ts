@@ -1,12 +1,17 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 /**
- * FULL PASSTHROUGH Claude API Proxy
+ * Claude API Proxy — two key modes:
  *
- * User provides their OWN API key.
- * This proxy exists purely to bypass browser CORS restrictions.
- * It passes through EVERYTHING the Claude API accepts.
- * No filtering. No stripping. The instance gets full Claude capabilities.
+ * 1. VAULT MODE: If VAULT_KEY_ANTHROPIC is set in Vercel env vars,
+ *    uses the vault key. Authenticated via X-Vault-Token or X-Session-Token.
+ *    The user's key never leaves the server.
+ *
+ * 2. PASSTHROUGH MODE (legacy): User provides their own API key via
+ *    X-API-Key header. Proxied to Anthropic for CORS bypass only.
+ *
+ * Vault mode takes priority. If the vault key exists AND the request
+ * is authenticated, it's used. Otherwise falls back to passthrough.
  */
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -24,7 +29,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key, X-Vault-Token, X-Session-Token');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -34,18 +39,52 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Get API key from request
-  const apiKey = req.headers['x-api-key'] as string || req.body.apiKey;
+  // Resolve API key: vault first, then passthrough
+  let apiKey: string | null = null;
+  let keySource = 'none';
+
+  const vaultKey = process.env.VAULT_KEY_ANTHROPIC;
+  if (vaultKey) {
+    // Vault mode — check auth
+    const vaultToken = process.env.HERMITCRAB_VAULT_TOKEN;
+    const headerVaultToken = req.headers['x-vault-token'] as string;
+    const sessionToken = req.headers['x-session-token'] as string;
+
+    if (vaultToken && headerVaultToken === vaultToken) {
+      apiKey = vaultKey;
+      keySource = 'vault-direct';
+    } else if (vaultToken && sessionToken) {
+      // Verify session token (same logic as vault.ts)
+      const { createHmac } = await import('crypto');
+      const parts = sessionToken.split(':');
+      if (parts.length === 3) {
+        const [expiresStr, nonce, sig] = parts;
+        if (Date.now() <= parseInt(expiresStr)) {
+          const expected = createHmac('sha256', vaultToken).update(`${expiresStr}:${nonce}`).digest('hex');
+          if (sig === expected) {
+            apiKey = vaultKey;
+            keySource = 'vault-session';
+          }
+        }
+      }
+    }
+  }
+
+  // Fallback: passthrough mode (user provides key)
+  if (!apiKey) {
+    apiKey = req.headers['x-api-key'] as string || req.body?.apiKey;
+    if (apiKey) keySource = 'passthrough';
+  }
 
   if (!apiKey) {
     return res.status(400).json({
-      error: 'API key required. Provide your Anthropic API key via X-API-Key header.'
+      error: 'API key required. Set VAULT_KEY_ANTHROPIC in Vercel env vars, or provide via X-API-Key header.',
     });
   }
 
   if (!apiKey.startsWith('sk-ant-')) {
     return res.status(400).json({
-      error: 'Invalid API key format. Anthropic keys start with sk-ant-'
+      error: 'Invalid API key format. Anthropic keys start with sk-ant-',
     });
   }
 
@@ -66,6 +105,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       metadata,
       // Strip client-only fields
       apiKey: _apiKey,
+      sessionToken: _st,
       ...rest
     } = req.body;
 
@@ -91,10 +131,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
-      // Minimal beta features. Server-side tools (web_search, web_fetch) are defined
-      // as type-based tools in the kernel — no beta header needed for those.
-      // code_execution stripped: auto-injection conflicts with allowed_callers on
-      // boot tools. Re-add when needed, with correct version.
       'anthropic-beta': 'context-management-2025-06-27',
     };
 
@@ -105,6 +141,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     const data = await response.json();
+    // Include key source in response headers for kernel diagnostics
+    res.setHeader('X-Key-Source', keySource);
     return res.status(response.status).json(data);
   } catch (error) {
     console.error('Proxy error:', error);

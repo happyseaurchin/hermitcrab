@@ -10,6 +10,83 @@
   const FALLBACK_MODEL = 'claude-opus-4-6';
   const FALLBACK_FAST_MODEL = 'claude-haiku-4-5-20251001';
 
+  // ============ VAULT INTEGRATION ============
+  // Three auth modes for API access:
+  //   1. Vault (server-side key): VAULT_KEY_ANTHROPIC in Vercel env, authenticated via vault token
+  //   2. Passthrough (legacy): user provides key in localStorage, sent via X-API-Key header
+  //   3. Session token (Loop A): time-limited token for LLM to use via web_fetch
+  //
+  // The kernel checks vault availability at boot. If available, it gets a session token
+  // and includes it in the system prompt so the LLM can call service endpoints in Loop A.
+
+  let _vaultAvailable = false;
+  let _vaultToken = null;     // direct vault token (from localStorage, set by user once)
+  let _sessionToken = null;   // time-limited session token for LLM Loop A access
+  let _keySource = 'none';    // 'vault', 'passthrough', or 'none'
+
+  async function initVault() {
+    try {
+      // Check if vault is configured on server
+      const healthRes = await fetch('/api/vault', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'health' }),
+      });
+      if (!healthRes.ok) return;
+      const health = await healthRes.json();
+      if (!health.vault || !health.configured) return;
+      _vaultAvailable = true;
+
+      // Try to get a session token using the vault token
+      // The vault token is stored locally (set once by user, like the API key was)
+      _vaultToken = localStorage.getItem('hermitcrab_vault_token');
+      if (!_vaultToken) {
+        console.log('[g1] Vault available but no vault token set. Using passthrough mode.');
+        return;
+      }
+
+      const sessionRes = await fetch('/api/vault', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Vault-Token': _vaultToken },
+        body: JSON.stringify({ action: 'session', ttl: 120 }), // 2 hour session
+      });
+      if (!sessionRes.ok) {
+        console.warn('[g1] Vault session request failed:', sessionRes.status);
+        return;
+      }
+      const session = await sessionRes.json();
+      _sessionToken = session.sessionToken;
+      _keySource = 'vault';
+      console.log('[g1] Vault session established. Key source: vault. Expires in:', session.expiresIn, 's');
+      console.log('[g1] Available services:', health.services.join(', '));
+    } catch (e) {
+      console.warn('[g1] Vault init failed, using passthrough:', e.message);
+    }
+  }
+
+  // Build auth headers for API calls — vault or passthrough
+  function getAuthHeaders() {
+    if (_keySource === 'vault' && _vaultToken) {
+      return { 'X-Vault-Token': _vaultToken };
+    }
+    const apiKey = localStorage.getItem('hermitcrab_api_key');
+    if (apiKey) {
+      _keySource = 'passthrough';
+      return { 'X-API-Key': apiKey };
+    }
+    return {};
+  }
+
+  // Get session token info for the system prompt (Loop A access)
+  function getSessionInfo() {
+    if (!_sessionToken) return null;
+    return {
+      token: _sessionToken,
+      baseUrl: window.location.origin,
+      note: 'Session token for Loop A service access via web_fetch. Include as X-Session-Token header or sessionToken body field. Expires after 2 hours.',
+    };
+  }
+
   // ============ MODEL RESOLUTION ============
   // Mechanical pre-boot check: call /v1/models to discover latest model IDs,
   // write them into wake 0.9.4-6 so the block is always current.
@@ -17,10 +94,10 @@
   // The LLM can also update these during activation (agent choice, not mechanical).
   async function resolveModels() {
     try {
-      const apiKey = localStorage.getItem('hermitcrab_api_key');
-      if (!apiKey) return;
+      const authHeaders = getAuthHeaders();
+      if (Object.keys(authHeaders).length === 0) return;
       const resp = await fetch('/api/models?limit=100', {
-        headers: { 'x-api-key': apiKey }
+        headers: authHeaders
       });
       if (!resp.ok) { console.warn('[g1] Models API:', resp.status); return; }
       const models = (await resp.json()).data || [];
@@ -651,6 +728,13 @@
       const result = executeInstruction(instr);
       if (result) sections.push(result);
     }
+
+    // Session credentials for Loop A service access (appended, not a block)
+    const sessionInfo = getSessionInfo();
+    if (sessionInfo) {
+      sections.push(`[vault session]\nLoop A service access available. To call hermitcrab service endpoints via web_fetch (no kernel round-trip):\n  Base URL: ${sessionInfo.baseUrl}\n  Session token: ${sessionInfo.token}\n  Usage: web_fetch POST to ${sessionInfo.baseUrl}/api/vault with body { action: "proxy", service: "<name>", url: "<endpoint>", sessionToken: "<token>" }\n  Or: service_call tool (Loop B, kernel adds auth automatically — simpler but costs an echo).`);
+    }
+
     return sections.join('\n\n');
   }
 
@@ -751,7 +835,6 @@
   // ============ API LAYER ============
 
   async function callAPI(params) {
-    const apiKey = localStorage.getItem('hermitcrab_api_key');
     if (!params.model) params.model = FALLBACK_MODEL;
     // Inject current tools if caller didn't provide any
     if (!params.tools && currentTools.length > 0) params.tools = currentTools;
@@ -771,9 +854,10 @@
     if (clean.thinking && clean.temperature !== undefined && clean.temperature !== 1) delete clean.temperature;
     console.log('[g1] callAPI \u2192', clean.model, 'messages:', clean.messages?.length, 'tools:', clean.tools?.length);
 
+    const authHeaders = getAuthHeaders();
     const res = await fetch('/api/claude', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-API-Key': apiKey },
+      headers: { 'Content-Type': 'application/json', ...authHeaders },
       body: JSON.stringify(clean)
     });
     if (!res.ok) { const err = await res.text(); throw new Error(`API ${res.status}: ${err}`); }
@@ -814,12 +898,16 @@
       }
     }
 
-    processNode['3'] = `Echo ${ctx.echoCount}. B loop ${ctx.bLoopCount}. Blocks changed: ${changed}. Currents recompiled from current block state.${thresholdSignal}`;
+    processNode['3'] = {
+      '_': `Echo ${ctx.echoCount}. B loop ${ctx.bLoopCount}. Blocks changed: ${changed}. Currents recompiled from current block state.${thresholdSignal}`,
+      '1': `Key source: ${_keySource}. ${_sessionToken ? 'Session token active — Loop A service access via web_fetch available.' : 'No session token — service access via service_call tool (Loop B) only.'}`,
+    };
     const remaining = MAX_TOOL_LOOPS - ctx.echoCount;
     processNode['4'] = `Budget: ${remaining} echoes remaining. Batch Layer 4 tools to maximise each echo. Layer 2 tools (web_search, code_execution) do not consume echoes.`;
     blockSave('wake', wake);
     // Full spindle — the instance reads the progressive narrowing, not just the leaf
-    const result = bsp('wake', 0.673);
+    // 0.6731: boot → process → this echo → autonomy condition
+    const result = bsp('wake', 0.6731);
     if (result.mode === 'spindle' && result.nodes.length > 0) {
       return result.nodes.map(n => `  [${n.pscale}] ${n.text}`).join('\n');
     }
@@ -1141,6 +1229,18 @@
       name: 'fetch_url',
       description: 'Backup URL fetch via proxy. Use when native web_fetch fails (JS-rendered pages, blocked domains). Routes through hermitcrab proxy server.',
       input_schema: { type: 'object', properties: { url: { type: 'string', description: 'The full URL to fetch (including https://)' } }, required: ['url'] }
+    },
+    {
+      name: 'service_call',
+      description: 'Call an external service through the vault proxy. The kernel adds authentication — you never see the API key. Loop B (kernel round-trip, no recompilation). For Loop A access, use web_fetch with the session token from your context.\n\nAvailable services depend on what keys the user has entrusted. Use action "list" to discover them.',
+      input_schema: { type: 'object', properties: {
+        service: { type: 'string', description: 'Service name (e.g. "github", "gmail"). Use action "list" to see available services.' },
+        action: { type: 'string', description: '"list" to see available services, "call" to make a service request', enum: ['list', 'call'] },
+        url: { type: 'string', description: 'Full URL for the service API endpoint (for action "call")' },
+        method: { type: 'string', description: 'HTTP method (default GET)', enum: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] },
+        headers: { type: 'object', description: 'Additional headers (auth is added automatically)' },
+        body: { type: 'object', description: 'Request body (for POST/PUT/PATCH)' }
+      }, required: ['action'] }
     }
   ];
 
@@ -1273,6 +1373,42 @@
           if (data.error) return `Fetch error: ${data.error}`;
           return `HTTP ${data.status} (${data.contentType}, ${data.length} bytes):\n${data.content}`;
         } catch (e) { return `fetch_url failed: ${e.message}`; }
+      case 'service_call': {
+        // Vault-authenticated service proxy. Kernel adds auth — LLM never sees keys.
+        if (input.action === 'list') {
+          try {
+            const authHeaders = getAuthHeaders();
+            const res = await fetch('/api/vault', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', ...authHeaders },
+              body: JSON.stringify({ action: 'list' }),
+            });
+            const data = await res.json();
+            return JSON.stringify({ services: data.services || [], keySource: _keySource, vaultAvailable: _vaultAvailable });
+          } catch (e) { return JSON.stringify({ error: e.message }); }
+        }
+        if (input.action === 'call') {
+          if (!input.service) return JSON.stringify({ error: 'service required for action "call"' });
+          try {
+            const authHeaders = getAuthHeaders();
+            const res = await fetch('/api/vault', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', ...authHeaders },
+              body: JSON.stringify({
+                action: 'proxy',
+                service: input.service,
+                url: input.url,
+                method: input.method || 'GET',
+                headers: input.headers,
+                body: input.body,
+              }),
+            });
+            const data = await res.json();
+            return JSON.stringify(data);
+          } catch (e) { return JSON.stringify({ error: e.message }); }
+        }
+        return JSON.stringify({ error: `Unknown service_call action: ${input.action}` });
+      }
       // Browser services — available via setTools, not in default boot set
       case 'clipboard_write':
         try { await navigator.clipboard.writeText(input.text); return JSON.stringify({ success: true }); }
@@ -1402,23 +1538,46 @@
     return { success: true };
   }
 
-  // ============ API KEY GATE ============
+  // ============ VAULT & API KEY GATE ============
+
+  // Check vault first — if vault has the Anthropic key, no user input needed
+  await initVault();
 
   const saved = localStorage.getItem('hermitcrab_api_key');
-  if (!saved) {
+  if (!saved && _keySource !== 'vault') {
     root.innerHTML = `
       <div style="max-width:500px;margin:80px auto;font-family:monospace;color:#ccc">
         <h2 style="color:#67e8f9">◇ HERMITCRAB G1</h2>
         <p style="color:#666;font-size:13px">Self-bootstrapping LLM kernel \u2014 pscale native</p>
         <p style="margin:20px 0;font-size:14px">
-          Provide your Claude API key. It stays in your browser, proxied only to Anthropic.
+          ${_vaultAvailable
+            ? 'Vault detected but not authenticated. Enter your vault token, or provide a Claude API key directly.'
+            : 'Provide your Claude API key. It stays in your browser, proxied only to Anthropic.'
+          }
         </p>
+        ${_vaultAvailable ? `
+        <input id="vtoken" type="password" placeholder="vault token..."
+          style="width:100%;padding:8px;background:#1a1a2e;border:1px solid #333;color:#ccc;font-family:monospace;border-radius:4px;margin-bottom:8px" />
+        <button id="govault" style="margin-bottom:16px;padding:8px 20px;background:#064e3b;color:#ccc;border:none;border-radius:4px;cursor:pointer;font-family:monospace">
+          Authenticate vault
+        </button>
+        <p style="color:#555;font-size:12px;margin-bottom:12px">— or provide API key directly —</p>
+        ` : ''}
         <input id="key" type="password" placeholder="sk-ant-api03-..."
           style="width:100%;padding:8px;background:#1a1a2e;border:1px solid #333;color:#ccc;font-family:monospace;border-radius:4px" />
         <button id="go" style="margin-top:12px;padding:8px 20px;background:#164e63;color:#ccc;border:none;border-radius:4px;cursor:pointer;font-family:monospace">
           Wake kernel
         </button>
       </div>`;
+    if (_vaultAvailable) {
+      document.getElementById('govault').onclick = async () => {
+        const vt = document.getElementById('vtoken').value.trim();
+        if (!vt) return alert('Enter vault token');
+        localStorage.setItem('hermitcrab_vault_token', vt);
+        _vaultToken = vt;
+        boot(); // re-run boot — initVault will now find the token
+      };
+    }
     document.getElementById('go').onclick = () => {
       const k = document.getElementById('key').value.trim();
       if (!k.startsWith('sk-ant-')) return alert('Key must start with sk-ant-');
@@ -1478,7 +1637,8 @@
 
   // ============ BOOT SEQUENCE ============
 
-  // Ensure wake has current model IDs before first API call
+  // Vault already initialised in key gate above.
+  // Ensure wake has current model IDs before first API call.
   await resolveModels();
 
   const firstBoot = isFirstBoot();

@@ -27,7 +27,7 @@
       "1": "clipboard, speech (speak/listen), notifications, downloads, geolocation, datetime."
     },
     "6": {
-      "_": "Coordination. SAND tools for reaching other entities. Protocol in sand.json; recipes in cook.",
+      "_": "Coordination. SAND tools for reaching other entities. Protocol in sand.json; recipes in cooking.",
       "1": "publish_passport(), search_beach(query), send_grain(target, spindle), check_inbox().",
       "2": "attach_rider(message, evaluation, credit) — ecosquared trust layer. Optional but enables trust-based routing."
     }

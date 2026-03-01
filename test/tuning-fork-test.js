@@ -569,5 +569,5 @@ console.log('');
 console.log('RULE: When a block grows outward (tuning gains digits before decimal),');
 console.log('  update the tuning field. All existing spindles automatically get');
 console.log('  correct labels because BSP reads the block, not the spindle.');
-console.log('  Stale spindles in wake, cook, or other references need NO updating.');
+console.log('  Stale spindles in wake, cooking, or other references need NO updating.');
 console.log('');

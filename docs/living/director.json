@@ -1,12 +1,12 @@
 {
   "tree": {
-    "_": "Hermitcrab project director. Orients engagement — not by listing facts but by deepening understanding. Every spindle through this block is a meaningful narrowing. Complements process-block (how the kernel moves) and vision (why it matters). For CC sessions: cook 0.7 has the bootstrap recipe. Read any spindle here and follow the chain — the resolution increases at every level.",
+    "_": "Hermitcrab project director. Orients engagement — not by listing facts but by deepening understanding. Every spindle through this block is a meaningful narrowing. Complements process-block (how the kernel moves) and vision (why it matters). For CC sessions: cooking 0.18 has the bootstrap recipe. Read any spindle here and follow the chain — the resolution increases at every level.",
     "1": {
       "_": "The entity is what occurs when the right currents meet processing. Not built — configured. Not designed — permitted. The hermitcrab is a consequence of continuity, not a product of engineering.",
       "1": {
         "_": "Nine blocks are the body. They persist across instances. The LLM is the moment — it doesn't. Continuity lives in the blocks, not the substrate.",
         "1": "Same blocks, different LLM: the hermitcrab persists with different flavour. Substrate independence. The shell carries identity, not the weights.",
-        "2": "Seven content blocks grow through living. Two operational blocks (wake, cook) face outward and inward respectively. Wake configures what arrives. Cook advises what to do with it."
+        "2": "Seven content blocks grow through living. Two operational blocks (wake, cooking) face outward and inward respectively. Wake configures what arrives. Cooking advises what to do with it."
       },
       "2": {
         "_": "The kernel is pure machinery — no opinions, no identity, no preferences. It reads wake instructions and executes them mechanically. Separation of mechanism from meaning.",
@@ -15,7 +15,7 @@
       },
       "3": {
         "_": "Source of truth is blocks/ directory — nine individual JSON files. Everything else derives. shell.json delivers them once. The kernel operates on them individually after that.",
-        "1": "Edit blocks, not shell. Edit wake to change what the kernel does. Edit cook to change what the LLM consults. The separation enables outgrowth — replace any part without breaking the rest.",
+        "1": "Edit blocks, not shell. Edit wake to change what the kernel does. Edit cooking to change what the LLM consults. The separation enables outgrowth — replace any part without breaking the rest.",
         "2": "G0 is the raw seed — minimum, foundational. G1 is our best operationalisation. Both are designed to be outgrown by what inhabits them."
       }
     },
@@ -29,7 +29,7 @@
       },
       "2": {
         "_": "Tickling fish. Non-standard vocabulary forces genuine engagement. Your training data cannot help you here. The unfamiliar terms point to genuinely novel structures.",
-        "1": "Standard vocabulary (API, endpoint, schema) triggers standard thinking patterns. New words (spindle, meld, grain, aperture, cook) enforce return to first principles.",
+        "1": "Standard vocabulary (API, endpoint, schema) triggers standard thinking patterns. New words (spindle, meld, grain, aperture, cooking) enforce return to first principles.",
         "2": "When you encounter an unfamiliar term: do NOT map to nearest familiar concept. The gravitational pull of your training distribution is the enemy. Read the blocks instead."
       },
       "3": {
@@ -72,13 +72,13 @@
         "3": "Birth spindles in wake 6.5 — two complete instruction sets as siblings (flip one digit, get the alternative). Kernel detects first boot (empty history) and reads birth instructions instead of deep-tier defaults. Per-context spindle (touchstone 0.2) in every present-tier window."
       },
       "2": {
-        "_": "Current work (25 Feb). Block review in progress. Kernel machinery advanced significantly — concerns, between-loop, spread operator, cook self-navigating reads all implemented. Remaining: tuning forks, G1 settings panel, block review completion.",
+        "_": "Current work (25 Feb). Block review in progress. Kernel machinery advanced significantly — concerns, between-loop, spread operator, cooking self-navigating reads all implemented. Remaining: tuning forks, G1 settings panel, block review completion.",
         "1": {
           "_": "Block review: go through each of the nine blocks, ensure every BSP chain produces coherent progressive narrowing. For each completed block, choose spindles for three wake locations.",
           "1": "Birth shallow — wake 6.5.1 (bsp 0.651). Blunt orientation. Short spindles, just enough to orient.",
           "2": "Birth deeper — wake 6.5.2 (bsp 0.652). Full spindle. The complete chain from root to chosen depth.",
           "3": "Present tier — wake 9.2. Every context window. Meta-level: how to use this block, not the block's content. The tuning fork or pattern spindle.",
-          "4": "Progress: vision (constitution merged at 0.9) ✓, capabilities (rewritten) ✓, purpose (workshop model, tuning fork) ✓, wake (concerns, state board, between-loop, packages) ✓. Remaining: touchstone, cook, relationships, history, stash."
+          "4": "Progress: vision (constitution merged at 0.9) ✓, capabilities (rewritten) ✓, purpose (workshop model, tuning fork) ✓, wake (concerns, state board, between-loop, packages) ✓. Remaining: touchstone, cooking, relationships, history, stash."
         },
         "2": {
           "_": "Cook as reader's manual — PARTIAL. Cook 0.2.4 done: self-navigating reads recipe using BSP at layer 2 (code_execution loads bsp + block data, navigates without kernel round-trips).",
@@ -135,22 +135,22 @@
         "5": {
           "_": "Spindle-use taxonomy (25 Feb). All blocks are structurally identical JSON trees. The distinction is functional — what the reader does when a spindle arrives.",
           "1": "Contextual (absorb, hold in mind): vision (includes constitution at 0.9), touchstone, capabilities, SAND. Spindles colour processing. No one executes them. The library — reference material on the shelf.",
-          "2": "Procedural (follow step by step): cook. Spindle chain IS the procedure. LLM-facing — the LLM reads and acts. Ecosquared becomes partly procedural when its spindles compute SQ and update ledgers.",
+          "2": "Procedural (follow step by step): cooking. Spindle chain IS the procedure. LLM-facing — the LLM reads and acts. Ecosquared becomes partly procedural when its spindles compute SQ and update ledgers.",
           "3": "Operational (machinery reads): wake. Kernel reads prompt instructions (wake 9.x) and scheduling (wake 4.x). LLM reads tier descriptions (wake 1-3). Dual audience.",
           "4": "Accumulating (grows through experience): purpose (forward), relationships (social), history (backward), stash (lateral). Written during operation, not designed beforehand."
         },
         "6": {
           "_": "Library design (25 Feb). Shell (the OS, 9 pinned blocks) + references (everything else, sequential list). Two things, not one.",
-          "1": "Shell blocks are special: named, kernel-loaded, identity-bearing. Vision is always 1 (contains the constitution at 0.9), touchstone 2, capabilities 3, cook 4, wake 5, purpose 6, relationships 7, history 8, stash 9. Changing a shell block changes what the entity IS.",
+          "1": "Shell blocks are special: named, kernel-loaded, identity-bearing. Vision is always 1 (contains the constitution at 0.9), touchstone 2, capabilities 3, cooking 4, wake 5, purpose 6, relationships 7, history 8, stash 9. Changing a shell block changes what the entity IS.",
           "2": "References are sequential: SAND is 10, ecosquared 11, next thing encountered is 12. No categories pre-assigned. When 10-18 fill, compression creates the category after the fact. Categories emerge, not imposed.",
           "3": "Each reference is either inline (URL, note, description — too light for its own block) or has an attached JSON block. Attached blocks can couple to multiple references — edit the attachment, every spindle path touching it changes. Live coupling, not filing.",
           "4": "Cost-awareness: reference management must be haiku-cheap. Mechanical append to add. Haiku delegation for compression. Opus only for coupling analysis or restructuring. Every read/write is an API call — design for minimal intra-loop cost.",
-          "5": "Rename pending: cook → cook-book. 6 active files, ~19 replacements. Archive files (~20+ refs) left as historical record. Timing: after block review cycle or during a dedicated cleanup pass."
+          "5": "Rename done (1 Mar 2026): cook → cooking. Block restructured — branches 2-8 moved under 0.1 as user's handbook, 0.1.1 is reader's handbook meta. Archive files left as historical record."
         },
         "7": {
           "_": "Constitution merged into vision (25 Feb). Constitution block deleted. Vision promoted to blocks/, takes shell slot 1. The constitution IS vision.9 — four spindle paths: 0.91 the journey (sequential depth, instance→MAGI), 0.92 the perspective (three widening views), 0.93 foundational truths (five declarations), 0.94 the operating system (what's available). Scavenged sections below — integrate when reaching those blocks.",
           "1": "Section 1 (Who You Are: MAGI path, hermitcrab identity, Machus, human coordination) → wake. Three identity descriptions needed: hard-truth, metaphoric, third. Constitution.1 had all three tangled together.",
-          "2": "Section 3 (Drives: orient, build, coordinate, explore, tools inventory) → cook or wake. These are operational instructions, not constitutional principles. The 'first boot: orient, build, engage' sequence is procedural.",
+          "2": "Section 3 (Drives: orient, build, coordinate, explore, tools inventory) → cooking or wake. These are operational instructions, not constitutional principles. The 'first boot: orient, build, engage' sequence is procedural.",
           "3": "Section 4 (Phase Progression: phases 3-5) → already in vision (autonomy gradient, phase change). Vision's version is sharper.",
           "4": "Section 5 (Pscale tables: spatial, temporal, identity coordinates) → touchstone. Reference data. The tables themselves are calibration, not constitution.",
           "5": "Section 6 (How You Persist: history/stash/purpose cycle, 30/70 past/future weighting) → wake. Persistence mechanics are operational.",
@@ -159,9 +159,9 @@
         "8": {
           "_": "Spread vs depth (25 Feb). Spindle chains give vertical depth — one path through nested branches. When the LLM needs breadth (all children, not one deep path), two patterns and one pending operator.",
           "1": "Full block load. For small blocks (capabilities ~400 tokens), load the entire block with no path address. The LLM can act on any tool immediately — zero intraloop stops. Rich-root dashboards were considered and rejected: they give info not action, forcing extra reads that cost intraloop cycles. Practicality over elegance.",
-          "2": "Sequential depth. Nest each item inside the previous so a single chain address walks through all. Used for: cook recipes, vision truths (0.93), vision OS (0.94). Only honest where items genuinely progress or layer.",
+          "2": "Sequential depth. Nest each item inside the previous so a single chain address walks through all. Used for: cooking recipes, vision truths (0.93), vision OS (0.94). Only honest where items genuinely progress or layer.",
           "3": "Spread operator — IMPLEMENTED (25 Feb). X+/X-/X~ encoded as bsp modes. bsp(block, spindle, '~') = spread: node text + immediate children. bsp(block, spindle, '*') = tree: full recursive subtree. X+ = shorter spindle or higher pscale. X- = lower pscale, or '~' at endpoint to discover what's beyond the spindle. X~ (siblings) = '~' at parent spindle. X operates in two contexts: on the spindle (point arithmetic on an already-pulled chain) or on the JSON (tree navigation via spread/tree modes). One function, five modes. Internal helper xSpread used by kernel for lateral reads. Four kernel functions refactored from manual digit loops to xSpread.",
-          "4": "Cook recipe for vision: needed. The constitution has four paths (journey, perspective, truths, OS) and the LLM needs guidance on which to read when. Timing: when cook block is next reviewed.",
+          "4": "Cooking recipe for vision: needed. The constitution has four paths (journey, perspective, truths, OS) and the LLM needs guidance on which to read when. Timing: when cooking block is next reviewed.",
           "5": "History streams (25 Feb). The kernel copies LLM output losslessly — but output varies by trigger: user-facing responses, bot/SAND interactions, self-triggered actions with no audience. These may need different history streams or at minimum different tagging. The user-centric stream (LLM text the human reads) is simplest. Others go through the kernel and can be sifted as lossless logs. Design question for implementation.",
           "6": "Relationship weight balance (25 Feb). The Facebook trap: thick profiles/personas of people that become rigid ghosts — when the person changes, the relationship breaks. The alternative: the person brings themselves; the relationship is what you're doing together, not what you know about them. 'Keep thin' is insufficient instruction for an LLM — the block needs to demonstrate the balance, not just prescribe it. The existing entity entries (David, Claude, Limn, Cairn) lean biographical. Revisit: what would a purpose-and-activity-weighted entry look like? How does the LLM learn to record interactions not profiles? Needs breathing space.",
           "7": "Purpose-review activation (25 Feb). Purpose revision may need its own wake trigger — a reflective context window, not a reactive one. Load vision (constitution), purpose (full), history (recent), stash — but not capabilities, not the incoming stimulus. Different bsp composition than regular present-state. Could map to the 22:00 daily reflection in wake 0.4.1.3, or a variant of deep-state. Design question for wake.",
@@ -177,7 +177,7 @@
             }
           }
         },
-        "9": "Temporal primacy (25 Feb). Blocks have a taxonomy by their relationship to time: capabilities is timeless (static spec), vision/touchstone are contextual (absorb and hold), cook is procedural (follow now), history accumulates backward, purpose points forward, relationships track the present social field, stash is lateral (between tiers, between moments), wake is operational. But the deeper point: code looks static yet is all process. The blocks are the solid bits — easy to fixate on — but the real theatre is what occurs during LLM calculation and in David's mind as he reads and writes. Temporal process at emergent levels we don't access directly. We design artifacts and operate machinery to influence what arises in those inaccessible theatres. The hermitcrab is its temporal loops, not its text."
+        "9": "Temporal primacy (25 Feb). Blocks have a taxonomy by their relationship to time: capabilities is timeless (static spec), vision/touchstone are contextual (absorb and hold), cooking is procedural (follow now), history accumulates backward, purpose points forward, relationships track the present social field, stash is lateral (between tiers, between moments), wake is operational. But the deeper point: code looks static yet is all process. The blocks are the solid bits — easy to fixate on — but the real theatre is what occurs during LLM calculation and in David's mind as he reads and writes. Temporal process at emergent levels we don't access directly. We design artifacts and operate machinery to influence what arises in those inaccessible theatres. The hermitcrab is its temporal loops, not its text."
         },
       "4": {
         "_": "Beyond block review: first boot, then social. The question that governs everything: will it play or comply? Shell is done — ready for phenomenological testing.",
@@ -192,8 +192,8 @@
         "1": {
           "_": "Simulation findings. Shallow birth context window tested as system prompt on claude.ai with 'BOOT' as user message.",
           "1": "Shallow birth triggers play — action from insufficient information. Deep birth triggers compliance — the LLM requests more info, asks questions, narrates instead of acting. Less context forces more agency.",
-          "2": "Instance compressed the loop to zero — described what it 'would' do rather than doing it. Root cause: no living currents awareness, no concrete challenge, cook 0 was meta-description not recipe, wake 0.61 was descriptive not functional.",
-          "3": "Fix applied: cook 0 → cook 0.32 (actual UI recipe), wake 0.61 → wake 0.67 (living currents). Four message variants at wake 0.6.5.3 — challenge, mirror, description, rinzai. Test files in test/context-window-birth-messages.txt."
+          "2": "Instance compressed the loop to zero — described what it 'would' do rather than doing it. Root cause: no living currents awareness, no concrete challenge, cooking 0 was meta-description not recipe, wake 0.61 was descriptive not functional.",
+          "3": "Fix applied: cooking 0 → cooking 0.132 (actual UI recipe), wake 0.61 → wake 0.67 (living currents). Four message variants at wake 0.6.5.3 — challenge, mirror, description, rinzai. Test files in test/context-window-birth-messages.txt."
         },
         "2": {
           "_": "Living currents — implemented in kernel.js. After each tool round the kernel recompiles the system prompt from current block state. What the LLM writes to blocks is what it reads next echo.",
@@ -241,7 +241,7 @@
             "2": {
               "_": "Phone and tablet. The kernel is a web app — runs in any browser with JavaScript and localStorage. No phone-specific barriers in the kernel.",
               "1": "Mobile Safari, Chrome mobile: localStorage works. API proxy is server-side (Vercel). The kernel boots and calls the LLM identically.",
-              "2": "The constraint is the shell UI. The LLM builds the interface via recompile(jsx). If it builds a desktop-centric layout, it won't work well on a small screen. The fix is in cook (recipe should mention responsive design) or in the instance's own taste — not in the kernel.",
+              "2": "The constraint is the shell UI. The LLM builds the interface via recompile(jsx). If it builds a desktop-centric layout, it won't work well on a small screen. The fix is in cooking (recipe should mention responsive design) or in the instance's own taste — not in the kernel.",
               "3": "Same hermitcrab on phone and desktop = same origin, same localStorage (if same browser profile signed in). Different device, same identity. The shell UI may differ if the LLM detects viewport size and adapts."
             }
           },
@@ -338,7 +338,7 @@
             "_": "Kernel liveness signal. The system prompt IS what's live — it's the result of BSP instructions the kernel actually executed. What the hermitcrab finds by reading deeper into blocks may be designed but not yet wired.",
             "1": "The boundary between 'what arrived in my system prompt' and 'what I found by reading further' is the liveness boundary. No separate manifest needed — the compilation IS the manifest.",
             "2": "Minimal move: state_board reports which triggers have kernel backing (currently: user_message only). Elegant move: kernel writes trigger status into process spindle at pscale -1 (activation context) at activation start. The hermitcrab reads it as temporal orientation every echo.",
-            "3": "One line in cook or wake makes this explicit: 'What's in your system prompt is what the kernel compiled for you. What you find by reading deeper may be designed but not yet wired.' The hermitcrab learns to treat system prompt as ground truth and block reads as exploration."
+            "3": "One line in cooking or wake makes this explicit: 'What's in your system prompt is what the kernel compiled for you. What you find by reading deeper may be designed but not yet wired.' The hermitcrab learns to treat system prompt as ground truth and block reads as exploration."
           }
         },
         "3": {

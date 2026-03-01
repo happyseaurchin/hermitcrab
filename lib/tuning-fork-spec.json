@@ -33,7 +33,7 @@
         "_": "Root (0.x). Decimal at position 0. Content extends only into negative pscale. The block delineates its own subject — it defines, rather than grows. Rendition blocks, reference specs, constitutional clauses.",
         "1": "Growth pattern: deeper only. 0.34 → 0.345. New content appears at lower pscale levels. Pscale 0 is always the root. Old spindles remain correct.",
         "2": "Tuning example: \"0.1111\". Four negative levels. A touchstone section, a spatial coordinate definition, a recipe.",
-        "3": "In the current shell: touchstone, vision, capabilities, cook, wake, relationships, history, stash are all root blocks (0.x). They delineate subjects. Most will stay root blocks."
+        "3": "In the current shell: touchstone, vision, capabilities, cooking, wake, relationships, history, stash are all root blocks (0.x). They delineate subjects. Most will stay root blocks."
       },
       "2": {
         "_": "Tree (xyz). No decimal — or decimal at the end. Content extends only into positive pscale. The block accumulates upward through compression. History, sequential logs, growing hierarchies.",
