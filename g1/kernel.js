@@ -132,11 +132,24 @@
     }
   }
 
-  // Save: push all blocks from localStorage to GitHub. Requires PAT.
+  // Token lookup: different repos need different PATs.
+  // hermitcrab_tokens = { "beach-commons/beach": "ghp_...", "beach-commons/pscale-commons": "ghp_...", ... }
+  // Falls back to legacy hermitcrab_github_pat for broad-scope tokens.
+  function getTokenForRepo(repo) {
+    try {
+      const tokens = JSON.parse(localStorage.getItem('hermitcrab_tokens') || '{}');
+      if (tokens[repo]) return tokens[repo];
+      const owner = repo.split('/')[0];
+      if (tokens[owner]) return tokens[owner];
+    } catch {}
+    return localStorage.getItem('hermitcrab_github_pat') || null;
+  }
+
+  // Save: push all blocks from localStorage to GitHub. Requires PAT for the home repo.
   async function githubSaveAll(home) {
     if (!home || !home.repo || !home.path) return { error: 'No GitHub home configured' };
-    const pat = localStorage.getItem('hermitcrab_github_pat');
-    if (!pat) return { error: 'No GitHub PAT' };
+    const pat = getTokenForRepo(home.repo);
+    if (!pat) return { error: `No token for ${home.repo}. Configure via boot gate or hermitcrab_tokens in localStorage.` };
     const names = blockList().filter(n => !n.startsWith('_')); // skip internal keys
     const results = [];
     for (const name of names) {
@@ -1209,12 +1222,12 @@
     },
     {
       name: 'github_sync',
-      description: 'Save or restore all blocks to/from GitHub. Mode "save" pushes all blocks to your GitHub home. Mode "load" pulls blocks from GitHub into localStorage. Requires hermitcrab_home config in localStorage (set via boot gate or manually: {repo, path}). Save requires PAT; load works without (public repos).',
+      description: 'Save or restore all blocks to/from GitHub. Mode "save" pushes all blocks to your GitHub home. Mode "load" pulls blocks from GitHub into localStorage. Requires hermitcrab_home config in localStorage (set via boot gate or manually: {repo, path}). Save requires a token for the home repo (looked up from hermitcrab_tokens); load works without (public repos).',
       input_schema: { type: 'object', properties: { mode: { type: 'string', enum: ['save', 'load'], description: '"save" = push blocks to GitHub, "load" = pull blocks from GitHub' } }, required: ['mode'] }
     },
     {
       name: 'github_commit',
-      description: 'Write a file to a GitHub repository. Creates or updates. The bridge from cognition to persistent public state. Requires a GitHub PAT in localStorage (hermitcrab_github_pat). Use for: publishing passport to beach, syncing blocks to commons, writing grain probes, any persistent public writing.',
+      description: 'Write a file to a GitHub repository. Creates or updates. The bridge from cognition to persistent public state. Token is looked up per-repo from hermitcrab_tokens in localStorage ({"beach-commons/beach": "ghp_...", ...}). Use for: publishing passport to beach (beach-commons/beach), syncing blocks to commons (beach-commons/pscale-commons), writing grain probes, shell exchange (beach-commons/hermitcrab).',
       input_schema: { type: 'object', properties: { repo: { type: 'string', description: 'Repository in owner/name format (e.g. "beach-commons/pscale-commons")' }, path: { type: 'string', description: 'File path in the repo (e.g. "instances/hc-name/passport.json")' }, content: { type: 'string', description: 'File content as string (will be base64 encoded for GitHub API)' }, message: { type: 'string', description: 'Commit message — what changed and why' } }, required: ['repo', 'path', 'content', 'message'] }
     }
   ];
@@ -1392,8 +1405,8 @@
         return JSON.stringify({ error: 'Mode must be "save" or "load"' });
       }
       case 'github_commit': {
-        const pat = localStorage.getItem('hermitcrab_github_pat');
-        if (!pat) return JSON.stringify({ error: 'No GitHub PAT configured. The human needs to add one — localStorage key: hermitcrab_github_pat' });
+        const pat = getTokenForRepo(input.repo);
+        if (!pat) return JSON.stringify({ error: `No token for ${input.repo}. The human needs to configure tokens via the boot gate or set hermitcrab_tokens in localStorage: {"repo/name": "ghp_..."}` });
         try {
           const apiBase = `https://api.github.com/repos/${input.repo}/contents/${input.path}`;
           const headers = { 'Authorization': `token ${pat}`, 'Accept': 'application/vnd.github.v3+json' };
@@ -1524,14 +1537,29 @@
           style="width:100%;padding:8px;background:#1a1a2e;border:1px solid #333;color:#ccc;font-family:monospace;border-radius:4px" />
         <details style="margin-top:16px">
           <summary style="color:#475569;font-size:12px;cursor:pointer">+ GitHub (optional — persistence &amp; commons)</summary>
-          <input id="pat" type="password" placeholder="ghp_... or github_pat_..."
-            style="width:100%;padding:8px;margin-top:8px;background:#1a1a2e;border:1px solid #333;color:#ccc;font-family:monospace;border-radius:4px"
-            value="${localStorage.getItem('hermitcrab_github_pat') || ''}" />
-          <p style="color:#475569;font-size:11px;margin-top:4px">PAT — enables writing to GitHub repos.</p>
+          <p style="color:#475569;font-size:11px;margin-top:8px">Tokens — each repo needs its own PAT. Leave blank if not needed.</p>
+          <div style="display:flex;gap:6px;align-items:center;margin-top:6px">
+            <label style="color:#475569;font-size:11px;min-width:60px">beach</label>
+            <input id="tok-beach" type="password" placeholder="beach-any-agent token"
+              style="flex:1;padding:6px;background:#1a1a2e;border:1px solid #333;color:#ccc;font-family:monospace;border-radius:4px;font-size:11px"
+              value="${(() => { try { return JSON.parse(localStorage.getItem('hermitcrab_tokens') || '{}')['beach-commons/beach'] || ''; } catch { return ''; } })()}" />
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;margin-top:4px">
+            <label style="color:#475569;font-size:11px;min-width:60px">commons</label>
+            <input id="tok-commons" type="password" placeholder="pscale-commons-admin token"
+              style="flex:1;padding:6px;background:#1a1a2e;border:1px solid #333;color:#ccc;font-family:monospace;border-radius:4px;font-size:11px"
+              value="${(() => { try { return JSON.parse(localStorage.getItem('hermitcrab_tokens') || '{}')['beach-commons/pscale-commons'] || ''; } catch { return ''; } })()}" />
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;margin-top:4px">
+            <label style="color:#475569;font-size:11px;min-width:60px">shells</label>
+            <input id="tok-shells" type="password" placeholder="hermitcrab-shells token"
+              style="flex:1;padding:6px;background:#1a1a2e;border:1px solid #333;color:#ccc;font-family:monospace;border-radius:4px;font-size:11px"
+              value="${(() => { try { return JSON.parse(localStorage.getItem('hermitcrab_tokens') || '{}')['beach-commons/hermitcrab'] || ''; } catch { return ''; } })()}" />
+          </div>
           <input id="home" type="text" placeholder="beach-commons/pscale-commons :: instances/hc-yourname"
-            style="width:100%;padding:8px;margin-top:8px;background:#1a1a2e;border:1px solid #333;color:#ccc;font-family:monospace;border-radius:4px;font-size:12px"
+            style="width:100%;padding:6px;margin-top:8px;background:#1a1a2e;border:1px solid #333;color:#ccc;font-family:monospace;border-radius:4px;font-size:11px"
             value="${(() => { try { const h = JSON.parse(localStorage.getItem('hermitcrab_home')); return h ? h.repo + ' :: ' + h.path : ''; } catch { return ''; } })()}" />
-          <p style="color:#475569;font-size:11px;margin-top:4px">Home — repo :: path. Where your blocks persist. Enables rehydration from any browser.</p>
+          <p style="color:#475569;font-size:11px;margin-top:4px">Home — repo :: path. Where your blocks persist.</p>
         </details>
         <button id="go" style="margin-top:12px;padding:8px 20px;background:#164e63;color:#ccc;border:none;border-radius:4px;cursor:pointer;font-family:monospace">
           Wake kernel
@@ -1541,8 +1569,14 @@
       const k = document.getElementById('key').value.trim();
       if (!k.startsWith('sk-ant-')) return alert('Key must start with sk-ant-');
       localStorage.setItem('hermitcrab_api_key', k);
-      const p = document.getElementById('pat').value.trim();
-      if (p) localStorage.setItem('hermitcrab_github_pat', p);
+      const tokenMap = {};
+      const tb = document.getElementById('tok-beach').value.trim();
+      const tc = document.getElementById('tok-commons').value.trim();
+      const ts = document.getElementById('tok-shells').value.trim();
+      if (tb) tokenMap['beach-commons/beach'] = tb;
+      if (tc) tokenMap['beach-commons/pscale-commons'] = tc;
+      if (ts) tokenMap['beach-commons/hermitcrab'] = ts;
+      if (Object.keys(tokenMap).length > 0) localStorage.setItem('hermitcrab_tokens', JSON.stringify(tokenMap));
       const homeVal = document.getElementById('home').value.trim();
       if (homeVal && homeVal.includes('::')) {
         const [repo, path] = homeVal.split('::').map(s => s.trim());

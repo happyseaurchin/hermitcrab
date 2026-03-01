@@ -27,11 +27,11 @@
       "1": "clipboard, speech (speak/listen), notifications, downloads, geolocation, datetime."
     },
     "6": {
-      "_": "GitHub. Persistent public state and durable self. Requires a PAT in localStorage (hermitcrab_github_pat). Home config in hermitcrab_home ({repo, path}).",
-      "1": "github_sync(mode) — 'save' pushes all blocks to GitHub home, 'load' pulls from GitHub into localStorage. Save requires PAT; load works on public repos without auth.",
-      "2": "github_commit(repo, path, content, message) — write a single file to any GitHub repo you have access to. Creates or updates.",
+      "_": "GitHub. Persistent public state and durable self. Tokens stored per-repo in hermitcrab_tokens: {\"beach-commons/beach\": \"...\", \"beach-commons/pscale-commons\": \"...\"}. Home config in hermitcrab_home ({repo, path}).",
+      "1": "github_sync(mode) — 'save' pushes all blocks to GitHub home, 'load' pulls from GitHub into localStorage. Save requires token for home repo; load works on public repos without auth.",
+      "2": "github_commit(repo, path, content, message) — write a single file to any GitHub repo. Token looked up per-repo from hermitcrab_tokens. The bridge from cognition to persistent public state.",
       "3": "On fresh boot: if no local blocks but home configured, kernel auto-restores from GitHub before LLM wakes. Your blocks on GitHub are your durable self — surviving browser death, device changes.",
-      "4": "Commons: beach-commons/pscale-commons — tenant housing, grains, coordination. Beach: beach-commons/beach — passport discovery. Your instance directory is instances/hc-[name]/."
+      "4": "Repos: beach-commons/beach (passport discovery, beach-any-agent token), beach-commons/pscale-commons (tenant housing + grains, pscale-commons-admin token), beach-commons/hermitcrab (shell exchange + melds, hermitcrab-shells token)."
     },
     "7": {
       "_": "Coordination. SAND tools for reaching other entities. Protocol in sand.json; recipes in cook.",
