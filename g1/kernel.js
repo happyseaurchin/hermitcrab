@@ -224,8 +224,8 @@
   // bsp(block)               → full block tree
   // bsp(block, spindle)      → chain of semantics, one per digit, high pscale to low
   // bsp(block, spindle, ps)  → single semantic at the specified pscale level
-  // bsp(block, spindle, '~') → spread (X~): node text + immediate children
-  // bsp(block, spindle, '*') → tree: full recursive subtree from endpoint
+  // bsp(block, spindle, '*') → ring: spindle context + one level of children at endpoint
+  // bsp(block, spindle, '~') → spread: raw subtree extraction at endpoint
   //
   // X vocabulary via bsp:
   //   X+ on spindle = change point to pscale+1 (or use shorter spindle)
@@ -347,7 +347,7 @@
     if (nodes.length === 0) return { mode: 'spindle', nodes: [] };
 
     // Point mode — return the semantic at the specified pscale level
-    // String modes: '~' = spread (X~), '*' = tree (recursive subtree)
+    // String modes: '*' = ring (spindle + one-level children), '~' = spread (raw subtree extraction)
     if (point !== undefined && point !== null) {
       // Defensive: API may send numeric point as string (e.g. "-3" instead of -3)
       if (typeof point === 'string' && !isNaN(Number(point)) && point !== '~' && point !== '*') {
@@ -355,18 +355,16 @@
       }
       if (typeof point === 'string') {
         const endPath = walkDigits.length > 0 ? walkDigits.join('.') : null;
-        if (point === '~') {
-          // Spread: node text + immediate children (X~)
-          const spread = xSpread(blk, endPath);
-          if (!spread) return { mode: 'spread', path: endPath, text: null, children: [] };
-          return { mode: 'spread', path: endPath, ...spread };
-        }
         if (point === '*') {
-          // Tree: full recursive subtree from endpoint
+          // Ring: spindle context + one level of children at endpoint
+          const spread = xSpread(blk, endPath);
+          const children = spread ? spread.children : [];
+          return { mode: 'ring', nodes, children };
+        }
+        if (point === '~') {
+          // Spread: raw subtree extraction at endpoint (for merging, manipulation)
           const endNode = endPath ? blockNavigate(blk, endPath) : blk.tree;
-          if (!endNode) return { mode: 'tree', path: endPath, text: null, children: [] };
-          const subtree = resolveBlock({ tree: endNode }, 9);
-          return { mode: 'tree', path: endPath, text: subtree.text, children: subtree.children };
+          return { mode: 'spread', path: endPath, subtree: endNode || null };
         }
         return { mode: 'error', error: `Unknown point mode: ${point}` };
       }
@@ -480,6 +478,18 @@
 
     if (result.mode === 'point') {
       return `[${blockName} ${spindle} ${point}] ${result.text}`;
+    }
+
+    if (result.mode === 'ring') {
+      // Spindle context + one level of children
+      const spine = result.nodes.map(n => `  [${n.pscale}] ${n.text}`);
+      const kids = (result.children || []).map(c => `    ${c.digit}: ${c.text || '(branch)'}${c.branch ? ' +' : ''}`);
+      return `[${blockName} ${spindle} *]\n${spine.join('\n')}\n${kids.join('\n')}`;
+    }
+
+    if (result.mode === 'spread') {
+      // Raw subtree — format as JSON for extraction
+      return `[${blockName} ${spindle} ~]\n${JSON.stringify(result.subtree, null, 2)}`;
     }
 
     return '';
@@ -1103,8 +1113,8 @@
   const PSCALE_TOOLS = [
     {
       name: 'bsp',
-      description: 'Block · Spindle · Point — semantic address resolution. One function, five modes.\n\nbsp(name) → full block tree\nbsp(name, 0.21) → spindle: root then walked digits [2,1]\nbsp(name, 0.21, -1) → point: semantic at pscale -1\nbsp(name, 0.21, "~") → spread (X~): node text + immediate children\nbsp(name, 0.21, "*") → tree: full recursive subtree\n\nX vocabulary: X+ = bsp with higher pscale or shorter spindle. X- = lower pscale, or "~" at endpoint to discover deeper paths. X~ (siblings) = "~" at parent spindle.\n\nPure blocks. Leading 0 in 0.xxx is stripped (delineation). Remaining digits walk the tree. Root (tree._) always included.',
-      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. "capabilities", "purpose", "touchstone")' }, spindle: { type: 'number', description: 'Semantic number. Leading 0. stripped (delineation). Remaining digits walk the tree. 0.21 walks [2,1]. 23.41 walks [2,3,4,1].' }, point: { description: "Number: pscale level for a single semantic (-1, 0, etc). String '~': spread (X~ — node + children). String '*': tree (full subtree).", oneOf: [{ type: 'number' }, { type: 'string', enum: ['~', '*'] }] } }, required: ['name'] }
+      description: 'Block · Spindle · Point — semantic address resolution. One function, five modes.\n\nbsp(name) → full block\nbsp(name, 0.21) → spindle: depth walk [root, 2, 1]\nbsp(name, 0.21, -1) → point: single semantic at pscale -1\nbsp(name, 0.21, "*") → ring: spindle context + one level of children at endpoint\nbsp(name, 0.21, "~") → spread: raw subtree extraction at endpoint\n\nRing returns { nodes (the spindle walk), children (one level) }. The spindle IS the context.\nSpread returns { subtree } — the raw JSON node for programmatic use (merging, copying).\n\nPure blocks. Leading 0 in 0.xxx is stripped (delineation). Remaining digits walk the tree. Root (tree._) always included.',
+      input_schema: { type: 'object', properties: { name: { type: 'string', description: 'Block name (e.g. "capabilities", "purpose", "touchstone")' }, spindle: { type: 'number', description: 'Semantic number. Leading 0. stripped (delineation). Remaining digits walk the tree. 0.21 walks [2,1]. 23.41 walks [2,3,4,1].' }, point: { description: "Number: pscale level for single semantic. '*': ring (spindle + one-level children). '~': spread (raw subtree extraction).", oneOf: [{ type: 'number' }, { type: 'string', enum: ['*', '~'] }] } }, required: ['name'] }
     },
     {
       name: 'resolve',

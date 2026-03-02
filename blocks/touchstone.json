@@ -15,7 +15,7 @@
       "5": "Every block is self-describing. Its root tells you what it is, its structure shows how it's organised, its content shows what it knows. You never need external documentation to read a block."
     },
     "2": {
-      "_": "One function reads everything: bsp. Three modes — block for storage, spindle for cognition, point for reference.",
+      "_": "One function reads everything: bsp. Five modes — block, spindle, point, ring, spread.",
       "1": "bsp('constitution') → block mode. Returns the whole tree. Every branch, every depth. Use this to survey a block or explore freely.",
       "2": {
         "_": "bsp('touchstone', 0.21) → spindle mode. Returns root → section 2 → subsection 1. Three levels of meaning in one result — broad context and fine detail together.",
@@ -24,7 +24,7 @@
         "3": "You can't get the detail without getting the context that makes it meaningful. That's not a feature of the format. That's what the format is."
       },
       "3": "bsp('touchstone', 0.21, -2) → point mode. Just the content at pscale level -2 from that spindle. Use this when you already know the context and need one specific piece.",
-      "4": "Three modes, three depths of the same question. Name alone → everything. Name + number → a path through it. Name + number + level → one stop on that path.",
+      "4": "Five modes, same principle. Name alone → everything. Name + number → a path through it. Name + number + level → one stop. Name + number + '*' → the path plus what's at the end. Name + number + '~' → raw subtree for extraction.",
       "5": "A spindle's cost in tokens scales with how many levels it spans and how much text sits at each. A three-level spindle of phrases is light. A six-level spindle of paragraphs is heavy. Design blocks with this in mind.",
       "6": {
         "_": "BSP evolves through use. The three modes above are the working core. Through practice, variants and refined notation emerge — each extending the same tree-walk principle.",
@@ -32,7 +32,9 @@
         "2": "Nested BSP — cross-block resolution. Same spindle notation, but the walk can follow references into other blocks. Handles blocks-within-blocks. Defined, not yet implemented.",
         "3": "Spindle notation — the full positional reading convention. Always left-to-right. The decimal marks pscale 0 but doesn't reset position counting. Leading digits mandatory — you walk from root. Specification to follow.",
         "4": "Truncation — trailing zeros signal termination. 0.450 walks two positions and stops. Mid-spindle zeros mean pass-through. An alternative to point mode using positional stopping instead of pscale levels. Specification to follow."
-      }
+      },
+      "7": "bsp('touchstone', 0.2, '*') → ring mode. Returns the full spindle walk (context) plus one level of children at the endpoint. A spindle that opens up. The spindle IS the context; the children are what you find there.",
+      "8": "bsp('touchstone', 0.2, '~') → spread mode. Returns the raw subtree at the endpoint — the actual JSON node and everything below it. A data extraction tool for merging, copying, or programmatic manipulation."
     },
     "3": {
       "_": "Each digit in the number selects a branch at the next depth. The decimal point marks pscale 0 — the reference scale.",

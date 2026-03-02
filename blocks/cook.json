@@ -43,7 +43,7 @@
               "4": {
                 "_": "Steps use ascending digits at each level. Digit 2, then 3, then 4... Follow the main path downward.",
                 "5": {
-                  "_": "At any step: digit 1 holds sub-detail. The ascending digit is the next step. X~ shows siblings if you need elaboration.",
+                  "_": "At any step: digit 1 holds sub-detail. The ascending digit is the next step. bsp(block, spindle, '*') shows siblings with context if you need elaboration.",
                   "6": {
                     "_": "The last node in the chain is always the taste test \u2014 what success looks like, what failure looks like, how you know you're done.",
                     "7": "Taste test: pick any recipe in this block and trace its spindle path. Can you predict what each node delivers before reading it? If yes \u2014 you can read recipes."
