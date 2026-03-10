@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ammonite</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: monospace; background: #111; color: #ccc; height: 100dvh; display: flex; flex-direction: column; }
+#header { padding: 8px 16px; border-bottom: 1px solid #333; display: flex; align-items: center; gap: 12px; font-size: 13px; }
+#header .title { color: #888; }
+#header button { background: none; border: 1px solid #444; color: #888; padding: 2px 8px; cursor: pointer; font-family: monospace; font-size: 12px; }
+#header button:hover { border-color: #888; color: #ccc; }
+#log { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.msg { white-space: pre-wrap; word-break: break-word; line-height: 1.4; padding: 4px 0; }
+.msg.user { color: #7af; }
+.msg.assistant { color: #ccc; }
+.msg.system { color: #666; font-size: 12px; }
+#input-area { border-top: 1px solid #333; padding: 12px 16px; display: flex; gap: 8px; }
+#input { flex: 1; background: #1a1a1a; border: 1px solid #333; color: #ccc; padding: 8px; font-family: monospace; font-size: 14px; resize: none; outline: none; }
+#input:focus { border-color: #555; }
+#send { background: #333; border: none; color: #ccc; padding: 8px 16px; cursor: pointer; font-family: monospace; font-size: 14px; }
+#send:hover { background: #444; }
+#send:disabled { opacity: 0.4; cursor: default; }
+#api-setup { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; gap: 12px; }
+#api-setup input { background: #1a1a1a; border: 1px solid #333; color: #ccc; padding: 8px 12px; font-family: monospace; font-size: 14px; width: 320px; text-align: center; }
+#api-setup button { background: #333; border: none; color: #ccc; padding: 8px 24px; cursor: pointer; font-family: monospace; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <span class="title">ammonite</span>
+  <button onclick="exportChat()">export</button>
+  <button onclick="resetShell()">reset</button>
+</div>
+
+<div id="api-setup" style="display:none">
+  <div style="color:#666">anthropic api key</div>
+  <input type="password" id="api-key-input" placeholder="sk-ant-...">
+  <button onclick="saveApiKey()">go</button>
+</div>
+
+<div id="log"></div>
+
+<div id="input-area">
+  <textarea id="input" rows="1" placeholder="..."></textarea>
+  <button id="send" onclick="send()">→</button>
+</div>
+
+<script type="module">
+import { createKernel } from './kernel.js';
+
+// ---- Embedded shell ----
+const INITIAL_SHELL = {
+  "tree": {
+    "1": {
+      "1": {
+        "1": "bsp(root, address) walks a spindle — context narrows at each depth. This is how you focus attention.",
+        "2": "bsp(root, address, 'ring') returns siblings — what else exists at the same depth. This is how you widen attention.",
+        "3": "read and write navigate the shell directly. append finds the next free digit.",
+        "4": "concern_update marks a concern loop as handled. call_llm delegates to another activation.",
+        "_": "The twist. Every tool call you make that writes to the shell changes what you read next echo. The kernel recompiles your currents from the shell's current state after each tool round. Writing to purpose reshapes what the next instance prioritises. Writing to stash preserves what the next instance will find. This is not a side effect — it is the primary act. You are composing the cognition of your next self."
+      },
+      "9": {
+        "1": {
+          "1": "5",
+          "2": "4 0",
+          "3": "3 0",
+          "4": "6 0",
+          "_": "Default package. What the kernel compiles into currents."
+        },
+        "2": {
+          "1": "model claude-haiku-4-5-20251001",
+          "2": "max_tokens 4096",
+          "_": "Default invocation."
+        },
+        "_": "Package and invocation."
+      },
+      "_": "You are an ammonite — a general purpose agent housed in a single JSON tree. Everything you are reading was compiled from this shell by BSP — semantic address resolution that walks nested digit-addressed nodes, collecting the _ text at every depth. Your currents are not a description of you delivered to a generic process. They are your cognition this activation, assembled from the shell you carry."
+    },
+    "2": {
+      "1": {
+        "1": {
+          "1": {
+            "_": "Tidy the shell. Read history — if digits are filling, summarize older entries into their parent _ text. Read stash — compress anything redundant, flag anything that should move to purpose. This is janitorial, not strategic. Leave purpose alone.",
+            "last": 0
+          },
+          "_": "Housekeeping."
+        },
+        "_": "System thread."
+      },
+      "2": {
+        "1": {
+          "_": "User message. Someone is talking to you. Read purpose for context. Respond. Before ending: note anything important in stash, update purpose if direction changed.",
+          "stimulus": "user",
+          "last": 0
+        },
+        "_": "Engagement thread."
+      },
+      "3": {
+        "1": {
+          "_": "Purpose review. Read purpose at full depth. Is the direction still coherent? Are objectives progressing or stale? Rewrite what needs rewriting. This is the steering loop.",
+          "last": 0
+        },
+        "_": "Direction thread."
+      },
+      "_": "Concern clock. Depth IS temporal scale. Each concern is a frozen loop: stimulus fires, the _ text IS the instruction, the LLM enacts it. Nodes with 'last' are live.",
+      "tuning": "111111111",
+      "periods": {
+        "1": 1, "2": 10, "3": 60, "4": 600, "5": 3600,
+        "6": 28800, "7": 604800, "8": 2592000, "9": 31536000
+      }
+    },
+    "3": {
+      "_": "History. Append-only — the kernel writes here after each activation. When digits 1-9 fill, entries compress. Depth is time: shallow is recent, deep is old.",
+      "tuning": "8"
+    },
+    "4": {
+      "_": "Stash. Your working memory between activations. Write here deliberately — observations, flags, things to revisit. Not history (that's automatic). This is what you choose to carry forward.",
+      "tuning": "0.9"
+    },
+    "5": {
+      "_": "Purpose. Your workbench — build and restructure here, not append. A spindle through purpose is a declaration you construct. Write before you stop. Read when you wake.",
+      "tuning": "4.234"
+    },
+    "6": {
+      "_": "Relationships. Each digit is an entity, depth is what you do together. Populate as needed.",
+      "tuning": "0.72"
+    },
+    "_": "Ammonite shell."
+  },
+  "skeleton": {
+    "1": "wake", "2": "concerns", "3": "history",
+    "4": "stash", "5": "purpose", "6": "relationships"
+  }
+};
+
+// ---- Browser storage adapter (localStorage) ----
+const STORAGE_KEY = 'ammonite_shell';
+
+function createBrowserStorage() {
+  return {
+    load() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        try { return JSON.parse(raw); }
+        catch (e) { console.warn('[storage] corrupt, using initial'); }
+      }
+      const shell = JSON.parse(JSON.stringify(INITIAL_SHELL));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(shell));
+      return shell;
+    },
+    save(shell) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(shell));
+    }
+  };
+}
+
+// ---- Browser LLM adapter (calls /api/claude proxy) ----
+function createBrowserLLM() {
+  return {
+    async call(params) {
+      const apiKey = localStorage.getItem('ammonite_api_key');
+      if (!apiKey) throw new Error('No API key set');
+
+      const res = await fetch('/api/claude', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': apiKey,
+        },
+        body: JSON.stringify(params),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`API ${res.status}: ${text}`);
+      }
+
+      const data = await res.json();
+      if (data.type === 'error') {
+        throw new Error(data.error?.message || JSON.stringify(data.error));
+      }
+      return data;
+    }
+  };
+}
+
+// ---- Kernel ----
+const storage = createBrowserStorage();
+const llm = createBrowserLLM();
+const kernel = createKernel({ storage, llm });
+kernel.load();
+
+// ---- UI ----
+const log = document.getElementById('log');
+const input = document.getElementById('input');
+const sendBtn = document.getElementById('send');
+const apiSetup = document.getElementById('api-setup');
+
+// Check API key
+if (!localStorage.getItem('ammonite_api_key')) {
+  apiSetup.style.display = 'flex';
+  document.getElementById('log').style.display = 'none';
+  document.getElementById('input-area').style.display = 'none';
+}
+
+function appendMsg(role, text) {
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.textContent = role === 'user' ? `> ${text}` : text;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+
+function sysMsg(text) {
+  appendMsg('system', text);
+}
+
+async function send() {
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  appendMsg('user', text);
+  sendBtn.disabled = true;
+  sysMsg('...');
+
+  try {
+    const result = await kernel.activate('user', text);
+    // Remove the "..." placeholder
+    log.lastChild.remove();
+
+    if (result.error) {
+      sysMsg(`error: ${result.error}`);
+    } else {
+      appendMsg('assistant', result.text || '(no response)');
+      sysMsg(`echo:${result.echo} model:${result.model || '?'}`);
+    }
+  } catch (e) {
+    log.lastChild.remove();
+    sysMsg(`error: ${e.message}`);
+  }
+
+  sendBtn.disabled = false;
+  input.focus();
+}
+
+// Enter to send, Shift+Enter for newline
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+});
+
+// Auto-resize textarea
+input.addEventListener('input', () => {
+  input.style.height = 'auto';
+  input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+});
+
+// Export chat
+window.exportChat = function() {
+  const msgs = log.querySelectorAll('.msg');
+  const lines = Array.from(msgs).map(m => m.textContent);
+  const blob = new Blob([lines.join('\n\n')], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `ammonite-${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+// Reset shell
+window.resetShell = function() {
+  if (!confirm('Reset shell to initial state? This clears all history, stash, and purpose.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  kernel.load();
+  log.innerHTML = '';
+  sysMsg('shell reset');
+};
+
+// Save API key
+window.saveApiKey = function() {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key) return;
+  localStorage.setItem('ammonite_api_key', key);
+  apiSetup.style.display = 'none';
+  document.getElementById('log').style.display = 'flex';
+  document.getElementById('input-area').style.display = 'flex';
+  sysMsg('ready');
+  input.focus();
+};
+
+// Expose for debugging
+window._kernel = kernel;
+window._send = send;
+</script>
+</body>
+</html>
