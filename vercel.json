@@ -6,14 +6,14 @@
       "maxDuration": 60
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/deepthought",
-      "dest": "/deepthought/app.html"
+      "source": "/deepthought",
+      "destination": "/deepthought/app.html"
     },
     {
-      "src": "/marvin",
-      "dest": "/marvin/index.html"
+      "source": "/marvin",
+      "destination": "/marvin/index.html"
     }
   ]
 }
