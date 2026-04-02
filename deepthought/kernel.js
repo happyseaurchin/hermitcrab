@@ -2315,7 +2315,11 @@
   // Birth variant gate: if birth concern detected and no variant selected yet, show selector.
   // This catches returning users who reset blocks but still have their API key.
   // New users see the variant selector in the setup panel instead.
-  if (isBirth && !localStorage.getItem('hermitcrab_birth_variant') && !localStorage.getItem('hermitcrab_birth_custom') && !new URLSearchParams(window.location.search).get('bv')) {
+  // Skip for deepthought — it uses the default variant (rinzai), no choice needed.
+  if (hcName === 'deepthought' && isBirth && !localStorage.getItem('hermitcrab_birth_variant')) {
+    localStorage.setItem('hermitcrab_birth_variant', '4'); // rinzai default
+  }
+  if (hcName !== 'deepthought' && isBirth && !localStorage.getItem('hermitcrab_birth_variant') && !localStorage.getItem('hermitcrab_birth_custom') && !new URLSearchParams(window.location.search).get('bv')) {
     root.innerHTML = `
       <div style="max-width:500px;margin:80px auto;font-family:monospace;color:var(--fg)">
         <h2 style="color:var(--accent)">◇ HERMITCRAB MÖBIUS</h2>
