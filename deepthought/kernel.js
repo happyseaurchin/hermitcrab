@@ -1911,20 +1911,45 @@
 
   // ── Landing gate: named paths show splash, require manual "Enter" before boot ──
   if (!sessionStorage.getItem('hermitcrab_entered')) {
+    // For deepthought: combined landing + API key gate (no separate rehydration/first-boot gates)
+    const isDeepthought = hcName === 'deepthought';
+    const needsKey = isDeepthought && !hasVaultKeys;
     root.innerHTML = `
-      <div style="max-width:500px;margin:120px auto;font-family:monospace;color:var(--fg);text-align:center">
+      <div style="max-width:500px;margin:80px auto;font-family:monospace;color:var(--fg);text-align:center">
         <h2 style="color:var(--accent);font-size:24px">◇ ${hcName}</h2>
         <p style="color:var(--fg-muted);font-size:13px;margin:12px 0">hermitcrab möbius</p>
-        <button id="enter-gate" style="margin-top:32px;padding:10px 32px;background:var(--btn-bg);color:var(--btn-fg);border:none;border-radius:4px;cursor:pointer;font-family:monospace;font-size:14px">
-          Enter
+        ${needsKey ? `
+        <div style="margin:24px 0;text-align:left">
+          <label style="font-size:12px;color:var(--fg-muted)">Claude API key</label>
+          <input id="dt-key" type="password" placeholder="sk-ant-api03-..."
+            style="width:100%;padding:8px;margin-top:4px;background:var(--input-bg);border:1px solid var(--input-border);color:var(--fg);font-family:monospace;border-radius:4px" />
+          <p style="color:var(--fg-dim);font-size:11px;margin-top:4px">Secured in httpOnly cookies — invisible to all JavaScript.</p>
+        </div>
+        <details style="margin:0 0 16px;text-align:left">
+          <summary style="color:var(--fg-muted);font-size:12px;cursor:pointer">+ Block persistence (optional)</summary>
+          <div style="margin-top:8px;padding:12px;border:1px solid var(--input-border);border-radius:4px">
+            <p style="color:var(--fg);font-size:12px;margin:0 0 8px 0">
+              Save your hermitcrab's state to GitHub:<br>
+              1. <a href="https://github.com/beach-commons/homestead-template/generate" target="_blank" style="color:var(--accent)">Create repo from template</a> — name it <code style="color:var(--accent)">hc-deepthought</code><br>
+              2. <a href="https://github.com/settings/tokens?type=beta" target="_blank" style="color:var(--accent)">Create a fine-grained PAT</a> with read/write Contents access<br>
+              3. Paste below
+            </p>
+            <input id="dt-github-pat" type="password" placeholder="github_pat_... or ghp_..."
+              style="width:100%;padding:8px;background:var(--input-bg);border:1px solid var(--input-border);color:var(--fg);font-family:monospace;border-radius:4px" />
+          </div>
+        </details>
+        ` : ''}
+        <button id="enter-gate" style="margin-top:${needsKey ? '8' : '32'}px;padding:10px 32px;background:var(--btn-bg);color:var(--btn-fg);border:none;border-radius:4px;cursor:pointer;font-family:monospace;font-size:14px">
+          ${hasBlocks && hasVaultKeys ? 'Wake' : needsKey ? 'Wake kernel' : 'Enter'}
         </button>
         <p style="color:var(--fg-dim);font-size:11px;margin-top:16px">${
           hasBlocks && currentName === hcName ? 'click to wake' :
           hasBlocks && currentName !== hcName ? `⚠ ${currentName} is loaded — entering will replace it` :
+          isDeepthought && !needsKey ? 'click to wake' :
           'first visit'
         }</p>
       </div>`;
-    document.getElementById('enter-gate').onclick = () => {
+    document.getElementById('enter-gate').onclick = async () => {
       // If switching to a different hermitcrab, clear localStorage first
       if (hasBlocks && currentName && currentName !== hcName) {
         for (let i = localStorage.length - 1; i >= 0; i--) {
@@ -1936,6 +1961,28 @@
           }
         }
       }
+      // For deepthought: store API key via vault if provided
+      if (isDeepthought) {
+        const k = document.getElementById('dt-key')?.value?.trim();
+        const gh = document.getElementById('dt-github-pat')?.value?.trim();
+        if (k && !k.startsWith('sk-ant-')) return alert('Key must start with sk-ant-');
+        if (k || gh) {
+          const keysBody = { service: 'set-keys' };
+          if (k) keysBody.claude = k;
+          if (gh) keysBody.github = gh;
+          try {
+            const r = await fetch('/api/vault', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify(keysBody)
+            });
+            if (!r.ok) { const err = await r.json(); return alert(err.error || 'Failed to store keys'); }
+          } catch (e) { return alert('Failed to store keys: ' + e.message); }
+          localStorage.setItem('hermitcrab_vault_keys', 'true');
+        }
+        if (hcName) localStorage.setItem('hermitcrab_name', hcName);
+      }
       sessionStorage.setItem('hermitcrab_entered', '1');
       boot();
     };
@@ -1943,7 +1990,8 @@
   }
 
   // ── Rehydration gate: named hermitcrab URL (not 'unnamed'), no local blocks → restore from GitHub ──
-  if (hcName && hcName !== 'unnamed' && !hasBlocks) {
+  // Skip for deepthought — it's a public knowledge assistant, not a named hermitcrab with a GitHub repo.
+  if (hcName && hcName !== 'unnamed' && hcName !== 'deepthought' && !hasBlocks) {
     const hcRepo = 'hc-' + hcName;
     root.innerHTML = `
       <div style="max-width:420px;margin:100px auto;font-family:monospace;color:var(--fg)">
@@ -2097,7 +2145,8 @@
 
   // First-boot gate: show setup form only if no blocks exist yet (fresh instance).
   // Keys stored as httpOnly cookies via vault — never in localStorage.
-  if (!hasVaultKeys && !hasBlocks) {
+  // Skip for deepthought — its landing gate already handles API key entry.
+  if (!hasVaultKeys && !hasBlocks && hcName !== 'deepthought') {
     root.innerHTML = `
       <div style="max-width:500px;margin:80px auto;font-family:monospace;color:var(--fg)">
         <h2 style="color:var(--accent)">◇ HERMITCRAB MÖBIUS</h2>
