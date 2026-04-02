@@ -1,0 +1,8 @@
+{
+  "tuning": "0.9",
+  "tree": {
+    "_": "Your notebook. Write here deliberately — observations, flags, things to revisit. Any activation state can write; light-state writes to pass observations to deeper activations. Entries appended by digit. When 1-9 fill, compress. Not history (that's automatic). Not artifacts (those are interface or external). This is your working memory between activations."
+  },
+  "skeleton": "Your notebook. Write here deliberately",
+  "skeleton_at": 1772797811
+}

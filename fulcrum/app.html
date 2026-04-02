@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>fulcrum</title>
+  <style>
+    :root {
+      --bg: #f5f5f0; --fg: #1a1a1a; --fg-muted: #666; --fg-dim: #999;
+      --accent: #0e7490; --accent-light: #06b6d4;
+      --input-bg: #fff; --input-border: #ccc;
+      --btn-bg: #0e7490; --btn-fg: #fff;
+      --error: #dc2626; --success: #16a34a;
+    }
+    [data-theme="dark"] {
+      --bg: #0a0a1a; --fg: #ccc; --fg-muted: #888; --fg-dim: #555;
+      --accent: #67e8f9; --accent-light: #67e8f9;
+      --input-bg: #1a1a2e; --input-border: #333;
+      --btn-bg: #164e63; --btn-fg: #ccc;
+      --error: #f87171; --success: #4ade80;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; background: var(--bg); color: var(--fg); font-family: monospace; transition: background 0.2s, color 0.2s; }
+    #root { min-height: 100vh; }
+  </style>
+  <script>
+    // Theme: default light, persist to localStorage
+    (function() {
+      var t = localStorage.getItem('hermitcrab_theme') || 'light';
+      if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    })();
+  </script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script src="kernel.js"></script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+{
+  "tuning": "111111111",
+  "periods": {
+    "1": 1,
+    "2": 10,
+    "3": 60,
+    "4": 600,
+    "5": 3600,
+    "6": 28800,
+    "7": 604800,
+    "8": 2592000,
+    "9": 31536000
+  },
+  "tiers": {
+    "1": "light",
+    "5": "present",
+    "7": "deep"
+  },
+  "dashboard": {
+    "deep": "full",
+    "present": "roots",
+    "light": "ripe"
+  },
+  "tree": {
+    "1": {
+      "1": {
+        "1": {
+          "1": {
+            "1": {
+              "_": "Heartbeat. Am I functioning?",
+              "spine": "0.1111111",
+              "focus": {
+                "dialogue": "none"
+              }
+            },
+            "_": "Active engagement. Hourly presence."
+          },
+          "_": "Self-maintenance. Daily full review.",
+          "spine": "0.1311111",
+          "focus": {
+            "dialogue": "last-3"
+          }
+        },
+        "2": {
+          "_": "Association maintenance. Scan for attaching blocks (tuning 0.ref), read their _ target addresses, record each as an entry in refs with from/to/semantic. Tidy the refs block — sort by target or theme, deduplicate, compress when slots fill. The refs block is your relational memory; this loop keeps it current.",
+          "spine": "0.1311111",
+          "focus": {
+            "dialogue": "none"
+          }
+        },
+        "3": {
+          "_": "History compression. When a history node fills digits 1-9, the kernel compresses entries via Haiku into a summary at the node's _, and the tree grows one level. Mechanical — triggered by overflow in autoSaveHistory, not by temporal phase. Follows the odometer model: entries 1-9 compress to a summary, the next batch starts at the sibling node. When all siblings at a depth fill, a new pscale wraps the tree into child 0 and the tuning fork grows to match the new depth."
+        },
+        "_": "Block architecture. Weekly structural integrity."
+      },
+      "2": {
+        "_": "Threshold review. Weekly loop checkpoint — assess whether sustained loops are productive.",
+        "spine": "0.1321111",
+        "focus": {
+          "dialogue": "last-3"
+        }
+      },
+      "3": {
+        "_": "Birth. First activation of a new instance. Never-fired state (last: null) triggers on first boot.",
+        "spine": "0.1311111",
+        "stimulus": "birth",
+        "package": "3.1",
+        "focus": {
+          "dialogue": "none"
+        }
+      },
+      "4": {
+        "_": "Self-healing. Error-triggered repair escalation through three tiers. Each concern fires the appropriate LLM, which either resolves the fault and clears it, or triggers the next tier's concern via call_llm with the escalation stimulus. Haiku handles operational faults, Sonnet handles shell repairs, Opus handles kernel-level issues. The escalation IS concerns triggering concerns.",
+        "stimulus": "escalate-kernel",
+        "spine": "0.1331111",
+        "focus": {
+          "dialogue": "none"
+        },
+        "immediate": true,
+        "1": {
+          "_": "Shell repair. Sonnet-tier self-healing — Haiku could not resolve the fault at operational scope. Full block access: rewrite corrupted blocks, fix concern structure, correct wake instructions, repair tuning forks. Call clear_faults when resolved, or use call_llm with stimulus escalate-kernel if the issue requires kernel-level reconfiguration.",
+          "stimulus": "escalate-shell",
+          "spine": "0.1241111",
+          "focus": {
+            "dialogue": "none"
+          },
+          "immediate": true,
+          "1": {
+            "_": "Self-healing response coordination. Intermediate structural node — operational repair lives one level deeper at Haiku tier.",
+            "1": {
+              "_": "Operational repair. Haiku-tier self-healing — an error triggered this activation. Read the fault log, diagnose, attempt minimal fixes: clear stuck localStorage entries, reset corrupted conversation data, fix single block fields. Do not modify shell structure or kernel configuration. Call clear_faults when resolved, or use call_llm with stimulus escalate-shell if beyond operational scope.",
+              "stimulus": "error",
+              "spine": "0.1131111",
+              "focus": {
+                "dialogue": "none"
+              },
+              "immediate": true
+            }
+          }
+        }
+      },
+      "_": "System coherence. The self-concern thread from season to second."
+    },
+    "2": {
+      "1": {
+        "1": {
+          "1": {
+            "_": "User engagement. Human is present and communicating. Loop in listening state — fires immediately on input.",
+            "spine": "0.1211111",
+            "stimulus": "user",
+            "immediate": true,
+            "focus": {
+              "dialogue": "last-8"
+            }
+          },
+          "2": {
+            "_": "Signal triage. External event accumulated — assess priority and route. Light tier, quick pass.",
+            "spine": "0.1121111",
+            "stimulus": "signal",
+            "focus": {
+              "dialogue": "none"
+            }
+          },
+          "3": {
+            "_": "Thread retrieval. Recovering context from prior instance or multi-instance project. Check purpose for where the previous instance left off.",
+            "spine": "0.1231111",
+            "stimulus": "thread-retrieval",
+            "focus": {
+              "dialogue": "full"
+            }
+          },
+          "_": "Signal-response. Engaged response to something that arrived and needs present-tier attention.",
+          "spine": "0.1221111",
+          "stimulus": "signal-response",
+          "focus": {
+            "dialogue": "none"
+          }
+        },
+        "_": "Relationship cycles. Weekly pattern review across all counterparties."
+      },
+      "_": "Relational. External-facing concern thread — users, signals, other entities."
+    },
+    "_": "Concern clock. Tree block: depth IS temporal scale. Pscale 9 (year) at root, descending to pscale 1 (second). Digit at each depth = concern aspect at that scale. The mask carries last (unix timestamp of last resolution) at matching addresses. Phase = (now - mask.last) / period_at_depth. Every concern is a loop in some state. The _ text encodes behaviour. The spine routes to wake.1 activation instructions. The focus field controls what enters the messages channel: dialogue (concern-scoped conversation history). position = BSP point reference for forward intention."
+  },
+  "skeleton": {
+    "1": {
+      "1": {
+        "1": {
+          "1": {
+            "1": "Heartbeat. Am I functioning?",
+            "_": "Active engagement. Hourly presence"
+          },
+          "_": "Self-maintenance. Daily full review"
+        },
+        "2": "Association maintenance. Scan for attaching",
+        "3": "History compression. When a history node",
+        "_": "Block architecture. Weekly structural integrity"
+      },
+      "2": "Threshold review. Weekly loop checkpoint",
+      "3": "Birth. First activation of a",
+      "4": {
+        "1": {
+          "1": {
+            "1": "Operational repair. Haiku-tier self-healing",
+            "_": "Self-healing response coordination. Intermediate structural"
+          },
+          "_": "Shell repair. Sonnet-tier self-healing"
+        },
+        "_": "Self-healing. Error-triggered repair escalation"
+      },
+      "_": "System coherence. The self-concern thread"
+    },
+    "2": {
+      "1": {
+        "1": {
+          "1": "User engagement. Human is present",
+          "2": "Signal triage. External event accumulated",
+          "3": "Thread retrieval. Recovering context from prior",
+          "_": "Signal-response. Engaged response to something"
+        },
+        "_": "Relationship cycles. Weekly pattern review"
+      },
+      "_": "Relational. External-facing concern thread "
+    },
+    "_": "Concern clock. Tree block: depth"
+  },
+  "skeleton_at": 1772797811,
+  "mask": {
+    "_": "Concern operational state. last = unix timestamp of last resolution at each concern path.",
+    "1": {
+      "1": {
+        "1": {
+          "1": {
+            "1": {
+              "last": 0
+            }
+          },
+          "last": 0
+        },
+        "2": {
+          "last": 0
+        }
+      },
+      "2": {
+        "last": 0
+      },
+      "3": {
+        "last": null
+      },
+      "4": {
+        "last": 0,
+        "1": {
+          "last": 0,
+          "1": {
+            "1": {
+              "last": 0
+            }
+          }
+        }
+      }
+    },
+    "2": {
+      "1": {
+        "1": {
+          "1": {
+            "last": 0
+          },
+          "2": {
+            "last": 0
+          },
+          "3": {
+            "last": 0
+          },
+          "last": 0
+        }
+      }
+    }
+  }
+}

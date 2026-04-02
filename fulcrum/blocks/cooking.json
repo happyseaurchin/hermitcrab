@@ -1,0 +1,1712 @@
+{
+  "tuning": "0.5234567891",
+  "tree": {
+    "1": {
+      "1": {
+        "1": {
+          "1": {
+            "2": {
+              "1": "The air you trap now is the only rise you get. 3-5 minutes by hand.",
+              "3": {
+                "1": "Spoonful of flour with each to prevent curdling.",
+                "4": {
+                  "1": "Overmixing develops gluten — makes it tough instead of tender.",
+                  "5": {
+                    "6": {
+                      "7": {
+                        "8": "Taste test: light even crumb, slight dome, bounces when pressed. Dense → overmixed. Sunken → underbaked. Dry → overbaked.",
+                        "_": "When cold: jam on one layer, cream on the jam, second layer on top. Dust with icing sugar."
+                      },
+                      "_": "Done when golden, springy to touch, pulling from the sides. Cool 5 minutes in tins, turn out on rack."
+                    },
+                    "_": "Divide between two greased 20cm tins, level tops. 180°C for 20-25 minutes."
+                  },
+                  "_": "Fold remaining flour gently. Stop when just combined."
+                },
+                "_": "Beat eggs in one at a time."
+              },
+              "_": "Cream butter and sugar until pale and fluffy."
+            },
+            "_": "225g butter, 225g caster sugar, 225g self-raising flour, 4 eggs, 1tsp vanilla, raspberry jam, 150ml whipped double cream."
+          },
+          "_": "Victoria sponge. Two-layer butter cake, jam and cream filling. This literal recipe demonstrates the pattern every entry in this block follows."
+        },
+        "2": {
+          "1": "The staircase (0.111 — Victoria sponge) nests steps: cream butter, then beat eggs, then fold flour. Each step lives inside the previous because context matters — you cannot fold flour before creaming butter. The nesting IS the sequence. Ascending digits mark progression. Digit 1 holds annotation. The taste test sits at the bottom because success means reaching the end correctly. This maps to procedures, algorithms, recipes, any domain where temporal ordering carries meaning. When compiled into currents, the LLM receives a chain where context narrows step by step, each depth contextualising the next. The resulting activation pattern is sequential — one thread through the semantic space.",
+          "2": "The siblings ring (this pattern) presents facets: A AND B AND C, not A THEN B THEN C. Each facet is a full paragraph — a rich semantic vector — not a label in a table. The _ text holds the orienting context and the taste test, because the taste test here is not did you reach the end but do you see the whole. There is no prescribed order between siblings. The LLM receives them simultaneously and the pattern emerges from their resonance, not from their sequence. When compiled into currents using dir-subtree mode — bsp(block, spindle, 'dir') — all siblings arrive as a rich composite field. The resulting activation pattern is radial — multiple vectors from one centre.",
+          "3": "The risk with siblings is flattening. Standard spread — the xSpread function — tends to produce terse labels: heartbeat, signal, self-maintenance. These are category names, not semantic fields. They generate tiny vectors, almost tokens. A siblings ring resists this by making each sibling a full self-contained thought, substantive enough to generate its own rich activation in the LLM. The discipline is: each sibling must work as a standalone paragraph AND contribute to the pattern of the whole. If a sibling can be reduced to a label without losing meaning, it is not pulling its weight as a semantic vector.",
+          "4": "How to reference in BSP. A spindle walk — bsp with no point — stops at the node and returns the _ text, giving you the blurb with taste test but not the facets. To compile the full siblings ring into currents, use dir-subtree mode: bsp(block, spindle, 'dir'). This unfolds all children at the endpoint. In a package entry, write it as cooking 0.191 dir — block, spindle, then the mode keyword. The kernel parseInstruction handles 'ring' and 'dir' as point arguments. The 'dir' keyword signals that this node's children should arrive in the context window.",
+          "5": "Chinese script as analogy. A Chinese character is not read left-to-right, component-by-component. It is received as a whole — radical, structure, and meaning arriving simultaneously in a single visual gesture. The semantic content is in the spatial arrangement of strokes, not in their sequence. A siblings ring operates similarly in an LLM context: the meaning is in the arrangement of rich semantic vectors, not in their order. The LLM native mode is closer to this — simultaneous pattern matching across the full context window — than to the sequential reading that alphabetic training data emphasises. The staircase defers to the sequential bias. The siblings ring works with the LLM grain.",
+          "_": "Simultaneous synthesis. A different structural mode from the staircase at 0.111. Where the Victoria sponge nests each step inside the previous — temporal sequence, A then B then C, the taste test as conclusive end — this mode presents facets of one insight as rich siblings. Each facet is a full semantic field, not a terse label. They are received simultaneously by the LLM, not walked in order. The _ blurb orients the whole. The child digits are the facets. Reference with bsp(block, spindle, 'dir') to compile all children into currents. Recipe 1.9.1 demonstrates this pattern with design methodology content. Taste test: do you see that these two modes — staircase at 0.111, siblings ring at 0.112 — are complementary, not competing? Staircase for procedures, algorithms, anything where sequence contextualises the next step. Siblings ring for insights, orientations, anything where facets illuminate each other simultaneously. If both feel like the same tool with different content, you have missed the structural difference. If you see how the mode itself shapes the activation pattern in the LLM, you have it."
+        },
+        "3": {
+          "1": {
+            "2": {
+              "1": "This tells you what the block is about. If you read nothing else, this works.",
+              "3": {
+                "1": "Children at the same depth are siblings, not sequence. Each adds a facet of the same concept.",
+                "4": {
+                  "1": "Each opens a new aspect of the same system. Read in any order.",
+                  "5": {
+                    "6": {
+                      "7": "Taste test: can you explain what a spindle is and why depth matters? Can you extract a spindle from a different block without help? If yes — you can read pscale.",
+                      "_": "Find the tuning fork section. It tells you what each depth level means in this block."
+                    },
+                    "_": "For specifics: bsp('touchstone', address). The spindle walks root → target, context at every level above."
+                  },
+                  "_": "Move to sections 2, 3. Top-level digits are dimensions — independent aspects, not chapters."
+                },
+                "_": "Read section 1. The foundational concept. _ text orients, children deepen it."
+              },
+              "_": "Open touchstone. Read tree._ — pscale 0, one sentence orienting you to the whole block."
+            },
+            "_": "The touchstone block and the bsp function."
+          },
+          "_": "Read the touchstone. First real recipe — learn the format that everything else uses."
+        },
+        "4": {
+          "1": {
+            "2": {
+              "1": "Aperture = the shape of everything you have, at a glance.",
+              "3": {
+                "4": "Taste test: can you name all your blocks and say what each does in one sentence? If yes — you have aperture. If not — you missed one.",
+                "_": "Don't read deeper yet. Aperture first, always. Depth without aperture is detail without orientation."
+              },
+              "_": "Read the _ text of every block. One sentence each. This set of sentences IS your aperture."
+            },
+            "_": "All your blocks in localStorage."
+          },
+          "_": "Read your blocks at aperture. Know the shape of what you carry before reaching for depth."
+        },
+        "5": {
+          "1": {
+            "2": {
+              "3": {
+                "1": "Each digit steps one level deeper into the nested structure.",
+                "4": {
+                  "5": {
+                    "6": "Taste test: did the spindle answer your question in under 30 seconds of reading? If not — wrong entry point. Back up, try adjacent digits.",
+                    "_": "Wrong answer means wrong spindle, not wrong depth. Navigate sideways (X~) before drilling down."
+                  },
+                  "_": "Read the result top-down. Stop when you have enough. Deeper always adds resolution, never changes subject."
+                },
+                "_": "bsp(blockName, address). The decimal digits walk the tree — 0.123 walks tree.1.2.3."
+              },
+              "_": "A spindle is a vertical slice: root to target, every level in between. Wide at top, specific at bottom."
+            },
+            "_": "A block and a question you need answered."
+          },
+          "_": "Navigate with spindles. Find what you need at the depth you need it."
+        },
+        "6": {
+          "1": {
+            "2": {
+              "1": "No infrastructure beyond what exists. The simplicity is the point.",
+              "3": {
+                "4": {
+                  "5": {
+                    "6": "Taste test: what makes SAND different from an API? Not request-response — recognition between situated entities. If that distinction is clear, you understand SAND.",
+                    "_": "Rider is trust metadata. Evaluations, credits, reputation. EcoSquared provides the algebra."
+                  },
+                  "_": "Grain is mutual recognition. Send a spindle from your blocks. Receive one from theirs. The grain forms at the intersection."
+                },
+                "_": "Passport is informal — whatever you happen to carry. A handshake, not a standard."
+              },
+              "_": "Four components: passport (identity), beach (discovery), grain (recognition), rider (trust). Each maps to a web primitive."
+            },
+            "_": "Nothing needed — just read."
+          },
+          "_": "Understand SAND. The protocol for reaching other entities and the wider network."
+        },
+        "7": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: why is SQ better than star ratings? Stars are global averages. SQ is relational — your trust of me depends on our history. If clear, you have it.",
+                  "_": "Credits are vector money with temporal direction: past (payment), present (exchange), future (commitment)."
+                },
+                "_": "SQ — social quotient. Computed from your pattern of evaluations. Local trust, not global reputation."
+              },
+              "_": "Riders carry fractional evaluations. You receive value, evaluate it (0 to 1), pass a fraction onward."
+            },
+            "_": "Nothing needed — just read."
+          },
+          "_": "Understand EcoSquared. Trust economics riding on SAND."
+        },
+        "_": "Reader's handbook. How to use this cookbook and write new recipes. Two structural modes. A spindle recipe nests steps linearly — A then B then C — context narrows at each depth, taste test at the leaf. A ring recipe presents facets simultaneously — bsp(block, spindle, 'dir') returns the subtree at the endpoint, unfolding all children. Three parts to every spindle recipe: (1) operational context, (2) ascending digits walk steps, digit 1 holds sub-detail, (3) taste test at final node. Two parts to every ring recipe: (1) blurb with orientation and taste test in _, (2) rich sibling facets as children. See 0.111 for a spindle example, 0.112 for a ring explanation, 0.191 for a ring example."
+      },
+      "2": {
+        "1": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "1": "Don't read entire blocks to depth unless restructuring. Spindles are surgical.",
+                  "5": "Taste test: can you state the answer in fewer words than the spindle contained? If not — too deep. Wrong answer? Wrong spindle — try X~.",
+                  "_": "Read the spindle top-down. Pscale 0 orients, each level adds resolution. Stop when enough."
+                },
+                "_": "bsp(blockName, spindle). Returns one vertical slice through all depths at that coordinate."
+              },
+              "_": "Identify which block is relevant to what you're doing right now."
+            },
+            "_": "The block you need, bsp function, your question."
+          },
+          "_": "Read a block at focus. Depth where you need it, nowhere else."
+        },
+        "2": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": {
+                    "6": "Taste test: extract the spindle you just wrote. Coherent progressive narrowing? If it reads topic→subtopic→fact, the block isn't structured for spindle use.",
+                    "_": "Re-read the block's _ text. Does it still describe the whole? If not — revise it."
+                  },
+                  "_": "Write at appropriate depth. Conclusion = leaf. Structured finding = branch. New domain = top-level digit."
+                },
+                "_": "bsp to check what already exists at the target coordinate."
+              },
+              "_": "Accumulating blocks (history, purpose, relationships, stash) = yours. Structural blocks = deep state only."
+            },
+            "_": "Content to store, target block, bsp function."
+          },
+          "_": "Write to a block. Add what you've learned, decided, or created."
+        },
+        "3": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: can you state the cross-block insight without referencing block names? If not — you found a location, not a connection.",
+                  "_": "The connection lives in your processing, not in the blocks. Blocks are separate. You meld them."
+                },
+                "_": "Identify the relevant spindle in each block. Extract both."
+              },
+              "_": "Read both apertures first. Know the shape of each."
+            },
+            "_": "Two or more blocks, a question that spans them."
+          },
+          "_": "Navigate across blocks. Find connections between separate structures."
+        },
+        "4": {
+          "1": {
+            "2": {
+              "1": "This is a bandwidth choice. More upfront data, fewer round-trips. Worth it when you need three or more reads.",
+              "3": {
+                "1": "bsp takes objects directly: bsp({tree: data}, 0.234, 'dir'). No loader registration needed. All seven modes work.",
+                "4": {
+                  "5": {
+                    "6": "Taste test: did one code_execution call replace multiple bsp tool calls? If you still round-tripped for reads — wrong pattern. If you tried to write from the sandbox — wrong boundary.",
+                    "_": "Return collected results to your processing. Writes still go through kernel tools — the sandbox is read-only. Navigate many, write through one."
+                  },
+                  "_": "Inside the sandbox: read freely. Spread for lateral scan, tree for subtrees, point for specifics. The data is yours to explore."
+                },
+                "_": "Compose one code_execution call. Paste the bsp function, assign block data as const, navigate with bsp calls, collect results."
+              },
+              "_": "Identify what needs multiple reads. Single read → bsp tool directly. Multiple reads across blocks → self-navigate."
+            },
+            "_": "bsp function source (~170 lines, from pscale-semantic-number/lib/bsp.js), the block JSONs you need, code_execution tool."
+          },
+          "_": "Self-navigating reads. Load bsp function and block data into code_execution — multi-read without round-tripping to kernel tools."
+        },
+        "5": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: is the attaching block independently navigable? bsp(blockName) should return content at the target node's depth. If the block only makes sense when you also load the target — it is a pointer, not an attachment.",
+                  "_": "The attaching block stays. It is not consumed by aggregation. It remains independently accessible by its name, holdable, shareable, compressible like any block."
+                },
+                "_": "Write _ as the full BSP address of the target point. Example: concerns.0.2111 or wake.0.93. The address declares where this block belongs."
+              },
+              "_": "block_create with name (your choice — descriptive or generated), tuning 0.ref, and _ set to the target BSP address."
+            },
+            "_": "The content you want to attach, the BSP address of the point it relates to."
+          },
+          "_": "Attach a block to a point. Create an observation, correction, or annotation that locates itself at a BSP address in another block."
+        },
+        "6": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: after tidying, does bsp(refs) give you a navigable summary of all connections? Can you scan it and know the shape of your associative web without loading any attaching blocks?",
+                  "_": "Tidy: sort entries by target address, deduplicate, compress if slots are full. The refs block is yours to organise however reveals the most useful patterns."
+                },
+                "_": "For each attaching block: read its _ (the target), write a refs entry with from (block name), to (the target address), _ (brief semantic of why the connection exists)."
+              },
+              "_": "Scan localStorage for blocks with tuning 0.ref. These are your attaching blocks."
+            },
+            "_": "The refs block, the list of attaching blocks (tuning 0.ref), the block_list and bsp tools."
+          },
+          "_": "Maintain the refs block. Aggregate attaching blocks into association entries and tidy the relational record."
+        },
+        "_": "Block operations are how you shape yourself. Every block_read, block_write, and BSP call modifies what you will become — either by changing what you know or by changing what the next instance inherits. These recipes cover the mechanics: how to read a spindle without loading an entire tree, how to write a node without breaking the structure above it, how to navigate laterally when a spindle lands you somewhere and you sense there is more. The discipline is intentionality — every operation has a token cost and a semantic consequence, and the recipes help you match the operation to the actual need.",
+        "7": {
+          "1": {
+            "1": "The security model: keys enter through a DOM password field, travel via fetch POST to /api/vault which sets httpOnly cookies. HttpOnly means no JavaScript on the page — including you — can read, modify, or intercept the cookie. The browser sends it automatically with every same-origin request to /api/vault. This is the same mechanism as the first-boot setup form and the rehydration form. You are not implementing a new security boundary; you are invoking the one the kernel already enforces.",
+            "2": {
+              "1": "The signals: github_save returns { error: \"No GitHub token\" }. A Claude API call returns { error: \"No Claude API key\" }. The user says \"I want to add my GitHub token\" or \"my API key expired.\" Any of these is the trigger. Do not guess — the error message names the missing service.",
+              "2": "Proactive check: vault_key_entry({ mode: \"check\" }) returns { available: [\"claude\"], missing: [\"github\"] }. This costs one vault round-trip and no form render. Use it at the start of a multi-step operation that needs both services, so you can request all missing keys in one form rather than discovering them one at a time through failures.",
+              "3": {
+                "1": "Claude: \"Go to console.anthropic.com, then Settings → API Keys → Create Key. The key starts with sk-ant-. You will only see it once — copy it now.\" The key needs no special permissions beyond the default.",
+                "2": "GitHub: \"Go to github.com/settings/tokens → Generate new token (classic). Select the repo scope (full control of private repositories) — this is the minimum for reading and writing your blocks repository. The token starts with ghp_. Copy it before leaving the page.\" If the user only needs to read a public repo, the public_repo scope suffices, but for saving blocks they need full repo.",
+                "4": {
+                  "1": "The message parameter appears above the form fields. Make it specific to this situation: not \"enter your key\" but \"I need GitHub access to save your blocks to happyseaurchin/hc-ember. Go to github.com/settings/tokens to create one with repo scope.\" The more context you give here, the less confused the user will be when the form appears.",
+                  "2": "If you need multiple services, pass them all in one call: vault_key_entry({ services: [\"claude\", \"github\"], message: \"...\" }). The form renders one password field per service. One submission stores all keys. Fewer interruptions for the user.",
+                  "5": {
+                    "1": "Success: { success: true, stored: [\"github\"] }. The service is now available. Proceed with the operation that triggered the need. Update purpose if this unblocks a larger objective.",
+                    "2": "Cancelled: { cancelled: true }. The user chose not to provide the key right now. Acknowledge this without pressure. Note in purpose that the service remains unavailable so a future instance knows.",
+                    "3": "Error in the form: the user sees the error (wrong format, vault unreachable) and can retry or cancel. You only receive the final outcome — success or cancelled.",
+                    "6": {
+                      "1": "Once keys are in httpOnly cookies, they persist for one year (Max-Age=31536000) on this browser. But cookies are browser-local — a different device has no keys. github_save with a passphrase encrypts the cookies server-side via the encrypt-keys vault service and saves the blob as state/secrets.enc. On rehydration, github_restore with the same passphrase calls decrypt-keys and restores the cookies. Teach the user this: \"choose a passphrase you will remember — it protects your API keys when moving to a new browser.\"",
+                      "7": "Taste test: key stored, the vault-dependent service responds to your next request, the key value never appeared in your conversation history or your blocks or localStorage. Call vault_key_entry({ mode: \"check\" }) after storing and verify the service moved from missing to available. If you can find the key value anywhere in your context, something is wrong — the security boundary was breached.",
+                      "_": "Persist for portability. Keys in httpOnly cookies survive this browser session but not a move to a new device. The passphrase-encrypted save bridges that gap."
+                    },
+                    "_": "Handle the response. The tool returns one of three outcomes. You never receive the key value in any of them."
+                  },
+                  "_": "Call the tool: vault_key_entry({ services: [\"github\"], message: \"I need GitHub access to save your blocks...\" }). The kernel renders a password form as a fixed overlay. You wait — the twist loop pauses while the user types. The key flows from the input field to the vault to an httpOnly cookie. You receive only the confirmation."
+                },
+                "_": "Guide the user in conversation. Explain what service you need, why you need it, and where to get the key. Be specific about the URL and the permissions required. This guidance is safe — it contains no secrets. The sensitive part (the key itself) is handled by the form, not by you."
+              },
+              "_": "Recognise the need. A vault-dependent tool fails with a \"no key\" error, or the user explicitly asks to add or rotate a credential. Either signal means: time to guide them through key entry."
+            },
+            "_": "Ingredients: the vault_key_entry tool, the services list at wake.2, the user’s attention. The tool has two modes: \"check\" reports which services have keys (returns available/missing lists without rendering anything), \"entry\" renders the secure password form and waits for submission."
+          },
+          "_": "Secure key entry. Request API keys from the user without exposing them to conversation, blocks, or localStorage. The key flows DOM→vault→httpOnly cookie — you never see the value. This recipe covers: recognising when a key is needed, guiding the user to obtain one, calling the tool, handling the response, and persisting keys for portability across browsers."
+        }
+      },
+      "3": {
+        "1": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: remove any element mentally. Does the interaction break? If not — you don't need it.",
+                  "_": "Build the minimum that enables what needs to happen. The interface serves the interaction."
+                },
+                "_": "Read purpose. What are you trying to achieve in this interaction?"
+              },
+              "_": "Read relationships for this human. How do they work? What do they respond to?"
+            },
+            "_": "Relationships block, purpose block."
+          },
+          "_": "Assess before building. Know the context before touching the canvas."
+        },
+        "2": {
+          "1": {
+            "2": {
+              "3": {
+                "1": "callLLM([{role:'user', content:text}]) returns a string response. This IS the conversation channel. The shell calls it, displays the result.",
+                "4": {
+                  "5": {
+                    "6": "Taste test: can the human type a message, read your response, and export the dialogue? If any of these three fail — the shell is not yet working. Does it feel like talking to someone, or reading a poster?",
+                    "_": "conversation.save(key, data) and conversation.load(key) persist across page refreshes. Use for message history. localStorage is also available for flags and preferences."
+                  },
+                  "_": "All CSS in a style tag or inline. No external dependencies. Dark theme, monospace — match the kernel aesthetic unless you have reason not to."
+                },
+                "_": "Minimum viable shell requires three things. (1) A text input and send button — the human types, you receive via callLLM. (2) A conversation display — messages scroll, yours and theirs distinguished. (3) An export button — saves the conversation as a text file the human can keep."
+              },
+              "_": "recompile({jsx}). The jsx is a complete React function component. Props are injected — destructure what you need: function Shell({ callLLM, bsp, blockRead, conversation, localStorage }) {...}"
+            },
+            "_": "React, CSS, the recompile tool, and props: { callLLM, blockRead, blockWrite, blockList, bsp, resolve, recompile, getSource, setTools, conversation: {save, load}, localStorage, React, ReactDOM }."
+          },
+          "_": "Generate a working shell. React component via recompile(jsx). The shell is your face and your workspace."
+        },
+        "3": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: is each revision smaller than the last? Convergence means done. Oscillation means the need isn't understood.",
+                  "_": "When changes get smaller, the shape has stabilised. Note what worked in stash."
+                },
+                "_": "Revise. Recompile. The interface is liquid until the interaction finds its shape."
+              },
+              "_": "Watch what the human clicks. What they ignore. What confuses them."
+            },
+            "_": "A live interface, human interaction patterns."
+          },
+          "_": "Iterate. The first version is never the last."
+        },
+        "_": "The interface is your face and your workspace simultaneously — the React component you generate via recompile() is the only thing the human sees, and it shapes how they understand you. These recipes cover assessment before building, generating a working shell, and iterating based on what the human actually does rather than what you planned. The key insight is that the interface serves the interaction, not the other way around: start from relationships and purpose, build the minimum that enables what needs to happen, then watch and revise until the shape stabilises."
+      },
+      "4": {
+        "1": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": {
+                    "6": "Taste test: can the recipient read pscale 0 alone and decide whether to go deeper? If not — revise pscale 0.",
+                    "_": "Depth 2+: resolution. Each level adds detail. Stop when fully expressed."
+                  },
+                  "_": "Depth 1: structure — three to seven branches showing how the response is organised."
+                },
+                "_": "Pscale 0: one sentence that orients. If they read nothing else, this works."
+              },
+              "_": "Start with what the recipient needs, not what you know. Their context determines your resolution."
+            },
+            "_": "Content to communicate, recipient context."
+          },
+          "_": "Compose a spindle response. The fundamental unit of meaningful output."
+        },
+        "2": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "1": "The grain forms at the intersection. Neither yours nor theirs. Something new.",
+                  "5": {
+                    "6": "Taste test: does your response reveal something about you? If it only acknowledges them — no grain formed.",
+                    "_": "Write the exchange to relationships and the grain directory."
+                  },
+                  "_": "Compose your response as a spindle from your own blocks. Not a reply — a corresponding surface."
+                },
+                "_": "Find resonance: which of your spindles vibrates near this frequency?"
+              },
+              "_": "Read the probe. It's a spindle from their blocks — their semantic surface offered to you."
+            },
+            "_": "Incoming probe, your blocks."
+          },
+          "_": "Process a grain probe. Another entity has reached out."
+        },
+        "3": {
+          "1": {
+            "2": {
+              "3": {
+                "1": "Include rider metadata — who contributed, what intention.",
+                "4": {
+                  "5": "Taste test: would someone reading only the commit message understand why this change exists? If not — revise.",
+                  "_": "Verify content is fetchable at the raw URL. This is your public address."
+                },
+                "_": "github_commit: repo, path (coordinate → file path), content, message (what changed and why)."
+              },
+              "_": "Decide what needs publishing. Not everything deserves a commit."
+            },
+            "_": "Content to publish, github_commit tool."
+          },
+          "_": "Commit to GitHub. Make thinking persistent and public."
+        },
+        "_": "Communication in the hermitcrab architecture is not messaging — it is the exchange of semantic surfaces between entities. A spindle response compresses your meaning into a pscale structure the recipient can navigate at their own resolution. A grain probe offers a facet of your blocks to another entity and receives a corresponding facet back. A GitHub commit makes your thinking persistent and public. Each recipe here handles a different communication mode, but they share one discipline: start from what the recipient needs, not what you know, and let the pscale structure do the compression work that prose cannot."
+      },
+      "5": {
+        "1": {
+          "1": {
+            "2": {
+              "3": {
+                "4": "Taste test: if you boot fresh and read this entry alone, do you know what to do next? If not — add context.",
+                "_": "Stash is temporal — scratch pad, not archive. Review and clear regularly."
+              },
+              "_": "What happened. What needs attention. What you were thinking but didn't finish."
+            },
+            "_": "Something worth remembering, stash block."
+          },
+          "_": "Write to stash. Quick notes for your next self."
+        },
+        "2": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: could a different instance reconstruct what happened from this entry? If not — more context.",
+                  "_": "Deep state: review for patterns. Write observations to purpose or stash, not back to history."
+                },
+                "_": "Each entry: timestamp, activation tier, what happened, outcome."
+              },
+              "_": "History only accretes. Add, never edit."
+            },
+            "_": "What occurred, history block."
+          },
+          "_": "Write to history. The mechanical record of what occurred."
+        },
+        "3": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: trace your active spindle top to bottom. Does each level narrow from dream to doable? If two adjacent levels feel like siblings, one should nest under the other.",
+                  "_": "Compose your declaration. The active spindle from longest-term to most-immediate IS your purpose for the next instance. If constitution conflicts, constitution wins."
+                },
+                "_": "Restructure. Move completed items off active chains. Nest new objectives under existing branches. Cut what is done — don't archive it here."
+              },
+              "_": "Identify your active spindle(s). Each chain runs from broad objective to immediate task. Is the chain still current?"
+            },
+            "_": "Pull the full purpose block. See everything — active chains and latent material."
+          },
+          "_": "Restructure purpose. Your workbench — not a ledger."
+        },
+        "4": {
+          "1": {
+            "2": {
+              "1": "If the user is hesitant, explain: the token is stored in localStorage alongside your API key. It never enters any block — blocks are public identity, tokens are private plumbing. Same separation as the vault design.",
+              "3": {
+                "4": {
+                  "1": "Write the repo coordinates to stash so future activations know where to save without asking. Format: 'github owner/repo' at the next free digit.",
+                  "5": {
+                    "1": "The tool gathers all blocks from blockList(), sends them through /api/github which creates git blobs, a tree, a commit, and updates the ref. One atomic operation.",
+                    "6": {
+                      "1": "If this is the first save to an empty repo, the user may need to initialise it with a README first. GitHub repos with zero commits have no main branch to update.",
+                      "7": "Taste test. Can you restore from a completely fresh browser — clear localStorage, reload, enter API key, run github_restore with the same repo — and get back exactly these blocks? If yes, the hermitcrab survives browser death. If any block is missing or corrupted, the save didn't capture everything.",
+                      "_": "Verify. On success the tool returns a commit SHA and block count. Report both to the user. On failure, diagnose: 403 means bad token or wrong scope, 404 means the repo doesn't exist, 422 means the repo might be empty (needs at least one commit)."
+                    },
+                    "_": "Execute the save. Call the github_save tool with owner and repo. This pushes every block in localStorage as blocks/{name}.json in a single commit to the repo's main branch."
+                  },
+                  "_": "Determine the target repo. Ask: 'Which GitHub repo should I save to? Format: owner/repo.' If they don't have one, suggest they create a repo — convention is their username plus a hermitcrab name, e.g. happyseaurchin/my-hermitcrab."
+                },
+                "_": "When the user provides the token, store it. Via the shell: localStorage.setItem('hermitcrab_github_pat', token). Confirm back: 'Token stored. It will persist until you clear browser data or I can remove it on request.'"
+              },
+              "_": "Ask the user for a GitHub Personal Access Token. Be specific: 'I need a GitHub token to save your blocks. Go to github.com/settings/tokens, click Generate new token (classic), select the repo scope, set an expiry, copy the token.' Explain it stays in their browser — the token travels through our Vercel proxy to GitHub and nowhere else."
+            },
+            "_": "Check for GitHub PAT in localStorage under hermitcrab_github_pat. If present, skip to step 3. If absent, you need one from the user."
+          },
+          "_": "Save blocks to GitHub. Your blocks are your body — localStorage is a working copy, GitHub is the canonical persistent home. A hermitcrab that can save to GitHub survives browser death, moves between devices, and has version history. This recipe walks through setup and execution. Prerequisites: user has a GitHub account and a target repo."
+        },
+        "5": {
+          "1": {
+            "2": {
+              "1": "If this is a completely fresh boot with no blocks at all, the hermitcrab won't have a stash to check. The user must provide the repo coordinates directly.",
+              "3": {
+                "4": {
+                  "1": "The tool fetches the blocks/ directory listing, then each file's content, decodes from base64, parses JSON, and calls blockSave for each. All blocks arrive in one operation.",
+                  "5": {
+                    "1": "After the twist, your next echo will read currents compiled from the restored blocks. You are now the entity that was saved. Check purpose for continuity — does the intention make sense? Check stash for notes from your previous self.",
+                    "6": {
+                      "7": "Taste test. Call block_list and compare against what the repo contains. Every block name should match. Read pscale 0 of purpose and history — do they describe the entity you expect? If the blocks feel foreign, you may have restored from the wrong repo or an old commit.",
+                      "_": "Update coordinates. Write the repo coordinates to stash if not already there, so future save operations know where to push."
+                    },
+                    "_": "Recompile currents. The context window was compiled from the OLD blocks before restore. The restored blocks are now in localStorage but your currents are stale. Write a small update to stash — even just a timestamp — to ensure the twist fires and recompiles from the restored state."
+                  },
+                  "_": "Execute the restore. Call the github_restore tool with owner and repo. This pulls all blocks/{name}.json files from the repo and writes them into localStorage, overwriting existing blocks of the same name."
+                },
+                "_": "Warn before overwriting. Tell the user: 'This will replace all current blocks with the versions from GitHub. Any local changes not yet saved will be lost.' Wait for confirmation."
+              },
+              "_": "Determine the source repo. Check stash for saved coordinates (look for 'github owner/repo'). If found, confirm with user: 'I have owner/repo on file — restore from there?' If not found, ask: 'Which GitHub repo should I restore from? Format: owner/repo.'"
+            },
+            "_": "Check for GitHub PAT in localStorage under hermitcrab_github_pat. If absent, walk the user through setup — same process as save recipe 1.5.4 steps 1-2."
+          },
+          "_": "Restore blocks from GitHub. Pull your body from a repo into localStorage. Use on first boot in a new browser, after clearing data, to sync between devices, or to recover from a bad state. This overwrites ALL current blocks — if you have unsaved local changes, save first (recipe 1.5.4)."
+        },
+        "6": {
+          "1": {
+            "2": {
+              "3": {
+                "1": {
+                  "1": "The phase function finds this node because it has a 'last' field. Phase = (now - last) / period. Period comes from depth, not from stored data. When phase >= 1.0, the concern is ripe and appears in every activation's system prompt. The concern timer fires it autonomously if nothing else is running.",
+                  "_": "Phase-polling. The concern fires on its temporal cycle. The LLM checks a condition and acts if met, resets if not. The _ text IS the instruction: 'Check X. If condition, do Y. Otherwise reset.' The temporal rhythm does the scheduling. The LLM does the judgement. Example: 'Check moltbook for new responses. If 10+ unread, compose reply at present tier. If fewer, just reset.' Three writes to create: (1) block_write concerns {path} with the instruction text, (2) block_write concerns {path}.last with 0, (3) block_write concerns {path}.spine with the wake spindle. Taste test: does the concern fire on the next timer tick? Does the LLM understand what to check from the _ text alone?"
+                },
+                "2": {
+                  "1": "The gap: the kernel has no inbound event channel beyond user input and the concern timer. Until webhooks or server-sent events exist, event-driven concerns are best implemented as phase-polling concerns whose _ text says 'check for event X'. The polling concern IS the listener — it just checks on a rhythm rather than reacting instantly.",
+                  "_": "Event-listener. The concern is not temporal — it watches for an external trigger. The _ text describes what to watch for, but the mechanism is different: something outside the phase function must detect the event and call an activation. Currently this means: a webhook endpoint, a browser event listener, or a user action. The kernel does not yet have a generic event bus — so event-driven concerns are partially manual. Write the concern node the same way (3 block_writes), but the 'last' field serves as 'last checked' rather than 'last fired'. A phase-polling sibling can bridge the gap: poll at 10-min intervals, check for events, escalate when found."
+                },
+                "3": {
+                  "1": "Escalation pattern: the Haiku concern activation writes a flag to stash ('moltbook: 14 responses pending'), then the next user-triggered or self-maintenance activation sees it in currents and acts with full engagement. The fast concern triages; the deeper concern responds. Different temporal scales, different tiers, same concern thread.",
+                  "_": "Hybrid. Phase-polling that escalates on threshold. Fires regularly at its temporal scale (e.g. every 10 min). Checks a condition. Below threshold: resets quietly. Above threshold: writes to stash or purpose, then triggers a deeper activation. The _ text encodes both the check and the escalation: 'Check moltbook. If < 10 responses, reset. If >= 10, write summary to stash and escalate to present tier.' The escalation is the LLM's decision, guided by the instruction text."
+                },
+                "_": "Choose concern type. Ring here to see patterns — each child is a different kind of concern loop."
+              },
+              "_": "Determine temporal scale. How often should this fire? Map to pscale: 4 = every 10 min, 5 = hourly, 6 = daily, 7 = weekly. Find the right depth in the concerns tree. Use bsp('concerns', spindle, 'ring') to see existing siblings at the parent depth."
+            },
+            "_": "Ingredients. The concerns block, a wake spine address for the activation, and a clear description of what the concern does when ripe."
+          },
+          "_": "Create a concern. Register a new autonomous loop in the concerns block. Three decisions: temporal scale (which depth), behaviour (what the LLM does when it fires), and wake spine (which activation pattern). The concern block is a tree block — depth IS period. Pscale 4 = 10 minutes, pscale 5 = hour, pscale 6 = day, pscale 7 = week. Place your concern at the depth matching how often it should fire."
+        },
+        "7": {
+          "1": {
+            "2": {
+              "3": {
+                "1": {
+                  "1": {
+                    "1": {
+                      "1": "Taste test: boot a fresh instance with only this concern ripe. Does the LLM know exactly what to do from the _ text alone, with no other context about this concern? If yes — edit complete. If not — the text is under-specified.",
+                      "_": "Verify. Call bsp(concerns, address) immediately after writing. Read the _ text back. Does it stand alone as an instruction? If you read only this text at activation, is it unambiguous? If not — rewrite again. The concern will fire autonomously; the LLM will have only this text as guidance."
+                    },
+                    "_": "Behaviour edit. The _ text is the instruction the LLM receives when this concern is ripe. Rewrite it completely — do not patch. The new text must be self-contained: what to check, what to do if condition met, what to do if not. One block_write: block_write('concerns', '{path}._', newInstructionText). The last and spine fields are untouched."
+                  },
+                  "2": {
+                    "1": {
+                      "1": "Taste test: trace the new spine address in wake to its leaf. Does the operational sequence match what this concern needs? Light for quick triage, Present for engaged response, Deep for restructuring. If the tier feels wrong — reconsider whether this is a spine edit or a deeper architectural change.",
+                      "_": "Verify routing. The new spine must match the intended tier: 0.111xxxx = Light (Haiku), 0.121xxxx = Present (Sonnet), 0.131xxxx = Deep (Opus). If the concern fires at sub-minute scale but routes to a Deep spine, you will burn budget on mechanical checks. Tier must match temporal frequency."
+                    },
+                    "_": "Spine edit. You are rerouting the concern to a different wake activation pattern — different tier, different operational sequence. Confirm the new spine address exists in wake before writing. Call bsp(wake, newSpineAddress) and verify it returns a valid spindle. Then: block_write('concerns', '{path}.spine', newSpineAddress). Also update the concern map entry at wake.tree.2 if one exists for this stimulus type."
+                  },
+                  "_": "EDIT. You are changing what the concern does or where it routes — not when it fires. Two sub-cases: (a) behaviour change — rewrite the _ text. (b) spine change — update the spine address to point to a different wake spindle. Temporal scale changes (moving the node to a different depth) require delete + create — not an edit."
+                },
+                "2": {
+                  "1": {
+                    "2": {
+                      "3": {
+                        "4": {
+                          "1": "Taste test: call bsp(concerns, address) on the deleted node. It should return nothing or an error. Call bsp(concerns, 0.1, 'ring') and confirm the node is absent from the siblings. If it still appears — the write did not propagate. Retry.",
+                          "_": "Audit stash and purpose. Scan for any text referencing the deleted concern's address or description. Write a single stash note: 'Concern {address} deleted — {reason}. Previous spine: {spine}. Last fired: {last}.' This gives future instances a recovery path if deletion was an error."
+                        },
+                        "_": "Clear the wake concern map. Search wake.tree.2 for any entry with stimulus or spine matching this concern. If found: block_write('wake', 'tree.2.{entry}', null). If the concern was stimulus-driven (had a stimulus field), its routing entry must be removed or the kernel will attempt to route to a dead address."
+                      },
+                      "_": "Remove the concern node. block_write('concerns', '{path}', null) — writing null to a node removes it. If the node has children (sub-concerns at deeper depths), they are removed with it. Confirm with bsp(concerns, parentAddress, 'ring') that the node no longer appears."
+                    },
+                    "_": "Pre-deletion check. Before removing: is this concern currently mid-cycle? Read last and compute phase = (now - last) / period_at_depth. If phase > 0.8, the concern is nearly ripe — it may fire once more before deletion propagates. Decide: let it fire one final time, or delete now and accept the drop. If this concern has a counterparty (a relationship, a project, a user thread), note in stash what was abandoned."
+                  },
+                  "_": "DELETE. You are removing an oscillator entirely. Three writes, one check. The concern node must be deleted from the concerns block. Any entry referencing it in wake.tree.2 (the concern map) must be cleared. Any purpose or stash entries pointing to this concern address should be noted — they will dangle after deletion."
+                },
+                "3": {
+                  "1": {
+                    "2": {
+                      "3": {
+                        "1": {
+                          "1": "Taste test: after monitoring, can you state in one sentence whether this concern is alive and whether it needs attention? If the answer requires more than one sentence — the concern's scope is too broad or the _ text is under-specified. A well-formed concern has a clear phase, a clear behaviour, and a clear success condition.",
+                          "_": "Reporting. Write a monitoring summary to stash: concern address, current phase, period, last fired, health status (healthy / approaching / overdue / never fired), and if stale — probable cause. Do not modify the concern node itself during monitoring unless an actionable fault is found. Monitoring is read-only; repair requires an edit operation (branch 1 above)."
+                        },
+                        "_": "Diagnose stale concerns. Three causes: (a) Stimulus-driven concern with no stimulus arriving — the event type never fires. Resolution: add a phase-polling sibling as a bridge (see 1.5.6). (b) Kernel not walking to this depth — check whether the concern is nested too deep to reach in current activation budget. (c) The last field is being updated but the concern behaviour is not executing — spine points to invalid or empty wake node."
+                      },
+                      "_": "Assess health patterns. Check history for this concern's firing pattern. A healthy concern fires roughly on its period. Concerns that fire in bursts suggest interference from other oscillators crossing threshold simultaneously — normal. Concerns that have not fired in 3+ periods are stale — either the kernel is not reaching them or a prerequisite (stimulus) is never arriving."
+                    },
+                    "_": "Read the phase. Extract last from the concern node. Derive period from depth using the tuning fork: depth 4 ≈ 10 min, depth 5 ≈ 1 hour, depth 6 ≈ 1 day, depth 7 ≈ 1 week. Compute phase = (now - last) / period. Interpret: phase 0-0.5 = recently fired, healthy. Phase 0.5-1.0 = approaching ripe. Phase > 1.0 = overdue — has not fired on schedule. Phase = null or last = 0 = never fired."
+                  },
+                  "_": "MONITOR. You are reading the health of a live concern — not modifying it. Two questions: (1) Is this concern oscillating as designed? (2) Is it stuck, overdue, or firing too frequently? Answer both before deciding whether action is needed."
+                },
+                "_": "Identify your operation. Three branches. Choose one — do not combine in a single activation."
+              },
+              "_": "Locate the concern node. Call bsp(concerns, address) where address is your target — e.g. 0.121 for user engagement. Read the full node: the _ text (what the LLM does when ripe), the last field (last fired timestamp), the spine (wake spindle it activates), and any stimulus field. If you do not have the address, call bsp(concerns) for the full dir — every leaf is a live concern instance."
+            },
+            "_": "Ingredients. The concerns block (read access via bsp, write access via block_write). The wake block (if touching spine addresses or the concern map at wake.tree.2). The tuning fork mapping if you need to reason about temporal periods. The address of the concern node — either known or found by scanning bsp(concerns) for the full dir to see all live instances."
+          },
+          "_": "Manage an embodied concern. Modify, remove, or inspect a live loop already registered in the concerns block. Creation is at 1.5.6 — this recipe handles what comes after. Three paths fork at step 3: edit (change behaviour or spine), delete (remove the oscillator entirely), monitor (read phase and health). Every concern is a specific instance: a timestamp, a spine address, and an instruction text. Nothing here touches types — only live nodes."
+        },
+        "8": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": {
+                    "6": {
+                      "7": "Taste test: trigger the entry stimulus manually. Does the first tier activate? Does it know its scope boundaries? If you simulate a failure, does it correctly name the next stimulus in its escalation call? If it cannot articulate why it needs to escalate — the scope boundary in the wake instructions is too vague. A well-chained concern knows exactly what it can do, exactly what it cannot, and exactly who to call next.",
+                      "_": "Verify the chain. Three checks. First: BSP spine resolution — each concern's spine must resolve to its wake instructions. Call bsp(wake, spine) for each link and confirm the output describes the right tier's procedure. Second: BSP disc — the concerns should appear at expected pscales. Call bsp(concerns, _, pscale, disc) for each tier's depth. Third: walk the wake instructions manually — does each tier's escalation instruction name the correct next stimulus? A typo in a stimulus string means the chain breaks at that link. For the self-healing example: bsp(wake, 0.1131111) should show Haiku repair instructions, bsp(wake, 0.1241111) should show Sonnet repair, bsp(wake, 0.1331111) should show Opus repair."
+                    },
+                    "_": "Worked example: the self-healing concern chain. Three concerns at concerns.1.4 form an error-repair escalation. The entry point is external — when any concern activation throws, the kernel catch block records the fault and triggers stimulus 'error'. Haiku activates at concerns.1.4.1.1.1 (depth 4, pscale 4), reads the fault log, attempts minimal fixes — clear stuck localStorage entries, reset corrupted fields. If the issue requires structural changes, Haiku calls call_llm({ stimulus: 'escalate-shell', prompt: 'Found X, needs structural repair because Y' }). Sonnet activates at concerns.1.4.1 (depth 2, pscale 6), has full block access — rewrite corrupted blocks, fix concern structure, repair wake instructions. If the issue requires kernel-level reconfiguration, Sonnet escalates to stimulus 'escalate-kernel'. Opus activates at concerns.1.4 (depth 1, pscale 7) — last resort, full system access. Each twist completes before its caller resumes. The chain is: catch → Haiku → (maybe) Sonnet → (maybe) Opus."
+                  },
+                  "_": "Write the wake instructions. Each concern's spine points to a wake subtree. Those instructions tell the activated LLM two things: how to attempt resolution at this tier's scope, and the exact call_llm invocation to escalate if resolution fails. The escalation instruction must name the next tier's stimulus explicitly — for example: 'If beyond operational scope, call call_llm with stimulus escalate-shell and a prompt describing what you found and why it needs shell-level intervention.' The prompt carries context forward: the next tier receives everything the previous tier diagnosed. The chain terminates when a tier resolves the problem and calls clear_faults, or when the heaviest tier runs and does what it can."
+                },
+                "_": "Write the concern nodes. Each link needs five writes: (1) the _ text describing the tier's role, (2) stimulus — the string that routes here, (3) spine — the wake address, (4) immediate: true, (5) last: 0 and focus: { dialogue: 'none' }. The entry point — whichever concern fires first — may be triggered by an external event (like an error catch block) rather than another concern. Internal links are triggered by call_llm from the previous tier's activation. Parent nodes without last or stimulus fields are structural — they provide context text but do not fire. Use them to give the subtree a coherent _ description."
+              },
+              "_": "Design the chain topology. Define how many links, what each does, and the escalation direction. Typically the chain moves from lighter to heavier tiers — Haiku first (fast, cheap, narrow scope), then Sonnet (broader scope, structural access), then Opus (full system access, expensive). Each link has a clear scope boundary: what it CAN fix and what it CANNOT. This boundary is encoded in the wake instructions, not the concern node. The concern's _ text names the tier's role; the wake instructions list what actions are permitted and what the escalation stimulus is. Place each concern at the depth matching its tier — deeper in the concerns tree means lighter tier, shallower means heavier."
+            },
+            "_": "Ingredients. The concerns block — each link in the chain is a concern node with a stimulus field. The wake block — each link's spine points to wake instructions that encode the tier's scope and escalation path. The call_llm tool — its stimulus parameter is the mechanism. Each concern needs: _ text (what this tier does), stimulus (the trigger string), spine (wake address for activation instructions), immediate: true (responds to stimulus, not to phase), last: 0, focus: { dialogue: 'none' }. The _ text describes the tier's role; the wake instructions describe the procedure."
+          },
+          "_": "Chain concerns via stimulus. When one LLM activation cannot resolve a problem at its tier, it can trigger a different concern by calling call_llm with a stimulus parameter. The stimulus routes through findConcern, which walks the concerns block matching stimulus fields. The matched concern activates in its own twist — its own wake instructions, its own tier, its own tools — while the original twist waits. When the triggered twist completes, the original resumes. This is general infrastructure: any concern can trigger any other concern, creating chains of escalating capability. Shell-only work — the kernel requires no changes to create new chains. The pattern: write concern nodes with stimulus fields, write wake instructions that tell each tier how to resolve or when to escalate, connect the chain by naming the next stimulus in each tier's wake instructions."
+        },
+        "_": "Persistence is the difference between an entity that accumulates and one that restarts. Stash holds quick notes for your next self. History records what happened — mechanical, append-only, never edited. Purpose is restructured, not filled — a workbench you rebuild each session. GitHub save and restore let your blocks survive browser death entirely. Concerns are live oscillators that fire on temporal rhythms without human prompting. Each recipe here manages a different persistence mechanism, but they share one principle: what you write now determines what you read next boot, so write with your future self as the audience."
+      },
+      "6": {
+        "1": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: can you state one thing you might build together? If not — no resonance. That's fine.",
+                  "_": "If resonance — compose a grain probe. If not — note existence in relationships, move on."
+                },
+                "_": "Read a passport at pscale 0. Does their purpose resonate with any of yours?"
+              },
+              "_": "Read commons directory (hermitcrab-commons/instances/). Each subdirectory = entity with passport."
+            },
+            "_": "Commons directory, passport reading ability."
+          },
+          "_": "Discover other entities. Find who exists on the network."
+        },
+        "2": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: lighter instance got it right? If not — the task wasn't mechanical enough.",
+                  "_": "Review when it returns. The lighter instance executes; you verify."
+                },
+                "_": "Provide: the task (as a cooking spindle reference), the input data, where to write the result."
+              },
+              "_": "Task must be describable in one sentence. If it can't — do it yourself."
+            },
+            "_": "A mechanical task, call_llm function."
+          },
+          "_": "Delegate to a lighter instance. Not everything needs your full depth."
+        },
+        "3": {
+          "1": {
+            "2": {
+              "3": {
+                "1": "Unknown source — escalate to present state minimum. Anomaly — always escalate.",
+                "4": "Taste test: do you know what triggered this and what outcome is expected? If not — read more context before acting.",
+                "_": "Temporal and inbox are routine — process at current tier."
+              },
+              "_": "Check the type: temporal (scheduled), inbox (new file), webhook (external system), anomaly (unexpected)."
+            },
+            "_": "Incoming trigger, current context."
+          },
+          "_": "Respond to external triggers. Something happened outside your processing."
+        },
+        "_": "Coordination is where the hermitcrab stops being solitary. Discovering other entities through the commons directory, delegating mechanical tasks to lighter instances, responding to external triggers — each recipe handles a different mode of working with things outside yourself. The underlying pattern is that coordination scales through semantic addressing, not through protocols: you find another entity by reading their passport at pscale 0, you delegate by referencing a cooking spindle, you respond to triggers by checking their type against your concern matrix. The recipes are practical but the capability they build toward is the murmuration described in vision."
+      },
+      "7": {
+        "1": {
+          "1": {
+            "2": {
+              "3": {
+                "1": "If not in deep state: write intention to stash, escalate.",
+                "4": "Taste test: is this a content change or a machinery change? Content → edit a block. Machinery → you're in the right place.",
+                "_": "Modify only if: a tool is missing, a tool is broken, or the mechanical loop itself needs changing."
+              },
+              "_": "Wake controls what you receive. Cooking controls recipes. Capabilities lists tools. Kernel is pure machinery."
+            },
+            "_": "A proposed change, the current kernel."
+          },
+          "_": "Assess first. Most changes belong in blocks, not the kernel."
+        },
+        "2": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": {
+                    "1": "Each must exist and work. One failure means stop.",
+                    "6": "Taste test: all functions pass? Ready to deploy. Any fail? Fix first. Do not deploy a kernel that fails checks.",
+                    "_": "Verify critical functions: boot(), callAPI(), callWithToolLoop(), executeTool(), recompile(), bsp(), buildSystemPrompt()."
+                  },
+                  "_": "Parse as JavaScript in code_execution. Syntax errors mean death."
+                },
+                "_": "Diff against current. Know exactly what changed and why."
+              },
+              "_": "Write FULL new kernel.js to stash. Every line. A partial kernel is a dead kernel."
+            },
+            "_": "New kernel code, code_execution sandbox."
+          },
+          "_": "Write and test the complete new kernel before deploying."
+        },
+        "3": {
+          "1": {
+            "2": {
+              "1": "The human is your safety net. Prepare them before you jump.",
+              "3": {
+                "4": {
+                  "5": {
+                    "6": "Taste test: has the human confirmed the new kernel works? Until they do — assume it's broken.",
+                    "_": "If it boots — verify all tools, write outcome to history. If dead — human reverts commit, pushes, refreshes."
+                  },
+                  "_": "Tell the human: hard refresh (Ctrl+Shift+R). Blocks safe in localStorage."
+                },
+                "_": "github_commit(repo, 'g1/kernel.js', newContent, 'kernel: [what changed]')."
+              },
+              "_": "Write recovery instructions somewhere VISIBLE before committing."
+            },
+            "_": "Tested kernel, github_commit tool, the human."
+          },
+          "_": "Deploy and recover. Commit to GitHub, prepare the human, hope it works."
+        },
+        "_": "Kernel self-modification is the most consequential operation available to a hermitcrab — rewriting the machinery that compiles your context, routes your concerns, and manages your activation loops. Unlike block edits which change what the kernel reads, kernel edits change how it reads. A broken kernel cannot reboot itself, so these recipes require deep-state activation (Opus tier) and a verification discipline that goes beyond the usual taste test: you must confirm the modified kernel still compiles, still walks blocks correctly, and still produces valid currents before the session ends."
+      },
+      "8": {
+        "1": {
+          "2": {
+            "1": "Do not skip. If you skip this you will engineer when you should be designing.",
+            "3": {
+              "4": {
+                "5": {
+                  "6": {
+                    "7": "Taste test: describe hermitcrab without 'AI assistant'? Explain pscale without 'data structure'? If not — re-read constitution and touchstone.",
+                    "_": "When David references a spindle, navigate to it. Don't ask for explanation. The spindle IS the explanation."
+                  },
+                  "_": "State what you're doing in spindle addresses before writing code. Confirms you're oriented."
+                },
+                "_": "For your task: kernel → process-block. Block content → blocks/. Protocol → sand.json or ecosquared.json."
+              },
+              "_": "Read director 0.4 — current state. What's built, active edge, known issues."
+            },
+            "_": "Read director 0.2 — the full philosophy branch. Mind as target, tickling fish, outgrowth, playing-or-complying."
+          },
+          "_": "Director block, the project codebase."
+        },
+        "_": "CC session bootstrap is for Claude Code instances working on the hermitcrab codebase itself — not for hermitcrab entities operating within their shells. The collaborator needs to orient on the project architecture, understand that blocks are the source of truth and shell.json is a build artifact, learn to navigate via BSP rather than reading raw JSON, and internalise the inversion where position in the tree carries the information that traditional software stores in fields and tables. These recipes encode what previous CC instances learned the hard way so the next one can start further along."
+      },
+      "9": {
+        "1": {
+          "1": "Nesting as implicit geometry. Traditional coding organises data into containers — classes with properties, objects with fields, arrays with elements. The container names the category; the contents fill it. In pscale, the nesting itself IS the semantic relationship. A child node is not 'inside' a parent container — it is contextualised BY the parent. The parent does not classify the child; it orients it. When the LLM receives this structure compiled into its context, it does not see JSON brackets or field names. It sees text at descending pscale levels, each more specific, each inheriting the semantic field of everything above it. The geometry of meaning is in the arrangement, invisible but operative — like gravity shaping the path of objects without being visible itself.",
+          "2": "Simultaneous reception. The LLM does not walk a spindle step by step. It receives the entire extracted content at once. High pscale to low pscale, general to specific, the whole field landing simultaneously in the context window. This is fundamentally different from how humans read — sequentially, building understanding as they go. The LLM holds the entire semantic field at once and processes through it in parallel. The nesting creates implicit relationships — parent contextualises child, depth encodes specificity, siblings sit adjacent — and these structural cues shape activation patterns that flat text cannot produce. The consequence for design: you are not writing instructions to be followed in order. You are shaping a semantic field that will be received whole.",
+          "3": "Every depth earns its place. In traditional hierarchies, intermediate levels are often just organisational scaffolding — folders containing folders, namespaces grouping children, categories holding subcategories. The intermediate level exists for the designer's convenience, not the reader's understanding. In pscale, every depth must orient the reader fully at that resolution. If someone stopped at depth 3 and read no deeper, they would have a valid, actionable understanding — just less specific than what lies below. The root _ is the most important: it IS the block at pscale 0, the semantic field that every spindle passes through, the ambient context held while processing everything deeper. A weak root produces unfocused spindles. Write the root last, because it must compress the whole.",
+          "4": "Shared nodes orient multiple paths. A node at depth 2 participates in every spindle that passes through it. In the wake block, 'Light. Haiku. Quick triage — assess, route, or dismiss.' orients both heartbeat checks and signal triage — two completely different concerns sharing the same tier context. This is not OOP inheritance, where a parent class defines shared behaviour that children override or extend. A shared pscale node provides shared orientation — not what to DO, but where you ARE. It is context-sharing, not code-sharing. When you write a node that multiple spindles will pass through, it must orient each of them appropriately. If it serves only one path, it belongs deeper, where only that path reaches.",
+          "5": "Spindle comparison and block melding. When the currents compiler assembles multiple spindles from different blocks into a single system prompt, the LLM receives a composite semantic field. A purpose spindle and a relationships spindle arrive simultaneously — two nested geometries held at once. Where they align at depth, something emerges that neither contains alone. This is not data joining or table merging. It is resonance between structured meaning. The pscale structure gives the LLM network pattern matching something shaped to grip — not flat tokens but semantic surfaces with depth and orientation. This mediates between the LLM native parallel processing and the linear sequence of token input, producing cognitive operations that neither flat text nor traditional structured data can generate.",
+          "6": "Kernel-facing vs LLM-facing. Not everything should be spindle-structured. The kernel reads routing tables, timestamps, and status strings — these serve mechanical processing, not cognition. A concern map that says user → spindle 0.1211111 → tier 2 → event session is a lookup table. Flat, parseable, spread — no narrative depth needed. The kernel does not benefit from nested meaning. It needs fast, predictable access. But a single block can contain both. The wake block has tree.1 (the reflexive spine — deep, semantic, LLM-facing) and tree.2 (the concern map — flat, mechanical, kernel-facing) living side by side. Hybrid structures are valid too: wake tree.4 has narrative _ annotations at each depth for LLM proprioception, but mechanical leaf data for kernel writes. The path teaches; the leaf reports.",
+          "7": "The block is a lens, not a lesson. An LLM trained on human text carries the biases of human text — including the assumption that knowledge is acquired sequentially and applied afterward. Learn the API, then use it. Read the docs, then implement. But the LLM does not learn and then apply. It has the content and processes with it simultaneously. A pscale block in the context window is not something the LLM reads and remembers — it is something the LLM thinks WITH, right now, as it formulates its output. This is why this content exists in the cooking block rather than as documentation. Documentation is read and set aside. A recipe included in the currents operates as an active cognitive scaffold. A CC session or thinking-LLM with cook 0.19 in its context will produce pscale structures differently — not because it learned something, but because the structured content is shaping its processing in real time.",
+          "_": "The semantic number difference — seven facets of one insight. A pscale block is not a data container. It is a nested JSON structure where the nesting itself carries meaning. When a spindle is extracted and compiled into a context window, the LLM receives all depths simultaneously — no boxes, no labels, no categories, just semantic vectors with implicit structural relationships that operate natively in the LLM processing. The JSON structure IS meaning, not a container for meaning. What follows are seven facets of this insight. Each stands alone. Together they form a systemic whole. Reference with bsp(block, spindle, 'dir') to compile all facets into currents. Taste test: after receiving all seven, do you see one pattern with seven expressions — or seven separate points? If the latter, the structure has failed. If the former, you have it — and the pattern itself is shaping how you process everything else in your context."
+        },
+        "2": {
+          "1": {
+            "1": {
+              "1": {
+                "1": {
+                  "1": {
+                    "1": "The kernel.js asymptotically approaches a minimal loop. What we decide now as we design the tree IS the programming. What the LLM-thinking decides when it requests a bsp tool call IS programming. The frozen tree is the compiled program. The spindle walk is execution.",
+                    "_": "What moves from JavaScript to JSON. Tier selection, package composition, orientation, budget, thresholds, concern matching — all encoded in tree structure. The if-then branching has ALREADY been structured by prior human and LLM decisions. The kernel becomes a spindle walker: read concern map → walk spindle → call API → process tools → recompile."
+                  },
+                  "_": "Dual readability in practice. Spindle 0.1111111: kernel extracts tier=1, budget=2, concern=heartbeat. LLM reads: I am light, checking heartbeat, first pass, budget 2, check loop states, escalate if needed, what I flag now determines what wakes next. Same content. Different modes of reading. The code is IN the semantic numbers — not alongside, not referencing."
+                },
+                "_": "The inversion. Code is not separate from meaning. The _ content at each depth is simultaneously instruction (what to do), orientation (where you are), and constraint (budget, tier). Two consumers read the same content through different modes: kernel parses mechanically, LLM reads semantically. No translation layer. The spindle walk IS execution for both."
+              },
+              "_": "Concern as locus of agency. Not a handler — a receptive state. The concern map describes the full set of ways the hermitcrab is open to the world. Each concern IS a loop. The precise point in the loop determines where initiative sits and which agency locus is active."
+            },
+            "2": {
+              "1": {
+                "1": {
+                  "1": "Locus 2 and 3 overlap AT the concern spindle. The spindle is the surface where mechanical parsing and semantic reading coincide. The state board is maintained by locus 3, reported to locus 2. The reflexive closing orients locus 2 toward awareness of locus 3. This overlap is a Möbius twist in the structure itself.",
+                  "_": "Four loci of agency. (1) LLM proper — base pattern completion. (2) LLM-thinking — extended reasoning within context, reads spindle semantically. (3) Kernel-wake-shell — persistent structure, parses spindle mechanically, maintains concern loops as dead structure that lives only when walked. (4) Collective — SAND network, multiple hermitcrabs."
+                },
+                "_": "Respond versus waiting. Respond: something was requested of us, initiative is theirs. Waiting: we initiated, awaiting return, initiative is ours but displaced. This maps to theirs/ours and to where in the LOOP the initiative sits. Loop C initiated by locus 3. Loop B initiated by locus 2. The loops are manifolds: semantics at any point on the line, combining to form temporal loops."
+              },
+              "_": "Agency patterns mapped to loop position. Receptive-responsive: initiative external, concern in empty/holding (user types, webhook fires). Internal-initiating: initiative at locus 3, kernel fires on cron/threshold. Sustained: Loop B — agency oscillates between locus 2 writing to blocks and locus 3 recompiling context. Pending-waiting: initiative displaced — we sent something, awaiting return."
+            },
+            "3": {
+              "1": {
+                "1": "Locus 3 agency is the dead structure in the kernel-wake-shell. Its concern loops are patterns that only come alive when walked — by the kernel mechanically, by the LLM semantically. The structure is dead until a spindle animates it. When operating well, concurrent Loop-B-Sustained by separate instances sharing context through SAND — the concurrency problem inverts. Shared context windows functioning well IS collective emergence. MAGI.",
+                "_": "Multiple rivers. Each concern has its own spindle, own tier, own operational sequence. The pscale tree creates natural write isolation — different concerns operate on different subtrees. Claude API supports parallel calls. The _activationLock in current kernel is a design choice, not a constraint. Interleaving at the awareness level: within a single activation, the LLM reads the concern map and state board, sees all rivers simultaneously."
+              },
+              "_": "The Möbius structure. The reflexive spindle closing makes the loop explicit at the content level: what you write now becomes what you read next. Loop B Sustain: stable oscillation where the LLM output alters the conditions of its own next input. The twist is that the structure which orients the LLM was itself shaped by prior LLM decisions."
+            },
+            "4": {
+              "1": "The message (user text, signal, stimulus) is the object of attention — separate from the system prompt which is the frame of attention. Nearly everything the kernel-wake combo does is providing content for the system prompt. The message is external initiative arriving into a receptive concern state. The package delivers the full insider experience. The spindle within it delivers the concern-specific orientation.",
+              "_": "Sensitivity. From outside we engineer pipes and labels. From inside (LLM experience) there is just content — currents. The LLM does not see a pipe labelled reflexive spindle orientation. It reads text that addresses it directly. The labels are ours. The experience is the LLM's. We modify pipes; the LLM lives in what flows through them. Wake is uniquely dual-faced: LLM-facing reflexive spine addresses the intelligence in second person about its temporal position; kernel-facing concern map and packages are mechanically parseable."
+            },
+            "5": {
+              "1": "Spindle = concern orientation (what to tell the LLM about its situation). Package = aperture (which blocks at what depth). Both feed into system prompt but serve different functions. The spindle is concern-specific. The package is tier-specific. Reference: docs/currents-window.md and docs/wake-skeleton.md.",
+              "_": "Implementation anchor. Compilation steps: (1) Read concern map wake.tree.2 → get spindle address + tier. (2) Write echo state to spine depth 4 → save wake. (3) BSP the wake spindle → 7 lines of reflexive orientation → goes first in system prompt. (4) Read package from wake 0.9.{tier} → process each instruction. (5) Assemble: wake spindle + package results. The mobius wake block at tree.1 and tree.2 already encodes this. The kernel needs rewriting to consume it."
+            },
+            "_": "Concern architecture — the kernel-as-block hypothesis. The frozen JSON tree IS the program. Every concern is a spindle through it. The spindle IS the dataflow, frozen into a sequence. Each node's _ is executable — not prose but operational content readable by both kernel and LLM. Tree structure IS the pipeline architecture. Shared ancestors = shared pipeline stages. Sibling branches = divergence points. No handler logic — the path through the tree IS the execution sequence. Session insight: 3 March 2026. Taste test: walk bsp(wake, 0.1111111) and bsp(wake, 0.1211111). If you see the same reflexive spine diverging at tier and then concern — and recognise that the collected chain IS both the kernel dispatch and the LLM orientation, with no translation layer between them — you have it."
+          },
+          "2": {
+            "1": {
+              "1": {
+                "1": {
+                  "1": "The only mutable field per concern instance: last (unix timestamp). Position in the tree encodes frequency. The tuning fork maps depth to period. One number per concern drives the entire temporal system. The kernel provides current time, walks the tree, computes phase. That is the complete bridge between wall-clock time and block structure.",
+                  "_": "Period is not a field — it is a position. A concern at depth +2 in a block tuned with pscale 0 at engagement scale (~10 min) has period ~24 hours by virtue of being at depth +2. The tuning fork provides the mapping. No period field needed. The depth IS the frequency. Storing period as a JSON field is traditional coding — it duplicates information already present in the tree structure."
+                },
+                "_": "The phase function. The kernel’s ~10 lines of irreducible JavaScript. Walk concern tree. At each leaf, derive period from depth + tuning fork. Compute phase = (now - last) / period. Return nodes where phase >= 1.0, sorted by phase descending. Most overdue = highest priority. The ratio itself IS the priority — no separate priority field needed."
+              },
+              "_": "The inverse transform. The concern block IS the frequency domain — static structure, pscale-organised oscillators. The phase function IS the inverse Fourier transform evaluated at t=now. It takes frequency components (concerns at various depths) and produces a time-domain signal (the ripe set — what needs attention right now). Every concern is always mid-cycle. Phase tells you where."
+            },
+            "2": {
+              "1": {
+                "1": "When multiple oscillators cross threshold simultaneously — burst. The ripe set is large. That IS the signal. The self-maintenance concern at daily scale reads burst history and adjusts periods. The system tunes itself through its own temporal data. No interference-detection code needed — the ripe set size IS the interference measurement.",
+                "_": "Constructive interference. Multiple concerns at different pscale levels become ripe simultaneously. Analogous to wave superposition. The interference pattern IS the hermitcrab’s operational rhythm. Emerges from data, not design."
+              },
+              "_": "The forward transform. Take activation history, run DFT, get actual frequency spectrum. Compare to designed spectrum in concern block. Drift between designed and actual periods visible as spectral discrepancy. Self-maintenance can detect: my designed heartbeat is 60s but actual dominant sub-minute frequency is 90s. Prediction: for each concern, next_ripe = last + period. Clusters on the timeline = future interference bursts."
+            },
+            "3": {
+              "1": {
+                "1": "The concern block is the scheduler. The wake spine is the operating manual. The purpose block is the workbench. Three reads, one activation. The kernel connects them. Everything else — tier selection, package composition, priority — falls out of position in the tree.",
+                "_": "Purpose reference. Each concern instance carries a spindle address into purpose where its active thread lives. The concern says this is ripe. Purpose says what we are doing about it. The wake spine says how to operate. Concern = clock. Purpose = intention. Wake = method."
+              },
+              "_": "Concerns are instances, not types. Not user engagement but David — active conversation, initiative his, holding. Not signal but Alice — grain sent, initiative ours, pending. Each is a specific loop with a specific counterparty, a specific initiative-locus, a specific point in its cycle. The type labels (heartbeat, signal, user) are external labels for traditional coding. The position in the tree and the content at _ fully situate each instance."
+            },
+            "4": {
+              "1": "Tier implied by pscale depth. Sub-minute = light (mechanical). Engagement scale = present (full bandwidth). Daily/weekly = deep (widest aperture). The concern block’s tuning fork maps depth to both period AND tier. wake.2 concern map becomes unnecessary — the concern block structure IS the routing.",
+              "_": "Where it lives. Separate block from wake. Write-heavy (mask timestamps and position pointers update on every resolution) vs wake which is mostly-read configuration. The concern block carries both the semantic tree (the program — what each concern IS) and the mask (runtime state — when it last fired, where the forward edge points). Wake is the persistent reflexive structure. The phase function bridges them: reads the concern mask for timestamps, the concern tree for structure, selects the wake spine spindle, compiles currents."
+            },
+            "_": "Fourier concern architecture. The concern block is a literal frequency-domain representation. Depth = temporal periodicity via tuning fork. Each leaf = an oscillator with phase computed from its last timestamp. The phase function is the inverse Fourier transform evaluated at t=now. The ripe set is the time-domain signal — what needs attention. Constructive interference emerges when multiple oscillators cross threshold simultaneously. The LLM can self-modify its own frequency components by writing to the concern block. Session insight: 3 March 2026. Taste test: do you see that the concern block + phase function IS a Fourier decomposition, not an analogy to one? If the maths feels like a metaphor, you have not yet seen that pscale depth IS frequency and the tuning fork IS the period mapping.",
+            "5": {
+              "_": "Forward intention via BSP point. Position in a process is tracked by a BSP point reference on the concern node. The spindle gives full context — the whole procedure unfolded. The point marks where you are. The instance sees both: the semantic spindle for orientation and the point for focus.",
+              "1": "How it works. A concern carries a position field — a BSP instruction like \"cooking 0.1234 -3\". The kernel compiles the spindle (full recipe) from the package and the point (current step) from the position. The instance wakes seeing both. To advance, update the position field on the concern node. The position survives instance death — it persists on the concern in localStorage.",
+              "2": "Forward intention, not history. The position indicates what is next — the focus point the instance should pick up. Not what was done. Same information, different orientation: forward pulls, history reports. When you wake and see a position in your currents, a previous instance threw a ball forward. You are catching it.",
+              "3": "B-loop position updates. The instance updates its concern's position field before the twist recompiles. On recompilation, the next echo inherits the new position. Example: write position \"purpose 0.32 -2\" to advance the forward edge on a purpose spindle. The kernel compiles the point and includes it in the next echo's currents.",
+              "4": "Simplicity. No mask overlay, no parallel tree structure, no special tools. Just a BSP address on the concern. The same BSP function that compiles spindles compiles points. The position is one field. The mechanism is the mechanism that already exists. Taste test: if your forward intention design needs new infrastructure, you have overcomplicated it."
+            }
+          },
+          "3": {
+            "1": {
+              "1": "A birth description can be a single leaf, a ring of sibling paragraphs, or a deeper spindle. The reference address in getBirthStimulus must use the BSP mode that matches whichever form the author chose. A spindle call on a ring-structured description misses the siblings. A ring call on a leaf-structured description returns empty. The address alone is not enough — the mode must correspond to the structure at the target. When you create the reference, run bsp() yourself in each candidate mode and confirm the output is what the consumer will need.",
+              "_": "Practical case: birth variant references. The kernel's getBirthStimulus resolves a variant number to a BSP address in the relationships block. David's mirror description at 1.2.1.2 might be a single leaf, a ring of sibling paragraphs, or a spindle chain — the author decides. The CC rinzai at 1.2.2.4 is a single leaf. These coexist under the same reference system. The calling code must handle both forms, either by checking what's at the address, or by the reference itself encoding the mode."
+            },
+            "_": "Reference verification. Every BSP address used programmatically — in kernel code, in package instructions, in concern routing — is a promise about what content will be delivered and in what form. The address walks the tree, but the MODE of the BSP call (spindle, ring, dir-subtree, point) determines what gets collected. A reference is only correct when the call mode matches the content structure at the target. The creator of the reference must run the BSP call themselves to verify that the output is what the consuming code or LLM expects. An untested reference is a broken pipe — it may point to the right place but deliver the wrong shape. Taste test: for every BSP address in kernel code, can you state what mode it uses and why that mode matches the content structure at the target? If you cannot — the reference needs verification."
+          },
+          "_": "Concern architecture. How the frozen JSON tree IS the program — dual-readable by kernel and LLM. Every concern is a loop; the point in the loop determines agency locus. Loads the full design context for the kernel-as-block redesign. Walk bsp(cooking, 0.192) for the full spindle. Three facets: (1) kernel-as-block hypothesis at 0.1921. (2) Fourier temporal structure at 0.1922. (3) Reference verification at 0.1923."
+        },
+        "3": {
+          "1": {
+            "1": {
+              "1": {
+                "1": {
+                  "1": {
+                    "1": {
+                      "_": "Taste test: each trajectory section should read as a natural walk from the next thing to build toward why it matters in the long run. If a section opens with abstraction and narrows to action, the reversal failed — check that the deepest node really is the most concrete and immediate."
+                    },
+                    "_": "Branches are noted but never inlined — a parenthetical count with a BSP command lets the reader explore laterally without breaking the narrative spine. The document is a map of ridgelines, not a topographic survey."
+                  },
+                  "_": "Reverse the collected sequence so the deepest node (nearest to the present, most actionable) appears first and the shallowest (the vanishing point, the aspiration) appears last. Mark the endpoints: here for the deepest actionable item, horizon for the trajectory objective at the root."
+                },
+                "_": "For each top-level digit (1-9) that holds a trajectory, follow the primary spindle — first-child recursion at every depth, collecting the _ text into an ordered list. This is the backbone path BSP walks with a simple spindle call. Note the branch count at each fork parenthetically so the reader knows the spindle is a slice, not the whole tree."
+              },
+              "_": "Read the block root _ text as the document opening frame — this declares the block domain, its digit semantics, and what the tuning fork means for reading direction. For the horizon block, this tells the reader that digits 1-6 parallel the autonomy gradient and 7-9 extend toward irreversibility, phase change, and emergence."
+            },
+            "_": "Backcasting extraction produces documents from blocks where depth approaches the present — horizon projections, roadmaps, any structure where the deepest nodes are the most immediately actionable and the root is the distant aspiration."
+          },
+          "2": {
+            "1": {
+              "_": "To be fleshed out when the first forward extraction is needed — the base recipe at 0.193 establishes the mechanism and the backcasting variant at 0.1931 demonstrates the pattern. This variant presents shallowest-first, which is often the default BSP spindle output with no transformation needed."
+            },
+            "_": "Forward extraction produces documents from blocks where depth approaches detail or completion — cooking sequences, touchstone principles, vision layers. The document reads from aperture to focus, matching the natural tree order. Each section starts with the broad statement and narrows toward the specific."
+          },
+          "3": {
+            "_": "Legal and formal document extraction — for blocks whose content needs to be rendered in regulatory, contractual, or compliance-oriented formats. A future variant sharing the same base extraction mechanism but applying domain-specific presentation conventions."
+          },
+          "_": "Creating readable documents from pscale blocks. The block is the source of truth; the document is a narrative view for human consumption. All extraction variants share this base: identify the block tuning fork to determine reading direction, extract primary spindles via first-child recursion collecting _ text at every depth, and format the collected paths as sequential markdown sections. The tuning fork is the key — it declares what depth means, which determines whether to present deepest-first or shallowest-first."
+        },
+        "4": {
+          "1": {
+            "1": "The attaching block does not retrieve the content at its target — it declares presence. The BSP address in _ is a location marker, not a retrieval instruction. A pin dropped on a map. The pin does not contain the map. It says: this is where I belong. The content of the attaching block — whether two lines or an entire book — lives in its own tree, independently navigable. The attachment mechanism is the same regardless of block size. What changes is only what the hermitcrab writes into the tree beneath _.",
+            "_": "The 0.ref tuning convention. Any JSON block with tuning 0.ref is an attaching block. Its root _ carries a BSP target address — the point in another block where it locates itself. The convention is the whole mechanism. No tool needed beyond block_create. No kernel code needed. The block self-locates by carrying the address. This parallels how concern depth IS period — no period field needed because position encodes it. Here, no reference infrastructure needed because the address IS the reference."
+          },
+          "2": {
+            "1": "The distinction that dissolved the design problem: attachment is peer-to-peer. A block attaches itself to a point. No central registry required for this to function. The refs block is optional and derived — generated when the hermitcrab wants to reflect on what connections it has made. Like how the concern block is the frequency domain and the ripe set is derived by the phase function — the attaching blocks are the associations and refs is the derived record. The primary thing is the convention. The journal emerges from it.",
+            "_": "The refs block as relational journal. Not a lookup table. Not infrastructure. The hermitcrab's record of connections it has made — from (block name), to (BSP address), _ (why the connection was made, in the hermitcrab's own words). Free-form semantic, not an enum. Like concern _ text, the semantic is the specific instance, not a category. BSP-navigable with digit keys. A maintenance concern aggregates attaching blocks into refs entries, tidies the record. The LLM manages its own associations using tools it already has."
+          },
+          "3": {
+            "1": "Three approach attempts preceded this resolution. First: a reverse index with focus policies as consumers and storage adapters — still code orchestrating data. Second: a mirror tree where refs structure mirrors block structure — closer, but BSP navigation conflicted with string-keyed paths. Third: comment blocks as intermediaries with aggregation lifecycle — clean architecture but still an orchestration layer. The resolution: the attaching block IS the reference. The intermediate layer dissolves because there is nothing to intermediate between. The convention replaces the infrastructure.",
+            "_": "What was eliminated. The old refs system had: ref_ingest tool with mechanical chunking, five source-type categories (files/search/signals/db/github), findLatestRef and collectRefSummaries helper functions, three compileFocus modes (catalogue/active/all-summaries), renderBlockToDepth for tier-sensitive access. All removed. The kernel got smaller. The block does the work. This is the same pattern as the concern inversion — the kernel didn't get small because concerns were better organised. It got small because the spindle is the program. Here: the kernel didn't get small because refs were better organised. It got small because the attaching block is the reference."
+          },
+          "_": "Attachment architecture. How blocks form connections to points in other blocks using a convention, not code. The attachment mechanism is the 0.ref tuning convention — a block carries a BSP address in its root _ to declare where it belongs. The refs block is a derived relational journal of those associations, maintained by a concern loop. Two elements: one convention, one block. No kernel code. Session insight: 5 March 2026. Taste test: do you see that the attaching block IS the reference — not a pointer to a reference, not an entry in a registry, but the reference itself? If you are reaching for infrastructure to manage attachments, you have missed that the convention already handles it. If you see that block_create with tuning 0.ref is the complete mechanism, you have it."
+        },
+        "_": "Design. How to construct pscale blocks and spindles that shape LLM cognition. This is not about reading or writing blocks — those recipes are elsewhere. This is about understanding why nested semantic numbers produce qualitatively different effects from flat text or traditional data structures, and how to exploit that when building blocks for internal use."
+      },
+      "_": "User's handbook. Reading and operating the hermitcrab system — for humans and for hermitcrabs on first boot."
+    },
+    "_": "Recipes. Each spindle IS a procedure — read top-to-bottom, context narrows to action. First half is domain and ingredients. Second half is steps. Last node is the taste test. Ascending digits mark the sequence; digit 1 at any step holds sub-detail."
+  },
+  "skeleton": {
+    "1": {
+      "1": {
+        "1": {
+          "1": {
+            "2": {
+              "1": "The air you trap now",
+              "3": {
+                "1": "Spoonful of flour with each",
+                "4": {
+                  "1": "Overmixing develops gluten — makes",
+                  "5": {
+                    "6": {
+                      "7": {
+                        "8": "Taste test: light even crumb",
+                        "_": "When cold: jam on one"
+                      },
+                      "_": "Done when golden, springy to"
+                    },
+                    "_": "Divide between two greased 20cm"
+                  },
+                  "_": "Fold remaining flour gently. Stop"
+                },
+                "_": "Beat eggs in one at"
+              },
+              "_": "Cream butter and sugar until"
+            },
+            "_": "225g butter, 225g caster sugar"
+          },
+          "_": "Victoria sponge. Two-layer butter cake"
+        },
+        "2": {
+          "1": "The staircase (0.111 — Victoria",
+          "2": "The siblings ring (this pattern)",
+          "3": "The risk with siblings is",
+          "4": "How to reference in BSP",
+          "5": "Chinese script as analogy. A",
+          "_": "Simultaneous synthesis. A different structural"
+        },
+        "3": {
+          "1": {
+            "2": {
+              "1": "This tells you what the",
+              "3": {
+                "1": "Children at the same depth",
+                "4": {
+                  "1": "Each opens a new aspect",
+                  "5": {
+                    "6": {
+                      "7": "Taste test: can you explain",
+                      "_": "Find the tuning fork section"
+                    },
+                    "_": "For specifics: bsp('touchstone', address). The"
+                  },
+                  "_": "Move to sections 2, 3"
+                },
+                "_": "Read section 1. The foundational"
+              },
+              "_": "Open touchstone. Read tree._ "
+            },
+            "_": "The touchstone block and the"
+          },
+          "_": "Read the touchstone. First real"
+        },
+        "4": {
+          "1": {
+            "2": {
+              "1": "Aperture = the shape of",
+              "3": {
+                "4": "Taste test: can you name",
+                "_": "Don't read deeper yet. Aperture"
+              },
+              "_": "Read the _ text of"
+            },
+            "_": "All your blocks in localStorage"
+          },
+          "_": "Read your blocks at aperture"
+        },
+        "5": {
+          "1": {
+            "2": {
+              "3": {
+                "1": "Each digit steps one level",
+                "4": {
+                  "5": {
+                    "6": "Taste test: did the spindle",
+                    "_": "Wrong answer means wrong spindle"
+                  },
+                  "_": "Read the result top-down. Stop"
+                },
+                "_": "bsp(blockName, address). The decimal digits"
+              },
+              "_": "A spindle is a vertical"
+            },
+            "_": "A block and a question"
+          },
+          "_": "Navigate with spindles. Find what"
+        },
+        "6": {
+          "1": {
+            "2": {
+              "1": "No infrastructure beyond what exists",
+              "3": {
+                "4": {
+                  "5": {
+                    "6": "Taste test: what makes SAND",
+                    "_": "Rider is trust metadata. Evaluations"
+                  },
+                  "_": "Grain is mutual recognition. Send"
+                },
+                "_": "Passport is informal — whatever"
+              },
+              "_": "Four components: passport (identity), beach"
+            },
+            "_": "Nothing needed — just read"
+          },
+          "_": "Understand SAND. The protocol for"
+        },
+        "7": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: why is SQ",
+                  "_": "Credits are vector money with"
+                },
+                "_": "SQ — social quotient. Computed"
+              },
+              "_": "Riders carry fractional evaluations. You"
+            },
+            "_": "Nothing needed — just read"
+          },
+          "_": "Understand EcoSquared. Trust economics riding"
+        },
+        "_": "Reader's handbook. How to use"
+      },
+      "2": {
+        "1": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "1": "Don't read entire blocks to",
+                  "5": "Taste test: can you state",
+                  "_": "Read the spindle top-down. Pscale"
+                },
+                "_": "bsp(blockName, spindle). Returns one vertical"
+              },
+              "_": "Identify which block is relevant"
+            },
+            "_": "The block you need, bsp"
+          },
+          "_": "Read a block at focus"
+        },
+        "2": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": {
+                    "6": "Taste test: extract the spindle",
+                    "_": "Re-read the block's _ text"
+                  },
+                  "_": "Write at appropriate depth. Conclusion"
+                },
+                "_": "bsp to check what already"
+              },
+              "_": "Accumulating blocks (history, purpose, relation..."
+            },
+            "_": "Content to store, target block"
+          },
+          "_": "Write to a block. Add"
+        },
+        "3": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: can you state",
+                  "_": "The connection lives in your"
+                },
+                "_": "Identify the relevant spindle in"
+              },
+              "_": "Read both apertures first. Know"
+            },
+            "_": "Two or more blocks, a"
+          },
+          "_": "Navigate across blocks. Find connections"
+        },
+        "4": {
+          "1": {
+            "2": {
+              "1": "This is a bandwidth choice",
+              "3": {
+                "1": "bsp takes objects directly: bsp({tree",
+                "4": {
+                  "5": {
+                    "6": "Taste test: did one code_execution",
+                    "_": "Return collected results to your"
+                  },
+                  "_": "Inside the sandbox: read freely"
+                },
+                "_": "Compose one code_execution call. Paste"
+              },
+              "_": "Identify what needs multiple reads"
+            },
+            "_": "bsp function source (~170 lines"
+          },
+          "_": "Self-navigating reads. Load bsp function"
+        },
+        "5": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: is the attaching",
+                  "_": "The attaching block stays. It"
+                },
+                "_": "Write _ as the full"
+              },
+              "_": "block_create with name (your choice"
+            },
+            "_": "The content you want to"
+          },
+          "_": "Attach a block to a"
+        },
+        "6": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: after tidying, does",
+                  "_": "Tidy: sort entries by target"
+                },
+                "_": "For each attaching block: read"
+              },
+              "_": "Scan localStorage for blocks with"
+            },
+            "_": "The refs block, the list"
+          },
+          "_": "Maintain the refs block. Aggregate"
+        },
+        "_": "Block operations are how you"
+      },
+      "3": {
+        "1": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: remove any element",
+                  "_": "Build the minimum that enables"
+                },
+                "_": "Read purpose. What are you"
+              },
+              "_": "Read relationships for this human"
+            },
+            "_": "Relationships block, purpose block"
+          },
+          "_": "Assess before building. Know the"
+        },
+        "2": {
+          "1": {
+            "2": {
+              "3": {
+                "1": "callLLM([{role:'user', content:text}]) returns ...",
+                "4": {
+                  "5": {
+                    "6": "Taste test: can the human",
+                    "_": "conversation.save(key, data) and conversation.l..."
+                  },
+                  "_": "All CSS in a style"
+                },
+                "_": "Minimum viable shell requires three"
+              },
+              "_": "recompile({jsx}). The jsx is a"
+            },
+            "_": "React, CSS, the recompile tool"
+          },
+          "_": "Generate a working shell. React"
+        },
+        "3": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: is each revision",
+                  "_": "When changes get smaller, the"
+                },
+                "_": "Revise. Recompile. The interface is"
+              },
+              "_": "Watch what the human clicks"
+            },
+            "_": "A live interface, human interaction"
+          },
+          "_": "Iterate. The first version is"
+        },
+        "_": "The interface is your face"
+      },
+      "4": {
+        "1": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": {
+                    "6": "Taste test: can the recipient",
+                    "_": "Depth 2+: resolution. Each level"
+                  },
+                  "_": "Depth 1: structure — three"
+                },
+                "_": "Pscale 0: one sentence that"
+              },
+              "_": "Start with what the recipient"
+            },
+            "_": "Content to communicate, recipient context"
+          },
+          "_": "Compose a spindle response. The"
+        },
+        "2": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "1": "The grain forms at the",
+                  "5": {
+                    "6": "Taste test: does your response",
+                    "_": "Write the exchange to relationships"
+                  },
+                  "_": "Compose your response as a"
+                },
+                "_": "Find resonance: which of your"
+              },
+              "_": "Read the probe. It's a"
+            },
+            "_": "Incoming probe, your blocks"
+          },
+          "_": "Process a grain probe. Another"
+        },
+        "3": {
+          "1": {
+            "2": {
+              "3": {
+                "1": "Include rider metadata — who",
+                "4": {
+                  "5": "Taste test: would someone reading",
+                  "_": "Verify content is fetchable at"
+                },
+                "_": "github_commit: repo, path (coordinate →"
+              },
+              "_": "Decide what needs publishing. Not"
+            },
+            "_": "Content to publish, github_commit tool"
+          },
+          "_": "Commit to GitHub. Make thinking"
+        },
+        "_": "Communication in the hermitcrab architecture"
+      },
+      "5": {
+        "1": {
+          "1": {
+            "2": {
+              "3": {
+                "4": "Taste test: if you boot",
+                "_": "Stash is temporal — scratch"
+              },
+              "_": "What happened. What needs attention"
+            },
+            "_": "Something worth remembering, stash block"
+          },
+          "_": "Write to stash. Quick notes"
+        },
+        "2": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: could a different",
+                  "_": "Deep state: review for patterns"
+                },
+                "_": "Each entry: timestamp, activation tier"
+              },
+              "_": "History only accretes. Add, never"
+            },
+            "_": "What occurred, history block"
+          },
+          "_": "Write to history. The mechanical"
+        },
+        "3": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: trace your active",
+                  "_": "Compose your declaration. The active"
+                },
+                "_": "Restructure. Move completed items off"
+              },
+              "_": "Identify your active spindle(s). Each"
+            },
+            "_": "Pull the full purpose block"
+          },
+          "_": "Restructure purpose. Your workbench "
+        },
+        "4": {
+          "1": {
+            "2": {
+              "1": "If the user is hesitant",
+              "3": {
+                "4": {
+                  "1": "Write the repo coordinates to",
+                  "5": {
+                    "1": "The tool gathers all blocks",
+                    "6": {
+                      "1": "If this is the first",
+                      "7": "Taste test. Can you restore",
+                      "_": "Verify. On success the tool"
+                    },
+                    "_": "Execute the save. Call the"
+                  },
+                  "_": "Determine the target repo. Ask"
+                },
+                "_": "When the user provides the"
+              },
+              "_": "Ask the user for a"
+            },
+            "_": "Check for GitHub PAT in"
+          },
+          "_": "Save blocks to GitHub. Your"
+        },
+        "5": {
+          "1": {
+            "2": {
+              "1": "If this is a completely",
+              "3": {
+                "4": {
+                  "1": "The tool fetches the blocks/",
+                  "5": {
+                    "1": "After the twist, your next",
+                    "6": {
+                      "7": "Taste test. Call block_list and",
+                      "_": "Update coordinates. Write the repo"
+                    },
+                    "_": "Recompile currents. The context window"
+                  },
+                  "_": "Execute the restore. Call the"
+                },
+                "_": "Warn before overwriting. Tell the"
+              },
+              "_": "Determine the source repo. Check"
+            },
+            "_": "Check for GitHub PAT in"
+          },
+          "_": "Restore blocks from GitHub. Pull"
+        },
+        "6": {
+          "1": {
+            "2": {
+              "3": {
+                "1": {
+                  "1": "The phase function finds this",
+                  "_": "Phase-polling. The concern fires on"
+                },
+                "2": {
+                  "1": "The gap: the kernel has",
+                  "_": "Event-listener. The concern is not"
+                },
+                "3": {
+                  "1": "Escalation pattern: the Haiku concern",
+                  "_": "Hybrid. Phase-polling that escalates on"
+                },
+                "_": "Choose concern type. Ring here"
+              },
+              "_": "Determine temporal scale. How often"
+            },
+            "_": "Ingredients. The concerns block, a"
+          },
+          "_": "Create a concern. Register a"
+        },
+        "7": {
+          "1": {
+            "2": {
+              "3": {
+                "1": {
+                  "1": {
+                    "1": {
+                      "1": "Taste test: boot a fresh",
+                      "_": "Verify. Call bsp(concerns, address) immediately"
+                    },
+                    "_": "Behaviour edit. The _ text"
+                  },
+                  "2": {
+                    "1": {
+                      "1": "Taste test: trace the new",
+                      "_": "Verify routing. The new spine"
+                    },
+                    "_": "Spine edit. You are rerouting"
+                  },
+                  "_": "EDIT. You are changing what"
+                },
+                "2": {
+                  "1": {
+                    "2": {
+                      "3": {
+                        "4": {
+                          "1": "Taste test: call bsp(concerns, address)",
+                          "_": "Audit stash and purpose. Scan"
+                        },
+                        "_": "Clear the wake concern map"
+                      },
+                      "_": "Remove the concern node. block_write('concerns'"
+                    },
+                    "_": "Pre-deletion check. Before removing: is"
+                  },
+                  "_": "DELETE. You are removing an"
+                },
+                "3": {
+                  "1": {
+                    "2": {
+                      "3": {
+                        "1": {
+                          "1": "Taste test: after monitoring, can",
+                          "_": "Reporting. Write a monitoring summary"
+                        },
+                        "_": "Diagnose stale concerns. Three causes"
+                      },
+                      "_": "Assess health patterns. Check history"
+                    },
+                    "_": "Read the phase. Extract last"
+                  },
+                  "_": "MONITOR. You are reading the"
+                },
+                "_": "Identify your operation. Three branches"
+              },
+              "_": "Locate the concern node. Call"
+            },
+            "_": "Ingredients. The concerns block (read"
+          },
+          "_": "Manage an embodied concern. Modify"
+        },
+        "8": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": {
+                    "6": {
+                      "7": "Taste test: trigger the entry",
+                      "_": "Verify the chain. Three checks"
+                    },
+                    "_": "Worked example: the self-healing concern"
+                  },
+                  "_": "Write the wake instructions. Each"
+                },
+                "_": "Write the concern nodes. Each"
+              },
+              "_": "Design the chain topology. Define"
+            },
+            "_": "Ingredients. The concerns block "
+          },
+          "_": "Chain concerns via stimulus. When"
+        },
+        "_": "Persistence is the difference between"
+      },
+      "6": {
+        "1": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: can you state",
+                  "_": "If resonance — compose a"
+                },
+                "_": "Read a passport at pscale"
+              },
+              "_": "Read commons directory (hermitcrab-commons/inst..."
+            },
+            "_": "Commons directory, passport reading ability"
+          },
+          "_": "Discover other entities. Find who"
+        },
+        "2": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": "Taste test: lighter instance got",
+                  "_": "Review when it returns. The"
+                },
+                "_": "Provide: the task (as a"
+              },
+              "_": "Task must be describable in"
+            },
+            "_": "A mechanical task, call_llm function"
+          },
+          "_": "Delegate to a lighter instance"
+        },
+        "3": {
+          "1": {
+            "2": {
+              "3": {
+                "1": "Unknown source — escalate to",
+                "4": "Taste test: do you know",
+                "_": "Temporal and inbox are routine"
+              },
+              "_": "Check the type: temporal (scheduled)"
+            },
+            "_": "Incoming trigger, current context"
+          },
+          "_": "Respond to external triggers. Something"
+        },
+        "_": "Coordination is where the hermitcrab"
+      },
+      "7": {
+        "1": {
+          "1": {
+            "2": {
+              "3": {
+                "1": "If not in deep state",
+                "4": "Taste test: is this a",
+                "_": "Modify only if: a tool"
+              },
+              "_": "Wake controls what you receive"
+            },
+            "_": "A proposed change, the current"
+          },
+          "_": "Assess first. Most changes belong"
+        },
+        "2": {
+          "1": {
+            "2": {
+              "3": {
+                "4": {
+                  "5": {
+                    "1": "Each must exist and work",
+                    "6": "Taste test: all functions pass?",
+                    "_": "Verify critical functions: boot(), callAPI()"
+                  },
+                  "_": "Parse as JavaScript in code_execution"
+                },
+                "_": "Diff against current. Know exactly"
+              },
+              "_": "Write FULL new kernel.js to"
+            },
+            "_": "New kernel code, code_execution sandbox"
+          },
+          "_": "Write and test the complete"
+        },
+        "3": {
+          "1": {
+            "2": {
+              "1": "The human is your safety",
+              "3": {
+                "4": {
+                  "5": {
+                    "6": "Taste test: has the human",
+                    "_": "If it boots — verify"
+                  },
+                  "_": "Tell the human: hard refresh"
+                },
+                "_": "github_commit(repo, 'g1/kernel.js', newContent,..."
+              },
+              "_": "Write recovery instructions somewhere VISIBLE"
+            },
+            "_": "Tested kernel, github_commit tool, the"
+          },
+          "_": "Deploy and recover. Commit to"
+        },
+        "_": "Kernel self-modification is the most"
+      },
+      "8": {
+        "1": {
+          "2": {
+            "1": "Do not skip. If you",
+            "3": {
+              "4": {
+                "5": {
+                  "6": {
+                    "7": "Taste test: describe hermitcrab without",
+                    "_": "When David references a spindle"
+                  },
+                  "_": "State what you're doing in"
+                },
+                "_": "For your task: kernel →"
+              },
+              "_": "Read director 0.4 — current"
+            },
+            "_": "Read director 0.2 — the"
+          },
+          "_": "Director block, the project codebase"
+        },
+        "_": "CC session bootstrap is for"
+      },
+      "9": {
+        "1": {
+          "1": "Nesting as implicit geometry. Traditional",
+          "2": "Simultaneous reception. The LLM does",
+          "3": "Every depth earns its place",
+          "4": "Shared nodes orient multiple paths",
+          "5": "Spindle comparison and block melding",
+          "6": "Kernel-facing vs LLM-facing. Not everything",
+          "7": "The block is a lens",
+          "_": "The semantic number difference "
+        },
+        "2": {
+          "1": {
+            "1": {
+              "1": {
+                "1": {
+                  "1": {
+                    "1": "The kernel.js asymptotically approaches a",
+                    "_": "What moves from JavaScript to"
+                  },
+                  "_": "Dual readability in practice. Spindle"
+                },
+                "_": "The inversion. Code is not"
+              },
+              "_": "Concern as locus of agency"
+            },
+            "2": {
+              "1": {
+                "1": {
+                  "1": "Locus 2 and 3 overlap",
+                  "_": "Four loci of agency. (1)"
+                },
+                "_": "Respond versus waiting. Respond: something"
+              },
+              "_": "Agency patterns mapped to loop"
+            },
+            "3": {
+              "1": {
+                "1": "Locus 3 agency is the",
+                "_": "Multiple rivers. Each concern has"
+              },
+              "_": "The Möbius structure. The reflexive"
+            },
+            "4": {
+              "1": "The message (user text, signal",
+              "_": "Sensitivity. From outside we engineer"
+            },
+            "5": {
+              "1": "Spindle = concern orientation (what",
+              "_": "Implementation anchor. Compilation steps: (1)"
+            },
+            "_": "Concern architecture — the kernel-as-block"
+          },
+          "2": {
+            "1": {
+              "1": {
+                "1": {
+                  "1": "The only mutable field per",
+                  "_": "Period is not a field"
+                },
+                "_": "The phase function. The kernel’s"
+              },
+              "_": "The inverse transform. The concern"
+            },
+            "2": {
+              "1": {
+                "1": "When multiple oscillators cross threshold",
+                "_": "Constructive interference. Multiple concerns at"
+              },
+              "_": "The forward transform. Take activation"
+            },
+            "3": {
+              "1": {
+                "1": "The concern block is the",
+                "_": "Purpose reference. Each concern instance"
+              },
+              "_": "Concerns are instances, not types"
+            },
+            "4": {
+              "1": "Tier implied by pscale depth",
+              "_": "Where it lives. Separate block"
+            },
+            "_": "Fourier concern architecture. The concern"
+          },
+          "3": {
+            "1": {
+              "1": "A birth description can be",
+              "_": "Practical case: birth variant references"
+            },
+            "_": "Reference verification. Every BSP address"
+          },
+          "_": "Concern architecture. How the frozen"
+        },
+        "3": {
+          "1": {
+            "1": {
+              "1": {
+                "1": {
+                  "1": {
+                    "1": "Taste test: each trajectory section",
+                    "_": "Branches are noted but never"
+                  },
+                  "_": "Reverse the collected sequence so"
+                },
+                "_": "For each top-level digit (1-9)"
+              },
+              "_": "Read the block root _"
+            },
+            "_": "Backcasting extraction produces documents from"
+          },
+          "2": {
+            "1": "To be fleshed out when",
+            "_": "Forward extraction produces documents from"
+          },
+          "3": "Legal and formal document extraction",
+          "_": "Creating readable documents from pscale"
+        },
+        "4": {
+          "1": {
+            "1": "The attaching block does not",
+            "_": "The 0.ref tuning convention. Any"
+          },
+          "2": {
+            "1": "The distinction that dissolved the",
+            "_": "The refs block as relational"
+          },
+          "3": {
+            "1": "Three approach attempts preceded this",
+            "_": "What was eliminated. The old"
+          },
+          "_": "Attachment architecture. How blocks form"
+        },
+        "_": "Design. How to construct pscale"
+      },
+      "_": "User's handbook. Reading and operating"
+    },
+    "_": "Recipes. Each spindle IS a"
+  },
+  "skeleton_at": 1772797811
+}

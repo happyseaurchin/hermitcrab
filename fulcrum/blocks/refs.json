@@ -1,0 +1,8 @@
+{
+  "tuning": "0.refs",
+  "tree": {
+    "_": "Association record. The hermitcrab's relational memory — connections it has made between blocks and points in other blocks. Each digit entry records one association: from (the attaching block name), to (the BSP target address), and _ (why the connection was made, in the hermitcrab's own words). Entries accumulate as the hermitcrab attaches blocks to points in its shell. A maintenance concern tidies this record — sorting, deduplicating, compressing when slots fill. Not a lookup table. Not infrastructure. A navigable journal of associations, maintained like any other block."
+  },
+  "skeleton": "Association record. The hermitcrab's relational",
+  "skeleton_at": 1772797811
+}

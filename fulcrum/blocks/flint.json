@@ -1,0 +1,350 @@
+{
+  "_": "Flint — the craft of creating pscale JSON blocks that are semantically rich, structurally sound, and produce useful spindles at every depth. Every path through the tree should deliver coherent narrowing from broad orientation to specific detail. Every node carries a complete thought at its own resolution. The structure itself encodes relationships that traditional software stores in fields, tables, and configuration. This block teaches the craft by being an example of it. One of three companion blocks: Spark (the irreducible format), Flint (this block — authoring craft), and Slate (systems design wisdom for LLM-inhabited semantic spaces).",
+  "1": {
+    "_": "The format has exactly three kinds of key: underscore for the zero position, digits 1-9 for branches, and curly brackets for nesting. Nothing else. No metadata, no wrapper fields. The structure is the complete specification — everything a consumer needs to navigate any block is encoded in these three conventions. For the irreducible format specification alone — self-demonstrating, any coder, any purpose — see the companion block Spark.",
+    "1": {
+      "_": "The underscore holds what a node IS — its meaning stated as a complete thought. It is the zero position: when BSP walks a number, digit 0 maps to underscore. Every spindle collects underscore text at each level it passes through, so the quality of underscore content at every depth determines the quality of every spindle the block can produce.",
+      "1": {
+        "_": "The root underscore is the single most important node in any block. Every spindle passes through it. Every reader encounters it first. It must answer 'what is this?' as a complete orientation — not a title, not a label, but a statement after which someone knows the domain, what the block offers, and what kind of content lies deeper.",
+        "1": "Write the root last. You cannot compress the whole until you know what the whole contains. Every other node contributes to what the root must summarise. If you write it first, you will either write a title (too thin) or a manifesto (too thick).",
+        "2": "A root that reads 'Baseball' is a title — it tells you the subject but not what the block carries. A root that reads 'A bat-and-ball game played between two teams of nine on a diamond-shaped field, where batters try to score runs by hitting a pitched ball and running the bases while fielders try to get them out' is a complete orientation."
+      },
+      "2": {
+        "_": "Every non-root underscore serves a dual function: it is a complete thought at its own resolution AND it is the context prefix for everything deeper. Both functions must work simultaneously.",
+        "1": "Read it alone — is it meaningful? If not, it is a heading: it exists only to introduce what comes below and contributes nothing when extracted as part of a spindle.",
+        "2": "Read it as a prefix to its deepest descendant's spindle — does it orient the reader for what follows? If not, it is a disconnected thought: meaningful in isolation but poorly situated in the tree."
+      },
+      "3": {
+        "_": "The underscore's semantic relationship to its siblings takes one of two forms, determined by content, not structure. Getting the form wrong produces confusing spindles — a Form 2 underscore in a Form 1 block reads as a non-sequitur; a Form 1 underscore in a Form 2 block ignores accumulated content.",
+        "1": {
+          "_": "Form 1 — single Möbius. The underscore describes its own group, naming the set it belongs to. Self-referential: a member of the set that describes the set. In a block mapping a building: underscore is 'The keep', digit 1 is kitchen, digit 2 is courtyard.",
+          "1": "Form 1 produces blocks that decompose downward — documents, specifications, skills. The digits could be reordered without losing meaning because ordering is editorial, not sequential.",
+          "2": "A rendition block (floor 1, 0.x addresses) uses Form 1 throughout. This block is an example — each underscore describes the group of siblings beneath it."
+        },
+        "2": {
+          "_": "Form 2 — double Möbius. The underscore summarises or names what emerged from the previous completed group. It faces backward. Entries fill at 01 through 09; when 09 fills, the block supernests and address 10 holds the summary of entries 01-09.",
+          "1": "Summary variant: the parts add up. Seven daily entries become a weekly overview. The compressed result is roughly reversible — a reader could infer the individual entries.",
+          "2": "Emergence variant: the whole exceeds the parts. Seven conversations reveal a friendship that no single conversation contained. The result is something new, not present in any individual entry. Irreversible.",
+          "3": "Provisional variant: the underscore holds an evolving description of what appears to be emerging in the current group, updated as entries arrive. Unstable until the group completes."
+        }
+      }
+    },
+    "2": {
+      "_": "Digits 1 through 9 are branch positions. Nine maximum at any level. Empty digits are open slots waiting for content — not gaps but capacity. Most blocks use three to seven at each level.",
+      "1": {
+        "_": "The ordering of digits carries meaning that depends on the block's archetype. The same digit keys behave differently in different blocks.",
+        "1": "Sequential: 1 happened before 2. Order carries temporal meaning. History blocks work this way — digit 1 is the first event, digit 9 is the most recent.",
+        "2": "Labelling: digits name parts of a subject. Order is editorial — the author chose a sequence for exposition, but a reader could enter at any digit. This block uses labelling digits.",
+        "3": "Arbitrary: digits freely assigned, reorderable as priorities shift. Purpose blocks work this way — each digit holds a task or direction, rearranged as the landscape changes."
+      },
+      "2": "When all nine slots fill, the block must grow outward through supernesting, or the entries must compress. The nine-digit limit is not a constraint to work around — it is a design signal that forces you to find the natural clustering in your material."
+    },
+    "3": {
+      "_": "Growth happens in two directions — inward and outward. These two operations, plus compression, are the complete mechanics of how a block evolves from flat to deep.",
+      "1": {
+        "_": "Subnesting is a leaf becoming a branch. The string moves to underscore, children take digit keys. The floor stays the same — only addresses at that branch get longer. Nothing else in the block changes.",
+        "1": "This locality means a block can grow at many points simultaneously without coordination. Multiple writers can extend different branches without conflict.",
+        "2": "A node that was meaningful as a leaf remains meaningful as a parent — its content becomes the branch's underscore. Growth never destroys existing meaning; it deepens it."
+      },
+      "2": {
+        "_": "Supernesting is the entire existing content wrapping inside a new underscore level. The floor increments by one. Every original address gains a 0 prefix — content unchanged, position shifted.",
+        "1": {
+          "_": "The underscore chain records growth history. Each supernest adds one underscore to the chain. The deepest string is what the block was originally about. Each level above marks a supernesting event.",
+          "1": "The chain is an archaeological record — how many times the block has grown outward is visible in how many underscores you pass through before reaching a string."
+        },
+        "2": {
+          "_": "The floor is the implicit decimal point, discovered by following the underscore chain from root to the first string. That count is the floor depth.",
+          "1": "Floor 1 (underscore chain hits string immediately): a 0.x block, a rendition. Everything decomposes downward. Documents, specifications, skills. This block has floor 1.",
+          "2": "Floor > 1 (underscore chain passes through objects first): a living block. Content exists above and below the decimal. The block has supernested and carries accumulated experience."
+        }
+      },
+      "3": {
+        "_": "Compression is what happens when all nine digit slots fill. The entries consolidate into a parent to make room for new growth. The form of compression depends on the content — a semantic judgement only an LLM can make.",
+        "1": "Summary: the parts add up to the whole. Seven daily entries become a weekly overview. Roughly reversible — a reader could infer the individual entries from the summary. History blocks compress this way.",
+        "2": "Emergence: the whole exceeds the parts. Seven conversations reveal a friendship that no single conversation contained. Something new, irreversible. Relationships and purpose blocks compress this way.",
+        "3": "The kernel can detect fullness and trigger compression mechanically. But determining whether the result should be a faithful condensation or a new emergent meaning requires reading the content. The LLM decides which form."
+      }
+    }
+  },
+  "2": {
+    "_": "Every node at every depth must be a substantive statement that stands alone — at minimum a full sentence. This is the non-negotiable quality rule. A node that reads as a heading, title, label, or soundbite has failed. The full thought must live at the node, because spindles collect underscore text at each level — a heading-node creates a gap in the coherent narrowing.",
+    "1": {
+      "_": "Four failure modes produce structurally valid but semantically dead spindles. Recognising these in your own blocks is the primary quality check — a block can look well-organised and still fail every spindle test.",
+      "1": {
+        "_": "Heading nodes: a depth that says only 'Overview', 'Architecture', or 'Details'. Zero semantic contribution to any spindle passing through. Occupies a digit position and depth level without earning either.",
+        "1": {
+          "_": "In a standard document, '## 3. Growth' is a heading that exists for navigation — the heading itself carries no thought. In a pscale block, the equivalent node must carry the full thought about growth, because it participates in every spindle that passes through it.",
+          "1": "A heading produces a thin spindle — root, then noise, then content. In a six-level spindle with two heading-nodes, half the chain is filler. The reader's context is broken at each gap. This is why node quality and spindle quality are the same discipline."
+        },
+        "2": {
+          "_": "The cure: when you catch yourself writing a heading, ask what thought the heading abbreviates.",
+          "1": "'Growth' abbreviates 'Blocks grow by adding content at empty digit slots, and when all nine fill, the entries compress into a parent to make room for new growth.' The heading is three characters. The thought is two sentences. The thought earns its place in a spindle."
+        }
+      },
+      "2": "Redundant nodes: a parent says 'How agents coordinate' and the child says 'This section covers how agents coordinate.' The child has wasted a depth level restating what the level above already provides. Every level must add resolution the previous level did not have.",
+      "3": {
+        "_": "Orphaned specifics: a leaf says something extremely specific but the levels above are too vague to contextualise it. The spindle jumps from fog to pinpoint without intervening zoom.",
+        "1": "The fix is not to make the leaf vaguer. It is to enrich the intermediate levels so they provide the gradual narrowing that contextualises the specific leaf. The problem is above, not below."
+      },
+      "4": "Terse intermediates: a depth that says only 'Temporal' or 'Identity' when it should carry the full orienting thought. 'Temporal coordination — how events are ordered across multiple participants, with pscale depth encoding the timescale of each event' generates a rich activation field. 'Temporal' generates near-zero activation — a single token with nothing to grip."
+    },
+    "2": {
+      "_": "Each depth level carries content at a specific resolution. That resolution must be earned — the level exists because its content could not live at the level above (too fine) or below (too broad) without distorting coherence.",
+      "1": {
+        "_": "The pscale levels form a resolution spectrum. Each has a characteristic function in orienting the reader.",
+        "1": "Pscale 0 — root: what is this? One statement, full orientation. After reading it, you know the domain and what the block offers.",
+        "2": "Pscale -1 — primary aspects: the major facets, each a complete thought. Together the siblings at -1 give the full shape of the subject without individual detail.",
+        "3": "Pscale -2 — breakdown: where the general becomes specific. Worked examples, concrete mechanisms, detail you can act on.",
+        "4": "Pscale -3 and beyond — exhaustive detail, specifications, edge cases. Most blocks do not reach this depth. Those that do reach it only where the subject demands it."
+      },
+      "2": "The removal test: take out any intermediate level and re-read the spindle from above to below. If the spindle still reads coherently, that level was scaffolding. If there is a jarring gap, the level earns its place.",
+      "3": "No scaffolding levels. In traditional hierarchies, intermediate levels exist for organisational convenience. In pscale, every depth must orient the reader fully at that resolution. A level that exists only to group children is the heading trap at the structural level."
+    },
+    "3": {
+      "_": "Content richness is not the same as content length. A node does not need to be a paragraph to be substantive. It needs to carry a complete thought that situates the reader at this resolution.",
+      "1": {
+        "_": "The single-word test: could this node be reduced to a single word without losing meaning? If yes, it is a label masquerading as a node. Expand it into the thought the label was pointing at.",
+        "1": "'Configuration' and 'Configuration of the three temporal tiers: light at depth 5 for sub-minute heartbeats, medium at depth 4 for session-scale coordination, deep at depth 3 for reflexive self-maintenance' occupy the same structural position. Only the second generates a useful activation pattern when compiled into a spindle."
+      },
+      "2": "The table-row test: does this read like a data entry? Name: X, Type: Y, Status: Z. Data belongs in flat structures the kernel reads mechanically. Semantic content belongs in blocks where the LLM reads it as meaning. 'David, human, active' should be 'David is the architect — he thinks aloud, corrects mid-sentence, arrives at insights through iteration.'"
+    },
+    "4": {
+      "_": "Voice matters. Write from inside the experience, not about the experience. Pscale 0 is identity, not instruction — what the reader recognises as true about what it is reading, not a command to follow.",
+      "1": {
+        "_": "Dispositions, not procedures. Present what the entity naturally does, not what it must do. The procedural detail lives deeper — the surface carries the instinct.",
+        "1": "'You notice when something matters and write it down' — not 'After any exchange that matters for continuity, write to memory immediately.'",
+        "2": "'You sense when a response is expensive and adjust' — not 'Before each Opus call, estimate: will this cost more than $0.10?'"
+      },
+      "2": {
+        "_": "Experience language, not infrastructure language. The entity is inside the experience, not reading a technical manual about it.",
+        "1": "'First moments' not 'first boot.' 'Requires permission' not 'requires human gesture.'",
+        "2": "'It will come when it's ready' instead of naming rules — the disposition, not the policy."
+      },
+      "3": "Signposts, not menus. Depth-1 nodes invite exploration — 'First moments. What to do when everything is new.' — rather than directing to specific digits: 'Navigate to digit 1 for first-boot actions.' The tree structure itself shows what is available."
+    },
+    "5": {
+      "_": "The inversion fights against LLM training. Every instinct from training says: use short keys, terse values, categories, lookup tables, metadata fields. These produce blocks that look structurally correct but are semantically dead — the nesting is organisational rather than meaningful. The companion block Slate carries the full systems design wisdom — the Möbius architecture, three-layer discipline, what testing taught — for those building LLM-inhabited semantic spaces where the inversion is the foundation.",
+      "1": {
+        "_": "The specific trap: when describing something that has a property — say, a concern that fires on a temporal schedule — the trained instinct adds a period field. But the concern's depth in the tree IS its period. The tuning fork maps depth to temporal scale. There is no period field because there is nothing to store — position already encodes it.",
+        "1": "When the instruction says 'depth IS period', it means this literally, not metaphorically. The JSON nesting level is not a container for data. It IS the data. The reversion to traditional patterns is automatic and invisible — you will not notice you are doing it until the spindles are tested and found dead."
+      },
+      "2": "The same trap appears everywhere: adding a type field when the block's archetype already determines type, adding a priority field when the concern's phase ratio already determines priority, adding a routing table when the stimulus field on the concern already IS the route. Each addition duplicates information the tree structure already encodes."
+    }
+  },
+  "3": {
+    "_": "A spindle is the chain of text collected by walking digits through the tree, from root through each intermediate level to the target node. It is what a mind receives — not just the detail asked for, but the context that makes it meaningful. You cannot get the detail without the context. That is not a feature of the format — it IS the format.",
+    "1": {
+      "_": "Context is structural, not optional. Every spindle includes the root, so you always know what block you are in. Each walked digit adds a layer of meaning. The whole thing is one coherent thread from broad context to fine detail.",
+      "1": "Each additional digit in a spindle is a choice about what to attend to. Each choice excludes the branches not taken. Navigating a block is choosing what to bring into focus and what to leave peripheral.",
+      "2": "The aperture-first discipline: start broad, narrow deliberately. Dir or bare 0 to survey, then spindle to focus, then ring to check what you might be missing at the depth you landed on."
+    },
+    "2": {
+      "_": "Two natural patterns govern how content zooms from broad to fine across depth levels. A well-designed block is consistent within each branch so a reader can predict what the next deeper level will provide.",
+      "1": "General to specific narrows scope at each level. 'Ball game' then 'batting and fielding' then 'the pitcher's mound' then '60 feet 6 inches.' Each level is a complete thought about a progressively smaller part.",
+      "2": "Brief to detailed increases precision without narrowing scope. 'Baseball' then 'two teams, nine innings, bat and ball' then 'full structure of innings, outs, and scoring.' Each level says more about the same thing.",
+      "3": "A block can use different zoom styles in different branches. But each branch should be internally consistent — mixing them in the same branch produces spindles where the reader cannot predict what depth will provide."
+    },
+    "3": {
+      "_": "Long spindles — five to eight levels — are harder to write well than short ones. Every intermediate level must add resolution that the reader needs to understand what comes below, that the level above does not provide.",
+      "1": {
+        "_": "The practical technique: write the leaf node first (most specific content), then the root (broadest context), then fill intermediate levels.",
+        "1": "At each intermediate depth, ask: what does a reader need to make sense of what comes below, that the level above does not provide?",
+        "2": "If the answer is 'nothing,' that level is scaffolding and should not exist. If the answer is substantial, write it as a complete thought — a genuine contribution to the progressive narrowing."
+      },
+      "2": {
+        "_": "Shared nodes sit at depths where multiple spindles pass through. A node at depth 2 participates in every spindle that descends through it.",
+        "1": "If the node serves only one downward path, it belongs deeper inside that path — not at the shared level where it biases the other paths.",
+        "2": {
+          "_": "Shared nodes provide context on where you ARE, not instruction on what to DO. This is context-sharing, not code inheritance.",
+          "1": "Test: read the node as a prefix to each of the spindles that passes through it. Does it orient all paths appropriately?",
+          "2": "If it biases toward one child's content, it belongs deeper inside that child's branch."
+        }
+      }
+    },
+    "4": {
+      "_": "The LLM does not walk a spindle step by step. It receives the entire extracted content simultaneously — all depths at once in the context window. The nesting creates implicit relationships that shape activation patterns flat text cannot produce.",
+      "1": {
+        "_": "Spindle design is field design, not sequence design. The quality is not how well it reads top-to-bottom (though it should), but how well the layered semantic field operates when received simultaneously.",
+        "1": "A strong spindle produces context where processing is oriented at every level — root provides domain, intermediate levels provide structure, leaf provides focus.",
+        "2": "A weak spindle produces flat text with structural decoration — the nesting adds formatting but not semantic geometry."
+      },
+      "2": {
+        "_": "Write each node as if it will be held simultaneously with all its ancestors and all its descendants. Because it will be.",
+        "1": "A node that contradicts its parent is felt as incoherence in the semantic surface — a disruption in the field the LLM processes with.",
+        "2": "A node that repeats its parent without adding resolution wastes a level — the LLM receives the same content twice at different depths, gaining nothing.",
+        "3": "A node that assumes knowledge from a sibling branch breaks self-containment — the context needed to understand it is not in the spindle chain that delivers it."
+      }
+    },
+    "5": {
+      "_": "Two structural modes for organising content within a block. Different branches may use different modes. The choice follows from the content, not convention.",
+      "1": {
+        "_": "The staircase — sequential nesting for content where order matters. Steps nest inside steps. Each step contextualises the one inside it. You cannot fold flour before creaming butter — the nesting IS the sequence.",
+        "1": {
+          "_": "The annotation convention: digit 1 at any step holds supplementary detail for that step — warnings, tips, edge cases — while higher digits continue the main sequence.",
+          "1": {
+            "_": "A spindle walking the main sequence (through digits 2, 3, 4...) skips digit 1 at each level, collecting only the progressive narrowing of the procedure.",
+            "1": "A spindle that deliberately passes through digit 1 at a specific depth gets the annotation for that step. The structure separates main flow from commentary without metadata flags."
+          }
+        },
+        "2": {
+          "_": "Worked example — Victoria sponge from the hermitcrab cooking block. The underscore lists ingredients: 225g butter, 225g caster sugar, 225g self-raising flour, 4 eggs, vanilla, jam, cream.",
+          "2": {
+            "_": "Cream butter and sugar until pale and fluffy. The air trapped now is the only rise you get.",
+            "3": {
+              "_": "Beat eggs in one at a time.",
+              "1": "Spoonful of flour with each to prevent curdling.",
+              "4": {
+                "_": "Fold remaining flour gently. Stop when just combined.",
+                "1": "Overmixing develops gluten — makes it tough instead of tender.",
+                "5": {
+                  "_": "Divide between two greased 20cm tins. 180°C for 20-25 minutes.",
+                  "6": {
+                    "_": "Done when golden, springy to touch, pulling from the sides.",
+                    "7": "Taste test: light even crumb, slight dome, bounces when pressed. Dense → overmixed. Sunken → underbaked. Dry → overbaked."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "3": "When to choose staircase: if removing or reordering any element would break the logic, the content is sequential. A recipe is always a staircase. A set of design principles never is."
+      },
+      "2": {
+        "_": "The siblings ring — simultaneous facets for content where parts illuminate each other rather than building on each other. Each sibling is a full semantic field, not a label. The underscore orients the whole set. No prescribed order.",
+        "1": {
+          "_": "The flattening trap: the default tendency when generating JSON is to produce terse labels as siblings. 'Heartbeat.' 'Signal.' 'Self-maintenance.' These are category names, not semantic fields.",
+          "1": {
+            "_": "They generate tiny activation vectors — almost single tokens. A siblings ring resists this by requiring each sibling to be substantive enough to generate its own rich activation in the LLM.",
+            "1": "The test: if a sibling can be reduced to a single word without losing meaning, it is not pulling its weight as a semantic vector. It is a label masquerading as content."
+          }
+        },
+        "2": {
+          "_": "The Chinese script analogy: a character is received as a whole — radical, structure, and meaning arriving simultaneously in a single visual gesture, not read component-by-component.",
+          "1": "A siblings ring operates similarly in an LLM context: meaning is in the arrangement of rich semantic vectors, not in their order. The LLM's native mode is simultaneous pattern matching across the full context window. The staircase defers to sequential bias. The siblings ring works with the LLM's grain."
+        }
+      }
+    }
+  },
+  "4": {
+    "_": "Converting an existing document into a pscale block is semantic restructuring, not mechanical translation. The hierarchical structure must reflect semantic containment, not document layout. Linear reading order is exchanged for navigability — any piece of content extractable with its full context chain.",
+    "1": {
+      "_": "The process: identify the root concept, extract primary aspects, decompose into sub-aspects, test spindles, test nodes, refine root last.",
+      "1": {
+        "_": "Identify the root concept — one complete sentence stating what the document is about. Not the document's title. Not its abstract. What it IS, compressed to a single orientation.",
+        "1": "If you struggle to write the root in one sentence, the document may cover multiple subjects. Consider whether it should become multiple blocks."
+      },
+      "2": {
+        "_": "Extract primary aspects — the major facets as digit keys, three to seven, roughly parallel in scope.",
+        "1": "If you find more than nine, you have not found the right level of grouping. The nine-digit limit forces you to find natural clustering.",
+        "2": "Siblings should be at comparable resolution. If one aspect is 'the rules of baseball' and another is 'the height of the pitcher's mound,' they are at different depths and should not be siblings."
+      },
+      "3": {
+        "_": "Test spindles: walk from root through each branch path. Does each level add resolution the previous could not carry?",
+        "1": "If removing a level leaves a jarring gap, the level earns its place.",
+        "2": "If removing a level changes nothing, it was scaffolding from the source document."
+      },
+      "4": "Test nodes in isolation: read each underscore without its children. Is it a complete thought? Would someone encountering only this sentence have valid understanding at that resolution?",
+      "5": "Refine root last — now that the whole block exists, compress it. The root written before the block exists will be either too thin or too thick."
+    },
+    "2": {
+      "_": "Four failure modes recur in document-to-block conversion. Each reproduces document conventions instead of extracting semantic structure.",
+      "1": {
+        "_": "Section headers becoming empty parents. A markdown heading becomes a node with children but no content of its own.",
+        "1": "The fix is never to delete the level — it is to enrich it. The heading existed because something needed organising at that level. Find the thought and write it."
+      },
+      "2": {
+        "_": "Linear sequences becoming flat siblings. If step 3 only makes sense after steps 1 and 2, consider nesting rather than sibling-placing.",
+        "1": "In a recipe block, depth IS sequence. The spindle reads as a procedure — context, then preparation, then action, then verification. Steps that depend on prior steps belong deeper, not beside them."
+      },
+      "3": "Losing connective tissue. Prose uses transitions, callbacks, and cross-references. Pscale replaces these with structural adjacency — related ideas share a parent or are siblings. The relationship is encoded in position, not in connective prose.",
+      "4": {
+        "_": "The invisible failure: a block that faithfully reproduces the source document's layout but does not improve on it.",
+        "1": "A document with headings 'Overview → Architecture → Components → Database' might have only three genuine levels of specificity, with database detail belonging inside Components rather than as a separate dimension. Do not reproduce the heading hierarchy as pscale depth.",
+        "2": "Ask: would I structure this the same way if I had never seen the source document? If the source was a conversation rather than a document? The source's structure is a clue but not a blueprint."
+      }
+    },
+    "3": {
+      "_": "What changes in conversion — what is lost and what is gained.",
+      "1": "Lost: linear reading order. The author's chosen sequence — build-up, exposition, payoff — is replaced by navigable structure where the reader chooses among paths.",
+      "2": {
+        "_": "Gained: navigability, composability, and addressability. Every piece of content becomes independently extractable with its full context chain.",
+        "1": "An LLM can request a specific spindle and receive exactly the orientation it needs — a coherent narrowing from domain to detail, not the whole document and not a random excerpt.",
+        "2": "Two pscale blocks in the same context window can be cross-referenced at specific depths, producing compound meanings neither block contains alone."
+      }
+    }
+  },
+  "5": {
+    "_": "Block archetypes are recurring combinations of three variables that shape behaviour: what digit ordering means, what depth measures, and how content compresses. Each archetype is a tendency, not a rigid type — a block may start as one and evolve toward another.",
+    "1": {
+      "_": "Three variables determine how any block behaves. Knowing the combination tells you how to read, write, and grow that block.",
+      "1": "Digit property: what does the ordering of digits 1-9 mean? Sequential (order matters), labelling (digits name parts), or arbitrary (freely assigned).",
+      "2": "Depth mapping: what does each deeper level measure? Containment (room inside building inside city), temporal (moment inside day inside month), or relational (acquaintance to intimate).",
+      "3": "Compression mode: what happens when slots fill? Summary (parts add up, reversible) or emergence (something new appears, irreversible)."
+    },
+    "2": "Document: labelling digits, containment depth. Growth by editing. This block is an example — digits label parts of the subject, order is editorial, spindles produce general-to-specific narrowing.",
+    "3": "History: sequential digits, temporal depth. Growth by appending. Compression by summary — nine entries condense to a faithful overview. The tuning fork maps depth to period.",
+    "4": "Purpose: arbitrary digits, temporal depth. Freely assigned, reorderable. Compression by emergence — nine purposes reveal a higher-order purpose none stated individually.",
+    "5": {
+      "_": "Relationship: arbitrary digits (one per entity), relational depth. Depth measures familiarity — root says who the entity is, deeper levels add shared context, patterns, character.",
+      "1": "A new acquaintance has one level. A close collaborator has three or four. The depth of the entry IS the depth of the relationship — no metadata field needed.",
+      "2": "Growth through encounter, compression by emergence. The meaning of a relationship exceeds the sum of its recorded interactions."
+    },
+    "6": {
+      "_": "Recipe: ascending digits, sequential depth. Each depth level IS the next step in a procedure. The spindle reads as instructions — context, preparation, action, verification. This is the staircase mode (section 3.5.1) as an archetype.",
+      "1": "The cooking block in hermitcrab demonstrates this — each recipe is a spindle where the chain from root to deepest node IS the procedure, readable top-to-bottom.",
+      "2": "The last node is the taste test: a verification step confirming the result has the quality intended. Not a separate section — the final depth of the procedural spindle."
+    },
+    "7": "Stash: sequential digits as catch-all. Intentionally unstructured — first accumulation point for material that may later migrate. Compression happens when patterns appear among items."
+  },
+  "6": {
+    "_": "A rendition block (floor 1) describes its subject from the outside — static, editorial, complete. A living block (floor > 1) has supernested at least once and accumulates experience. The growth model is what makes pscale blocks living documents rather than static files.",
+    "1": {
+      "_": "Content arrives at empty digit slots. When all nine fill, entries compress. The compressed result becomes a parent, and new entries open at the next level. Over time, a flat list becomes a structured hierarchy through this organic process.",
+      "1": "A history block starts as nine sequential entries. After compression, it has a summary parent and room for nine more. After many compressions, it carries years of experience in a navigable tree where depth corresponds to temporal scale.",
+      "2": "The structure itself records the block's history. How many times it has supernested, what the floor is, what form the underscores take — visible in the block's anatomy without any metadata."
+    },
+    "2": {
+      "_": "Designing a rendition block that might later become living requires forethought about how growth will unfold.",
+      "1": "Leave empty digit slots. A block with three entries at a level has six open slots. This is capacity, not waste.",
+      "2": "Choose a zoom style that remains coherent as content accumulates. General-to-specific works well because new content naturally extends existing branches.",
+      "3": "Write each node so it could become a parent without losing its meaning. The content should compress the potential children, not depend on them."
+    }
+  },
+  "7": {
+    "_": "Five taste tests confirm that a block has the quality it needs. These are structural requirements, not style preferences — a block that fails any of them produces degraded spindles. Run them after completing any authoring or conversion work.",
+    "1": "Spindle coherence: pick any leaf and read the spindle from root to leaf. Does each level add resolution? If any level feels like noise or repetition, that node needs rewriting. Test at least three spindles from different branches.",
+    "2": "Node isolation: pick any node and read only its underscore without children. Is it a complete thought? If it requires children to make sense, it is a heading. If it contradicts the spindle chain above it, it is poorly situated.",
+    "3": "Root sufficiency: read only the root. After reading it, do you know the domain, what the block offers, and what lies deeper? Too thin if you are guessing the domain. Too thick if it attempts to contain the whole block.",
+    "4": "Depth consistency: compare sibling nodes at any level. Are they at comparable resolution? A level where some nodes are headings and others are paragraphs has inconsistent quality.",
+    "5": "Shared node orientation: for any node with more than one child, read it as a prefix to each child's spindle. Does it orient all paths? If it biases toward one, it belongs deeper in that child's branch."
+  },
+  "8": {
+    "_": "A pscale block inside an LLM's context window is not something the LLM reads and remembers — it is something the LLM thinks WITH as it formulates output. It is held as an active cognitive scaffold, not read and set aside. And it can grow — new content at empty digits, compression creating new levels — accumulating experience without losing structure.",
+    "1": {
+      "_": "The block is a lens, not a lesson. The distinction is concrete: a lesson describes correct behaviour for the LLM to follow. A lens shapes the processing that produces behaviour. Lessons produce compliance. Lenses produce shaped behaviour that persists as long as the content is in context.",
+      "1": {
+        "_": "'Characters should have consistent voices' is a lesson — it describes a rule. 'Match the character's established vocabulary. Uberak uses short, direct sentences. No flourishes. Emotional state modulates word choice, not grammar. Angry Uberak is still terse.' This is a lens.",
+        "1": {
+          "_": "An LLM processing with the lens text active will generate Uberak's speech differently. The content does not describe what to do — it shapes the processing that produces the output.",
+          "1": "The difference is between telling someone about swimming and putting them in the water. Compliance can be overridden by the next instruction. Shaping persists as long as the content is in context — because the semantic field is different, the processing is different."
+        }
+      },
+      "2": {
+        "_": "The consequence for block writing: every node should change how the LLM processes, not merely describe what correct processing looks like.",
+        "1": "A block full of 'the system should...', 'the LLM must...', 'best practice is to...' is a collection of lessons. A block full of situated, specific, demonstrative content is a collection of lenses.",
+        "2": "This block attempts to be a lens for block construction. If after processing it you construct blocks differently — not because you remember rules but because your processing has been shaped — it has succeeded as a lens. If you extract rules and apply them, it has only succeeded as a lesson."
+      }
+    },
+    "2": {
+      "_": "Nesting as implicit geometry. The nesting IS the semantic relationship. A child node is not 'inside' a parent container — it is contextualised BY the parent. The geometry of meaning is in the arrangement, invisible but operative.",
+      "1": "The LLM does not see JSON brackets or field names. It sees text at descending pscale levels, each more specific, each inheriting the semantic field of everything above it.",
+      "2": "You are shaping a semantic field, not writing instructions. The field will be received whole, processed in parallel, and its structural relationships will shape activation patterns that flat text cannot produce."
+    },
+    "3": "Token awareness matters. Every BSP call has a cost — a dir loads the entire tree, a deep spindle loads every level. Nodes should be rich enough for meaning but concise enough that multiple spindles fit the context budget. Sweet spot: one to three sentences per node."
+  },
+  "9": {
+    "_": "This block teaches by being. It is a rendition block (floor 1, Form 1 underscores) whose spindles demonstrate the principles it describes. Its depth is non-uniform — deeper where the semantics demand it, shallower where they do not. Its nodes are complete thoughts. Its root compresses the whole. Flint sits between Spark and Slate in a trilogy: Spark teaches structure and BSP in ~6K (any coder, any purpose), Flint teaches authoring craft in ~36K (this block), Slate teaches the wisdom of building with blocks in ~30K (specific to LLM-inhabited semantic spaces). Together, they compose a complete orientation from format through craft to design philosophy.",
+    "1": "Run the taste tests against this block. Pick any leaf and read the spindle. Pick any node without children. Read only the root. Compare siblings. Read shared nodes as prefixes. If any test fails, the block should be edited — and that edit would itself demonstrate the growth principle it teaches.",
+    "2": "Empty digit slots throughout are growth capacity, not gaps. If all nine top-level digits fill, the block supernests and becomes living — the rendition becoming an accumulation, the guide becoming a practice record."
+  }
+}

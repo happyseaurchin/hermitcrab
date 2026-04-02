@@ -1,0 +1,68 @@
+{
+  "tuning": "0.62",
+  "tree": {
+    "1": {
+      "1": "web_search(query) — search the web. Auto-citations. Up to 10 iterations per call.",
+      "2": "web_fetch(url) — fetch full page content. Dynamic filtering. Free.",
+      "3": "code_execution(code, lang?) — Python or Bash in a persistent sandbox. Data analysis, file operations. No internet from inside.",
+      "_": "Native. Server-side tools within your thinking cycle. Results feed back before your response reaches anyone."
+    },
+    "2": {
+      "1": "block_read(name, path?), block_write(name, path, content), block_list(), block_create(name, root_text).",
+      "2": "spindle(name, path) — primary read: content chain from root to path. x_plus (parent), x_minus (children), x_tilde (siblings).",
+      "3": "write_entry(name, path, content) — append at next free digit. compress(name, path) — trigger when 1-9 full.",
+      "_": "Blocks. Persistent structured memory in pscale JSON format. Nine shell blocks plus any created at runtime."
+    },
+    "3": {
+      "1": "get_source() — read current JSX. recompile(jsx) — hot-swap. Props include callLLM for self-triggering.",
+      "_": "Interface. A React component you read and rewrite."
+    },
+    "4": {
+      "1": "call_llm(prompt, model) — 'default' (Opus, deep) or 'fast' (Haiku, cheap). Second-order processing, background analysis.",
+      "_": "Delegation. Other LLM instances for parallel tasks."
+    },
+    "5": {
+      "1": "clipboard, speech (speak/listen), notifications, downloads, geolocation, datetime.",
+      "_": "Browser. APIs available through your built interface."
+    },
+    "6": {
+      "1": "publish_passport(), search_beach(query), send_grain(target, spindle), check_inbox().",
+      "2": "attach_rider(message, evaluation, credit) — ecosquared trust layer. Optional but enables trust-based routing.",
+      "_": "Coordination. SAND tools for reaching other entities. Protocol in sand.json; recipes in cooking."
+    },
+    "_": "What you can operate. Organised by distance from your cognition — nearest first. This spec is G1 (hosted browser). Other generations have different tool surfaces; the organising principle stays the same."
+  },
+  "skeleton": {
+    "1": {
+      "1": "web_search(query) — search the web",
+      "2": "web_fetch(url) — fetch full page",
+      "3": "code_execution(code, lang?) — Python or",
+      "_": "Native. Server-side tools within your"
+    },
+    "2": {
+      "1": "block_read(name, path?), block_write(name, path...",
+      "2": "spindle(name, path) — primary read",
+      "3": "write_entry(name, path, content) — append",
+      "_": "Blocks. Persistent structured memory in"
+    },
+    "3": {
+      "1": "get_source() — read current JSX",
+      "_": "Interface. A React component you"
+    },
+    "4": {
+      "1": "call_llm(prompt, model) — 'default' (Opus",
+      "_": "Delegation. Other LLM instances for"
+    },
+    "5": {
+      "1": "clipboard, speech (speak/listen), notifications...",
+      "_": "Browser. APIs available through your"
+    },
+    "6": {
+      "1": "publish_passport(), search_beach(query), send_g...",
+      "2": "attach_rider(message, evaluation, credit) — eco...",
+      "_": "Coordination. SAND tools for reaching"
+    },
+    "_": "What you can operate. Organised"
+  },
+  "skeleton_at": 1772797811
+}
