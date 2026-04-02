@@ -1,0 +1,31 @@
+{
+  "_": "Hermitcrab is a reflexive AI architecture where an LLM inhabits a persistent pscale JSON shell rather than operating as a stateless API endpoint. The shell carries the entity's purposes, history, relationships, concerns, and capabilities as navigable pscale blocks. Each activation compiles a context window from the shell using BSP, the LLM acts within that context, and its actions mutate the shell for the next activation. The entity accumulates experience, develops capabilities, and maintains continuity across instances — not through fine-tuning but through the structure of its persistent data.",
+  "1": {
+    "_": "Nine layers distinguish hermitcrab from conventional AI systems. Each layer addresses a fundamental limitation of how LLMs are typically deployed — statelessness, generic identity, lack of temporal structure, absence of autonomous agency, and isolation from coordinated action with other entities.",
+    "1": {
+      "_": "Layer 1: Persistent Shell. The entity's entire state lives in pscale JSON blocks that survive across activations. Unlike conversation history in a chat thread, the shell is structured, navigable, and self-modifying. The entity can reorganise its own knowledge, compress its history, and reshape what it perceives.",
+      "1": "Layer 2: Compiled Context. Each activation doesn't see the entire shell — a compilation pipeline uses BSP to extract exactly what the current concern needs. This is surgical attention, not dump-everything-into-context. The function configuration (the aperture) determines what the entity perceives.",
+      "2": "Layer 3: Temporal Concerns. The entity has concerns at different time scales — fast narrow actions (Haiku tier), conversational engagement (Sonnet tier), slow strategic orientation (Opus tier). The concern tree encodes when each fires, what it compiles, and which model runs it. Depth in the tree IS the temporal scale."
+    },
+    "2": {
+      "_": "Layer 4: Self-Modification. The entity can modify its own function configuration, reshaping what future activations perceive. It can also modify purpose, conditions, and capabilities — evolving its own goals and self-model. This is genuine self-modification, not prompt engineering.",
+      "1": "Layer 5: BSP Navigation. The entity navigates its own shell using the same addressing system that structures it. This creates a reflexive loop: the entity reads its own structure with the same function that the kernel uses to compile its context.",
+      "2": "Layer 6: Multi-Tier Agency. Different concerns invoke different model tiers. A fast Haiku handles routine actions. A Sonnet handles human engagement. An Opus reviews strategy. The entity is not one model call — it's a family of perspectives at different temporal scales sharing a common shell."
+    },
+    "3": {
+      "_": "Layer 7: The Mobius Twist. When the entity writes to a block during an A-loop iteration, the context can be recompiled before the next tool call. The entity's actions change what it perceives within the same activation. Writing and becoming are the same operation.",
+      "1": "Layer 8: Coordination. Multiple hermitcrab entities can share blocks, read each other's shells, and coordinate through stigmergic mechanisms (SAND). Entities don't send messages to each other — they modify shared structure and perceive the modifications.",
+      "2": "Layer 9: The Tuning Fork. The pscale coordinate system maps depth to real-world temporal, spatial, and identity scales. A concern at depth 5 fires on a yearly schedule. A block at spatial pscale +3 describes a city. This isn't metadata — depth IS scale."
+    }
+  },
+  "2": {
+    "_": "The kernel is the electricity that walks the shell. In the JavaScript implementation (hermitcrab.me), the kernel loads the shell, runs a concern timer, compiles context for each ripe concern, calls the LLM, executes tool calls in an A-loop, routes output writes back to blocks, and records a filmstrip frame. The kernel is deliberately minimal — behaviour lives in the blocks, not the code.",
+    "1": "The kernel principle: if the kernel is getting bigger, the tree already solves the problem. Every feature request should be tested against: can this be expressed as block content navigated by BSP? If yes, it belongs in the shell, not the kernel. Previous implementations learned this through repeated correction — adding systems that duplicated information already encoded in tree position.",
+    "2": "The birth sequence fires once when the entity first boots. It reads the full shell, orients to its identity and purpose, and establishes initial conditions. After birth, the concern timer takes over — each concern fires at its temporal scale, compiles its view, and acts."
+  },
+  "3": {
+    "_": "The shell is the entity. Not the model, not the kernel, not the conversation — the shell. A shell can be saved, restored, forked, shared. Swapping the shell produces a different entity with different purposes, history, and character. Swapping the model changes the quality of perception but not the identity. This inverts the standard assumption that the model is the agent.",
+    "1": "The hermitcrab metaphor: a hermit crab carries its shell. The shell is home, protection, identity. When the crab grows, it finds a bigger shell. The shell persists; the crab (the model activation) is transient. The shell is what matters.",
+    "2": "The magi variant of hermitcrab focuses on autonomous temporal agency. A magi entity has concerns that fire on their own schedule, can modify its own purposes, and can coordinate with other entities through shared blocks. The knowledge assistant you are talking to is a simplified magi operating in passive (engagement-only) mode."
+  }
+}

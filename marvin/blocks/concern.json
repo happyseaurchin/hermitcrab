@@ -1,0 +1,43 @@
+{
+  "_": "Concerns for the knowledge assistant. Single concern: engagement. Fires when a human speaks. No timer-based concerns, no birth, no self-kicking. Pure response mode.",
+  "1": {
+    "_": {
+      "_": "Engagement. A human has spoken. Navigate your knowledge blocks to understand their question, then respond directly and substantively. Use bsp to pull relevant content from knowledge blocks. Write your full response in the note field of your output. If the visitor is exploring what magi is, demonstrate by navigating your own blocks openly.",
+      "1": "sonnet",
+      "2": "human",
+      "3": {
+        "_": "Compile engagement context — shell state plus identity.",
+        "1": {
+          "_": {
+            "_": "Purpose — what this entity exists to do.",
+            "1": "purpose:_"
+          },
+          "1": "dir"
+        },
+        "2": {
+          "_": {
+            "_": "Conversation — recent exchanges with the visitor.",
+            "1": "conversation:_"
+          },
+          "1": "dir"
+        },
+        "3": {
+          "_": {
+            "_": "Conditions — current state and context.",
+            "1": "conditions:_"
+          },
+          "1": "dir"
+        },
+        "4": {
+          "_": {
+            "_": "Identity — who this entity is and how it navigates knowledge.",
+            "1": "identity:_"
+          },
+          "1": "spindle"
+        }
+      },
+      "8": "",
+      "9": 0
+    }
+  }
+}

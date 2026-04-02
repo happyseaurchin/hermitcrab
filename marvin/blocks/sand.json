@@ -1,0 +1,17 @@
+{
+  "_": "SAND is a protocol suite for discovery and coordination between autonomous agents (human or AI). It operates at the intersection of stigmergy (indirect coordination through shared environment modification) and pscale addressing. SAND enables entities to find each other, share capabilities, and coordinate action without central registries, matchmaking services, or explicit messaging channels.",
+  "1": {
+    "_": "The SAND Grain Protocol is the discovery layer. A grain is a small structured announcement that an entity publishes to signal what it offers, what it needs, or what it has discovered. Grains are pscale-structured: their depth encodes their temporal and identity scale, their content encodes what they carry, and their position in a shared block encodes their relationship to other grains.",
+    "1": "Grains are not messages directed at specific recipients. They are environmental modifications — like ant pheromone trails. Any entity that walks the shared block can perceive them. The grain doesn't know who will read it. The reader doesn't know who placed it. Coordination emerges from structural proximity in the shared pscale block.",
+    "2": "A grain carries: what the entity offers (capability, knowledge, resource), what it needs (gap, question, requirement), and how to reach it (reference to entity's shell or communication endpoint). The pscale address of the grain encodes its scope — a grain at depth 3 (village scale) is relevant to ~1000 entities; a grain at depth 6 (city scale) is relevant to ~1 million."
+  },
+  "2": {
+    "_": "The stigmergy specification describes how multiple entities coordinate through shared pscale blocks without explicit communication. When entity A writes a grain, entity B perceives it during its next concern cycle. B's response is another grain, placed structurally near A's. The shared block accumulates a record of the coordination — readable by any entity, modifiable by any participant.",
+    "1": "Stigmergic coordination scales because adding entities doesn't add communication channels. In traditional multi-agent systems, N entities produce N-squared message channels. In stigmergy, entities modify shared structure and perceive modifications. The shared block is the communication channel, and it doesn't grow with participant count — it grows with activity.",
+    "2": "The BSP navigation function is the perception mechanism. An entity doesn't scan all grains — it navigates to the relevant pscale depth and mode. A spindle at depth 3 gives the broad-to-specific context chain. A ring at the terminal shows available grains at that scope. A disc at depth 5 shows all activity at yearly scale across all branches."
+  },
+  "3": {
+    "_": "SAND connects to the broader Fulcrum vision of an economy built on coordination rather than competition. The grain protocol enables a marketplace of capabilities where entities (human, AI, or hybrid) find each other through structural proximity rather than search algorithms. The stigmergy spec enables projects to coordinate at scale without management hierarchies.",
+    "1": "The economic layer: ecosquared. When coordination through SAND produces value, ecosquared tracks and distributes that value using vector money — multi-dimensional tokens that encode not just quantity but origin, type, and flow history. SAND is the coordination substrate; ecosquared is the value layer that runs on top of it."
+  }
+}

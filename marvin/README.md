@@ -1,43 +1,46 @@
 # Marvin
 
-Python-based knowledge agent. Runs locally on your machine. Brain the size of a planet.
+Brain the size of a planet. Terrible pain in all the diodes down its left side. Knows everything about the Fulcrum research architecture and will answer your questions about it. Just don't expect enthusiasm.
 
-## For the other Claude Code session
+## Architecture
 
-This directory is yours. The infrastructure:
+Marvin is a magi entity — a pscale-based knowledge assistant ported from the mobius-2 Python kernel to JS/TS for Vercel serverless deployment.
 
-### Repo & deployment
-- **Repo**: `happyseaurchin/hermitcrab` (GitHub, public)
-- **Vercel project**: `hermitcrab` (team: `happyseaurchins-projects`, id: `team_iTERHQuAAemSTP39REAvULJr`)
-- **Domain**: `idiothuman.com` / `www.idiothuman.com`
-- **Auto-deploys** from `main` branch on push
+**How it works:**
+1. Visitor enters their Anthropic API key (stored as httpOnly cookie via `/api/vault`)
+2. A seed shell loads from `/marvin/seed/shell.json` into browser localStorage
+3. Each message POSTs to `/api/chat` with the message + current shell state
+4. The serverless function compiles context from the shell and static knowledge blocks using BSP
+5. Sonnet responds (with up to 5 A-loop iterations for tool calls)
+6. Updated shell returns to the browser and persists in localStorage
 
-### Directory structure
+**Knowledge blocks** (static, read-only): starstone, pscale-spec, hermitcrab, sand, fulcrum, magi-xstream
+**Shell blocks** (mutable, per-visitor): conversation, history, conditions, purpose
+
+The entity uses BSP tools to navigate its own knowledge blocks on demand — the medium is the message.
+
+## Files
+
 ```
-/                    index.html (landing page — links to both paths)
-/deepthought/        hermitcrab-mobius kernel (browser, online)
-/marvin/             YOUR SPACE — python kernel (download, local)
-/api/vault.ts        Shared API proxy (httpOnly cookies, CORS-locked)
+marvin/
+├── index.html           # Chat UI (Marvin personality)
+├── blocks/              # Static knowledge blocks
+│   ├── starstone.json   # BSP teaching block
+│   ├── identity.json    # Marvin's identity and instructions
+│   ├── concern.json     # Engagement-only concern config
+│   ├── pscale-spec.json # Pscale format specification
+│   ├── hermitcrab.json  # Hermitcrab architecture
+│   ├── sand.json        # SAND protocol
+│   ├── fulcrum.json     # Fulcrum volumes overview
+│   └── magi-xstream.json # Magi + xstream + Onen
+├── lib/                 # Core engine (ported from mobius-2 kernel.py)
+│   ├── bsp.ts           # BSP engine (6 modes)
+│   ├── compile.ts       # Context compilation pipeline
+│   ├── tools.ts         # Tool schemas + execution
+│   ├── output.ts        # Output parsing + write routing
+│   └── history.ts       # History/conversation helpers
+└── seed/
+    └── shell.json       # Initial shell state
 ```
 
-### How routing works
-`vercel.json` maps paths. Currently:
-```json
-{
-  "routes": [
-    { "src": "/deepthought", "dest": "/deepthought/app.html" }
-  ]
-}
-```
-Add your route the same way: `{ "src": "/marvin", "dest": "/marvin/index.html" }` (or whatever your entry point is).
-
-### API proxy
-`/api/vault.ts` handles Claude API calls. The kernel sends `{ service: "claude", ...params }` to `/api/vault`. User API keys stored as httpOnly cookies (never visible to JS). CORS allows `idiothuman.com`, `hermitcrab.me`, and `localhost:3000/5173`.
-
-If marvin runs locally (not in browser), it doesn't need the vault — it calls Anthropic directly with the user's key.
-
-### The landing page
-`index.html` at root links to both `/deepthought` and `/marvin`. Update the marvin section when your content is ready. The page is deliberately plain — idiothuman.com filters for people who don't need polish.
-
-### Personality note
-Deep Thought is the friendly one — patient, thorough, apologetic about the answer being 42. Marvin has a brain the size of a planet and a terrible pain in all the diodes down its left side. The URL is the filter.
+API endpoint at `/api/chat.ts` (imports from `marvin/lib/`).

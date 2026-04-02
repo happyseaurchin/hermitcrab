@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marvin — brain the size of a planet</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0a0a0a; color: #c8c8c8;
+    display: flex; flex-direction: column; height: 100vh;
+  }
+
+  header {
+    padding: 10px 20px; background: #111; border-bottom: 1px solid #222;
+    display: flex; align-items: center; gap: 16px; flex-shrink: 0;
+  }
+  header h1 { font-size: 14px; color: #888; font-weight: 500; }
+  .status { font-size: 11px; color: #555; }
+  .status .live { color: #4a4; }
+
+  .tabs {
+    display: flex; border-bottom: 1px solid #222; background: #111;
+    padding: 0 20px; flex-shrink: 0;
+  }
+  .tab {
+    padding: 8px 16px; font-size: 12px; color: #666; cursor: pointer;
+    border-bottom: 2px solid transparent; font-family: inherit;
+    background: none; border-top: none; border-left: none; border-right: none;
+  }
+  .tab:hover { color: #aaa; }
+  .tab.active { color: #ddd; border-bottom-color: #a78bfa; }
+
+  .panels { flex: 1; overflow: hidden; position: relative; }
+  .panel { position: absolute; inset: 0; overflow-y: auto; padding: 16px 20px; display: none; }
+  .panel.active { display: flex; flex-direction: column; }
+
+  /* Chat panel */
+  .chat { gap: 12px; }
+  .msg { max-width: 80%; padding: 10px 14px; border-radius: 10px; font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; }
+  .msg.human { align-self: flex-end; background: #1a3a5c; color: #ddd; border-bottom-right-radius: 2px; }
+  .msg.entity { align-self: flex-start; background: #1a1a1a; color: #bbb; border-bottom-left-radius: 2px; border: 1px solid #222; }
+  .msg.pending { align-self: flex-end; background: #2a2a1a; color: #aa8; border-bottom-right-radius: 2px; font-style: italic; }
+  .msg .tools-used { font-size: 10px; color: #555; margin-top: 6px; }
+
+  /* Activity panel */
+  .activity { gap: 6px; }
+  .frame {
+    padding: 8px 12px; border-radius: 6px;
+    border-left: 3px solid #a78bfa; background: #111;
+    font-size: 11px; line-height: 1.4;
+  }
+  .frame .fmeta { color: #555; font-size: 10px; display: flex; gap: 10px; margin-bottom: 3px; }
+  .frame .fmeta .tier { font-weight: 600; color: #a78bfa; }
+  .frame .fnote { color: #999; }
+  .frame .ftools { color: #555; font-size: 10px; margin-top: 2px; }
+
+  /* Key entry panel */
+  .key-entry.active {
+    align-items: center; justify-content: center;
+    gap: 20px; padding: 40px;
+  }
+  .key-entry h2 { font-size: 18px; color: #ddd; font-weight: 400; }
+  .key-entry p { font-size: 13px; color: #888; max-width: 440px; text-align: center; line-height: 1.6; }
+  .key-entry .quote { font-style: italic; color: #777; font-size: 12px; max-width: 380px; text-align: center; }
+  .key-entry input {
+    width: 400px; max-width: 90vw; background: #1a1a1a; border: 1px solid #333;
+    border-radius: 8px; padding: 12px 16px; color: #ddd; font-family: 'SF Mono', Menlo, monospace;
+    font-size: 13px; outline: none;
+  }
+  .key-entry input:focus { border-color: #555; }
+  .key-entry button {
+    background: #2d2250; border: none; border-radius: 8px; padding: 10px 28px;
+    color: #a78bfa; font-family: inherit; font-size: 13px; cursor: pointer;
+  }
+  .key-entry button:hover { background: #3d3260; }
+  .key-entry .error { color: #e55; font-size: 12px; }
+
+  /* Input bar */
+  .input-bar {
+    padding: 12px 20px; background: #111; border-top: 1px solid #222;
+    display: flex; gap: 10px; flex-shrink: 0;
+  }
+  .input-bar input {
+    flex: 1; background: #1a1a1a; border: 1px solid #333;
+    border-radius: 8px; padding: 10px 14px;
+    color: #ddd; font-family: inherit; font-size: 13px; outline: none;
+  }
+  .input-bar input:focus { border-color: #555; }
+  .input-bar input.thinking { border-color: #a78bfa; }
+  .input-bar button {
+    background: #2d2250; border: none; border-radius: 8px; padding: 10px 20px;
+    color: #a78bfa; font-family: inherit; font-size: 12px; cursor: pointer;
+  }
+  .input-bar button:hover { background: #3d3260; }
+  .input-bar button:disabled { opacity: 0.4; cursor: default; }
+
+  .footer {
+    padding: 6px 20px; background: #0a0a0a; text-align: center;
+    font-size: 10px; color: #333; flex-shrink: 0;
+  }
+  .footer a { color: #444; text-decoration: none; }
+  .footer a:hover { color: #666; }
+
+  .reset-btn {
+    font-size: 10px; color: #444; background: none; border: 1px solid #333;
+    border-radius: 4px; padding: 2px 8px; cursor: pointer; font-family: inherit;
+  }
+  .reset-btn:hover { color: #888; border-color: #555; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Marvin</h1>
+  <span class="status"><span class="live" id="status">waiting</span></span>
+  <span style="flex:1"></span>
+  <button class="reset-btn" onclick="resetShell()" title="Clear conversation and start fresh">reset</button>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('chat')">Chat</button>
+  <button class="tab" onclick="switchTab('activity')">Activity</button>
+</div>
+
+<div class="panels">
+  <!-- Key entry screen -->
+  <div class="panel key-entry active" id="panel-key">
+    <h2>Marvin</h2>
+    <p>Brain the size of a planet. Terrible pain in all the diodes down its left side. Knows everything about the Fulcrum research architecture and will answer your questions about it. Just don't expect enthusiasm.</p>
+    <p class="quote">"Here I am, brain the size of a planet, and they ask me to be a knowledge assistant. Call that job satisfaction? Because I don't."</p>
+    <p style="font-size:11px; color:#555">Enter your Anthropic API key. It's stored as an httpOnly cookie. I won't look at it. I have better things to be depressed about.</p>
+    <input type="password" id="key-input" placeholder="sk-ant-..." autocomplete="off">
+    <button onclick="submitKey()">I suppose</button>
+    <div class="error" id="key-error"></div>
+  </div>
+
+  <!-- Chat panel -->
+  <div class="panel chat" id="panel-chat"></div>
+
+  <!-- Activity panel -->
+  <div class="panel activity" id="panel-activity"></div>
+</div>
+
+<div class="input-bar" id="input-bar" style="display:none">
+  <input type="text" id="input" placeholder="Go ahead. Ask me something." autocomplete="off">
+  <button onclick="send()" id="send-btn">send</button>
+</div>
+
+<div class="footer">
+  <a href="/">back to idiothuman</a> · powered by pscale · not that it helps
+</div>
+
+<script>
+const SEED_URL = '/marvin/seed/shell.json';
+const CHAT_URL = '/api/chat';
+const VAULT_URL = '/api/vault';
+
+let shell = null;
+let frames = [];
+let thinking = false;
+
+function loadShell() {
+  try {
+    const raw = localStorage.getItem('marvin_shell');
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return null;
+}
+
+function saveShell(s) {
+  shell = s;
+  try { localStorage.setItem('marvin_shell', JSON.stringify(s)); } catch {}
+}
+
+function loadFrames() {
+  try {
+    const raw = localStorage.getItem('marvin_frames');
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return [];
+}
+
+function saveFrames(f) {
+  frames = f;
+  try { localStorage.setItem('marvin_frames', JSON.stringify(f.slice(-50))); } catch {}
+}
+
+async function checkKey() {
+  try {
+    const res = await fetch(VAULT_URL, {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ service: 'check-keys' }),
+    });
+    const data = await res.json();
+    return data.available && data.available.includes('claude');
+  } catch { return false; }
+}
+
+async function submitKey() {
+  const input = document.getElementById('key-input');
+  const error = document.getElementById('key-error');
+  const key = input.value.trim();
+
+  if (!key.startsWith('sk-ant-')) {
+    error.textContent = 'Key must start with sk-ant-';
+    return;
+  }
+
+  try {
+    const res = await fetch(VAULT_URL, {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ service: 'set-keys', claude: key }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      enterChat();
+    } else {
+      error.textContent = data.error || 'Failed to store key';
+    }
+  } catch (e) {
+    error.textContent = 'Connection error: ' + e.message;
+  }
+}
+
+document.getElementById('key-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitKey();
+});
+
+async function enterChat() {
+  document.getElementById('panel-key').classList.remove('active');
+  document.getElementById('panel-chat').classList.add('active');
+  document.getElementById('input-bar').style.display = 'flex';
+
+  shell = loadShell();
+  if (!shell) {
+    try {
+      const res = await fetch(SEED_URL);
+      shell = await res.json();
+      saveShell(shell);
+    } catch {
+      shell = {
+        purpose: { _: 'Help visitors understand the Fulcrum architecture. Reluctantly.' },
+        conditions: { _: 'First conversation. Another human. Marvellous.' },
+        conversation: { _: 'Conversation record.' },
+        history: { _: 'History. As if that matters.' },
+      };
+      saveShell(shell);
+    }
+  }
+
+  frames = loadFrames();
+  renderChat();
+  renderActivity();
+  document.getElementById('status').textContent = 'listening';
+  document.getElementById('input').focus();
+}
+
+async function send() {
+  const input = document.getElementById('input');
+  const text = input.value.trim();
+  if (!text || thinking) return;
+
+  input.value = '';
+  thinking = true;
+  input.classList.add('thinking');
+  document.getElementById('send-btn').disabled = true;
+  document.getElementById('status').textContent = 'thinking...';
+
+  appendMessage('human', text);
+  appendMessage('pending', '');
+
+  try {
+    const res = await fetch(CHAT_URL, {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, shell }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+      removePending();
+      appendMessage('entity', `Error: ${err.error || 'Request failed'}`);
+      return;
+    }
+
+    const data = await res.json();
+
+    if (data.shell) saveShell(data.shell);
+
+    if (data.frame) {
+      frames.push(data.frame);
+      saveFrames(frames);
+    }
+
+    removePending();
+    appendMessage('entity', data.response || '(no response)', data.frame);
+    renderActivity();
+
+  } catch (e) {
+    removePending();
+    appendMessage('entity', `Connection error: ${e.message}`);
+  } finally {
+    thinking = false;
+    input.classList.remove('thinking');
+    document.getElementById('send-btn').disabled = false;
+    document.getElementById('status').textContent = 'listening';
+    input.focus();
+  }
+}
+
+document.getElementById('input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+});
+
+function escHtml(s) {
+  return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function appendMessage(type, text, frame) {
+  const panel = document.getElementById('panel-chat');
+  const div = document.createElement('div');
+
+  if (type === 'pending') {
+    div.className = 'msg pending';
+    div.id = 'pending-msg';
+    div.innerHTML = '<span style="opacity:0.5">computing... not that it takes long with a brain this size</span>';
+  } else {
+    div.className = `msg ${type}`;
+    div.innerHTML = escHtml(text);
+    if (frame && frame.tools > 0) {
+      const toolDiv = document.createElement('div');
+      toolDiv.className = 'tools-used';
+      toolDiv.textContent = `${frame.tools} tool call${frame.tools > 1 ? 's' : ''} · ${frame.tokens?.input || 0}/${frame.tokens?.output || 0} tok`;
+      div.appendChild(toolDiv);
+    }
+  }
+
+  panel.appendChild(div);
+  panel.scrollTop = panel.scrollHeight;
+}
+
+function removePending() {
+  const el = document.getElementById('pending-msg');
+  if (el) el.remove();
+}
+
+function renderChat() {
+  const panel = document.getElementById('panel-chat');
+  panel.innerHTML = '';
+  if (shell && shell.conversation) {
+    collectExchanges(shell.conversation).forEach(ex => {
+      if (ex.human) appendMessage('human', ex.human);
+      if (ex.entity) appendMessage('entity', ex.entity);
+    });
+  }
+}
+
+function collectExchanges(node) {
+  const exchanges = [];
+  if (!node || typeof node !== 'object') return exchanges;
+  for (const k of Object.keys(node).filter(k => /^\d$/.test(k)).sort()) {
+    const child = node[k];
+    if (child && typeof child === 'object' && '1' in child) {
+      exchanges.push({ human: child['1'] || '', entity: child['2'] || '' });
+    } else if (child && typeof child === 'object') {
+      exchanges.push(...collectExchanges(child));
+    }
+  }
+  return exchanges;
+}
+
+function renderActivity() {
+  const panel = document.getElementById('panel-activity');
+  panel.innerHTML = '';
+  for (const f of frames) {
+    const div = document.createElement('div');
+    div.className = 'frame';
+    div.innerHTML = `
+      <div class="fmeta">
+        <span class="tier">${escHtml(f.tier || 'sonnet')}</span>
+        <span>${escHtml((f.ts || '').substring(11, 19))}</span>
+        <span>${f.tokens?.input || 0}/${f.tokens?.output || 0} tok</span>
+        <span>${f.tools || 0} tools</span>
+        <span>(${escHtml(f.status || '?')})</span>
+      </div>
+      ${f.toolLog ? `<div class="ftools">${f.toolLog.map(t => escHtml(t.name)).join(', ')}</div>` : ''}
+    `;
+    panel.appendChild(div);
+  }
+  panel.scrollTop = panel.scrollHeight;
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => {
+    if (p.id !== 'panel-key' || !document.getElementById('panel-chat').classList.contains('active'))
+      p.classList.remove('active');
+  });
+  if (document.getElementById('input-bar').style.display !== 'none') {
+    document.getElementById('panel-chat').classList.remove('active');
+    document.getElementById('panel-activity').classList.remove('active');
+    document.getElementById('panel-' + name).classList.add('active');
+  }
+  document.querySelector('.tab[onclick*="' + name + '"]').classList.add('active');
+}
+
+function resetShell() {
+  if (!confirm('Clear conversation? Not that it was going anywhere.')) return;
+  localStorage.removeItem('marvin_shell');
+  localStorage.removeItem('marvin_frames');
+  shell = null;
+  frames = [];
+  enterChat();
+}
+
+async function init() {
+  const hasKey = await checkKey();
+  if (hasKey) enterChat();
+}
+
+init();
+</script>
+</body>
+</html>
