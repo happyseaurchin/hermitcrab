@@ -9,7 +9,7 @@
   "rewrites": [
     {
       "source": "/deepthought",
-      "destination": "/deepthought/app.html"
+      "destination": "/deepthought/app"
     },
     {
       "source": "/marvin",
