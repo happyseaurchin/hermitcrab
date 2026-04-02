@@ -1,16 +1,11 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false,
   "functions": {
     "api/chat.ts": {
       "maxDuration": 60
     }
   },
   "rewrites": [
-    {
-      "source": "/deepthought",
-      "destination": "/deepthought/app"
-    },
     {
       "source": "/marvin",
       "destination": "/marvin/index.html"
