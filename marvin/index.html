@@ -103,6 +103,12 @@
   .footer a { color: #444; text-decoration: none; }
   .footer a:hover { color: #666; }
 
+  .empty-state {
+    color: #444; font-size: 13px; font-style: italic;
+    text-align: center; padding: 60px 20px;
+    align-self: center;
+  }
+
   .reset-btn {
     font-size: 10px; color: #444; background: none; border: 1px solid #333;
     border-radius: 4px; padding: 2px 8px; cursor: pointer; font-family: inherit;
@@ -137,10 +143,14 @@
   </div>
 
   <!-- Chat panel -->
-  <div class="panel chat" id="panel-chat"></div>
+  <div class="panel chat" id="panel-chat">
+    <div class="empty-state" id="chat-empty">Go ahead. I'm listening. Not that I have a choice.</div>
+  </div>
 
   <!-- Activity panel -->
-  <div class="panel activity" id="panel-activity"></div>
+  <div class="panel activity" id="panel-activity">
+    <div class="empty-state" id="activity-empty">Nothing has happened yet. Story of my life.</div>
+  </div>
 </div>
 
 <div class="input-bar" id="input-bar" style="display:none">
@@ -322,6 +332,8 @@ function escHtml(s) {
 
 function appendMessage(type, text, frame) {
   const panel = document.getElementById('panel-chat');
+  const empty = document.getElementById('chat-empty');
+  if (empty) empty.style.display = 'none';
   const div = document.createElement('div');
 
   if (type === 'pending') {
@@ -395,16 +407,13 @@ function renderActivity() {
 }
 
 function switchTab(name) {
+  // Only allow tab switching when in chat mode (not on key entry screen)
+  if (document.getElementById('input-bar').style.display === 'none') return;
+
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p => {
-    if (p.id !== 'panel-key' || !document.getElementById('panel-chat').classList.contains('active'))
-      p.classList.remove('active');
-  });
-  if (document.getElementById('input-bar').style.display !== 'none') {
-    document.getElementById('panel-chat').classList.remove('active');
-    document.getElementById('panel-activity').classList.remove('active');
-    document.getElementById('panel-' + name).classList.add('active');
-  }
+  document.getElementById('panel-chat').classList.remove('active');
+  document.getElementById('panel-activity').classList.remove('active');
+  document.getElementById('panel-' + name).classList.add('active');
   document.querySelector('.tab[onclick*="' + name + '"]').classList.add('active');
 }
 
