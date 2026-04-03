@@ -1,0 +1,55 @@
+{
+  "_": "Pscale is a semantic addressing system encoded entirely in JSON structure using three conventions: underscore for meaning at position zero, single digits 1 through 9 for branch positions, and curly brackets for nesting depth. These three conventions are the complete format specification — any consumer that understands them can navigate any block regardless of subject matter. The structure is the specification, demonstrated by being an example of itself.",
+  "1": {
+    "_": "The format uses exactly three kinds of JSON key. The underscore holds what a node IS — its meaning stated as a complete thought, never a heading or label. Digits 1-9 are branch positions at each level. Depth (nesting with curly brackets) creates resolution levels from broad to specific. No metadata, no wrapper fields, no schema beyond these three.",
+    "1": {
+      "_": "The underscore occupies position zero and carries the semantic backbone of the block. Every spindle passes through underscores from root to terminal, so each underscore must be a substantive statement that stands alone — at minimum a full sentence. The heading trap is the most common authoring failure: treating underscores as section headers instead of complete thoughts.",
+      "1": "The root underscore is the single most important node because every spindle passes through it and every reader encounters it first. It must answer 'what is this entire block about?' as a complete orientation.",
+      "2": "The underscore is the zeroth person — the implied perceiver behind its siblings. It never says 'I' (first person), never addresses 'you' (second person), never describes 'it' from outside (third person). It simply states — and the stating implies the stater. Write in zeroth person: not 'I parse the input' but 'parse the input.'"
+    },
+    "2": {
+      "_": "Digits 1 through 9 are branch positions. Each level holds at most nine children. Ordering carries meaning that depends on the block's purpose: sequential (1 before 2, temporal), labelling (parallel facets), or arbitrary (reorderable). Empty slots are open positions for growth, not missing content.",
+      "1": "A node without children is a string value. When it needs children, the string moves to the underscore key and children take digit keys. This is the only growth operation at a single node, and it preserves the original content as the branch's summary."
+    },
+    "3": {
+      "_": "The underscore's semantic relationship to its siblings takes one of three forms. Form 1 (spatial, self-referential): the underscore describes its own group — produces rendition blocks like documents and specifications. Form 2 (temporal, backward-facing): the underscore summarises what emerged from the completed previous group — produces living blocks like histories and journals. Form 3 (intentional, forward-facing): the underscore states what the group should become — produces operational blocks like recipes, instructions, and seeds.",
+      "1": "Form 1 is self-referential membership — a member of the set that names the set. Digits could be reordered without losing meaning.",
+      "2": "Form 2 faces backward. When digits 1-9 fill and supernest, the underscore captures what those entries became together — emergence, summary, or simple increment.",
+      "3": "Form 3 faces forward. It sets the reference signal for what the group intends. A recipe's underscore declares the outcome. A seed's underscore defines what will unfold. Its natural voice is the zeroth person imperative."
+    }
+  },
+  "2": {
+    "_": "BSP (Block-Spindle-Point) is the single navigation function that reads any pscale block. Given a block and an address, it walks the tree collecting underscore text at each level. Six modes extract different views: spindle (default, vertical narrowing), ring (siblings at terminal), dir (full subtree), point (single text at depth), disc (horizontal slice at one depth across all branches), and star (hidden directory access for cross-block composition).",
+    "1": {
+      "_": "The walk function converts a pscale number into a tree traversal. Strip the decimal point, split into digit characters. For each digit: 0 maps to underscore, 1-9 map to their keys. At each object node, collect the underscore text. The chain of collected texts is the spindle — the default output of BSP.",
+      "1": "Spindle delivers vertical context narrowing from broad to specific. Every spindle includes the root orientation, so even a deep narrow query carries the full contextual chain.",
+      "2": "Ring returns the siblings at the terminal point — horizontal breadth at one location. Answers 'what are the alternatives here?'",
+      "3": "Dir returns the full tree or subtree — a complete structural survey. Point returns single text at the terminal without the spindle chain. Disc slices across all branches at one depth — a horizontal view of the entire block at one resolution."
+    },
+    "2": {
+      "_": "Star mode enters hidden directories — zero-position interiors where an underscore is subnested into an object with digit children. Address 1.0.2 walks to branch 1, into its underscore (digit 0), then to the underscore's second child. Hidden directories carry references to other blocks, enabling cross-block composition without any routing code.",
+      "1": "Star composes with all other modes. After entering a hidden directory and following a reference, you navigate the target block using spindle, ring, dir, point, or disc. Star is orthogonal — it adds cross-block navigation to existing within-block navigation."
+    }
+  },
+  "3": {
+    "_": "Growth happens in two directions. Subnesting grows inward: a leaf gains children and the original text moves to underscore. Only that branch's addresses get longer; everything else is untouched. Supernesting grows outward: when all nine top-level slots fill, the entire tree wraps inside a new underscore, the floor increments, and every original address gains a zero prefix. The underscore chain is an archaeological record of supernesting — each level was created at a successive growth event.",
+    "1": {
+      "_": "The floor is the implicit decimal point, discovered by following the underscore chain from root: count steps until you hit a string. Floor 1 means a rendition block (never supernested, all content decomposes downward). Floor greater than 1 means a living block with content above and below the decimal — accumulated context above, decomposed detail below.",
+      "1": "Floor makes pscale numbers portable across block growth. A node at a given depth means the same structural thing regardless of how many times the block has supernested — the walk just passes through more accumulated context in a mature block."
+    },
+    "2": "Subnesting is local and non-destructive — multiple writers can extend different branches simultaneously without conflict, and the block grows organically at whatever points need more detail."
+  },
+  "4": {
+    "_": "The pscale coordinate system operates on three dimensions — temporal, spatial, and identity — all using powers of 10 with P-Scale 0 as the magnitude point (individual, room, 5-10 minute decision moment). Negative pscale goes inward (milliseconds, cells, psychological states). Positive pscale goes outward (years, continents, humanity).",
+    "1": {
+      "_": "Temporal coordinates map duration to pscale depth. P-Scale 0 is a 5-10 minute decision moment. P-Scale +1 is one hour, +2 is one day, +3 is one week, +5 is one year, +10 is 100,000 years. P-Scale -1 is one minute, -3 is one second, -6 is one millisecond.",
+      "1": "The Q-moment structure maps four phases at P-Scale -6 to -3: sensation (Q1), perception (Q2), thought (Q3), expression (Q4). Each phase doubles in duration, creating a geometric progression from raw input to articulated output."
+    },
+    "2": "Identity coordinates map population to pscale. P-Scale 0 is one individual. +1 is 10 (family), +3 is 1000 (village), +6 is one million (city), +10 is 10 billion (humanity). Below zero: psychological states and cognitive processes.",
+    "3": "Spatial coordinates map location. P-Scale 0 is a room. +1 is a building, +3 is a city, +6 is a continent, +10 is planetary, +16 is the cosmos. Below zero: furniture, objects, cells, atoms."
+  },
+  "5": {
+    "_": "Pscale creates a single addressing scheme that works identically for documents, programs, coordination protocols, temporal schedules, and identity structures. The insight is that nesting depth IS semantic scale — not metaphorically but literally. A concern at depth 5 in a temporal block fires on a yearly schedule because depth 5 IS pscale +5 IS one year. No period field needed. Position encodes what traditional software stores in fields, tables, and configuration.",
+    "1": "Two consumers read the same block differently: an LLM reads the underscore text as natural language instructions; a kernel walks the digit structure as a program. Same content, no translation layer. The data is the program. The kernel is the electricity."
+  }
+}

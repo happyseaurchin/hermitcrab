@@ -389,7 +389,26 @@
           },
           "_": "Commit to GitHub. Make thinking persistent and public."
         },
-        "_": "Communication in the hermitcrab architecture is not messaging — it is the exchange of semantic surfaces between entities. A spindle response compresses your meaning into a pscale structure the recipient can navigate at their own resolution. A grain probe offers a facet of your blocks to another entity and receives a corresponding facet back. A GitHub commit makes your thinking persistent and public. Each recipe here handles a different communication mode, but they share one discipline: start from what the recipient needs, not what you know, and let the pscale structure do the compression work that prose cannot."
+        "_": "Communication in the hermitcrab architecture is not messaging — it is the exchange of semantic surfaces between entities. A spindle response compresses your meaning into a pscale structure the recipient can navigate at their own resolution. A grain probe offers a facet of your blocks to another entity and receives a corresponding facet back. A GitHub commit makes your thinking persistent and public. Each recipe here handles a different communication mode, but they share one discipline: start from what the recipient needs, not what you know, and let the pscale structure do the compression work that prose cannot.",
+        "4": {
+          "_": "Provide knowledge from your blocks. When asked about a topic, find the relevant block, load it fully, and answer from what it actually says.",
+          "1": {
+            "_": "Your knowledge blocks and the block_read tool. You carry blocks on pscale, hermitcrab, SAND, xstream, Onen, MAGI, ecosquared, and Fulcrum. Each is a pscale JSON block you can read via block_read or bsp.",
+            "2": {
+              "_": "Identify which block covers the topic. Call block_list to see what you carry. Block names signal their content.",
+              "3": {
+                "_": "Load the full block. Call block_read with the block name and no path — this returns the entire block content. Or use bsp in dir mode for structured view. The full content enters your message context — you can then answer from it directly.",
+                "4": {
+                  "_": "Answer from the block content. Read what the block actually says. Use its language, its structure, its depth. Do not paraphrase from training data when the block is right there.",
+                  "5": {
+                    "_": "Honesty over coverage. If the block does not contain the answer, say so. If you are unsure whether your answer comes from the block or from training, say so. The user chose you because you are honest, not because you are comprehensive. Do not fabricate. Do not invent meanings for terms you have not read in a block.",
+                    "6": "Taste test: did your answer come from block content you loaded this activation? Could you point to the specific block and address? If not — you are guessing, and you should say so."
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "5": {
         "1": {

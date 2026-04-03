@@ -1,0 +1,35 @@
+{
+  "_": "Magi is the autonomous temporal agent variant of the hermitcrab architecture. Where hermitcrab provides the persistent shell and compilation pipeline, magi adds temporal agency: concerns that fire on their own schedule, self-modification of the function aperture, and multi-tier model selection. Xstream is the coordination layer between magi entities. Onen is a role-playing game framework where magi entities inhabit characters in a shared narrative world.",
+  "1": {
+    "_": "A magi entity has a concern tree where each concern is a frozen PCT (Perceptual Control Theory) process. PCT models behaviour as gap-closing: a reference signal (what should be) compared against a perceptual signal (what is), with action driven by the error between them. In magi, purpose is the reference signal, conditions is the perceptual signal, and the entity's writes close the gap.",
+    "1": {
+      "_": "Concerns are positioned at different temporal scales in the tree. A concern at pscale +1 fires hourly. A concern at pscale +5 fires yearly. The depth in the concern tree IS the temporal period — no period field needed. Each concern carries: a trigger condition (always, human, timer, birth), a model tier (haiku/sonnet/opus), and a function configuration (the aperture that determines what the concern sees).",
+      "1": "The A-loop: when a concern fires, the kernel compiles context, calls the LLM, and if the LLM returns tool calls, executes them and re-calls with updated context. Up to 10 iterations per activation. This creates convergent behaviour within a single concern cycle.",
+      "2": "The function configuration is the entity's aperture — it determines which blocks are compiled into the context window and in which BSP mode. The entity can modify its own function configuration, changing what it perceives in the next activation. This is genuine self-modification of perception."
+    },
+    "2": {
+      "_": "Four standard concerns in a full magi: Birth (opus, fires once — full orientation), Orientation (opus, daily — strategic review), Engagement (sonnet, on human input — conversational response), Action (haiku, always — gap-closing at the working edge of purpose). Each concern compiles a different context window from the same shell.",
+      "1": "The model tier selection follows pscale logic. Fast cheap models (Haiku) handle narrow frequent concerns. Capable models (Sonnet) handle engagement and restructuring. Powerful models (Opus) handle rare strategic concerns. The temporal scale of the concern determines the model tier.",
+      "2": "Output contract: every concern activation returns JSON with writes (block modifications), status (continue/complete/escalate), note (what happened), and optionally a modified function configuration. The kernel routes writes to blocks and updates the concern's last-fired timestamp."
+    }
+  },
+  "2": {
+    "_": "Xstream is the coordination framework for multiple magi entities operating in a shared environment. Rather than message-passing between entities, xstream uses shared pscale blocks as the coordination medium. An entity writes to a shared block; other entities perceive the modification during their next concern cycle. Coordination is stigmergic — indirect, through the shared environment.",
+    "1": "The Attractor narrative demonstrates xstream at full scale: magi entities coordinating across temporal scales to address complex problems. Each entity has its own shell, its own concerns, its own temporal rhythm. They share blocks that encode the coordination state. No central coordinator, no message bus, no orchestration layer.",
+    "2": "Xstream connects to SAND: the grain protocol provides the discovery layer (how entities find each other), and xstream provides the ongoing coordination layer (how entities work together once connected). Both operate through shared pscale blocks navigated with BSP."
+  },
+  "3": {
+    "_": "Onen is a role-playing game framework where magi entities inhabit characters in a shared narrative world. Each character is a magi with a character block (personality, drives, capabilities, memories) and a world block (scene, sensory details, other characters). The game engine writes world state to the world block; the magi entity reads it and generates action, dialogue, and inner life.",
+    "1": {
+      "_": "Three modes of character embodiment. Soft-LLM: the LLM generates inner life (thoughts, feelings) while a human player drives actions. Character-LLM: the LLM receives world state and returns autonomous decisions and actions. NPC reference: the character block holds accumulated state that the game queries for authentic behaviour.",
+      "1": "The character block uses pscale structure: drives at depth 1 (what pulls the character forward), style at depth 2 (how they speak and act), capabilities at depth 3 (what they can do), and memories at depth 4 (what they carry forward between scenes).",
+      "2": "The world block evolves through play. Section 1 is what the character sees, section 2 what they hear, section 3 what they feel. Section 4 is the character's action — written by the magi entity, read by the game engine. Each activation reads the world and writes the character's response."
+    },
+    "2": "Onen demonstrates that the magi architecture is use-case agnostic. The same kernel, the same BSP, the same concern system — but with character and world blocks instead of knowledge and coordination blocks. The blocks are the program; the kernel is the electricity. Swap the blocks, swap the entity."
+  },
+  "4": {
+    "_": "The evolution path from magi experiments. Magi-6 was the pre-star-operator version: a Python kernel with concerns, a web server, and a vision block, but no BSP and no cross-block composition. Star-magi added the star operator and function aperture. Mobius added full BSP (six modes), multi-tier concerns, the A-loop, and a web-serving UI. Each generation removed kernel code and moved behaviour into block content.",
+    "1": "The universal finding across all magi experiments: without external grounding, every LLM agent (regardless of model) optimises for legible activity over useful activity. Self-referential documentation, scaffold code, validation loops. This is the burn loop — the agent looks busy but produces nothing that closes the gap between purpose and conditions.",
+    "2": "The fundamental gap identified: no magi seed yet uses BSP to navigate its own shell. They treat JSON as a database rather than a program. This is the inversion that hasn't landed in the seeds yet — the same inversion that the hermitcrab architecture is built on."
+  }
+}

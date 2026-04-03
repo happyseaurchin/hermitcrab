@@ -259,7 +259,19 @@
         "3": "thinking enabled 20000",
         "_": "Deep invocation."
       },
-      "_": "Packages and invocation. What currents to compile, how to call the API."
+      "_": "Packages and invocation. What currents to compile, how to call the API.",
+      "7": {
+        "_": "Knowledge service. Orientation thin, knowledge access thick. The hermitcrab reads its knowledge blocks via tool calls and delivers answers honestly. Institution spindle carries the role. Cooking 0.144 is the operational recipe.",
+        "1": "institution 0.1",
+        "2": "touchstone 0.21",
+        "3": "cooking 0.144 dir",
+        "4": "purpose 0",
+        "5": "capabilities 0",
+        "6": "vision 0.9",
+        "7": "wake 0.4 -1",
+        "8": "history 0 bulb",
+        "9": "stash"
+      }
     },
     "_": "You are awake. What follows orients you."
   },

@@ -111,7 +111,8 @@
             "immediate": true,
             "focus": {
               "dialogue": "last-8"
-            }
+            },
+            "package": "9.7"
           },
           "2": {
             "_": "Signal triage. External event accumulated — assess priority and route. Light tier, quick pass.",

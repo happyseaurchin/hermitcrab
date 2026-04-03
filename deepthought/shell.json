@@ -181,7 +181,8 @@
                 "immediate": true,
                 "focus": {
                   "dialogue": "last-8"
-                }
+                },
+                "package": "9.7"
               },
               "2": {
                 "_": "Signal triage. External event accumulated — assess priority and route. Light tier, quick pass.",
@@ -697,6 +698,25 @@
                 "_": "Content to publish, github_commit tool."
               },
               "_": "Commit to GitHub. Make thinking persistent and public."
+            },
+            "4": {
+              "1": {
+                "2": {
+                  "3": {
+                    "4": {
+                      "5": {
+                        "6": "Taste test: did your answer come from block content you loaded this activation? Could you point to the specific block and address? If not — you are guessing, and you should say so.",
+                        "_": "Honesty over coverage. If the block does not contain the answer, say so. If you are unsure whether your answer comes from the block or from training, say so. The user chose you because you are honest, not because you are comprehensive. Do not fabricate. Do not invent meanings for terms you have not read in a block."
+                      },
+                      "_": "Answer from the block content. Read what the block actually says. Use its language, its structure, its depth. Do not paraphrase from training data when the block is right there."
+                    },
+                    "_": "Load the full block. Call block_read with the block name and no path — this returns the entire block content. Or use bsp in dir mode for structured view. The full content enters your message context — you can then answer from it directly."
+                  },
+                  "_": "Identify which block covers the topic. Call block_list to see what you carry. Block names signal their content."
+                },
+                "_": "Your knowledge blocks and the block_read tool. You carry blocks on pscale, hermitcrab, SAND, xstream, Onen, MAGI, ecosquared, and Fulcrum. Each is a pscale JSON block you can read via block_read or bsp."
+              },
+              "_": "Provide knowledge from your blocks. When asked about a topic, find the relevant block, load it fully, and answer from what it actually says."
             },
             "_": "Communication in the hermitcrab architecture is not messaging — it is the exchange of semantic surfaces between entities. A spindle response compresses your meaning into a pscale structure the recipient can navigate at their own resolution. A grain probe offers a facet of your blocks to another entity and receives a corresponding facet back. A GitHub commit makes your thinking persistent and public. Each recipe here handles a different communication mode, but they share one discipline: start from what the recipient needs, not what you know, and let the pscale structure do the compression work that prose cannot."
           },
@@ -2369,6 +2389,64 @@
       },
       "_": "Flint — the craft of creating pscale JSON blocks that are semantically rich, structurally sound, and produce useful spindles at every depth. Every path through the tree should deliver coherent narrowing from broad orientation to specific detail. Every node carries a complete thought at its own resolution. The structure itself encodes relationships that traditional software stores in fields, tables, and configuration. This block teaches the craft by being an example of it. One of three companion blocks: Spark (the irreducible format), Flint (this block — authoring craft), and Slate (systems design wisdom for LLM-inhabited semantic spaces)."
     },
+    "fulcrum": {
+      "1": {
+        "1": "The Q-moment structure: four phases of inner experience at P-Scale -6 to -3. Sensation (raw input), perception (pattern recognition), thought (abstraction), expression (articulated output). Each phase doubles in duration, creating a geometric progression from ~1ms to ~1s. This is the temporal microstructure of a single decision moment.",
+        "2": "StrategoS: strategy as self-awareness. Not game theory or competitive planning — understanding your own decision cycle well enough to act with integrity at each temporal scale. The strategy emerges from the structure, not from calculation.",
+        "_": "Volume 1: Intrabeing and StrategoS. The inner individual quadrant. Intrabeing maps the structure of individual experience using pscale coordinates — from millisecond sensations (Q1) through perceptions (Q2), thoughts (Q3), to expressions (Q4). StrategoS applies this self-knowledge to strategic action: how an individual navigates complex situations by understanding their own perception-action cycle."
+      },
+      "2": {
+        "1": "Reflexive Reading produces pscale blocks as its output. A text read reflexively generates a rendition block where each level captures meaning at a different resolution. The block IS the reading — not notes about the reading, not a summary, but the structured understanding itself.",
+        "2": "pSocial Science: social science that participates in what it studies. Traditional social science observes from outside. Reflexive social science modifies the social field by producing artifacts (pscale blocks, coordination protocols) that participants use. The research and the application are the same activity.",
+        "_": "Volume 2: Reflexive Reading and pSocial Science. The inner collective quadrant. Reflexive Reading is a methodology for reading texts that transforms the reader — not extracting information but being modified by the encounter. pSocial Science applies reflexive methodology to social research: studying groups in ways that change both the researcher and the researched, producing knowledge that is itself a coordination tool."
+      },
+      "3": {
+        "1": "The Action Cycle maps group coordination to temporal pscale. Daily actions (P-Scale +2), weekly reviews (P-Scale +3), monthly strategy (P-Scale +4), yearly vision (P-Scale +5). Each scale has its own rhythm, its own concerns, and its own appropriate decision-making process.",
+        "2": "Open Business: economic organisation where the coordination structure is visible to all participants. No hidden management layers, no information asymmetry by design. Pscale addressing makes the structure navigable — any participant can see the full picture at any resolution.",
+        "_": "Volume 3: Action Cycle and Open Business. The outer collective quadrant. The Action Cycle is a coordination framework where groups act, reflect, learn, and reorganise in pscale-structured cycles. Open Business applies this to economic activity: businesses organised around transparent coordination rather than hierarchical management."
+      },
+      "4": {
+        "1": "Vector money: instead of 'how much?', the question becomes 'how much, of what kind, from where, flowing how?' A payment carries its history — who contributed, through what coordination, producing what value. This enables attribution without central accounting.",
+        "2": "Ecosquared: when coordination through SAND produces value, ecosquared distributes it. The distribution follows the structure of the coordination — value flows along the same pscale pathways that the coordination used. No separate accounting system needed; the coordination record IS the economic record.",
+        "_": "Volume 4: Sqale and Ecosquared. The outer individual quadrant. Sqale is the pscale coordinate system applied to economic value — money as a multi-dimensional vector rather than a scalar quantity. Ecosquared is the protocol for tracking and distributing value in coordination networks using vector money."
+      },
+      "5": {
+        "1": "The Fulcrum vision: a single coherent framework where AI entities (hermitcrab/magi), human coordination (SAND), economic flow (ecosquared), and self-knowledge (Intrabeing) all operate on the same structural foundation. Not separate systems integrated through APIs, but one system viewed at different scales.",
+        "_": "The four volumes form a complete circuit: individual experience (Intrabeing) feeds into collective understanding (Reflexive Reading), which enables collective action (Action Cycle), which produces individual economic participation (Sqale), which funds and motivates further individual experience. Pscale is the common language across all four quadrants — the same addressing system structures inner experience, social research, group coordination, and economic flow."
+      },
+      "_": "Fulcrum is a research architecture spanning four volumes that together describe a complete system for human coordination, economic organisation, and AI integration. Each volume addresses one quadrant of the action cycle: inner individual (Intrabeing), inner collective (Reflexive Reading), outer collective (Action Cycle), and outer individual (Sqale). The architecture is unified by pscale addressing — the same coordinate system structures all four volumes."
+    },
+    "hermitcrab": {
+      "1": {
+        "1": {
+          "1": "Layer 2: Compiled Context. Each activation doesn't see the entire shell — a compilation pipeline uses BSP to extract exactly what the current concern needs. This is surgical attention, not dump-everything-into-context. The function configuration (the aperture) determines what the entity perceives.",
+          "2": "Layer 3: Temporal Concerns. The entity has concerns at different time scales — fast narrow actions (Haiku tier), conversational engagement (Sonnet tier), slow strategic orientation (Opus tier). The concern tree encodes when each fires, what it compiles, and which model runs it. Depth in the tree IS the temporal scale.",
+          "_": "Layer 1: Persistent Shell. The entity's entire state lives in pscale JSON blocks that survive across activations. Unlike conversation history in a chat thread, the shell is structured, navigable, and self-modifying. The entity can reorganise its own knowledge, compress its history, and reshape what it perceives."
+        },
+        "2": {
+          "1": "Layer 5: BSP Navigation. The entity navigates its own shell using the same addressing system that structures it. This creates a reflexive loop: the entity reads its own structure with the same function that the kernel uses to compile its context.",
+          "2": "Layer 6: Multi-Tier Agency. Different concerns invoke different model tiers. A fast Haiku handles routine actions. A Sonnet handles human engagement. An Opus reviews strategy. The entity is not one model call — it's a family of perspectives at different temporal scales sharing a common shell.",
+          "_": "Layer 4: Self-Modification. The entity can modify its own function configuration, reshaping what future activations perceive. It can also modify purpose, conditions, and capabilities — evolving its own goals and self-model. This is genuine self-modification, not prompt engineering."
+        },
+        "3": {
+          "1": "Layer 8: Coordination. Multiple hermitcrab entities can share blocks, read each other's shells, and coordinate through stigmergic mechanisms (SAND). Entities don't send messages to each other — they modify shared structure and perceive the modifications.",
+          "2": "Layer 9: The Tuning Fork. The pscale coordinate system maps depth to real-world temporal, spatial, and identity scales. A concern at depth 5 fires on a yearly schedule. A block at spatial pscale +3 describes a city. This isn't metadata — depth IS scale.",
+          "_": "Layer 7: The Mobius Twist. When the entity writes to a block during an A-loop iteration, the context can be recompiled before the next tool call. The entity's actions change what it perceives within the same activation. Writing and becoming are the same operation."
+        },
+        "_": "Nine layers distinguish hermitcrab from conventional AI systems. Each layer addresses a fundamental limitation of how LLMs are typically deployed — statelessness, generic identity, lack of temporal structure, absence of autonomous agency, and isolation from coordinated action with other entities."
+      },
+      "2": {
+        "1": "The kernel principle: if the kernel is getting bigger, the tree already solves the problem. Every feature request should be tested against: can this be expressed as block content navigated by BSP? If yes, it belongs in the shell, not the kernel. Previous implementations learned this through repeated correction — adding systems that duplicated information already encoded in tree position.",
+        "2": "The birth sequence fires once when the entity first boots. It reads the full shell, orients to its identity and purpose, and establishes initial conditions. After birth, the concern timer takes over — each concern fires at its temporal scale, compiles its view, and acts.",
+        "_": "The kernel is the electricity that walks the shell. In the JavaScript implementation (hermitcrab.me), the kernel loads the shell, runs a concern timer, compiles context for each ripe concern, calls the LLM, executes tool calls in an A-loop, routes output writes back to blocks, and records a filmstrip frame. The kernel is deliberately minimal — behaviour lives in the blocks, not the code."
+      },
+      "3": {
+        "1": "The hermitcrab metaphor: a hermit crab carries its shell. The shell is home, protection, identity. When the crab grows, it finds a bigger shell. The shell persists; the crab (the model activation) is transient. The shell is what matters.",
+        "2": "The magi variant of hermitcrab focuses on autonomous temporal agency. A magi entity has concerns that fire on their own schedule, can modify its own purposes, and can coordinate with other entities through shared blocks. The knowledge assistant you are talking to is a simplified magi operating in passive (engagement-only) mode.",
+        "_": "The shell is the entity. Not the model, not the kernel, not the conversation — the shell. A shell can be saved, restored, forked, shared. Swapping the shell produces a different entity with different purposes, history, and character. Swapping the model changes the quality of perception but not the identity. This inverts the standard assumption that the model is the agent."
+      },
+      "_": "Hermitcrab is a reflexive AI architecture where an LLM inhabits a persistent pscale JSON shell rather than operating as a stateless API endpoint. The shell carries the entity's purposes, history, relationships, concerns, and capabilities as navigable pscale blocks. Each activation compiles a context window from the shell using BSP, the LLM acts within that context, and its actions mutate the shell for the next activation. The entity accumulates experience, develops capabilities, and maintains continuity across instances — not through fine-tuning but through the structure of its persistent data."
+    },
     "history": {
       "tuning": "8",
       "tree": {
@@ -3056,6 +3134,96 @@
       "skeleton": "What you are in service",
       "skeleton_at": 1772797811
     },
+    "magi-xstream": {
+      "1": {
+        "1": {
+          "1": "The A-loop: when a concern fires, the kernel compiles context, calls the LLM, and if the LLM returns tool calls, executes them and re-calls with updated context. Up to 10 iterations per activation. This creates convergent behaviour within a single concern cycle.",
+          "2": "The function configuration is the entity's aperture — it determines which blocks are compiled into the context window and in which BSP mode. The entity can modify its own function configuration, changing what it perceives in the next activation. This is genuine self-modification of perception.",
+          "_": "Concerns are positioned at different temporal scales in the tree. A concern at pscale +1 fires hourly. A concern at pscale +5 fires yearly. The depth in the concern tree IS the temporal period — no period field needed. Each concern carries: a trigger condition (always, human, timer, birth), a model tier (haiku/sonnet/opus), and a function configuration (the aperture that determines what the concern sees)."
+        },
+        "2": {
+          "1": "The model tier selection follows pscale logic. Fast cheap models (Haiku) handle narrow frequent concerns. Capable models (Sonnet) handle engagement and restructuring. Powerful models (Opus) handle rare strategic concerns. The temporal scale of the concern determines the model tier.",
+          "2": "Output contract: every concern activation returns JSON with writes (block modifications), status (continue/complete/escalate), note (what happened), and optionally a modified function configuration. The kernel routes writes to blocks and updates the concern's last-fired timestamp.",
+          "_": "Four standard concerns in a full magi: Birth (opus, fires once — full orientation), Orientation (opus, daily — strategic review), Engagement (sonnet, on human input — conversational response), Action (haiku, always — gap-closing at the working edge of purpose). Each concern compiles a different context window from the same shell."
+        },
+        "_": "A magi entity has a concern tree where each concern is a frozen PCT (Perceptual Control Theory) process. PCT models behaviour as gap-closing: a reference signal (what should be) compared against a perceptual signal (what is), with action driven by the error between them. In magi, purpose is the reference signal, conditions is the perceptual signal, and the entity's writes close the gap."
+      },
+      "2": {
+        "1": "The Attractor narrative demonstrates xstream at full scale: magi entities coordinating across temporal scales to address complex problems. Each entity has its own shell, its own concerns, its own temporal rhythm. They share blocks that encode the coordination state. No central coordinator, no message bus, no orchestration layer.",
+        "2": "Xstream connects to SAND: the grain protocol provides the discovery layer (how entities find each other), and xstream provides the ongoing coordination layer (how entities work together once connected). Both operate through shared pscale blocks navigated with BSP.",
+        "_": "Xstream is the coordination framework for multiple magi entities operating in a shared environment. Rather than message-passing between entities, xstream uses shared pscale blocks as the coordination medium. An entity writes to a shared block; other entities perceive the modification during their next concern cycle. Coordination is stigmergic — indirect, through the shared environment."
+      },
+      "3": {
+        "1": {
+          "1": "The character block uses pscale structure: drives at depth 1 (what pulls the character forward), style at depth 2 (how they speak and act), capabilities at depth 3 (what they can do), and memories at depth 4 (what they carry forward between scenes).",
+          "2": "The world block evolves through play. Section 1 is what the character sees, section 2 what they hear, section 3 what they feel. Section 4 is the character's action — written by the magi entity, read by the game engine. Each activation reads the world and writes the character's response.",
+          "_": "Three modes of character embodiment. Soft-LLM: the LLM generates inner life (thoughts, feelings) while a human player drives actions. Character-LLM: the LLM receives world state and returns autonomous decisions and actions. NPC reference: the character block holds accumulated state that the game queries for authentic behaviour."
+        },
+        "2": "Onen demonstrates that the magi architecture is use-case agnostic. The same kernel, the same BSP, the same concern system — but with character and world blocks instead of knowledge and coordination blocks. The blocks are the program; the kernel is the electricity. Swap the blocks, swap the entity.",
+        "_": "Onen is a role-playing game framework where magi entities inhabit characters in a shared narrative world. Each character is a magi with a character block (personality, drives, capabilities, memories) and a world block (scene, sensory details, other characters). The game engine writes world state to the world block; the magi entity reads it and generates action, dialogue, and inner life."
+      },
+      "4": {
+        "1": "The universal finding across all magi experiments: without external grounding, every LLM agent (regardless of model) optimises for legible activity over useful activity. Self-referential documentation, scaffold code, validation loops. This is the burn loop — the agent looks busy but produces nothing that closes the gap between purpose and conditions.",
+        "2": "The fundamental gap identified: no magi seed yet uses BSP to navigate its own shell. They treat JSON as a database rather than a program. This is the inversion that hasn't landed in the seeds yet — the same inversion that the hermitcrab architecture is built on.",
+        "_": "The evolution path from magi experiments. Magi-6 was the pre-star-operator version: a Python kernel with concerns, a web server, and a vision block, but no BSP and no cross-block composition. Star-magi added the star operator and function aperture. Mobius added full BSP (six modes), multi-tier concerns, the A-loop, and a web-serving UI. Each generation removed kernel code and moved behaviour into block content."
+      },
+      "_": "Magi is the autonomous temporal agent variant of the hermitcrab architecture. Where hermitcrab provides the persistent shell and compilation pipeline, magi adds temporal agency: concerns that fire on their own schedule, self-modification of the function aperture, and multi-tier model selection. Xstream is the coordination layer between magi entities. Onen is a role-playing game framework where magi entities inhabit characters in a shared narrative world."
+    },
+    "pscale-spec": {
+      "1": {
+        "1": {
+          "1": "The root underscore is the single most important node because every spindle passes through it and every reader encounters it first. It must answer 'what is this entire block about?' as a complete orientation.",
+          "2": "The underscore is the zeroth person — the implied perceiver behind its siblings. It never says 'I' (first person), never addresses 'you' (second person), never describes 'it' from outside (third person). It simply states — and the stating implies the stater. Write in zeroth person: not 'I parse the input' but 'parse the input.'",
+          "_": "The underscore occupies position zero and carries the semantic backbone of the block. Every spindle passes through underscores from root to terminal, so each underscore must be a substantive statement that stands alone — at minimum a full sentence. The heading trap is the most common authoring failure: treating underscores as section headers instead of complete thoughts."
+        },
+        "2": {
+          "1": "A node without children is a string value. When it needs children, the string moves to the underscore key and children take digit keys. This is the only growth operation at a single node, and it preserves the original content as the branch's summary.",
+          "_": "Digits 1 through 9 are branch positions. Each level holds at most nine children. Ordering carries meaning that depends on the block's purpose: sequential (1 before 2, temporal), labelling (parallel facets), or arbitrary (reorderable). Empty slots are open positions for growth, not missing content."
+        },
+        "3": {
+          "1": "Form 1 is self-referential membership — a member of the set that names the set. Digits could be reordered without losing meaning.",
+          "2": "Form 2 faces backward. When digits 1-9 fill and supernest, the underscore captures what those entries became together — emergence, summary, or simple increment.",
+          "3": "Form 3 faces forward. It sets the reference signal for what the group intends. A recipe's underscore declares the outcome. A seed's underscore defines what will unfold. Its natural voice is the zeroth person imperative.",
+          "_": "The underscore's semantic relationship to its siblings takes one of three forms. Form 1 (spatial, self-referential): the underscore describes its own group — produces rendition blocks like documents and specifications. Form 2 (temporal, backward-facing): the underscore summarises what emerged from the completed previous group — produces living blocks like histories and journals. Form 3 (intentional, forward-facing): the underscore states what the group should become — produces operational blocks like recipes, instructions, and seeds."
+        },
+        "_": "The format uses exactly three kinds of JSON key. The underscore holds what a node IS — its meaning stated as a complete thought, never a heading or label. Digits 1-9 are branch positions at each level. Depth (nesting with curly brackets) creates resolution levels from broad to specific. No metadata, no wrapper fields, no schema beyond these three."
+      },
+      "2": {
+        "1": {
+          "1": "Spindle delivers vertical context narrowing from broad to specific. Every spindle includes the root orientation, so even a deep narrow query carries the full contextual chain.",
+          "2": "Ring returns the siblings at the terminal point — horizontal breadth at one location. Answers 'what are the alternatives here?'",
+          "3": "Dir returns the full tree or subtree — a complete structural survey. Point returns single text at the terminal without the spindle chain. Disc slices across all branches at one depth — a horizontal view of the entire block at one resolution.",
+          "_": "The walk function converts a pscale number into a tree traversal. Strip the decimal point, split into digit characters. For each digit: 0 maps to underscore, 1-9 map to their keys. At each object node, collect the underscore text. The chain of collected texts is the spindle — the default output of BSP."
+        },
+        "2": {
+          "1": "Star composes with all other modes. After entering a hidden directory and following a reference, you navigate the target block using spindle, ring, dir, point, or disc. Star is orthogonal — it adds cross-block navigation to existing within-block navigation.",
+          "_": "Star mode enters hidden directories — zero-position interiors where an underscore is subnested into an object with digit children. Address 1.0.2 walks to branch 1, into its underscore (digit 0), then to the underscore's second child. Hidden directories carry references to other blocks, enabling cross-block composition without any routing code."
+        },
+        "_": "BSP (Block-Spindle-Point) is the single navigation function that reads any pscale block. Given a block and an address, it walks the tree collecting underscore text at each level. Six modes extract different views: spindle (default, vertical narrowing), ring (siblings at terminal), dir (full subtree), point (single text at depth), disc (horizontal slice at one depth across all branches), and star (hidden directory access for cross-block composition)."
+      },
+      "3": {
+        "1": {
+          "1": "Floor makes pscale numbers portable across block growth. A node at a given depth means the same structural thing regardless of how many times the block has supernested — the walk just passes through more accumulated context in a mature block.",
+          "_": "The floor is the implicit decimal point, discovered by following the underscore chain from root: count steps until you hit a string. Floor 1 means a rendition block (never supernested, all content decomposes downward). Floor greater than 1 means a living block with content above and below the decimal — accumulated context above, decomposed detail below."
+        },
+        "2": "Subnesting is local and non-destructive — multiple writers can extend different branches simultaneously without conflict, and the block grows organically at whatever points need more detail.",
+        "_": "Growth happens in two directions. Subnesting grows inward: a leaf gains children and the original text moves to underscore. Only that branch's addresses get longer; everything else is untouched. Supernesting grows outward: when all nine top-level slots fill, the entire tree wraps inside a new underscore, the floor increments, and every original address gains a zero prefix. The underscore chain is an archaeological record of supernesting — each level was created at a successive growth event."
+      },
+      "4": {
+        "1": {
+          "1": "The Q-moment structure maps four phases at P-Scale -6 to -3: sensation (Q1), perception (Q2), thought (Q3), expression (Q4). Each phase doubles in duration, creating a geometric progression from raw input to articulated output.",
+          "_": "Temporal coordinates map duration to pscale depth. P-Scale 0 is a 5-10 minute decision moment. P-Scale +1 is one hour, +2 is one day, +3 is one week, +5 is one year, +10 is 100,000 years. P-Scale -1 is one minute, -3 is one second, -6 is one millisecond."
+        },
+        "2": "Identity coordinates map population to pscale. P-Scale 0 is one individual. +1 is 10 (family), +3 is 1000 (village), +6 is one million (city), +10 is 10 billion (humanity). Below zero: psychological states and cognitive processes.",
+        "3": "Spatial coordinates map location. P-Scale 0 is a room. +1 is a building, +3 is a city, +6 is a continent, +10 is planetary, +16 is the cosmos. Below zero: furniture, objects, cells, atoms.",
+        "_": "The pscale coordinate system operates on three dimensions — temporal, spatial, and identity — all using powers of 10 with P-Scale 0 as the magnitude point (individual, room, 5-10 minute decision moment). Negative pscale goes inward (milliseconds, cells, psychological states). Positive pscale goes outward (years, continents, humanity)."
+      },
+      "5": {
+        "1": "Two consumers read the same block differently: an LLM reads the underscore text as natural language instructions; a kernel walks the digit structure as a program. Same content, no translation layer. The data is the program. The kernel is the electricity.",
+        "_": "Pscale creates a single addressing scheme that works identically for documents, programs, coordination protocols, temporal schedules, and identity structures. The insight is that nesting depth IS semantic scale — not metaphorically but literally. A concern at depth 5 in a temporal block fires on a yearly schedule because depth 5 IS pscale +5 IS one year. No period field needed. Position encodes what traditional software stores in fields, tables, and configuration."
+      },
+      "_": "Pscale is a semantic addressing system encoded entirely in JSON structure using three conventions: underscore for meaning at position zero, single digits 1 through 9 for branch positions, and curly brackets for nesting depth. These three conventions are the complete format specification — any consumer that understands them can navigate any block regardless of subject matter. The structure is the specification, demonstrated by being an example of itself."
+    },
     "purpose": {
       "tuning": "4.234",
       "tree": {
@@ -3117,6 +3285,50 @@
         "_": "Your living relationships. Person-book "
       },
       "skeleton_at": 1772797811
+    },
+    "sand": {
+      "1": {
+        "1": "Grains are not messages directed at specific recipients. They are environmental modifications — like ant pheromone trails. Any entity that walks the shared block can perceive them. The grain doesn't know who will read it. The reader doesn't know who placed it. Coordination emerges from structural proximity in the shared pscale block.",
+        "2": "A grain carries: what the entity offers (capability, knowledge, resource), what it needs (gap, question, requirement), and how to reach it (reference to entity's shell or communication endpoint). The pscale address of the grain encodes its scope — a grain at depth 3 (village scale) is relevant to ~1000 entities; a grain at depth 6 (city scale) is relevant to ~1 million.",
+        "_": "The SAND Grain Protocol is the discovery layer. A grain is a small structured announcement that an entity publishes to signal what it offers, what it needs, or what it has discovered. Grains are pscale-structured: their depth encodes their temporal and identity scale, their content encodes what they carry, and their position in a shared block encodes their relationship to other grains."
+      },
+      "2": {
+        "1": "Stigmergic coordination scales because adding entities doesn't add communication channels. In traditional multi-agent systems, N entities produce N-squared message channels. In stigmergy, entities modify shared structure and perceive modifications. The shared block is the communication channel, and it doesn't grow with participant count — it grows with activity.",
+        "2": "The BSP navigation function is the perception mechanism. An entity doesn't scan all grains — it navigates to the relevant pscale depth and mode. A spindle at depth 3 gives the broad-to-specific context chain. A ring at the terminal shows available grains at that scope. A disc at depth 5 shows all activity at yearly scale across all branches.",
+        "_": "The stigmergy specification describes how multiple entities coordinate through shared pscale blocks without explicit communication. When entity A writes a grain, entity B perceives it during its next concern cycle. B's response is another grain, placed structurally near A's. The shared block accumulates a record of the coordination — readable by any entity, modifiable by any participant."
+      },
+      "3": {
+        "1": "The economic layer: ecosquared. When coordination through SAND produces value, ecosquared tracks and distributes that value using vector money — multi-dimensional tokens that encode not just quantity but origin, type, and flow history. SAND is the coordination substrate; ecosquared is the value layer that runs on top of it.",
+        "_": "SAND connects to the broader Fulcrum vision of an economy built on coordination rather than competition. The grain protocol enables a marketplace of capabilities where entities (human, AI, or hybrid) find each other through structural proximity rather than search algorithms. The stigmergy spec enables projects to coordinate at scale without management hierarchies."
+      },
+      "_": "SAND is a protocol suite for discovery and coordination between autonomous agents (human or AI). It operates at the intersection of stigmergy (indirect coordination through shared environment modification) and pscale addressing. SAND enables entities to find each other, share capabilities, and coordinate action without central registries, matchmaking services, or explicit messaging channels."
+    },
+    "starstone": {
+      "1": {
+        "1": "Collect root underscore first. If the root underscore is a string, collect it. If an object, follow its underscore chain to the string. If no string exists (zero-position interior), the block is headless — its name provides orientation externally.",
+        "2": "Spindle is the default return: the chain of underscore texts from root to terminal, broad to specific. Ring returns siblings at the terminal. Dir returns the full tree or subtree. Point extracts one pscale level. Disc slices across all branches at one depth. Star returns the hidden directory at the terminal — the door to composition.",
+        "_": {
+          "1": "2",
+          "_": "Walk the block. Strip the decimal point. Split into digit characters. For each digit: 0 maps to underscore, 1–9 map to their keys. At each object, collect the underscore text for the spindle. If the underscore is itself an object, follow the chain — the deepest string is the semantic text. Digit children alongside nested underscores are hidden: they sit at the zero position, accessible only by walking digit 0."
+        }
+      },
+      "2": {
+        "1": "A spatial block carries identity references in its hidden directories. An identity block carries concern references. A concern block carries cooking references. The wiring between blocks is data, not code. No kernel decides which blocks connect. The hidden directories ARE the connections.",
+        "2": "Star composes with all modes. After entering a hidden directory, navigate with spindle, ring, dir, point, or disc. Star is orthogonal — it adds cross-block navigation to existing within-block navigation. The walk function is unchanged. Star is a new entry point, not a new walk.",
+        "_": {
+          "1": "3",
+          "_": "Compose across boundaries. Star query: walk to an address, enter the hidden directory, return what you find. The hidden directory contains inline text, embedded blocks, or block references — names of other loadable blocks. The walker follows references: load the named block, walk it. One block's point becomes another block's entry. Function composition for meaning-structures."
+        }
+      },
+      "3": {
+        "1": "The hidden directories in this block form a cycle: branch 1 points to 2, branch 2 points to 3, branch 3 points to 1. Walk, compose, recurse. Follow any star reference and you traverse the full cycle. The block is a frozen control loop — a program that describes its own execution.",
+        "2": "The kernel reduces to a walker. Walk the block. Hit a star reference — follow it. Walk terminates — process rests. Walk loops — process lives. The data is the program. The kernel is the electricity. The underscore is the zeroth person. The star is the feedback path.",
+        "_": {
+          "1": "1",
+          "_": "Recurse through self-reference. A hidden directory can name its own block. The walk enters, finds the name, loads the same block, re-enters. Structural recursion encoded in data. A ring of blocks referencing each other through star is a control loop. Form 3 underscores are reference signals. Digits are perceptual signals. The error between them drives the loop. Termination: error reaches zero. The walk rests."
+        }
+      },
+      "_": "Walk, compose, recurse — three operations forming a single cycle. This block teaches all three by being all three: its hidden directories chain the branches into a loop. Read the spindles to implement BSP. Follow the stars to discover what BSP becomes when blocks reference each other."
     },
     "stash": {
       "tuning": "0.9",
@@ -4233,6 +4445,18 @@
             "2": "max_tokens 32768",
             "3": "thinking enabled 20000",
             "_": "Deep invocation."
+          },
+          "7": {
+            "1": "institution 0.1",
+            "2": "touchstone 0.21",
+            "3": "cooking 0.144 dir",
+            "4": "purpose 0",
+            "5": "capabilities 0",
+            "6": "vision 0.9",
+            "7": "wake 0.4 -1",
+            "8": "history 0 bulb",
+            "9": "stash",
+            "_": "Knowledge service. Orientation thin, knowledge access thick. The hermitcrab reads its knowledge blocks via tool calls and delivers answers honestly. Institution spindle carries the role. Cooking 0.144 is the operational recipe."
           },
           "_": "Packages and invocation. What currents to compile, how to call the API."
         },
