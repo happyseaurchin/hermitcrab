@@ -32,6 +32,16 @@ function setCors(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
 
+function parseCookies(req: VercelRequest): Record<string, string> {
+  const raw = req.headers.cookie || '';
+  const cookies: Record<string, string> = {};
+  for (const pair of raw.split(';')) {
+    const eq = pair.indexOf('=');
+    if (eq > 0) cookies[pair.slice(0, eq).trim()] = pair.slice(eq + 1).trim();
+  }
+  return cookies;
+}
+
 // ── Static block loading ──
 
 const BLOCKS_DIR = join(process.cwd(), 'marvin', 'blocks');
@@ -161,10 +171,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { message, shell, apiKey: clientKey } = req.body;
-  const apiKey = clientKey || process.env.VAULT_KEY_CLAUDE;
+  const cookies = parseCookies(req);
+  const apiKey = process.env.VAULT_KEY_CLAUDE || cookies.hc_claude;
   if (!apiKey) return res.status(401).json({ error: 'No API key.' });
   if (!apiKey.startsWith('sk-ant-')) return res.status(401).json({ error: 'Invalid API key format' });
+
+  const { message, shell } = req.body;
   if (!message || typeof message !== 'string') {
     return res.status(400).json({ error: 'message required' });
   }

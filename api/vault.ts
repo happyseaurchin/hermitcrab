@@ -48,7 +48,7 @@ function parseCookies(req: VercelRequest): Record<string, string> {
 
 function cookieFlags(req: VercelRequest): string {
   const isSecure = !req.headers.host?.includes('localhost');
-  return `HttpOnly; SameSite=Lax; Path=/api/vault; Max-Age=31536000${isSecure ? '; Secure' : ''}`;
+  return `HttpOnly; SameSite=Lax; Path=/api; Max-Age=31536000${isSecure ? '; Secure' : ''}`;
 }
 
 // ── GitHub helper ──
