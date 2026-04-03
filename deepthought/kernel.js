@@ -2431,8 +2431,24 @@
 
   } catch (e) {
     _activationLock = false;
-    status(`boot failed: ${e.message}`, 'error');
     console.error('[möbius]', e);
+    // If boot failed due to auth (401), clear gate flag and vault keys flag,
+    // then reload to re-show the landing gate with key entry
+    if (e.message && e.message.includes('401')) {
+      sessionStorage.removeItem('hermitcrab_entered');
+      localStorage.removeItem('hermitcrab_vault_keys');
+      root.innerHTML = `
+        <div style="max-width:420px;margin:100px auto;font-family:monospace;color:var(--fg);text-align:center">
+          <h2 style="color:var(--accent);font-size:24px">◇ deepthought</h2>
+          <p style="color:#e55;font-size:13px;margin:16px 0">API key invalid or missing.</p>
+          <p style="color:var(--fg-muted);font-size:12px;margin:0 0 24px">Enter a valid key to continue.</p>
+          <button onclick="location.reload()" style="padding:10px 32px;background:var(--btn-bg);color:var(--btn-fg);border:none;border-radius:4px;cursor:pointer;font-family:monospace;font-size:14px">
+            Try again
+          </button>
+        </div>`;
+    } else {
+      status(`boot failed: ${e.message}`, 'error');
+    }
   }
 
   // ═══════ §10 CONCERN TIMER ═══════
