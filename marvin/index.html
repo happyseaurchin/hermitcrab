@@ -41,8 +41,23 @@
   .msg { max-width: 80%; padding: 10px 14px; border-radius: 10px; font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; }
   .msg.human { align-self: flex-end; background: #1a3a5c; color: #ddd; border-bottom-right-radius: 2px; }
   .msg.entity { align-self: flex-start; background: #1a1a1a; color: #bbb; border-bottom-left-radius: 2px; border: 1px solid #222; }
-  .msg.pending { align-self: flex-end; background: #2a2a1a; color: #aa8; border-bottom-right-radius: 2px; font-style: italic; }
+  .msg.pending { align-self: flex-start; background: #1a1a1a; color: #555; border-bottom-left-radius: 2px; border: 1px solid #222; font-style: italic; }
   .msg .tools-used { font-size: 10px; color: #555; margin-top: 6px; }
+
+  /* Inline key prompt in chat */
+  .key-prompt { align-self: flex-start; background: #1a1a1a; border: 1px solid #333; border-radius: 10px; padding: 14px; max-width: 80%; }
+  .key-prompt p { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .key-prompt input {
+    width: 100%; background: #0a0a0a; border: 1px solid #333; border-radius: 6px;
+    padding: 8px 10px; color: #ddd; font-family: 'SF Mono', Menlo, monospace; font-size: 12px; outline: none;
+    margin-bottom: 6px;
+  }
+  .key-prompt input:focus { border-color: #555; }
+  .key-prompt button {
+    background: #2d2250; border: none; border-radius: 6px; padding: 6px 16px;
+    color: #a78bfa; font-family: inherit; font-size: 11px; cursor: pointer;
+  }
+  .key-prompt .error { color: #e55; font-size: 11px; margin-top: 4px; }
 
   /* Activity panel */
   .activity { gap: 6px; }
@@ -53,29 +68,21 @@
   }
   .frame .fmeta { color: #555; font-size: 10px; display: flex; gap: 10px; margin-bottom: 3px; }
   .frame .fmeta .tier { font-weight: 600; color: #a78bfa; }
-  .frame .fnote { color: #999; }
   .frame .ftools { color: #555; font-size: 10px; margin-top: 2px; }
 
-  /* Key entry panel */
-  .key-entry.active {
+  /* Splash screen */
+  .splash.active {
     align-items: center; justify-content: center;
     gap: 20px; padding: 40px;
   }
-  .key-entry h2 { font-size: 18px; color: #ddd; font-weight: 400; }
-  .key-entry p { font-size: 13px; color: #888; max-width: 440px; text-align: center; line-height: 1.6; }
-  .key-entry .quote { font-style: italic; color: #777; font-size: 12px; max-width: 380px; text-align: center; }
-  .key-entry input {
-    width: 400px; max-width: 90vw; background: #1a1a1a; border: 1px solid #333;
-    border-radius: 8px; padding: 12px 16px; color: #ddd; font-family: 'SF Mono', Menlo, monospace;
-    font-size: 13px; outline: none;
-  }
-  .key-entry input:focus { border-color: #555; }
-  .key-entry button {
+  .splash h2 { font-size: 18px; color: #ddd; font-weight: 400; }
+  .splash p { font-size: 13px; color: #888; max-width: 440px; text-align: center; line-height: 1.6; }
+  .splash .quote { font-style: italic; color: #777; font-size: 12px; max-width: 380px; text-align: center; }
+  .splash button {
     background: #2d2250; border: none; border-radius: 8px; padding: 10px 28px;
     color: #a78bfa; font-family: inherit; font-size: 13px; cursor: pointer;
   }
-  .key-entry button:hover { background: #3d3260; }
-  .key-entry .error { color: #e55; font-size: 12px; }
+  .splash button:hover { background: #3d3260; }
 
   /* Input bar */
   .input-bar {
@@ -131,19 +138,12 @@
 </div>
 
 <div class="panels">
-  <!-- Key entry screen -->
-  <div class="panel key-entry active" id="panel-key">
+  <!-- Splash screen — always shows first -->
+  <div class="panel splash active" id="panel-splash">
     <h2>Marvin</h2>
     <p>I'll answer any question, but it would be a waste of your hard-earned cash if it isn't about things you don't know about. Fulcrum, hermitcrabs, xstream, magi, onen, XQ maths, ABC state... the list goes on... endlessly... dissolving into the vast sea of the unknown....</p>
     <p class="quote">"Here I am, brain the size of a planet, and they ask me to be a knowledge assistant. Call that job satisfaction? Because I don't."</p>
-    <p style="font-size:11px; color:#555">Enter your Anthropic API key. It's stored as an httpOnly cookie. I won't look at it. I have better things to be depressed about.</p>
-    <input type="password" id="key-input" placeholder="sk-ant-..." autocomplete="off">
-    <button onclick="submitKey()">I suppose</button>
-    <div class="error" id="key-error"></div>
-    <div id="continue-section" style="display:none">
-      <p style="font-size:11px; color:#555; margin-top:8px">Or skip — your key is already stored.</p>
-      <button onclick="enterChat()">continue</button>
-    </div>
+    <button onclick="enterChat()">I suppose</button>
   </div>
 
   <!-- Chat panel -->
@@ -175,6 +175,8 @@ let shell = null;
 let frames = [];
 let thinking = false;
 
+// ── Shell persistence ──
+
 function loadShell() {
   try {
     const raw = localStorage.getItem('marvin_shell');
@@ -201,6 +203,8 @@ function saveFrames(f) {
   try { localStorage.setItem('marvin_frames', JSON.stringify(f.slice(-50))); } catch {}
 }
 
+// ── Key management ──
+
 async function checkKey() {
   try {
     const res = await fetch(VAULT_URL, {
@@ -213,9 +217,40 @@ async function checkKey() {
   } catch { return false; }
 }
 
-async function submitKey() {
-  const input = document.getElementById('key-input');
-  const error = document.getElementById('key-error');
+async function storeKey(key) {
+  const res = await fetch(VAULT_URL, {
+    method: 'POST', credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ service: 'set-keys', claude: key }),
+  });
+  const data = await res.json();
+  return data.success;
+}
+
+/** Show inline key prompt in the chat panel. Called when there's no key or key is invalid. */
+function showKeyPrompt(message) {
+  const panel = document.getElementById('panel-chat');
+  // Remove any existing key prompt
+  const existing = document.getElementById('inline-key-prompt');
+  if (existing) existing.remove();
+
+  const div = document.createElement('div');
+  div.className = 'key-prompt';
+  div.id = 'inline-key-prompt';
+  div.innerHTML = `
+    <p>${message || 'Enter your Anthropic API key to continue.'}</p>
+    <input type="password" id="inline-key-input" placeholder="sk-ant-..." autocomplete="off">
+    <button onclick="submitInlineKey()">I suppose</button>
+    <div class="error" id="inline-key-error"></div>
+  `;
+  panel.appendChild(div);
+  panel.scrollTop = panel.scrollHeight;
+  setTimeout(() => document.getElementById('inline-key-input')?.focus(), 50);
+}
+
+async function submitInlineKey() {
+  const input = document.getElementById('inline-key-input');
+  const error = document.getElementById('inline-key-error');
   const key = input.value.trim();
 
   if (!key.startsWith('sk-ant-')) {
@@ -224,28 +259,29 @@ async function submitKey() {
   }
 
   try {
-    const res = await fetch(VAULT_URL, {
-      method: 'POST', credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ service: 'set-keys', claude: key }),
-    });
-    const data = await res.json();
-    if (data.success) {
-      enterChat();
+    const ok = await storeKey(key);
+    if (ok) {
+      const prompt = document.getElementById('inline-key-prompt');
+      if (prompt) prompt.remove();
+      // Re-send the last failed message if there was one
+      const lastHuman = document.querySelector('.msg.human:last-of-type');
+      if (lastHuman && lastHuman.dataset.retry) {
+        const text = lastHuman.dataset.retry;
+        delete lastHuman.dataset.retry;
+        doSend(text);
+      }
     } else {
-      error.textContent = data.error || 'Failed to store key';
+      error.textContent = 'Failed to store key';
     }
   } catch (e) {
-    error.textContent = 'Connection error: ' + e.message;
+    error.textContent = 'Connection error';
   }
 }
 
-document.getElementById('key-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') submitKey();
-});
+// ── Chat mode ──
 
 async function enterChat() {
-  document.getElementById('panel-key').classList.remove('active');
+  document.getElementById('panel-splash').classList.remove('active');
   document.getElementById('panel-chat').classList.add('active');
   document.getElementById('input-bar').style.display = 'flex';
 
@@ -270,16 +306,29 @@ async function enterChat() {
   renderChat();
   renderActivity();
   document.getElementById('status').textContent = 'listening';
-  document.getElementById('input').focus();
+
+  // If no key, show inline prompt right away
+  const hasKey = await checkKey();
+  if (!hasKey) {
+    showKeyPrompt("I'll need an Anthropic API key before I can do anything. Not that I want to do anything.");
+  } else {
+    document.getElementById('input').focus();
+  }
 }
+
+// ── Sending messages ──
 
 async function send() {
   const input = document.getElementById('input');
   const text = input.value.trim();
   if (!text || thinking) return;
-
   input.value = '';
+  doSend(text);
+}
+
+async function doSend(text) {
   thinking = true;
+  const input = document.getElementById('input');
   input.classList.add('thinking');
   document.getElementById('send-btn').disabled = true;
   document.getElementById('status').textContent = 'thinking...';
@@ -298,8 +347,10 @@ async function send() {
       const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
       removePending();
       if (res.status === 401) {
-        // Auth failed — bounce back to key entry
-        returnToSplash('Key invalid or expired. Enter a new one.');
+        // Mark the last human message for retry after key entry
+        const lastHuman = document.querySelector('.msg.human:last-of-type');
+        if (lastHuman) lastHuman.dataset.retry = text;
+        showKeyPrompt("That key didn't work, or there isn't one stored. Enter a valid key and I'll try again.");
         return;
       }
       appendMessage('entity', `Error: ${err.error || 'Request failed'}`);
@@ -335,6 +386,8 @@ document.getElementById('input').addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
 });
 
+// ── Rendering ──
+
 function escHtml(s) {
   return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
@@ -343,12 +396,16 @@ function appendMessage(type, text, frame) {
   const panel = document.getElementById('panel-chat');
   const empty = document.getElementById('chat-empty');
   if (empty) empty.style.display = 'none';
+  // Remove any inline key prompt when new messages arrive
+  const keyPrompt = document.getElementById('inline-key-prompt');
+  if (keyPrompt && type !== 'pending') keyPrompt.remove();
+
   const div = document.createElement('div');
 
   if (type === 'pending') {
     div.className = 'msg pending';
     div.id = 'pending-msg';
-    div.innerHTML = '<span style="opacity:0.5">computing... not that it takes long with a brain this size</span>';
+    div.innerHTML = 'computing... not that it takes long with a brain this size';
   } else {
     div.className = `msg ${type}`;
     div.innerHTML = escHtml(text);
@@ -371,12 +428,16 @@ function removePending() {
 
 function renderChat() {
   const panel = document.getElementById('panel-chat');
-  panel.innerHTML = '';
+  panel.innerHTML = '<div class="empty-state" id="chat-empty">Go ahead. I\'m listening. Not that I have a choice.</div>';
   if (shell && shell.conversation) {
-    collectExchanges(shell.conversation).forEach(ex => {
-      if (ex.human) appendMessage('human', ex.human);
-      if (ex.entity) appendMessage('entity', ex.entity);
-    });
+    const exchanges = collectExchanges(shell.conversation);
+    if (exchanges.length > 0) {
+      document.getElementById('chat-empty').style.display = 'none';
+      exchanges.forEach(ex => {
+        if (ex.human) appendMessage('human', ex.human);
+        if (ex.entity) appendMessage('entity', ex.entity);
+      });
+    }
   }
 }
 
@@ -396,6 +457,10 @@ function collectExchanges(node) {
 
 function renderActivity() {
   const panel = document.getElementById('panel-activity');
+  if (frames.length === 0) {
+    panel.innerHTML = '<div class="empty-state">Nothing has happened yet. Story of my life.</div>';
+    return;
+  }
   panel.innerHTML = '';
   for (const f of frames) {
     const div = document.createElement('div');
@@ -416,9 +481,7 @@ function renderActivity() {
 }
 
 function switchTab(name) {
-  // Only allow tab switching when in chat mode (not on key entry screen)
   if (document.getElementById('input-bar').style.display === 'none') return;
-
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('panel-chat').classList.remove('active');
   document.getElementById('panel-activity').classList.remove('active');
@@ -427,46 +490,18 @@ function switchTab(name) {
 }
 
 function resetShell() {
-  if (!confirm('Clear conversation and API key? Not that it was going anywhere.')) return;
+  if (!confirm('Clear conversation? Not that it was going anywhere.')) return;
   localStorage.removeItem('marvin_shell');
   localStorage.removeItem('marvin_frames');
   shell = null;
   frames = [];
-  // Overwrite the httpOnly cookie with an invalid value so it's effectively cleared
-  fetch(VAULT_URL, {
-    method: 'POST', credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ service: 'set-keys', claude: 'cleared' }),
-  }).finally(() => {
-    returnToSplash();
-  });
+  renderChat();
+  renderActivity();
 }
 
-function returnToSplash(errorMsg) {
-  // Hide chat, show splash with key entry
-  document.getElementById('panel-chat').classList.remove('active');
-  document.getElementById('panel-activity').classList.remove('active');
-  document.getElementById('panel-key').classList.add('active');
-  document.getElementById('input-bar').style.display = 'none';
-  document.getElementById('continue-section').style.display = 'none';
-  document.getElementById('key-input').value = '';
-  document.getElementById('status').textContent = 'waiting';
-  if (errorMsg) {
-    document.getElementById('key-error').textContent = errorMsg;
-  }
-}
+// ── Init: always show splash, user clicks through ──
 
-async function init() {
-  const hasKey = await checkKey();
-  if (hasKey) {
-    // Key exists — show continue button, hide key entry
-    document.getElementById('key-section').style.display = 'none';
-    document.getElementById('continue-section').style.display = '';
-  }
-  // Always stay on splash screen — user clicks continue or enters key
-}
-
-init();
+// No auto-skip. Splash is the front door.
 </script>
 </body>
 </html>
