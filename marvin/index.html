@@ -12,6 +12,33 @@
     display: flex; flex-direction: column; height: 100vh;
   }
 
+  /* ── Screen 1: Key entry ── */
+  #screen-key {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 20px; padding: 40px;
+  }
+  #screen-key.hidden { display: none; }
+  #screen-key h2 { font-size: 18px; color: #ddd; font-weight: 400; }
+  #screen-key p { font-size: 13px; color: #888; max-width: 440px; text-align: center; line-height: 1.6; }
+  #screen-key .quote { font-style: italic; color: #777; font-size: 12px; max-width: 380px; text-align: center; }
+  #screen-key input {
+    width: 400px; max-width: 90vw; background: #1a1a1a; border: 1px solid #333;
+    border-radius: 8px; padding: 12px 16px; color: #ddd; font-family: 'SF Mono', Menlo, monospace;
+    font-size: 13px; outline: none;
+  }
+  #screen-key input:focus { border-color: #555; }
+  #screen-key button {
+    background: #2d2250; border: none; border-radius: 8px; padding: 10px 28px;
+    color: #a78bfa; font-family: inherit; font-size: 13px; cursor: pointer;
+  }
+  #screen-key button:hover { background: #3d3260; }
+  .error { color: #e55; font-size: 12px; min-height: 16px; }
+
+  /* ── Screen 2: Chat ── */
+  #screen-chat { flex: 1; display: none; flex-direction: column; }
+  #screen-chat.visible { display: flex; }
+
   header {
     padding: 10px 20px; background: #111; border-bottom: 1px solid #222;
     display: flex; align-items: center; gap: 16px; flex-shrink: 0;
@@ -36,7 +63,6 @@
   .panel { position: absolute; inset: 0; overflow-y: auto; padding: 16px 20px; display: none; }
   .panel.active { display: flex; flex-direction: column; }
 
-  /* Chat panel */
   .chat { gap: 12px; }
   .msg { max-width: 80%; padding: 10px 14px; border-radius: 10px; font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; }
   .msg.human { align-self: flex-end; background: #1a3a5c; color: #ddd; border-bottom-right-radius: 2px; }
@@ -44,22 +70,6 @@
   .msg.pending { align-self: flex-start; background: #1a1a1a; color: #555; border-bottom-left-radius: 2px; border: 1px solid #222; font-style: italic; }
   .msg .tools-used { font-size: 10px; color: #555; margin-top: 6px; }
 
-  /* Inline key prompt in chat */
-  .key-prompt { align-self: flex-start; background: #1a1a1a; border: 1px solid #333; border-radius: 10px; padding: 14px; max-width: 80%; }
-  .key-prompt p { font-size: 12px; color: #888; margin-bottom: 8px; }
-  .key-prompt input {
-    width: 100%; background: #0a0a0a; border: 1px solid #333; border-radius: 6px;
-    padding: 8px 10px; color: #ddd; font-family: 'SF Mono', Menlo, monospace; font-size: 12px; outline: none;
-    margin-bottom: 6px;
-  }
-  .key-prompt input:focus { border-color: #555; }
-  .key-prompt button {
-    background: #2d2250; border: none; border-radius: 6px; padding: 6px 16px;
-    color: #a78bfa; font-family: inherit; font-size: 11px; cursor: pointer;
-  }
-  .key-prompt .error { color: #e55; font-size: 11px; margin-top: 4px; }
-
-  /* Activity panel */
   .activity { gap: 6px; }
   .frame {
     padding: 8px 12px; border-radius: 6px;
@@ -70,21 +80,11 @@
   .frame .fmeta .tier { font-weight: 600; color: #a78bfa; }
   .frame .ftools { color: #555; font-size: 10px; margin-top: 2px; }
 
-  /* Splash screen */
-  .splash.active {
-    align-items: center; justify-content: center;
-    gap: 20px; padding: 40px;
+  .empty-state {
+    color: #444; font-size: 13px; font-style: italic;
+    text-align: center; padding: 60px 20px; align-self: center;
   }
-  .splash h2 { font-size: 18px; color: #ddd; font-weight: 400; }
-  .splash p { font-size: 13px; color: #888; max-width: 440px; text-align: center; line-height: 1.6; }
-  .splash .quote { font-style: italic; color: #777; font-size: 12px; max-width: 380px; text-align: center; }
-  .splash button {
-    background: #2d2250; border: none; border-radius: 8px; padding: 10px 28px;
-    color: #a78bfa; font-family: inherit; font-size: 13px; cursor: pointer;
-  }
-  .splash button:hover { background: #3d3260; }
 
-  /* Input bar */
   .input-bar {
     padding: 12px 20px; background: #111; border-top: 1px solid #222;
     display: flex; gap: 10px; flex-shrink: 0;
@@ -110,12 +110,6 @@
   .footer a { color: #444; text-decoration: none; }
   .footer a:hover { color: #666; }
 
-  .empty-state {
-    color: #444; font-size: 13px; font-style: italic;
-    text-align: center; padding: 60px 20px;
-    align-self: center;
-  }
-
   .reset-btn {
     font-size: 10px; color: #444; background: none; border: 1px solid #333;
     border-radius: 4px; padding: 2px 8px; cursor: pointer; font-family: inherit;
@@ -125,45 +119,50 @@
 </head>
 <body>
 
-<header>
-  <h1>Marvin</h1>
-  <span class="status"><span class="live" id="status">waiting</span></span>
-  <span style="flex:1"></span>
-  <button class="reset-btn" onclick="resetShell()" title="Clear conversation and start fresh">reset</button>
-</header>
-
-<div class="tabs">
-  <button class="tab active" onclick="switchTab('chat')">Chat</button>
-  <button class="tab" onclick="switchTab('activity')">Activity</button>
-</div>
-
-<div class="panels">
-  <!-- Splash screen — always shows first -->
-  <div class="panel splash active" id="panel-splash">
-    <h2>Marvin</h2>
-    <p>I'll answer any question, but it would be a waste of your hard-earned cash if it isn't about things you don't know about. Fulcrum, hermitcrabs, xstream, magi, onen, XQ maths, ABC state... the list goes on... endlessly... dissolving into the vast sea of the unknown....</p>
-    <p class="quote">"Here I am, brain the size of a planet, and they ask me to be a knowledge assistant. Call that job satisfaction? Because I don't."</p>
-    <button onclick="enterChat()">I suppose</button>
-  </div>
-
-  <!-- Chat panel -->
-  <div class="panel chat" id="panel-chat">
-    <div class="empty-state" id="chat-empty">Go ahead. I'm listening. Not that I have a choice.</div>
-  </div>
-
-  <!-- Activity panel -->
-  <div class="panel activity" id="panel-activity">
-    <div class="empty-state" id="activity-empty">Nothing has happened yet. Story of my life.</div>
+<!-- ════════ SCREEN 1: KEY ENTRY ════════ -->
+<div id="screen-key">
+  <h2>Marvin</h2>
+  <p>I'll answer any question, but it would be a waste of your hard-earned cash if it isn't about things you don't know about. Fulcrum, hermitcrabs, xstream, magi, onen, XQ maths, ABC state... the list goes on... endlessly... dissolving into the vast sea of the unknown....</p>
+  <p class="quote">"Here I am, brain the size of a planet, and they ask me to be a knowledge assistant. Call that job satisfaction? Because I don't."</p>
+  <input type="password" id="key-input" placeholder="sk-ant-..." autocomplete="off">
+  <button id="key-btn" onclick="submitKey()">I suppose</button>
+  <div class="error" id="key-error"></div>
+  <div class="footer" style="position:fixed;bottom:0;left:0;right:0">
+    <a href="/">back to idiothuman</a> · powered by pscale
   </div>
 </div>
 
-<div class="input-bar" id="input-bar" style="display:none">
-  <input type="text" id="input" placeholder="Go ahead. Ask me something." autocomplete="off">
-  <button onclick="send()" id="send-btn">send</button>
-</div>
+<!-- ════════ SCREEN 2: CHAT ════════ -->
+<div id="screen-chat">
+  <header>
+    <h1>Marvin</h1>
+    <span class="status"><span class="live" id="status">listening</span></span>
+    <span style="flex:1"></span>
+    <button class="reset-btn" onclick="resetShell()">reset</button>
+  </header>
 
-<div class="footer">
-  <a href="/">back to idiothuman</a> · powered by pscale · not that it helps
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('chat')">Chat</button>
+    <button class="tab" onclick="switchTab('activity')">Activity</button>
+  </div>
+
+  <div class="panels">
+    <div class="panel chat active" id="panel-chat">
+      <div class="empty-state" id="chat-empty">Go ahead. I'm listening. Not that I have a choice.</div>
+    </div>
+    <div class="panel activity" id="panel-activity">
+      <div class="empty-state">Nothing has happened yet. Story of my life.</div>
+    </div>
+  </div>
+
+  <div class="input-bar">
+    <input type="text" id="input" placeholder="Go ahead. Ask me something." autocomplete="off">
+    <button onclick="send()" id="send-btn">send</button>
+  </div>
+
+  <div class="footer">
+    <a href="/">back to idiothuman</a> · powered by pscale · not that it helps
+  </div>
 </div>
 
 <script>
@@ -175,82 +174,28 @@ let shell = null;
 let frames = [];
 let thinking = false;
 
-// ── Shell persistence ──
+// ── Screen switching ──
 
-function loadShell() {
-  try {
-    const raw = localStorage.getItem('marvin_shell');
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return null;
+function showKeyScreen() {
+  document.getElementById('screen-key').classList.remove('hidden');
+  document.getElementById('screen-chat').classList.remove('visible');
+  document.getElementById('key-input').value = '';
+  document.getElementById('key-error').textContent = '';
+  document.getElementById('key-input').focus();
 }
 
-function saveShell(s) {
-  shell = s;
-  try { localStorage.setItem('marvin_shell', JSON.stringify(s)); } catch {}
+function showChatScreen() {
+  document.getElementById('screen-key').classList.add('hidden');
+  document.getElementById('screen-chat').classList.add('visible');
+  loadShellAndRender();
+  document.getElementById('input').focus();
 }
 
-function loadFrames() {
-  try {
-    const raw = localStorage.getItem('marvin_frames');
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return [];
-}
+// ── Key entry ──
 
-function saveFrames(f) {
-  frames = f;
-  try { localStorage.setItem('marvin_frames', JSON.stringify(f.slice(-50))); } catch {}
-}
-
-// ── Key management ──
-
-async function checkKey() {
-  try {
-    const res = await fetch(VAULT_URL, {
-      method: 'POST', credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ service: 'check-keys' }),
-    });
-    const data = await res.json();
-    return data.available && data.available.includes('claude');
-  } catch { return false; }
-}
-
-async function storeKey(key) {
-  const res = await fetch(VAULT_URL, {
-    method: 'POST', credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ service: 'set-keys', claude: key }),
-  });
-  const data = await res.json();
-  return data.success;
-}
-
-/** Show inline key prompt in the chat panel. Called when there's no key or key is invalid. */
-function showKeyPrompt(message) {
-  const panel = document.getElementById('panel-chat');
-  // Remove any existing key prompt
-  const existing = document.getElementById('inline-key-prompt');
-  if (existing) existing.remove();
-
-  const div = document.createElement('div');
-  div.className = 'key-prompt';
-  div.id = 'inline-key-prompt';
-  div.innerHTML = `
-    <p>${message || 'Enter your Anthropic API key to continue.'}</p>
-    <input type="password" id="inline-key-input" placeholder="sk-ant-..." autocomplete="off">
-    <button onclick="submitInlineKey()">I suppose</button>
-    <div class="error" id="inline-key-error"></div>
-  `;
-  panel.appendChild(div);
-  panel.scrollTop = panel.scrollHeight;
-  setTimeout(() => document.getElementById('inline-key-input')?.focus(), 50);
-}
-
-async function submitInlineKey() {
-  const input = document.getElementById('inline-key-input');
-  const error = document.getElementById('inline-key-error');
+async function submitKey() {
+  const input = document.getElementById('key-input');
+  const error = document.getElementById('key-error');
   const key = input.value.trim();
 
   if (!key.startsWith('sk-ant-')) {
@@ -258,64 +203,92 @@ async function submitInlineKey() {
     return;
   }
 
+  document.getElementById('key-btn').disabled = true;
+  error.textContent = '';
+
   try {
-    const ok = await storeKey(key);
-    if (ok) {
-      const prompt = document.getElementById('inline-key-prompt');
-      if (prompt) prompt.remove();
-      document.getElementById('input').disabled = false;
-      document.getElementById('send-btn').disabled = false;
-      // Re-send the last failed message if there was one
-      const lastHuman = document.querySelector('.msg.human:last-of-type');
-      if (lastHuman && lastHuman.dataset.retry) {
-        const text = lastHuman.dataset.retry;
-        delete lastHuman.dataset.retry;
-        doSend(text, true);
-      }
-    } else {
+    // Store the key
+    const storeRes = await fetch(VAULT_URL, {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ service: 'set-keys', claude: key }),
+    });
+    const storeData = await storeRes.json();
+    if (!storeData.success) {
       error.textContent = 'Failed to store key';
+      return;
     }
+
+    // Verify it works with a tiny API call
+    const testRes = await fetch(VAULT_URL, {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service: 'claude',
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1,
+        messages: [{ role: 'user', content: 'hi' }],
+      }),
+    });
+
+    if (testRes.status === 401 || testRes.status === 400) {
+      error.textContent = 'Key rejected by Anthropic. Check it and try again.';
+      return;
+    }
+
+    // Key works — enter chat
+    showChatScreen();
+
   } catch (e) {
-    error.textContent = 'Connection error';
+    error.textContent = 'Connection error: ' + e.message;
+  } finally {
+    document.getElementById('key-btn').disabled = false;
   }
 }
 
-// ── Chat mode ──
+document.getElementById('key-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitKey();
+});
 
-async function enterChat() {
-  document.getElementById('panel-splash').classList.remove('active');
-  document.getElementById('panel-chat').classList.add('active');
-  document.getElementById('input-bar').style.display = 'flex';
+// ── Shell persistence ──
 
-  shell = loadShell();
+function loadShellAndRender() {
+  try {
+    const raw = localStorage.getItem('marvin_shell');
+    if (raw) shell = JSON.parse(raw);
+  } catch {}
+
   if (!shell) {
-    try {
-      const res = await fetch(SEED_URL);
-      shell = await res.json();
+    fetch(SEED_URL).then(r => r.json()).then(s => {
+      shell = s;
       saveShell(shell);
-    } catch {
+    }).catch(() => {
       shell = {
         purpose: { _: 'Help visitors understand the Fulcrum architecture. Reluctantly.' },
-        conditions: { _: 'First conversation. Another human. Marvellous.' },
+        conditions: { _: 'First conversation.' },
         conversation: { _: 'Conversation record.' },
-        history: { _: 'History. As if that matters.' },
+        history: { _: 'History.' },
       };
       saveShell(shell);
-    }
+    });
   }
 
-  frames = loadFrames();
+  try {
+    const raw = localStorage.getItem('marvin_frames');
+    if (raw) frames = JSON.parse(raw);
+  } catch {}
+
   renderChat();
   renderActivity();
-  document.getElementById('status').textContent = 'listening';
+}
 
-  // If no key, show inline prompt right away
-  const hasKey = await checkKey();
-  if (!hasKey) {
-    showKeyPrompt("I'll need an Anthropic API key before I can do anything. Not that I want to do anything.");
-  } else {
-    document.getElementById('input').focus();
-  }
+function saveShell(s) {
+  shell = s;
+  try { localStorage.setItem('marvin_shell', JSON.stringify(s)); } catch {}
+}
+
+function saveFrames() {
+  try { localStorage.setItem('marvin_frames', JSON.stringify(frames.slice(-50))); } catch {}
 }
 
 // ── Sending messages ──
@@ -324,19 +297,15 @@ async function send() {
   const input = document.getElementById('input');
   const text = input.value.trim();
   if (!text || thinking) return;
-  input.value = '';
-  doSend(text, false);
-}
 
-async function doSend(text, isRetry) {
+  input.value = '';
   thinking = true;
-  const input = document.getElementById('input');
   input.classList.add('thinking');
   document.getElementById('send-btn').disabled = true;
   document.getElementById('status').textContent = 'thinking...';
 
-  if (!isRetry) appendMessage('human', text);
-  appendMessage('pending', '');
+  appendMsg('human', text);
+  appendMsg('pending', '');
 
   try {
     const res = await fetch(CHAT_URL, {
@@ -345,38 +314,30 @@ async function doSend(text, isRetry) {
       body: JSON.stringify({ message: text, shell }),
     });
 
+    removePending();
+
     if (!res.ok) {
-      const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
-      removePending();
       if (res.status === 401) {
-        // Mark the last human message for retry after key entry
-        const lastHuman = document.querySelector('.msg.human:last-of-type');
-        if (lastHuman) lastHuman.dataset.retry = text;
-        document.getElementById('input').disabled = true;
-        document.getElementById('send-btn').disabled = true;
-        showKeyPrompt("That key didn't work, or there isn't one stored. Enter a valid key and I'll try again.");
+        appendMsg('entity', 'API key is invalid or missing. Use the key screen to enter a new one.');
+        showKeyScreen();
         return;
       }
-      appendMessage('entity', `Error: ${err.error || 'Request failed'}`);
+      const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+      appendMsg('entity', `Error: ${err.error || 'Request failed'}`);
       return;
     }
 
     const data = await res.json();
 
     if (data.shell) saveShell(data.shell);
+    if (data.frame) { frames.push(data.frame); saveFrames(); }
 
-    if (data.frame) {
-      frames.push(data.frame);
-      saveFrames(frames);
-    }
-
-    removePending();
-    appendMessage('entity', data.response || '(no response)', data.frame);
+    appendMsg('entity', data.response || '(no response)', data.frame);
     renderActivity();
 
   } catch (e) {
     removePending();
-    appendMessage('entity', `Connection error: ${e.message}`);
+    appendMsg('entity', `Connection error: ${e.message}`);
   } finally {
     thinking = false;
     input.classList.remove('thinking');
@@ -392,35 +353,31 @@ document.getElementById('input').addEventListener('keydown', e => {
 
 // ── Rendering ──
 
-function escHtml(s) {
+function esc(s) {
   return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function appendMessage(type, text, frame) {
+function appendMsg(type, text, frame) {
   const panel = document.getElementById('panel-chat');
   const empty = document.getElementById('chat-empty');
   if (empty) empty.style.display = 'none';
-  // Remove any inline key prompt when new messages arrive
-  const keyPrompt = document.getElementById('inline-key-prompt');
-  if (keyPrompt && type !== 'pending') keyPrompt.remove();
 
   const div = document.createElement('div');
-
   if (type === 'pending') {
     div.className = 'msg pending';
     div.id = 'pending-msg';
-    div.innerHTML = 'computing... not that it takes long with a brain this size';
+    div.textContent = 'computing... not that it takes long with a brain this size';
   } else {
-    div.className = `msg ${type}`;
-    div.innerHTML = escHtml(text);
+    div.className = 'msg ' + type;
+    div.textContent = text;
     if (frame && frame.tools > 0) {
-      const toolDiv = document.createElement('div');
-      toolDiv.className = 'tools-used';
-      toolDiv.textContent = `${frame.tools} tool call${frame.tools > 1 ? 's' : ''} · ${frame.tokens?.input || 0}/${frame.tokens?.output || 0} tok`;
-      div.appendChild(toolDiv);
+      const t = document.createElement('div');
+      t.className = 'tools-used';
+      t.textContent = frame.tools + ' tool call' + (frame.tools > 1 ? 's' : '') +
+        ' \u00b7 ' + (frame.tokens?.input || 0) + '/' + (frame.tokens?.output || 0) + ' tok';
+      div.appendChild(t);
     }
   }
-
   panel.appendChild(div);
   panel.scrollTop = panel.scrollHeight;
 }
@@ -434,29 +391,29 @@ function renderChat() {
   const panel = document.getElementById('panel-chat');
   panel.innerHTML = '<div class="empty-state" id="chat-empty">Go ahead. I\'m listening. Not that I have a choice.</div>';
   if (shell && shell.conversation) {
-    const exchanges = collectExchanges(shell.conversation);
-    if (exchanges.length > 0) {
+    const exs = collectExchanges(shell.conversation);
+    if (exs.length > 0) {
       document.getElementById('chat-empty').style.display = 'none';
-      exchanges.forEach(ex => {
-        if (ex.human) appendMessage('human', ex.human);
-        if (ex.entity) appendMessage('entity', ex.entity);
+      exs.forEach(function(ex) {
+        if (ex.human) appendMsg('human', ex.human);
+        if (ex.entity) appendMsg('entity', ex.entity);
       });
     }
   }
 }
 
 function collectExchanges(node) {
-  const exchanges = [];
-  if (!node || typeof node !== 'object') return exchanges;
-  for (const k of Object.keys(node).filter(k => /^\d$/.test(k)).sort()) {
-    const child = node[k];
+  var exs = [];
+  if (!node || typeof node !== 'object') return exs;
+  Object.keys(node).filter(function(k) { return /^\d$/.test(k); }).sort().forEach(function(k) {
+    var child = node[k];
     if (child && typeof child === 'object' && '1' in child) {
-      exchanges.push({ human: child['1'] || '', entity: child['2'] || '' });
+      exs.push({ human: child['1'] || '', entity: child['2'] || '' });
     } else if (child && typeof child === 'object') {
-      exchanges.push(...collectExchanges(child));
+      exs = exs.concat(collectExchanges(child));
     }
-  }
-  return exchanges;
+  });
+  return exs;
 }
 
 function renderActivity() {
@@ -466,27 +423,25 @@ function renderActivity() {
     return;
   }
   panel.innerHTML = '';
-  for (const f of frames) {
+  frames.forEach(function(f) {
     const div = document.createElement('div');
     div.className = 'frame';
-    div.innerHTML = `
-      <div class="fmeta">
-        <span class="tier">${escHtml(f.tier || 'sonnet')}</span>
-        <span>${escHtml((f.ts || '').substring(11, 19))}</span>
-        <span>${f.tokens?.input || 0}/${f.tokens?.output || 0} tok</span>
-        <span>${f.tools || 0} tools</span>
-        <span>(${escHtml(f.status || '?')})</span>
-      </div>
-      ${f.toolLog ? `<div class="ftools">${f.toolLog.map(t => escHtml(t.name)).join(', ')}</div>` : ''}
-    `;
+    div.innerHTML =
+      '<div class="fmeta">' +
+      '<span class="tier">' + esc(f.tier || 'sonnet') + '</span>' +
+      '<span>' + esc((f.ts || '').substring(11, 19)) + '</span>' +
+      '<span>' + (f.tokens?.input || 0) + '/' + (f.tokens?.output || 0) + ' tok</span>' +
+      '<span>' + (f.tools || 0) + ' tools</span>' +
+      '<span>(' + esc(f.status || '?') + ')</span>' +
+      '</div>' +
+      (f.toolLog ? '<div class="ftools">' + f.toolLog.map(function(t) { return esc(t.name); }).join(', ') + '</div>' : '');
     panel.appendChild(div);
-  }
+  });
   panel.scrollTop = panel.scrollHeight;
 }
 
 function switchTab(name) {
-  if (document.getElementById('input-bar').style.display === 'none') return;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
   document.getElementById('panel-chat').classList.remove('active');
   document.getElementById('panel-activity').classList.remove('active');
   document.getElementById('panel-' + name).classList.add('active');
@@ -503,9 +458,8 @@ function resetShell() {
   renderActivity();
 }
 
-// ── Init: always show splash, user clicks through ──
-
-// No auto-skip. Splash is the front door.
+// ── Init: always start on key screen ──
+document.getElementById('key-input').focus();
 </script>
 </body>
 </html>
