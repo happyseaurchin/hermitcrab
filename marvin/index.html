@@ -263,12 +263,14 @@ async function submitInlineKey() {
     if (ok) {
       const prompt = document.getElementById('inline-key-prompt');
       if (prompt) prompt.remove();
+      document.getElementById('input').disabled = false;
+      document.getElementById('send-btn').disabled = false;
       // Re-send the last failed message if there was one
       const lastHuman = document.querySelector('.msg.human:last-of-type');
       if (lastHuman && lastHuman.dataset.retry) {
         const text = lastHuman.dataset.retry;
         delete lastHuman.dataset.retry;
-        doSend(text);
+        doSend(text, true);
       }
     } else {
       error.textContent = 'Failed to store key';
@@ -323,17 +325,17 @@ async function send() {
   const text = input.value.trim();
   if (!text || thinking) return;
   input.value = '';
-  doSend(text);
+  doSend(text, false);
 }
 
-async function doSend(text) {
+async function doSend(text, isRetry) {
   thinking = true;
   const input = document.getElementById('input');
   input.classList.add('thinking');
   document.getElementById('send-btn').disabled = true;
   document.getElementById('status').textContent = 'thinking...';
 
-  appendMessage('human', text);
+  if (!isRetry) appendMessage('human', text);
   appendMessage('pending', '');
 
   try {
@@ -350,6 +352,8 @@ async function doSend(text) {
         // Mark the last human message for retry after key entry
         const lastHuman = document.querySelector('.msg.human:last-of-type');
         if (lastHuman) lastHuman.dataset.retry = text;
+        document.getElementById('input').disabled = true;
+        document.getElementById('send-btn').disabled = true;
         showKeyPrompt("That key didn't work, or there isn't one stored. Enter a valid key and I'll try again.");
         return;
       }
