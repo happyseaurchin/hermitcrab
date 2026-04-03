@@ -7,6 +7,10 @@
   },
   "rewrites": [
     {
+      "source": "/deepthought",
+      "destination": "/deepthought/index.html"
+    },
+    {
       "source": "/marvin",
       "destination": "/marvin/index.html"
     }
