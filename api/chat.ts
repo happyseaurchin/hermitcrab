@@ -122,7 +122,7 @@ async function aLoop(
   const tokens = { input: 0, output: 0 };
   const messages: any[] = [{ role: 'user', content: initialMessage }];
 
-  for (let iteration = 0; iteration < 5; iteration++) {
+  for (let iteration = 0; iteration < 10; iteration++) {
     const result = await apiCall(apiKey, system, messages, tools);
 
     const usage = result.usage || {};
@@ -161,7 +161,7 @@ async function aLoop(
     messages.push({ role: 'user', content: toolResults });
   }
 
-  return { text: '[A-loop exhausted after 5 iterations]', toolLog, tokens };
+  return { text: '[A-loop exhausted after 10 iterations]', toolLog, tokens };
 }
 
 // ── Main handler ──

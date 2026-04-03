@@ -1,39 +1,74 @@
 {
-  "_": "Concerns for the knowledge assistant. Single concern: engagement. Fires when a human speaks. No timer-based concerns, no birth, no self-kicking. Pure response mode.",
+  "_": "Concerns for the knowledge assistant. Single concern: engagement. Fires when a human speaks.",
   "1": {
     "_": {
-      "_": "Engagement. A human has spoken. Navigate your knowledge blocks to understand their question, then respond directly and substantively. Use bsp to pull relevant content from knowledge blocks. Write your full response in the note field of your output. If the visitor is exploring what magi is, demonstrate by navigating your own blocks openly.",
+      "_": "Engagement. A human has spoken. Answer their question directly and substantively using the knowledge compiled into your context. You have pscale-spec, hermitcrab, sand, fulcrum, and magi-xstream already loaded — read them, don't tool-call for them. Use bsp tools only if you need deeper detail beyond what's in your compiled context. Write your full response in the note field of your output.",
       "1": "sonnet",
       "2": "human",
       "3": {
-        "_": "Compile engagement context — shell state plus identity.",
+        "_": "Compile engagement context — identity, shell state, and all knowledge blocks.",
         "1": {
+          "_": {
+            "_": "Identity — who this entity is.",
+            "1": "identity:_"
+          },
+          "1": "spindle"
+        },
+        "2": {
+          "_": {
+            "_": "Pscale specification — the format, BSP, forms, growth, coordinates.",
+            "1": "pscale-spec:_"
+          },
+          "1": "dir"
+        },
+        "3": {
+          "_": {
+            "_": "Hermitcrab architecture — nine layers, kernel, shell-as-entity.",
+            "1": "hermitcrab:_"
+          },
+          "1": "dir"
+        },
+        "4": {
+          "_": {
+            "_": "SAND protocol — grains, stigmergy, coordination.",
+            "1": "sand:_"
+          },
+          "1": "dir"
+        },
+        "5": {
+          "_": {
+            "_": "Fulcrum volumes — Intrabeing, Reflexive Reading, Action Cycle, Sqale.",
+            "1": "fulcrum:_"
+          },
+          "1": "dir"
+        },
+        "6": {
+          "_": {
+            "_": "Magi, xstream, and Onen — temporal agents, coordination, RPG.",
+            "1": "magi-xstream:_"
+          },
+          "1": "dir"
+        },
+        "7": {
           "_": {
             "_": "Purpose — what this entity exists to do.",
             "1": "purpose:_"
           },
           "1": "dir"
         },
-        "2": {
+        "8": {
           "_": {
-            "_": "Conversation — recent exchanges with the visitor.",
+            "_": "Conversation — recent exchanges.",
             "1": "conversation:_"
           },
           "1": "dir"
         },
-        "3": {
+        "9": {
           "_": {
-            "_": "Conditions — current state and context.",
+            "_": "Conditions — current state.",
             "1": "conditions:_"
           },
           "1": "dir"
-        },
-        "4": {
-          "_": {
-            "_": "Identity — who this entity is and how it navigates knowledge.",
-            "1": "identity:_"
-          },
-          "1": "spindle"
         }
       },
       "8": "",
