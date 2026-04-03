@@ -173,6 +173,7 @@ const VAULT_URL = '/api/vault';
 let shell = null;
 let frames = [];
 let thinking = false;
+let storedKey = null;
 
 // ── Screen switching ──
 
@@ -207,36 +208,24 @@ async function submitKey() {
   error.textContent = '';
 
   try {
-    // Store the key
-    const storeRes = await fetch(VAULT_URL, {
-      method: 'POST', credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ service: 'set-keys', claude: key }),
-    });
-    const storeData = await storeRes.json();
-    if (!storeData.success) {
-      error.textContent = 'Failed to store key';
-      return;
-    }
-
-    // Verify it works with a tiny API call
-    const testRes = await fetch(VAULT_URL, {
-      method: 'POST', credentials: 'include',
+    // Verify the key works by sending it directly to the chat endpoint with a test
+    const testRes = await fetch(CHAT_URL, {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        service: 'claude',
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1,
-        messages: [{ role: 'user', content: 'hi' }],
+        apiKey: key,
+        message: 'test',
+        shell: { purpose: { _: 'test' }, conditions: { _: 'test' }, conversation: { _: 'test' }, history: { _: 'test' } },
       }),
     });
 
-    if (testRes.status === 401 || testRes.status === 400) {
+    if (testRes.status === 401) {
       error.textContent = 'Key rejected by Anthropic. Check it and try again.';
       return;
     }
 
-    // Key works — enter chat
+    // Key works — store it in memory and enter chat
+    storedKey = key;
     showChatScreen();
 
   } catch (e) {
@@ -311,7 +300,7 @@ async function send() {
     const res = await fetch(CHAT_URL, {
       method: 'POST', credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text, shell }),
+      body: JSON.stringify({ message: text, shell, apiKey: storedKey }),
     });
 
     removePending();
