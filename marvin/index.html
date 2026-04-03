@@ -136,13 +136,12 @@
     <h2>Marvin</h2>
     <p>I'll answer any question, but it would be a waste of your hard-earned cash if it isn't about things you don't know about. Fulcrum, hermitcrabs, xstream, magi, onen, XQ maths, ABC state... the list goes on... endlessly... dissolving into the vast sea of the unknown....</p>
     <p class="quote">"Here I am, brain the size of a planet, and they ask me to be a knowledge assistant. Call that job satisfaction? Because I don't."</p>
-    <div id="key-section">
-      <p style="font-size:11px; color:#555">Enter your Anthropic API key. It's stored as an httpOnly cookie. I won't look at it. I have better things to be depressed about.</p>
-      <input type="password" id="key-input" placeholder="sk-ant-..." autocomplete="off">
-      <button onclick="submitKey()">I suppose</button>
-      <div class="error" id="key-error"></div>
-    </div>
+    <p style="font-size:11px; color:#555">Enter your Anthropic API key. It's stored as an httpOnly cookie. I won't look at it. I have better things to be depressed about.</p>
+    <input type="password" id="key-input" placeholder="sk-ant-..." autocomplete="off">
+    <button onclick="submitKey()">I suppose</button>
+    <div class="error" id="key-error"></div>
     <div id="continue-section" style="display:none">
+      <p style="font-size:11px; color:#555; margin-top:8px">Or skip — your key is already stored.</p>
       <button onclick="enterChat()">continue</button>
     </div>
   </div>
@@ -298,6 +297,11 @@ async function send() {
     if (!res.ok) {
       const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
       removePending();
+      if (res.status === 401) {
+        // Auth failed — bounce back to key entry
+        returnToSplash('Key invalid or expired. Enter a new one.');
+        return;
+      }
       appendMessage('entity', `Error: ${err.error || 'Request failed'}`);
       return;
     }
@@ -423,12 +427,33 @@ function switchTab(name) {
 }
 
 function resetShell() {
-  if (!confirm('Clear conversation? Not that it was going anywhere.')) return;
+  if (!confirm('Clear conversation and API key? Not that it was going anywhere.')) return;
   localStorage.removeItem('marvin_shell');
   localStorage.removeItem('marvin_frames');
   shell = null;
   frames = [];
-  enterChat();
+  // Overwrite the httpOnly cookie with an invalid value so it's effectively cleared
+  fetch(VAULT_URL, {
+    method: 'POST', credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ service: 'set-keys', claude: 'cleared' }),
+  }).finally(() => {
+    returnToSplash();
+  });
+}
+
+function returnToSplash(errorMsg) {
+  // Hide chat, show splash with key entry
+  document.getElementById('panel-chat').classList.remove('active');
+  document.getElementById('panel-activity').classList.remove('active');
+  document.getElementById('panel-key').classList.add('active');
+  document.getElementById('input-bar').style.display = 'none';
+  document.getElementById('continue-section').style.display = 'none';
+  document.getElementById('key-input').value = '';
+  document.getElementById('status').textContent = 'waiting';
+  if (errorMsg) {
+    document.getElementById('key-error').textContent = errorMsg;
+  }
 }
 
 async function init() {
