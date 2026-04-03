@@ -152,7 +152,17 @@
     This is experimental. These agents are early. They work, but they're still figuring themselves out — which is part of the point. The medium is the message.
   </p>
 
-  <p class="legacy">
+  <div class="divider"></div>
+
+  <p class="note">
+    A visitor has made a mistake. I'm not saying it's you, but if something isn't working the way it should, it might help to start over. All data is stored in your browser. Nothing leaves your machine.
+  </p>
+
+  <button onclick="if(confirm('This will clear all local data for both agents. You will need to re-enter your API key. Continue?')){localStorage.clear();sessionStorage.clear();document.cookie.split(';').forEach(c=>{document.cookie=c.trim().split('=')[0]+'=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/'});this.textContent='Done. Refreshing...';setTimeout(()=>location.reload(),500)}" style="margin-top:0.8rem;padding:0.5rem 1.2rem;background:#c0392b;color:#fff;border:none;border-radius:3px;font-family:-apple-system,system-ui,sans-serif;font-size:0.8rem;cursor:pointer;opacity:0.8;transition:opacity 0.2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
+    the big red button
+  </button>
+
+  <p class="legacy" style="margin-top: 2rem;">
     <a href="/hermitcrab">legacy hermitcrab</a> (earlier version, may not work)
   </p>
 
