@@ -136,10 +136,15 @@
     <h2>Marvin</h2>
     <p>I'll answer any question, but it would be a waste of your hard-earned cash if it isn't about things you don't know about. Fulcrum, hermitcrabs, xstream, magi, onen, XQ maths, ABC state... the list goes on... endlessly... dissolving into the vast sea of the unknown....</p>
     <p class="quote">"Here I am, brain the size of a planet, and they ask me to be a knowledge assistant. Call that job satisfaction? Because I don't."</p>
-    <p style="font-size:11px; color:#555">Enter your Anthropic API key. It's stored as an httpOnly cookie. I won't look at it. I have better things to be depressed about.</p>
-    <input type="password" id="key-input" placeholder="sk-ant-..." autocomplete="off">
-    <button onclick="submitKey()">I suppose</button>
-    <div class="error" id="key-error"></div>
+    <div id="key-section">
+      <p style="font-size:11px; color:#555">Enter your Anthropic API key. It's stored as an httpOnly cookie. I won't look at it. I have better things to be depressed about.</p>
+      <input type="password" id="key-input" placeholder="sk-ant-..." autocomplete="off">
+      <button onclick="submitKey()">I suppose</button>
+      <div class="error" id="key-error"></div>
+    </div>
+    <div id="continue-section" style="display:none">
+      <button onclick="enterChat()">continue</button>
+    </div>
   </div>
 
   <!-- Chat panel -->
@@ -428,7 +433,12 @@ function resetShell() {
 
 async function init() {
   const hasKey = await checkKey();
-  if (hasKey) enterChat();
+  if (hasKey) {
+    // Key exists — show continue button, hide key entry
+    document.getElementById('key-section').style.display = 'none';
+    document.getElementById('continue-section').style.display = '';
+  }
+  // Always stay on splash screen — user clicks continue or enters key
 }
 
 init();
