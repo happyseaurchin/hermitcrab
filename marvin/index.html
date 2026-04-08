@@ -323,7 +323,12 @@ async function send() {
         return;
       }
       const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
-      appendMsg('entity', `Error: ${err.error || 'Request failed'}`);
+      const msg = err.error || 'Request failed';
+      if (res.status === 502 && msg.includes('429')) {
+        appendMsg('entity', 'Your Anthropic API plan has a rate limit that is too low. You may need to upgrade your plan at console.anthropic.com, or wait a minute and try again.');
+      } else {
+        appendMsg('entity', `Error: ${msg}`);
+      }
       return;
     }
 

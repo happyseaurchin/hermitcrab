@@ -61,7 +61,10 @@ function loadStaticBlock(name: string): Block {
 
 const STATIC_BLOCK_NAMES = [
   'starstone', 'identity', 'concern',
-  'pscale-spec', 'hermitcrab', 'sand', 'fulcrum', 'magi-xstream',
+  'pscale-spec', 'hermitcrab', 'sand', 'magi-xstream',
+  'intro_induction_pscale',
+  'volume_0_pscale', 'volume_1_pscale_10k', 'volume_2_pscale', 'volume_3_pscale',
+  'volume_m1_pscale', 'volume_m2_pscale', 'volume_m3_pscale',
 ];
 
 const SHELL_BLOCK_NAMES = ['conversation', 'history', 'conditions', 'purpose'];
